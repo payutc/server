@@ -1,0 +1,98 @@
+/*
+Interface de login
+*/ 
+.form-noindent {
+    background-color: #FFFFFF;
+    border: 1px solid #C3D9FF;
+}
+/*
+Messages
+*/ 
+div.validmsg {
+    color: green;
+    font-family: arial, sans-serif;
+}
+div.errormsg {
+    color: red;
+    font-family: arial, sans-serif;
+}
+h3.attention {
+    color: red;
+	text-align: center;	
+}
+/*
+Corps de page
+*/
+.colomn1 {
+    float: left;
+    width: 530px;
+}
+
+.colomn11 {
+    float: left;
+    width: 260px;
+}
+
+.colomn12 {
+    float: right;
+    width: 260px;
+}
+
+.colomn2 {
+    float: right;
+    width: 230px;
+}
+/*
+Tableau
+*/
+th {
+    background-color: #6177AB;
+    color: #FFFFFF;
+}
+
+tr.impair {
+    background-color: #C3D9FF;
+}
+
+tr.pair {
+    background-color: #FFFFFF;
+}
+/*
+Formulaire
+*/
+input.buy {
+	background: transparent url(../skins/default/images/icons.png) repeat scroll -73px -51px;
+	border: 0px;
+	height:20px;
+	margin:2px;
+	width:20px;
+	cursor: pointer;
+	text-decoration: underline;
+}
+input.edit {
+	background: transparent url(../skins/default/images/icons.png) repeat scroll -48px -16px;
+	border: 0px;
+	height:16px;
+	margin:2px;
+	width:16px;
+	cursor: pointer;
+	text-decoration: underline;
+}
+input.delete {
+	background: transparent url(../skins/default/images/icons.png) repeat scroll -112px -16px;
+	border: 0px;
+	height:16px;
+	margin:2px;
+	width:16px;
+	cursor: pointer;
+	text-decoration: underline;
+}
+div.stopEdition {
+	background: transparent url(../skins/default/images/icons.png) repeat scroll -73px -51px;
+	border: 0px;
+	height:20px;
+	margin:2px;
+	width:20px;
+	cursor: pointer;
+	text-decoration: underline;
+}
