@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://10.10.10.1:8080/BADMIN.class.php" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="BADMIN" targetNamespace="http://10.10.10.1:8080/BADMIN.class.php">
+	<portType name="BADMINPort">
+		<operation name="login">
+			<input message="tns:loginRequest"/>
+			<output message="tns:loginResponse"/>
+		</operation>
+		<operation name="getAllFundations">
+			<input message="tns:getAllFundationsRequest"/>
+			<output message="tns:getAllFundationsResponse"/>
+		</operation>
+		<operation name="addFundation">
+			<input message="tns:addFundationRequest"/>
+			<output message="tns:addFundationResponse"/>
+		</operation>
+		<operation name="editFundationName">
+			<input message="tns:editFundationNameRequest"/>
+			<output message="tns:editFundationNameResponse"/>
+		</operation>
+		<operation name="deleteFundation">
+			<input message="tns:deleteFundationRequest"/>
+			<output message="tns:deleteFundationResponse"/>
+		</operation>
+		<operation name="getAllPoints">
+			<input message="tns:getAllPointsRequest"/>
+			<output message="tns:getAllPointsResponse"/>
+		</operation>
+		<operation name="addPoint">
+			<input message="tns:addPointRequest"/>
+			<output message="tns:addPointResponse"/>
+		</operation>
+		<operation name="editPointName">
+			<input message="tns:editPointNameRequest"/>
+			<output message="tns:editPointNameResponse"/>
+		</operation>
+		<operation name="deletePoint">
+			<input message="tns:deletePointRequest"/>
+			<output message="tns:deletePointResponse"/>
+		</operation>
+		<operation name="getAllRights">
+			<input message="tns:getAllRightsRequest"/>
+			<output message="tns:getAllRightsResponse"/>
+		</operation>
+		<operation name="getAllRightsAdminLight">
+			<input message="tns:getAllRightsAdminLightRequest"/>
+			<output message="tns:getAllRightsAdminLightResponse"/>
+		</operation>
+		<operation name="getAllUsersFromRight">
+			<input message="tns:getAllUsersFromRightRequest"/>
+			<output message="tns:getAllUsersFromRightResponse"/>
+		</operation>
+		<operation name="addUserToRight">
+			<input message="tns:addUserToRightRequest"/>
+			<output message="tns:addUserToRightResponse"/>
+		</operation>
+		<operation name="deleteUserFromRight">
+			<input message="tns:deleteUserFromRightRequest"/>
+			<output message="tns:deleteUserFromRightResponse"/>
+		</operation>
+		<operation name="getAllBlockedUsers">
+			<input message="tns:getAllBlockedUsersRequest"/>
+			<output message="tns:getAllBlockedUsersResponse"/>
+		</operation>
+		<operation name="deblockUser">
+			<input message="tns:deblockUserRequest"/>
+			<output message="tns:deblockUserResponse"/>
+		</operation>
+		<operation name="blockUser">
+			<input message="tns:blockUserRequest"/>
+			<output message="tns:blockUserResponse"/>
+		</operation>
+		<operation name="getRecharge">
+			<input message="tns:getRechargeRequest"/>
+			<output message="tns:getRechargeResponse"/>
+		</operation>
+		<operation name="getPurchase">
+			<input message="tns:getPurchaseRequest"/>
+			<output message="tns:getPurchaseResponse"/>
+		</operation>
+		<operation name="getEpargne">
+			<input message="tns:getEpargneRequest"/>
+			<output message="tns:getEpargneResponse"/>
+		</operation>
+		<operation name="getErrorDetail">
+			<input message="tns:getErrorDetailRequest"/>
+			<output message="tns:getErrorDetailResponse"/>
+		</operation>
+		<operation name="getImage">
+			<input message="tns:getImageRequest"/>
+			<output message="tns:getImageResponse"/>
+		</operation>
+		<operation name="getPointName">
+			<input message="tns:getPointNameRequest"/>
+			<output message="tns:getPointNameResponse"/>
+		</operation>
+		<operation name="getRpcUser">
+			<input message="tns:getRpcUserRequest"/>
+			<output message="tns:getRpcUserResponse"/>
+		</operation>
+		<operation name="getAllPeriod">
+			<input message="tns:getAllPeriodRequest"/>
+			<output message="tns:getAllPeriodResponse"/>
+		</operation>
+	</portType>
+	<binding name="BADMINBinding" type="tns:BADMINPort">
+		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="login">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#login"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllFundations">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#getAllFundations"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="addFundation">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#addFundation"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editFundationName">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#editFundationName"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="deleteFundation">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#deleteFundation"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllPoints">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#getAllPoints"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="addPoint">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#addPoint"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editPointName">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#editPointName"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="deletePoint">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#deletePoint"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllRights">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#getAllRights"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllRightsAdminLight">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#getAllRightsAdminLight"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllUsersFromRight">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#getAllUsersFromRight"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="addUserToRight">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#addUserToRight"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="deleteUserFromRight">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#deleteUserFromRight"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllBlockedUsers">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#getAllBlockedUsers"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="deblockUser">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#deblockUser"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="blockUser">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#blockUser"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getRecharge">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#getRecharge"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getPurchase">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#getPurchase"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getEpargne">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#getEpargne"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getErrorDetail">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#getErrorDetail"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getImage">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#getImage"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getPointName">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#getPointName"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getRpcUser">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#getRpcUser"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllPeriod">
+			<soap:operation soapAction="http://10.10.10.1:8080/BADMIN.class.php#getAllPeriod"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+	</binding>
+	<service name="BADMINService">
+		<port name="BADMINPort" binding="tns:BADMINBinding">
+			<soap:address location="http://10.10.10.1:8080/BADMIN.class.php"/>
+		</port>
+	</service>
+	<message name="loginRequest">
+		<part name="data" type="xsd:string"/>
+		<part name="meanOfLogin" type="xsd:string"/>
+		<part name="pass" type="xsd:int"/>
+		<part name="ip" type="xsd:string"/>
+	</message>
+	<message name="loginResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="getAllFundationsRequest"/>
+	<message name="getAllFundationsResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="addFundationRequest">
+		<part name="name" type="xsd:string"/>
+	</message>
+	<message name="addFundationResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="editFundationNameRequest">
+		<part name="id_fundation" type="xsd:int"/>
+		<part name="name" type="xsd:string"/>
+	</message>
+	<message name="editFundationNameResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="deleteFundationRequest">
+		<part name="id_fundation" type="xsd:int"/>
+	</message>
+	<message name="deleteFundationResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="getAllPointsRequest"/>
+	<message name="getAllPointsResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="addPointRequest">
+		<part name="name" type="xsd:string"/>
+	</message>
+	<message name="addPointResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="editPointNameRequest">
+		<part name="id_point" type="xsd:int"/>
+		<part name="name" type="xsd:string"/>
+	</message>
+	<message name="editPointNameResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="deletePointRequest">
+		<part name="id_point" type="xsd:int"/>
+	</message>
+	<message name="deletePointResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="getAllRightsRequest"/>
+	<message name="getAllRightsResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllRightsAdminLightRequest"/>
+	<message name="getAllRightsAdminLightResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllUsersFromRightRequest">
+		<part name="rig_id" type="xsd:int"/>
+	</message>
+	<message name="getAllUsersFromRightResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="addUserToRightRequest">
+		<part name="id_droit" type="xsd:int"/>
+		<part name="id_user" type="xsd:int"/>
+		<part name="date_start" type="xsd:int"/>
+		<part name="date_end" type="xsd:int"/>
+		<part name="point" type="xsd:int"/>
+		<part name="fundation" type="xsd:int"/>
+	</message>
+	<message name="addUserToRightResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="deleteUserFromRightRequest">
+		<part name="id_droit" type="xsd:int"/>
+		<part name="id_link" type="xsd:int"/>
+	</message>
+	<message name="deleteUserFromRightResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="getAllBlockedUsersRequest"/>
+	<message name="getAllBlockedUsersResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="deblockUserRequest">
+		<part name="usr_id" type="xsd:int"/>
+	</message>
+	<message name="deblockUserResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="blockUserRequest">
+		<part name="usr_id" type="xsd:int"/>
+	</message>
+	<message name="blockUserResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="getRechargeRequest">
+		<part name="date_start" type="xsd:int"/>
+		<part name="date_end" type="xsd:int"/>
+	</message>
+	<message name="getRechargeResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getPurchaseRequest">
+		<part name="date_start" type="xsd:int"/>
+		<part name="date_end" type="xsd:int"/>
+	</message>
+	<message name="getPurchaseResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getEpargneRequest"/>
+	<message name="getEpargneResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="getErrorDetailRequest">
+		<part name="id" type="xsd:int"/>
+	</message>
+	<message name="getErrorDetailResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getImageRequest">
+		<part name="img_id" type="xsd:int"/>
+	</message>
+	<message name="getImageResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getPointNameRequest">
+		<part name="poi_id" type="xsd:int"/>
+	</message>
+	<message name="getPointNameResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getRpcUserRequest">
+		<part name="queryString" type="xsd:string"/>
+	</message>
+	<message name="getRpcUserResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllPeriodRequest"/>
+	<message name="getAllPeriodResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+</definitions>

@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://10.10.10.1:8080/SBUY.class.php" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="SBUY" targetNamespace="http://10.10.10.1:8080/SBUY.class.php">
+	<portType name="SBUYPort">
+		<operation name="login">
+			<input message="tns:loginRequest"/>
+			<output message="tns:loginResponse"/>
+		</operation>
+		<operation name="reload">
+			<input message="tns:reloadRequest"/>
+			<output message="tns:reloadResponse"/>
+		</operation>
+		<operation name="select">
+			<input message="tns:selectRequest"/>
+			<output message="tns:selectResponse"/>
+		</operation>
+		<operation name="getCredit">
+			<input message="tns:getCreditRequest"/>
+			<output message="tns:getCreditResponse"/>
+		</operation>
+		<operation name="transactionEncode">
+			<input message="tns:transactionEncodeRequest"/>
+			<output message="tns:transactionEncodeResponse"/>
+		</operation>
+		<operation name="transactionDecode">
+			<input message="tns:transactionDecodeRequest"/>
+			<output message="tns:transactionDecodeResponse"/>
+		</operation>
+		<operation name="transactionClientDecode">
+			<input message="tns:transactionClientDecodeRequest"/>
+			<output message="tns:transactionClientDecodeResponse"/>
+		</operation>
+		<operation name="loadBuyer">
+			<input message="tns:loadBuyerRequest"/>
+			<output message="tns:loadBuyerResponse"/>
+		</operation>
+		<operation name="getBuyerIdentity">
+			<input message="tns:getBuyerIdentityRequest"/>
+			<output message="tns:getBuyerIdentityResponse"/>
+		</operation>
+		<operation name="getTypeRecharge">
+			<input message="tns:getTypeRechargeRequest"/>
+			<output message="tns:getTypeRechargeResponse"/>
+		</operation>
+		<operation name="getProposition">
+			<input message="tns:getPropositionRequest"/>
+			<output message="tns:getPropositionResponse"/>
+		</operation>
+		<operation name="cancelCart">
+			<input message="tns:cancelCartRequest"/>
+			<output message="tns:cancelCartResponse"/>
+		</operation>
+		<operation name="getCartCsv">
+			<input message="tns:getCartCsvRequest"/>
+			<output message="tns:getCartCsvResponse"/>
+		</operation>
+		<operation name="getMaxCredit">
+			<input message="tns:getMaxCreditRequest"/>
+			<output message="tns:getMaxCreditResponse"/>
+		</operation>
+		<operation name="endTransaction">
+			<input message="tns:endTransactionRequest"/>
+			<output message="tns:endTransactionResponse"/>
+		</operation>
+		<operation name="getErrorDetail">
+			<input message="tns:getErrorDetailRequest"/>
+			<output message="tns:getErrorDetailResponse"/>
+		</operation>
+		<operation name="getImage">
+			<input message="tns:getImageRequest"/>
+			<output message="tns:getImageResponse"/>
+		</operation>
+		<operation name="getAllPoints">
+			<input message="tns:getAllPointsRequest"/>
+			<output message="tns:getAllPointsResponse"/>
+		</operation>
+		<operation name="getPointName">
+			<input message="tns:getPointNameRequest"/>
+			<output message="tns:getPointNameResponse"/>
+		</operation>
+		<operation name="getRpcUser">
+			<input message="tns:getRpcUserRequest"/>
+			<output message="tns:getRpcUserResponse"/>
+		</operation>
+		<operation name="getAllPeriod">
+			<input message="tns:getAllPeriodRequest"/>
+			<output message="tns:getAllPeriodResponse"/>
+		</operation>
+	</portType>
+	<binding name="SBUYBinding" type="tns:SBUYPort">
+		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="login">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#login"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="reload">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#reload"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="select">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#select"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getCredit">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#getCredit"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="transactionEncode">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#transactionEncode"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="transactionDecode">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#transactionDecode"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="transactionClientDecode">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#transactionClientDecode"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="loadBuyer">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#loadBuyer"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getBuyerIdentity">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#getBuyerIdentity"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getTypeRecharge">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#getTypeRecharge"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getProposition">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#getProposition"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="cancelCart">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#cancelCart"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getCartCsv">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#getCartCsv"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getMaxCredit">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#getMaxCredit"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="endTransaction">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#endTransaction"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getErrorDetail">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#getErrorDetail"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getImage">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#getImage"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllPoints">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#getAllPoints"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getPointName">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#getPointName"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getRpcUser">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#getRpcUser"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllPeriod">
+			<soap:operation soapAction="http://10.10.10.1:8080/SBUY.class.php#getAllPeriod"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+	</binding>
+	<service name="SBUYService">
+		<port name="SBUYPort" binding="tns:SBUYBinding">
+			<soap:address location="http://10.10.10.1:8080/SBUY.class.php"/>
+		</port>
+	</service>
+	<message name="loginRequest">
+		<part name="data" type="xsd:string"/>
+		<part name="meanOfLogin" type="xsd:string"/>
+		<part name="pass" type="xsd:int"/>
+		<part name="ip" type="xsd:string"/>
+	</message>
+	<message name="loginResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="reloadRequest">
+		<part name="amount" type="xsd:int"/>
+		<part name="rty_id" type="xsd:int"/>
+		<part name="trace" type="xsd:string"/>
+	</message>
+	<message name="reloadResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="selectRequest">
+		<part name="obj_id" type="xsd:int"/>
+		<part name="obj_credit" type="xsd:int"/>
+		<part name="trace" type="xsd:string"/>
+	</message>
+	<message name="selectResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="getCreditRequest"/>
+	<message name="getCreditResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="transactionEncodeRequest">
+		<part name="amount" type="xsd:int"/>
+	</message>
+	<message name="transactionEncodeResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="transactionDecodeRequest">
+		<part name="post" type="xsd:string"/>
+	</message>
+	<message name="transactionDecodeResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="transactionClientDecodeRequest">
+		<part name="post" type="xsd:string"/>
+	</message>
+	<message name="transactionClientDecodeResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="loadBuyerRequest">
+		<part name="data" type="xsd:string"/>
+		<part name="meanOfLogin" type="xsd:int"/>
+		<part name="pass" type="xsd:string"/>
+		<part name="ip" type="xsd:string"/>
+		<part name="noPass" type="xsd:int"/>
+	</message>
+	<message name="loadBuyerResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="getBuyerIdentityRequest"/>
+	<message name="getBuyerIdentityResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getTypeRechargeRequest">
+		<part name="type" type="xsd:string"/>
+	</message>
+	<message name="getTypeRechargeResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getPropositionRequest"/>
+	<message name="getPropositionResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="cancelCartRequest"/>
+	<message name="cancelCartResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="getCartCsvRequest"/>
+	<message name="getCartCsvResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getMaxCreditRequest"/>
+	<message name="getMaxCreditResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="endTransactionRequest"/>
+	<message name="endTransactionResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="getErrorDetailRequest">
+		<part name="id" type="xsd:int"/>
+	</message>
+	<message name="getErrorDetailResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getImageRequest">
+		<part name="img_id" type="xsd:int"/>
+	</message>
+	<message name="getImageResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllPointsRequest"/>
+	<message name="getAllPointsResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getPointNameRequest">
+		<part name="poi_id" type="xsd:int"/>
+	</message>
+	<message name="getPointNameResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getRpcUserRequest">
+		<part name="queryString" type="xsd:string"/>
+	</message>
+	<message name="getRpcUserResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllPeriodRequest"/>
+	<message name="getAllPeriodResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+</definitions>

@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://10.10.10.1:8080/SADMIN.class.php" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="SADMIN" targetNamespace="http://10.10.10.1:8080/SADMIN.class.php">
+	<portType name="SADMINPort">
+		<operation name="login">
+			<input message="tns:loginRequest"/>
+			<output message="tns:loginResponse"/>
+		</operation>
+		<operation name="isInGroup">
+			<input message="tns:isInGroupRequest"/>
+			<output message="tns:isInGroupResponse"/>
+		</operation>
+		<operation name="getHistoriqueAchats">
+			<input message="tns:getHistoriqueAchatsRequest"/>
+			<output message="tns:getHistoriqueAchatsResponse"/>
+		</operation>
+		<operation name="getHistoriqueRecharge">
+			<input message="tns:getHistoriqueRechargeRequest"/>
+			<output message="tns:getHistoriqueRechargeResponse"/>
+		</operation>
+		<operation name="blockMe">
+			<input message="tns:blockMeRequest"/>
+			<output message="tns:blockMeResponse"/>
+		</operation>
+		<operation name="changeKeySecure">
+			<input message="tns:changeKeySecureRequest"/>
+			<output message="tns:changeKeySecureResponse"/>
+		</operation>
+		<operation name="resetKey">
+			<input message="tns:resetKeyRequest"/>
+			<output message="tns:resetKeyResponse"/>
+		</operation>
+		<operation name="isAdminBuckutt">
+			<input message="tns:isAdminBuckuttRequest"/>
+			<output message="tns:isAdminBuckuttResponse"/>
+		</operation>
+		<operation name="isBloqueur">
+			<input message="tns:isBloqueurRequest"/>
+			<output message="tns:isBloqueurResponse"/>
+		</operation>
+		<operation name="isDroitAdmin">
+			<input message="tns:isDroitAdminRequest"/>
+			<output message="tns:isDroitAdminResponse"/>
+		</operation>
+		<operation name="isBuckuttTrezo">
+			<input message="tns:isBuckuttTrezoRequest"/>
+			<output message="tns:isBuckuttTrezoResponse"/>
+		</operation>
+		<operation name="isRespFundations">
+			<input message="tns:isRespFundationsRequest"/>
+			<output message="tns:isRespFundationsResponse"/>
+		</operation>
+		<operation name="isVenteAdmin">
+			<input message="tns:isVenteAdminRequest"/>
+			<output message="tns:isVenteAdminResponse"/>
+		</operation>
+		<operation name="isPointAdmin">
+			<input message="tns:isPointAdminRequest"/>
+			<output message="tns:isPointAdminResponse"/>
+		</operation>
+		<operation name="isGroupEditor">
+			<input message="tns:isGroupEditorRequest"/>
+			<output message="tns:isGroupEditorResponse"/>
+		</operation>
+		<operation name="isFundTrezo">
+			<input message="tns:isFundTrezoRequest"/>
+			<output message="tns:isFundTrezoResponse"/>
+		</operation>
+		<operation name="getUserDroits">
+			<input message="tns:getUserDroitsRequest"/>
+			<output message="tns:getUserDroitsResponse"/>
+		</operation>
+		<operation name="hasDroitsInFundations">
+			<input message="tns:hasDroitsInFundationsRequest"/>
+			<output message="tns:hasDroitsInFundationsResponse"/>
+		</operation>
+		<operation name="getDroits">
+			<input message="tns:getDroitsRequest"/>
+			<output message="tns:getDroitsResponse"/>
+		</operation>
+		<operation name="getErrorDetail">
+			<input message="tns:getErrorDetailRequest"/>
+			<output message="tns:getErrorDetailResponse"/>
+		</operation>
+		<operation name="getImage">
+			<input message="tns:getImageRequest"/>
+			<output message="tns:getImageResponse"/>
+		</operation>
+		<operation name="getAllPoints">
+			<input message="tns:getAllPointsRequest"/>
+			<output message="tns:getAllPointsResponse"/>
+		</operation>
+		<operation name="getPointName">
+			<input message="tns:getPointNameRequest"/>
+			<output message="tns:getPointNameResponse"/>
+		</operation>
+		<operation name="getRpcUser">
+			<input message="tns:getRpcUserRequest"/>
+			<output message="tns:getRpcUserResponse"/>
+		</operation>
+		<operation name="getAllPeriod">
+			<input message="tns:getAllPeriodRequest"/>
+			<output message="tns:getAllPeriodResponse"/>
+		</operation>
+	</portType>
+	<binding name="SADMINBinding" type="tns:SADMINPort">
+		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="login">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#login"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="isInGroup">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#isInGroup"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getHistoriqueAchats">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#getHistoriqueAchats"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getHistoriqueRecharge">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#getHistoriqueRecharge"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="blockMe">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#blockMe"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="changeKeySecure">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#changeKeySecure"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="resetKey">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#resetKey"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="isAdminBuckutt">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#isAdminBuckutt"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="isBloqueur">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#isBloqueur"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="isDroitAdmin">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#isDroitAdmin"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="isBuckuttTrezo">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#isBuckuttTrezo"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="isRespFundations">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#isRespFundations"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="isVenteAdmin">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#isVenteAdmin"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="isPointAdmin">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#isPointAdmin"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="isGroupEditor">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#isGroupEditor"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="isFundTrezo">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#isFundTrezo"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getUserDroits">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#getUserDroits"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="hasDroitsInFundations">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#hasDroitsInFundations"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getDroits">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#getDroits"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getErrorDetail">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#getErrorDetail"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getImage">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#getImage"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllPoints">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#getAllPoints"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getPointName">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#getPointName"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getRpcUser">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#getRpcUser"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllPeriod">
+			<soap:operation soapAction="http://10.10.10.1:8080/SADMIN.class.php#getAllPeriod"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+	</binding>
+	<service name="SADMINService">
+		<port name="SADMINPort" binding="tns:SADMINBinding">
+			<soap:address location="http://10.10.10.1:8080/SADMIN.class.php"/>
+		</port>
+	</service>
+	<message name="loginRequest">
+		<part name="data" type="xsd:string"/>
+		<part name="meanOfLogin" type="xsd:string"/>
+		<part name="pass" type="xsd:int"/>
+		<part name="ip" type="xsd:string"/>
+	</message>
+	<message name="loginResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="isInGroupRequest">
+		<part name="data" type="xsd:string"/>
+		<part name="meanOfLogin" type="xsd:int"/>
+		<part name="ip" type="xsd:string"/>
+		<part name="grp_id" type="xsd:int"/>
+	</message>
+	<message name="isInGroupResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="getHistoriqueAchatsRequest">
+		<part name="date_start" type="xsd:int"/>
+		<part name="date_end" type="xsd:int"/>
+	</message>
+	<message name="getHistoriqueAchatsResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getHistoriqueRechargeRequest">
+		<part name="date_start" type="xsd:int"/>
+		<part name="date_end" type="xsd:int"/>
+	</message>
+	<message name="getHistoriqueRechargeResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="blockMeRequest">
+		<part name="pin" type="xsd:string"/>
+	</message>
+	<message name="blockMeResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="changeKeySecureRequest">
+		<part name="oldKey" type="xsd:string"/>
+		<part name="newKey1" type="xsd:string"/>
+		<part name="newKey2" type="xsd:string"/>
+	</message>
+	<message name="changeKeySecureResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="resetKeyRequest">
+		<part name="usr_id" type="xsd:string"/>
+		<part name="email" type="xsd:string"/>
+	</message>
+	<message name="resetKeyResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="isAdminBuckuttRequest"/>
+	<message name="isAdminBuckuttResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="isBloqueurRequest"/>
+	<message name="isBloqueurResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="isDroitAdminRequest"/>
+	<message name="isDroitAdminResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="isBuckuttTrezoRequest"/>
+	<message name="isBuckuttTrezoResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="isRespFundationsRequest"/>
+	<message name="isRespFundationsResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="isVenteAdminRequest">
+		<part name="id_fundation" type="xsd:int"/>
+	</message>
+	<message name="isVenteAdminResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="isPointAdminRequest"/>
+	<message name="isPointAdminResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="isGroupEditorRequest">
+		<part name="id_fundation" type="xsd:int"/>
+	</message>
+	<message name="isGroupEditorResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="isFundTrezoRequest">
+		<part name="id_fundation" type="xsd:int"/>
+	</message>
+	<message name="isFundTrezoResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="getUserDroitsRequest"/>
+	<message name="getUserDroitsResponse">
+		<part name="return" type="soap-enc:Array"/>
+	</message>
+	<message name="hasDroitsInFundationsRequest"/>
+	<message name="hasDroitsInFundationsResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getDroitsRequest">
+		<part name="droit" type="xsd:string"/>
+	</message>
+	<message name="getDroitsResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getErrorDetailRequest">
+		<part name="id" type="xsd:int"/>
+	</message>
+	<message name="getErrorDetailResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getImageRequest">
+		<part name="img_id" type="xsd:int"/>
+	</message>
+	<message name="getImageResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllPointsRequest"/>
+	<message name="getAllPointsResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getPointNameRequest">
+		<part name="poi_id" type="xsd:int"/>
+	</message>
+	<message name="getPointNameResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getRpcUserRequest">
+		<part name="queryString" type="xsd:string"/>
+	</message>
+	<message name="getRpcUserResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllPeriodRequest"/>
+	<message name="getAllPeriodResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+</definitions>

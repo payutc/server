@@ -1,0 +1,1236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://10.10.10.1:8080/FADMIN.class.php" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="FADMIN" targetNamespace="http://10.10.10.1:8080/FADMIN.class.php">
+	<portType name="FADMINPort">
+		<operation name="login">
+			<input message="tns:loginRequest"/>
+			<output message="tns:loginResponse"/>
+		</operation>
+		<operation name="setIdFundation">
+			<input message="tns:setIdFundationRequest"/>
+			<output message="tns:setIdFundationResponse"/>
+		</operation>
+			<operation name="getPurchasedObjects">
+			<input message="tns:getPurchasedObjectsRequest"/>
+			<output message="tns:getPurchasedObjectsResponse"/>
+		</operation>
+			<operation name="getTotal">
+			<input message="tns:getTotalRequest"/>
+			<output message="tns:getTotalResponse"/>
+		</operation>
+			<operation name="getAllFundationGroupsLight">
+			<input message="tns:getAllFundationGroupsLightRequest"/>
+			<output message="tns:getAllFundationGroupsLightResponse"/>
+		</operation>
+			<operation name="getAllFundationGroups">
+			<input message="tns:getAllFundationGroupsRequest"/>
+			<output message="tns:getAllFundationGroupsResponse"/>
+		</operation>
+		<operation name="getAllGroups">
+			<input message="tns:getAllGroupsRequest"/>
+			<output message="tns:getAllGroupsResponse"/>
+		</operation>
+		<operation name="addGroup">
+			<input message="tns:addGroupRequest"/>
+			<output message="tns:addGroupResponse"/>
+		</operation>
+		<operation name="editGroupName">
+			<input message="tns:editGroupNameRequest"/>
+			<output message="tns:editGroupNameResponse"/>
+		</operation>
+		<operation name="editGroupAlone">
+			<input message="tns:editGroupAloneRequest"/>
+			<output message="tns:editGroupAloneResponse"/>
+		</operation>
+		<operation name="editGroupPublic">
+			<input message="tns:editGroupPublicRequest"/>
+			<output message="tns:editGroupPublicResponse"/>
+		</operation>
+		<operation name="deleteGroup">
+			<input message="tns:deleteGroupRequest"/>
+			<output message="tns:deleteGroupResponse"/>
+		</operation>
+		<operation name="getAllUsersFromGroup">
+			<input message="tns:getAllUsersFromGroupRequest"/>
+			<output message="tns:getAllUsersFromGroupResponse"/>
+		</operation>
+		<operation name="addUserToGroup">
+			<input message="tns:addUserToGroupRequest"/>
+			<output message="tns:addUserToGroupResponse"/>
+		</operation>
+		<operation name="editLinkUserInGroupDateStart">
+			<input message="tns:editLinkUserInGroupDateStartRequest"/>
+			<output message="tns:editLinkUserInGroupDateStartResponse"/>
+		</operation>
+		<operation name="editLinkUserInGroupDateEnd">
+			<input message="tns:editLinkUserInGroupDateEndRequest"/>
+			<output message="tns:editLinkUserInGroupDateEndResponse"/>
+		</operation>
+		<operation name="deleteUserFromGroup">
+			<input message="tns:deleteUserFromGroupRequest"/>
+			<output message="tns:deleteUserFromGroupResponse"/>
+		</operation>
+		<operation name="getAllFundations">
+			<input message="tns:getAllFundationsRequest"/>
+			<output message="tns:getAllFundationsResponse"/>
+		</operation>
+		<operation name="getAllObjects">
+			<input message="tns:getAllObjectsRequest"/>
+			<output message="tns:getAllObjectsResponse"/>
+		</operation>
+		<operation name="addImage">
+			<input message="tns:addImageRequest"/>
+			<output message="tns:addImageResponse"/>
+		</operation>
+		<operation name="addObject">
+			<input message="tns:addObjectRequest"/>
+			<output message="tns:addObjectResponse"/>
+		</operation>
+		<operation name="editObjectName">
+			<input message="tns:editObjectNameRequest"/>
+			<output message="tns:editObjectNameResponse"/>
+		</operation>
+		<operation name="editObjectIsUnique">
+			<input message="tns:editObjectIsUniqueRequest"/>
+			<output message="tns:editObjectIsUniqueResponse"/>
+		</operation>
+		<operation name="editObjectStock">
+			<input message="tns:editObjectStockRequest"/>
+			<output message="tns:editObjectStockResponse"/>
+		</operation>
+		<operation name="editObjectCategorie">
+			<input message="tns:editObjectCategorieRequest"/>
+			<output message="tns:editObjectCategorieResponse"/>
+		</operation>
+		<operation name="editObjectImage">
+			<input message="tns:editObjectImageRequest"/>
+			<output message="tns:editObjectImageResponse"/>
+		</operation>
+		<operation name="editObjectIsPromo">
+			<input message="tns:editObjectIsPromoRequest"/>
+			<output message="tns:editObjectIsPromoResponse"/>
+		</operation>
+		<operation name="deleteObject">
+			<input message="tns:deleteObjectRequest"/>
+			<output message="tns:deleteObjectResponse"/>
+		</operation>
+		<operation name="addCategorie">
+			<input message="tns:addCategorieRequest"/>
+			<output message="tns:addCategorieResponse"/>
+		</operation>
+		<operation name="editCategorieName">
+			<input message="tns:editCategorieNameRequest"/>
+			<output message="tns:editCategorieNameResponse"/>
+		</operation>
+		<operation name="editCategoriePriorite">
+			<input message="tns:editCategoriePrioriteRequest"/>
+			<output message="tns:editCategoriePrioriteResponse"/>
+		</operation>
+		<operation name="deleteCategorie">
+			<input message="tns:deleteCategorieRequest"/>
+			<output message="tns:deleteCategorieResponse"/>
+		</operation>
+		<operation name="getAllCategories">
+			<input message="tns:getAllCategoriesRequest"/>
+			<output message="tns:getAllCategoriesResponse"/>
+		</operation>
+		<operation name="addVente">
+			<input message="tns:addVenteRequest"/>
+			<output message="tns:addVenteResponse"/>
+		</operation>
+		<operation name="editVenteDateStart">
+			<input message="tns:editVenteDateStartRequest"/>
+			<output message="tns:editVenteDateStartResponse"/>
+		</operation>
+		<operation name="editVenteDateEnd">
+			<input message="tns:editVenteDateEndRequest"/>
+			<output message="tns:editVenteDateEndResponse"/>
+		</operation>
+		<operation name="editVenteObject">
+			<input message="tns:editVenteObjectRequest"/>
+			<output message="tns:editVenteObjectResponse"/>
+		</operation>
+		<operation name="editVenteName">
+			<input message="tns:editVenteNameRequest"/>
+			<output message="tns:editVenteNameResponse"/>
+		</operation>
+		<operation name="deleteVente">
+			<input message="tns:deleteVenteRequest"/>
+			<output message="tns:deleteVenteResponse"/>
+		</operation>
+		<operation name="getVentes">
+			<input message="tns:getVentesRequest"/>
+			<output message="tns:getVentesResponse"/>
+		</operation>
+		<operation name="getAllVentes">
+			<input message="tns:getAllVentesRequest"/>
+			<output message="tns:getAllVentesResponse"/>
+		</operation>
+		<operation name="getAllObjectByPrice">
+			<input message="tns:getAllObjectByPriceRequest"/>
+			<output message="tns:getAllObjectByPriceResponse"/>
+		</operation>
+		<operation name="addPrice">
+			<input message="tns:addPriceRequest"/>
+			<output message="tns:addPriceResponse"/>
+		</operation>
+		<operation name="editPriceGroup">
+			<input message="tns:editPriceGroupRequest"/>
+			<output message="tns:editPriceGroupResponse"/>
+		</operation>
+		<operation name="editPriceObject">
+			<input message="tns:editPriceObjectRequest"/>
+			<output message="tns:editPriceObjectResponse"/>
+		</operation>
+		<operation name="editPriceCredit">
+			<input message="tns:editPriceCreditRequest"/>
+			<output message="tns:editPriceCreditResponse"/>
+		</operation>
+		<operation name="deletePrice">
+			<input message="tns:deletePriceRequest"/>
+			<output message="tns:deletePriceResponse"/>
+		</operation>
+		<operation name="getAllPrice">
+			<input message="tns:getAllPriceRequest"/>
+			<output message="tns:getAllPriceResponse"/>
+		</operation>
+		<operation name="getAllUsers">
+			<input message="tns:getAllUsersRequest"/>
+			<output message="tns:getAllUsersResponse"/>
+		</operation>
+		<operation name="getAllObjectsByPoint">
+			<input message="tns:getAllObjectsByPointRequest"/>
+			<output message="tns:getAllObjectsByPointResponse"/>
+		</operation>
+		<operation name="addObjectToPoint">
+			<input message="tns:addObjectToPointRequest"/>
+			<output message="tns:addObjectToPointResponse"/>
+		</operation>
+		<operation name="deleteObjectFromPoint">
+			<input message="tns:deleteObjectFromPointRequest"/>
+			<output message="tns:deleteObjectFromPointResponse"/>
+		</operation>
+		<operation name="getAllDroitsFundationLight">
+			<input message="tns:getAllDroitsFundationLightRequest"/>
+			<output message="tns:getAllDroitsFundationLightResponse"/>
+		</operation>
+		<operation name="getAllUsersFromDroit">
+			<input message="tns:getAllUsersFromDroitRequest"/>
+			<output message="tns:getAllUsersFromDroitResponse"/>
+		</operation>
+		<operation name="addUserToDroit">
+			<input message="tns:addUserToDroitRequest"/>
+			<output message="tns:addUserToDroitResponse"/>
+		</operation>
+		<operation name="deleteUserFromDroit">
+			<input message="tns:deleteUserFromDroitRequest"/>
+			<output message="tns:deleteUserFromDroitResponse"/>
+		</operation>
+		<operation name="searchPeople">
+			<input message="tns:searchPeopleRequest"/>
+			<output message="tns:searchPeopleResponse"/>
+		</operation>
+		<operation name="getErrorDetail">
+			<input message="tns:getErrorDetailRequest"/>
+			<output message="tns:getErrorDetailResponse"/>
+		</operation>
+		<operation name="getImage">
+			<input message="tns:getImageRequest"/>
+			<output message="tns:getImageResponse"/>
+		</operation>
+		<operation name="getAllPoints">
+			<input message="tns:getAllPointsRequest"/>
+			<output message="tns:getAllPointsResponse"/>
+		</operation>
+		<operation name="getPointName">
+			<input message="tns:getPointNameRequest"/>
+			<output message="tns:getPointNameResponse"/>
+		</operation>
+		<operation name="getRpcUser">
+			<input message="tns:getRpcUserRequest"/>
+			<output message="tns:getRpcUserResponse"/>
+		</operation>
+		<operation name="getAllPeriod">
+			<input message="tns:getAllPeriodRequest"/>
+			<output message="tns:getAllPeriodResponse"/>
+		</operation>
+	</portType>
+	<binding name="FADMINBinding" type="tns:FADMINPort">
+		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="login">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#login"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="setIdFundation">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#setIdFundation"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getPurchasedObjects">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getPurchasedObjects"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getTotal">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getTotal"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllFundationGroupsLight">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getAllFundationGroupsLight"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllFundationGroups">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getAllFundationGroups"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllGroups">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getAllGroups"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="addGroup">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#addGroup"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editGroupName">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editGroupName"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editGroupAlone">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editGroupAlone"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editGroupPublic">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editGroupPublic"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="deleteGroup">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#deleteGroup"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllUsersFromGroup">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getAllUsersFromGroup"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="addUserToGroup">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#addUserToGroup"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editLinkUserInGroupDateStart">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editLinkUserInGroupDateStart"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editLinkUserInGroupDateEnd">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editLinkUserInGroupDateEnd"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="deleteUserFromGroup">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#deleteUserFromGroup"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllFundations">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getAllFundations"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllObjects">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getAllObjects"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="addImage">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#addImage"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="addObject">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#addObject"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editObjectName">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editObjectName"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editObjectIsUnique">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editObjectIsUnique"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editObjectStock">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editObjectStock"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editObjectCategorie">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editObjectCategorie"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editObjectImage">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editObjectImage"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editObjectIsPromo">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editObjectIsPromo"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="deleteObject">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#deleteObject"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="addCategorie">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#addCategorie"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editCategorieName">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editCategorieName"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editCategoriePriorite">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editCategoriePriorite"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="deleteCategorie">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#deleteCategorie"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllCategories">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getAllCategories"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="addVente">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#addVente"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editVenteDateStart">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editVenteDateStart"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editVenteDateEnd">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editVenteDateEnd"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editVenteObject">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editVenteObject"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editVenteName">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editVenteName"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="deleteVente">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#deleteVente"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getVentes">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getVentes"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllVentes">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getAllVentes"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllObjectByPrice">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getAllObjectByPrice"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="addPrice">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#addPrice"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editPriceGroup">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editPriceGroup"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editPriceObject">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editPriceObject"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="editPriceCredit">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#editPriceCredit"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="deletePrice">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#deletePrice"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllPrice">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getAllPrice"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllUsers">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getAllUsers"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllObjectsByPoint">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getAllObjectsByPoint"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="addObjectToPoint">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#addObjectToPoint"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="deleteObjectFromPoint">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#deleteObjectFromPoint"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllDroitsFundationLight">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getAllDroitsFundationLight"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllUsersFromDroit">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getAllUsersFromDroit"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="addUserToDroit">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#addUserToDroit"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="deleteUserFromDroit">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#deleteUserFromDroit"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="searchPeople">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#searchPeople"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getErrorDetail">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getErrorDetail"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getImage">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getImage"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllPoints">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getAllPoints"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getPointName">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getPointName"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getRpcUser">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getRpcUser"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="getAllPeriod">
+			<soap:operation soapAction="http://10.10.10.1:8080/FADMIN.class.php#getAllPeriod"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+	</binding>
+	<service name="FADMINService">
+		<port name="FADMINPort" binding="tns:FADMINBinding">
+			<soap:address location="http://10.10.10.1:8080/FADMIN.class.php"/>
+		</port>
+	</service>
+	<message name="loginRequest">
+		<part name="data" type="xsd:string"/>
+		<part name="meanOfLogin" type="xsd:string"/>
+		<part name="pass" type="xsd:int"/>
+		<part name="ip" type="xsd:string"/>
+	</message>
+	<message name="loginResponse">
+			<part name="return" type="xsd:int"/>
+	</message>
+	<message name="setIdFundationRequest">
+		<part name="fun_id" type="xsd:int"/>
+	</message>
+	<message name="setIdFundationResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="getPurchasedObjectsRequest">
+		<part name="date_start" type="xsd:int"/>
+		<part name="date_end" type="xsd:int"/>
+		<part name="fun_id" type="xsd:int"/>
+	</message>
+	<message name="getPurchasedObjectsResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getTotalRequest">
+		<part name="date_start" type="xsd:int"/>
+		<part name="date_end" type="xsd:int"/>
+		<part name="fun_id" type="xsd:int"/>
+	</message>
+	<message name="getTotalResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="getAllFundationGroupsLightRequest"/>
+	<message name="getAllFundationGroupsLightResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllFundationGroupsRequest"/>
+	<message name="getAllFundationGroupsResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllGroupsRequest"/>
+	<message name="getAllGroupsResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="addGroupRequest">
+		<part name="name_group" type="xsd:string"/>
+		<part name="open" type="xsd:boolean"/>
+		<part name="public" type="xsd:boolean"/>
+	</message>
+	<message name="addGroupResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="editGroupNameRequest">
+		<part name="id_group" type="xsd:int"/>
+		<part name="name_group" type="xsd:string"/>
+	</message>
+	<message name="editGroupNameResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="editGroupAloneRequest">
+		<part name="id_group" type="xsd:int"/>
+		<part name="alone" type="xsd:int"/>
+	</message>
+	<message name="editGroupAloneResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="editGroupPublicRequest">
+		<part name="id_group" type="xsd:int"/>
+		<part name="public" type="xsd:int"/>
+	</message>
+	<message name="editGroupPublicResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="deleteGroupRequest">
+		<part name="id_group" type="xsd:int"/>
+	</message>
+	<message name="deleteGroupResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="getAllUsersFromGroupRequest">
+		<part name="grp_id" type="xsd:int"/>
+	</message>
+	<message name="getAllUsersFromGroupResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="addUserToGroupRequest">
+		<part name="id_group" type="xsd:int"/>
+		<part name="id_user" type="xsd:int"/>
+		<part name="date_start" type="xsd:int"/>
+		<part name="date_end" type="xsd:int"/>
+	</message>
+	<message name="addUserToGroupResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="editLinkUserInGroupDateStartRequest">
+		<part name="id_link" type="xsd:int"/>
+		<part name="date_start" type="xsd:int"/>
+	</message>
+	<message name="editLinkUserInGroupDateStartResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="editLinkUserInGroupDateEndRequest">
+		<part name="id_link" type="xsd:int"/>
+		<part name="date_end" type="xsd:int"/>
+	</message>
+	<message name="editLinkUserInGroupDateEndResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="deleteUserFromGroupRequest">
+		<part name="id_group" type="xsd:int"/>
+		<part name="id_link" type="xsd:int"/>
+	</message>
+	<message name="deleteUserFromGroupResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="getAllFundationsRequest"/>
+	<message name="getAllFundationsResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllObjectsRequest"/>
+	<message name="getAllObjectsResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="addImageRequest">
+		<part name="mime" type="xsd:string"/>
+		<part name="width" type="xsd:int"/>
+		<part name="length" type="xsd:int"/>
+		<part name="content" type="xsd:string"/>
+	</message>
+	<message name="addImageResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="addObjectRequest">
+		<part name="name_object" type="xsd:string"/>
+		<part name="unique" type="xsd:int"/>
+		<part name="stock" type="xsd:int"/>
+		<part name="id_categorie" type="xsd:int"/>
+		<part name="id_image" type="xsd:int"/>
+		<part name="ispromo" type="xsd:int"/>
+	</message>
+	<message name="addObjectResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="editObjectNameRequest">
+		<part name="id_object" type="xsd:int"/>
+		<part name="name_object" type="xsd:string"/>
+	</message>
+	<message name="editObjectNameResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="editObjectIsUniqueRequest">
+		<part name="id_object" type="xsd:int"/>
+		<part name="isunique" type="xsd:boolean"/>
+	</message>
+	<message name="editObjectIsUniqueResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="editObjectStockRequest">
+		<part name="id_object" type="xsd:int"/>
+		<part name="stock" type="xsd:int"/>
+	</message>
+	<message name="editObjectStockResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="editObjectCategorieRequest">
+		<part name="id_object" type="xsd:int"/>
+		<part name="id_categorie" type="xsd:int"/>
+	</message>
+	<message name="editObjectCategorieResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="editObjectImageRequest">
+		<part name="id_object" type="xsd:int"/>
+		<part name="id_image" type="xsd:int"/>
+	</message>
+	<message name="editObjectImageResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="editObjectIsPromoRequest">
+		<part name="id_object" type="xsd:int"/>
+		<part name="ispromo" type="xsd:boolean"/>
+	</message>
+	<message name="editObjectIsPromoResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="deleteObjectRequest">
+		<part name="id_object" type="xsd:int"/>
+	</message>
+	<message name="deleteObjectResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="addCategorieRequest">
+		<part name="name_categorie" type="xsd:string"/>
+		<part name="priorite" type="xsd:anyType"/>
+	</message>
+	<message name="addCategorieResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="editCategorieNameRequest">
+		<part name="id_categorie" type="xsd:int"/>
+		<part name="name_categorie" type="xsd:string"/>
+	</message>
+	<message name="editCategorieNameResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="editCategoriePrioriteRequest">
+		<part name="id_categorie" type="xsd:int"/>
+		<part name="priorite" type="xsd:int"/>
+	</message>
+	<message name="editCategoriePrioriteResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="deleteCategorieRequest">
+		<part name="id_categorie" type="xsd:int"/>
+	</message>
+	<message name="deleteCategorieResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="getAllCategoriesRequest"/>
+	<message name="getAllCategoriesResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="addVenteRequest">
+		<part name="date_start" type="xsd:int"/>
+		<part name="date_end" type="xsd:int"/>
+		<part name="id_object" type="xsd:int"/>
+		<part name="name" type="xsd:string"/>
+	</message>
+	<message name="addVenteResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="editVenteDateStartRequest">
+		<part name="id_vente" type="xsd:int"/>
+		<part name="date_start" type="xsd:int"/>
+	</message>
+	<message name="editVenteDateStartResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="editVenteDateEndRequest">
+		<part name="id_vente" type="xsd:int"/>
+		<part name="date_end" type="xsd:int"/>
+	</message>
+	<message name="editVenteDateEndResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="editVenteObjectRequest">
+		<part name="id_vente" type="xsd:int"/>
+		<part name="id_object" type="xsd:int"/>
+	</message>
+	<message name="editVenteObjectResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="editVenteNameRequest">
+		<part name="id_vente" type="xsd:int"/>
+		<part name="name" type="xsd:string"/>
+	</message>
+	<message name="editVenteNameResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="deleteVenteRequest">
+		<part name="id_vente" type="xsd:int"/>
+	</message>
+	<message name="deleteVenteResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="getVentesRequest"/>
+	<message name="getVentesResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllVentesRequest"/>
+	<message name="getAllVentesResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllObjectByPriceRequest"/>
+	<message name="getAllObjectByPriceResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="addPriceRequest">
+		<part name="id_group" type="xsd:int"/>
+		<part name="id_object" type="xsd:int"/>
+		<part name="credit" type="xsd:int"/>
+	</message>
+	<message name="addPriceResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="editPriceGroupRequest">
+		<part name="id_price" type="xsd:int"/>
+		<part name="id_group" type="xsd:int"/>
+	</message>
+	<message name="editPriceGroupResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="editPriceObjectRequest">
+		<part name="id_price" type="xsd:int"/>
+		<part name="id_object" type="xsd:int"/>
+	</message>
+	<message name="editPriceObjectResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="editPriceCreditRequest">
+		<part name="id_price" type="xsd:int"/>
+		<part name="credit" type="xsd:int"/>
+	</message>
+	<message name="editPriceCreditResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="deletePriceRequest">
+		<part name="id_price" type="xsd:int"/>
+	</message>
+	<message name="deletePriceResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="getAllPriceRequest"/>
+	<message name="getAllPriceResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllUsersRequest"/>
+	<message name="getAllUsersResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllObjectsByPointRequest">
+		<part name="id_point" type="xsd:anyType"/>
+	</message>
+	<message name="getAllObjectsByPointResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="addObjectToPointRequest">
+		<part name="id_object" type="xsd:int"/>
+		<part name="id_point" type="xsd:int"/>
+	</message>
+	<message name="addObjectToPointResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="deleteObjectFromPointRequest">
+		<part name="id_object" type="xsd:int"/>
+		<part name="id_point" type="xsd:int"/>
+	</message>
+	<message name="deleteObjectFromPointResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="getAllDroitsFundationLightRequest"/>
+	<message name="getAllDroitsFundationLightResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllUsersFromDroitRequest">
+		<part name="id_droit" type="xsd:int"/>
+	</message>
+	<message name="getAllUsersFromDroitResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="addUserToDroitRequest">
+		<part name="id_droit" type="xsd:int"/>
+		<part name="id_user" type="xsd:int"/>
+		<part name="date_start" type="xsd:int"/>
+		<part name="date_end" type="xsd:int"/>
+		<part name="id_point" type="xsd:int"/>
+	</message>
+	<message name="addUserToDroitResponse">
+		<part name="return" type="xsd:boolean"/>
+	</message>
+	<message name="deleteUserFromDroitRequest">
+		<part name="id_droit" type="xsd:int"/>
+		<part name="id_link" type="xsd:int"/>
+	</message>
+	<message name="deleteUserFromDroitResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+	<message name="searchPeopleRequest">
+		<part name="query" type="xsd:string"/>
+	</message>
+	<message name="searchPeopleResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getErrorDetailRequest">
+		<part name="id" type="xsd:int"/>
+	</message>
+	<message name="getErrorDetailResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getImageRequest">
+		<part name="img_id" type="xsd:int"/>
+	</message>
+	<message name="getImageResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllPointsRequest"/>
+	<message name="getAllPointsResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getPointNameRequest">
+		<part name="poi_id" type="xsd:int"/>
+	</message>
+	<message name="getPointNameResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getRpcUserRequest">
+		<part name="queryString" type="xsd:string"/>
+	</message>
+	<message name="getRpcUserResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+	<message name="getAllPeriodRequest"/>
+	<message name="getAllPeriodResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+</definitions>
