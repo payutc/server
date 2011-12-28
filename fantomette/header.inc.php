@@ -5,13 +5,16 @@ $idPage = 155; //gestion du fil d'ariane
 
 //$toto_session = 'bernardx';
 include ('../include/config.inc');
+//TODO: rendre generique les inc.php ou .inc , par cq on prefereras les .inc.php
+
+require_once('config.inc.php');
 
 $page = new Page();
 $page->header('Système de paiement', 'buckutt');
 
 // A retirer pour la V8
 ?>
-<link rel="stylesheet" type="text/css" href="<?php echo $config['baseUrl']?>/buckutt/buckutt.style.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo $config['baseUrl']?>/fantomette/buckutt.style.css" />
 <link type="text/css" href="css/flick/jquery-ui-1.8.4.custom.css" rel="stylesheet" />
 <script type="text/javascript" src="js/jquery-1.4.2.min.js">
 </script>
@@ -21,9 +24,11 @@ $page->header('Système de paiement', 'buckutt');
 error_reporting(E_ERROR);
 
 //$url = 'http://buckutt.dyndns.org/server/';
-$url = 'http://10.10.10.1:8080/';
+//TODO:rendre plus propre ca :
+$url = $config['SERVER']['URL'];
 
 // En fonction des pages, on appel ou non les wsdl utiles
+//TODO: revoir avec le fichier de configuration
 $wsdlSADMIN = $url.'SADMIN.class.php?wsdl';
 if ($needSBUY){
   $wsdlSBUY = $url.'SBUY.class.php?wsdl';

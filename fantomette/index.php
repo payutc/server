@@ -67,12 +67,16 @@ if ( isset ($_SESSION['buckutt']['SADMIN']) && isset ($_SESSION['buckutt']['SBUY
     {
         if (! empty($_POST['pin']) && $_POST['pin'] != 0)
         {
+//Ok, donc désision unilatérale de moi meme : on utiliseras pas la classe de session de wopelight pour gerer l'authentification, en tout cas dans un premier temps !
+//soit:
+//%s/session..login/_POST['login']/g
+
             $SADMIN = new nusoap_client($wsdlSADMIN, true);
             $SBUY = new nusoap_client($wsdlSBUY, true);
-            $loginSADMIN = $SADMIN->login($session->login, 1, $_POST['pin'], $_SERVER["REMOTE_ADDR"]);
+            $loginSADMIN = $SADMIN->login($_POST['login'], 1, $_POST['pin'], $_SERVER["REMOTE_ADDR"]);
 			//Ã©cite de tenter si le mec a pas le bon mdp (et donc, que +1 en fail_auth)
 			if($loginSADMIN == 1)
-	            $loginSBUY = $SBUY->login($session->login, 1, $_POST['pin'], $_SERVER["REMOTE_ADDR"]);
+	            $loginSBUY = $SBUY->login($_POST['login'], 1, $_POST['pin'], $_SERVER["REMOTE_ADDR"]);
             if ($loginSADMIN == 1 && $loginSBUY == 1)
             {
                 // On verifie s'il est administrateur de fundation
@@ -80,7 +84,8 @@ if ( isset ($_SESSION['buckutt']['SADMIN']) && isset ($_SESSION['buckutt']['SBUY
                 if ($allFundations != 409)
                 {
                     $FADMIN = new nusoap_client($wsdlFADMIN, true);
-					$FADMIN->login($session->login, 1, $_POST['pin'], $_SERVER["REMOTE_ADDR"]);
+						//pk deux n nn ????
+					$FADMIN->login($_POST['login'], 1, $_POST['pin'], $_SERVER["REMOTE_ADDR"]);
                 }
 				
                 // On verifie s'il est admin de buckutt
@@ -88,7 +93,7 @@ if ( isset ($_SESSION['buckutt']['SADMIN']) && isset ($_SESSION['buckutt']['SBUY
                 if ($isAdminBuckutt == 1)
                 {
 					$BADMIN = new nusoap_client($wsdlBADMIN, true);
-                    $BADMIN->login($session->login, 1, $_POST['pin'], $_SERVER["REMOTE_ADDR"]);
+                    $BADMIN->login($_POST['login'], 1, $_POST['pin'], $_SERVER["REMOTE_ADDR"]);
                 }
 				
                 include_once ('dashboard.inc.php');

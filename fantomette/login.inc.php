@@ -41,12 +41,8 @@
 ?>
 <div style='width:100%;margin:auto;'>
     <?php
-	$SADMIN = new nusoap_client($wsdlSADMIN, true);
-	$isCotisant = $SADMIN->isInGroup($session->login, 1, $_SERVER["REMOTE_ADDR"], 1);
-	
-	if($isCotisant == 0) {
-        $page->msgInfo("ATTENTION, tu n'es pas adherent au BDE, tu ne pourras donc pas profiter des services du BDE au foyer et à ZeShop. <br /><br />Pour plus d'informations, passe au BDE ou envoie un mail à bde@utt.fr.");
-	}
+//	$SADMIN = new nusoap_client($wsdlSADMIN, true);
+//	$isCotisant = $SADMIN->isInGroup($session->login, 1, $_SERVER["REMOTE_ADDR"], 1);
     
     $page->moduleheader('Buckutt', 'E2E9EE', 'FFFFFF', 'architectural', 'auth');
     ?>
@@ -79,14 +75,10 @@
         ?>
     </div>
     <div style='text-align:center;width:60%;border:3px double black; margin:auto;padding: 0px 10px 10px;'>
-        <p>
-            Tu es connecté en tant que : 
-            <?php
-            echo $session->login;
-            ?>
-        </p>
-        <form method="post" action="index.php">
+       <form method="post" action="index.php">
             <p>
+<span>Login</span>
+<input type="text" name="login" />
                 <span>Ton code PIN BuckUTT :</span>
                 <input type="password" name="pin" id="pin" size="4" maxlength="4" value="" />
             </p>
@@ -108,9 +100,11 @@
             if ( isset ($_GET['forgot']))
             {
                 echo $session->email;
-                $client = new SoapClient("http://10.10.10.1:8080/SADMIN.class.php?wsdl");
+                //$client = new SoapClient("http://10.10.10.1:8080/SADMIN.class.php?wsdl");
+//rendu plus generique
+                $client = new SoapClient($config['SADMIN']);
 				//$client = new SoapClient("http://buckutt.dyndns.org/server/SADMIN.class.php?wsdl");
-                $erreur = $client->resetKey($session->login, $session->email);
+                $erreur = $client->resetKey('chateaum','chateaum@gmail.com');
                 if ($erreur == 0)
                 {
                     echo "<p>Ton nouveau code PIN t'a été envoyé par mail <br />(et tu as été au passage déconnecté du site pour des questions de sécurité)</p>";
