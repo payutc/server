@@ -105,6 +105,27 @@ class FADMIN extends WsdlBase {
     }
 
     /**
+     * Retourne un csv qui contient les id_fundation et les name_fundation dont l'user à des droits
+     * @return String $txt
+     */
+    public function hasDroitsInFundations() {
+        if (isset($this->User)) {
+	        $txt = new ComplexData(array());
+	        $array = array();
+        	foreach ($this->User->getDroits() as $value) {
+        		if($value['fun_id'] != 0)
+					$array[$value['fun_id']] = $value['fun_name'];
+       		}
+			foreach ($array as $key => $value) {
+        		$txt->addLine(array($key, $value));
+       		}
+      		return $txt->csvArrays();
+        } else {
+            return 409;
+        }
+    }	
+
+    /**
      * Fonction qui renvoie les produits vendus entre 2 dates
      * 
      * @param int $date_start
