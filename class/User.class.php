@@ -397,13 +397,13 @@ class User {
 			if(in_array($rig_name, $value))
 			{
 				if (($fun_id != 0) && ($poi_id != 0)) {
-					if ($value[fun_id] == $fun_id AND $value[poi_id] == $poi_id)
+					if ($value['fun_id'] == $fun_id AND $value['poi_id'] == $poi_id)
 						$return = 1;
 				} elseif ($fun_id != 0) {
-					if ($value[fun_id] == $fun_id)
+					if ($value['fun_id'] == $fun_id)
 						$return = 1;
 				} elseif ($poi_id != 0) {
-					if ($value[poi_id] == $poi_id)
+					if ($value['poi_id'] == $poi_id)
 						$return = 1;
 				} else {
 					$return = 1;
