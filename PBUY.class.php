@@ -246,6 +246,23 @@ class PBUY extends Buy {
 		else
 			return 409;
 	}
+
+	
+	/**
+	 * Acheter ou sélectionner des objets.
+	 * 
+	 * @param String $obj_ids
+	 * @param String $trace
+	 * @return int $state
+	 */
+	public function multiselect($obj_ids, $trace) {
+		if (isset($this->Buyer)) {
+			$trace .= " via PBUY";
+			return parent::multiselect($obj_ids, $obj_credit, $trace, $this->Seller->getId());
+		}
+		else
+			return 409;
+	}
 }
 
 /*SOAP-ISATION PAR CLASSE*/

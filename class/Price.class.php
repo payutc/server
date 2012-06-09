@@ -214,9 +214,21 @@ class Price {
 	 * @return int $state
 	 */
 	public static function checkPrice(&$User, &$Point, &$Object, $credit) {
-		$db = Db_buckutt::getInstance();
 		//TODO vérifier suite aux modifs sur la requere des propositions
-		if ($db->numRows($creditBDD = $db->query("
+		$creditBDD = Price::getPrice($User, $Point, $Object);
+		if (!is_null($creditBDD)) {
+			if (is_null($credit) or $creditBDD == $credit)
+				return 1;
+			else
+				return 0;
+		} else {
+			return 0;
+		}
+	}
+
+	public static function getPrice(&$User, &$Point, &$Object) {
+		$db = Db_buckutt::getInstance();
+		$result = $db->query("
 SELECT 
 MIN(pri.pri_credit) AS credit 
 
@@ -254,15 +266,9 @@ per3.per_date_start <= NOW() AND
 per3.per_date_end >= NOW() 
 
 GROUP BY obj.obj_id
-		;", Array($Object->getId(), $User->getId(), $Point->getId()))) == 1) {
-			$creditBDD = $db->result($creditBDD);
-			if ($creditBDD == $credit)
-				return 1;
-			else
-				return 0;
-		} else {
-			return 0;
-		}
+		;", Array($Object->getId(), $User->getId(), $Point->getId()));
+		
+		return $db->result($result);
 	}
 }
 ?>
