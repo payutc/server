@@ -170,7 +170,7 @@ class Buy extends WsdlBase {
 	 * @param int $operator_id
 	 * @return int $state
 	 */
-	public function select($obj_id, $obj_credit, $trace, $operator_id) {		
+	public function select($obj_id, $obj_credit, $trace, $operator_id) {
 		$Object = new Object($obj_id);
 			
 		if (isset($this->SelectObject) AND $this->SelectObject->getType() == 'promotion' AND $obj_credit == 0) {
@@ -264,6 +264,46 @@ class Buy extends WsdlBase {
 		unset($this->Buyer);
 		unset($this->SelectObject);
 		$this->promo_step = 0;
+		return 1;
+	}
+
+	
+	/**
+	 * Acheter des objets. Si un erreur arrive, annule toutes les transactions,
+	 * mais ne ferme pas la session.
+	 * 
+	 * @param String $obj_ids
+	 * @param String $trace
+	 * @param int $operator_id
+	 * @return int $state
+	 */
+	public function multiselect($obj_ids, $trace, $operator_id) {
+		$obj_ids = explode(',',$obj_ids);
+		$prices = array();
+		// récupération des ids, du prix
+		foreach ($obj_ids as $value) {
+			$obj_id = trim($value);
+			$object = new Object($obj_id);
+			$price = Price::getPrice($this->Buyer, $this->Point, $object);
+			if (is_null($price)) {
+				return -1;
+			}
+			$prices[$obj_id] = $price;
+		}
+		echo "COUCOU";
+		echo "<pre>";
+		print_r($prices);
+		echo "</pre>";
+		foreach($prices as $key => $value) {
+			echo $key." ".$value." ".$operator_id."\n";
+			$return = $this->select($key, $value, $trace, $operator_id);
+			// si erreur, on annul tout
+			if ($return != 1) {
+				$this->cancelCart();
+				return $return;
+			}
+		}
+
 		return 1;
 	}
 }
