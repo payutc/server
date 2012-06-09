@@ -61,8 +61,14 @@ class Proposition {
 		
 		$this->db = Db_buckutt::getInstance();
 		
-                $this->Seller = $Seller;
-		$this->User = $User;
+    $this->Seller = $Seller;
+    if($User){
+  		$this->User = $User;
+      $userid = $this->User->getId();      
+    }
+    else
+      $userid = 0;
+      
 		$this->Point = $Point;
 		
 		//si c'est une catégorie
@@ -96,9 +102,9 @@ class Proposition {
 		//TODO gérer les produits en vente unique
 		//TODO gérer le seller
 		
-		$res1 = $this->db->query("SET @SELLER_ID='%u',@BUYER_ID='%u',@POINT_ID='%u';",array($this->Seller->getId(), $this->User->getId(), $this->Point->getId()));
-		
-		$res = $this->db->query("
+		$res1 = $this->db->query("SET @SELLER_ID='%u',@BUYER_ID='%u',@POINT_ID='%u';",array($this->Seller->getId(), $userid, $this->Point->getId()));
+
+		$req = "
 SELECT
 obj.obj_id, obj.obj_name, obj.obj_type, obj.obj_stock, obj.obj_single, obj.img_id,
 IF(obj.obj_type = 'category',0, MIN(pri.pri_credit)) AS credit
@@ -115,15 +121,19 @@ t_object_obj obj
                     ON sal.per_id = per1.per_id
 
    LEFT OUTER JOIN t_price_pri pri
-         ON ((obj.obj_type = 'category') OR (obj.obj_id = pri.obj_id AND obj.obj_type != 'category' AND pri.pri_removed = '0'))
+         ON ((obj.obj_id = pri.obj_id AND obj.obj_type != 'category' AND pri.pri_removed = '0'))
                 LEFT JOIN t_period_per per2
-                         ON pri.per_id = per2.per_id
+                         ON pri.per_id = per2.per_id";
+		if($userid != 0)
+			$req .= "
                 INNER JOIN tj_usr_grp_jug jug
                         ON (pri.grp_id = jug.grp_id AND jug.jug_removed = '0')
                              LEFT JOIN t_period_per per3
                                    ON jug.per_id = per3.per_id
+";
 
-   LEFT JOIN tj_object_link_oli oli
+		$req .= "
+		LEFT JOIN tj_object_link_oli oli
          ON (obj.obj_id = oli.obj_id_child AND oli.oli_removed = '0')
 
    INNER JOIN tj_usr_rig_jur jur
@@ -140,19 +150,28 @@ per1.per_date_start <= NOW() AND
 per1.per_date_end >= NOW() AND
 (per2.per_date_start <= NOW() OR per2.per_date_start IS NULL) AND
 (per2.per_date_end >= NOW() OR per2.per_date_end IS NULL) AND
+";
+		if($userid != 0)
+			$req .= "
 per3.per_date_start <= NOW() AND
 per3.per_date_end >= NOW() AND
+";
+		$req .= "
 per4.per_date_start <= NOW() AND
-per4.per_date_end >= NOW() AND
-jug.usr_id = @BUYER_ID AND
+per4.per_date_end >= NOW() AND";
+   
+		if($userid != 0)
+			$req .= " jug.usr_id = @BUYER_ID AND ";
+		$req .= "
 jop.poi_id = @POINT_ID AND
 (obj.obj_stock > '0' OR obj.obj_stock = '-1')
 
-GROUP BY obj.obj_id
+GROUP BY obj.obj_id, pri.pri_id
 
 ORDER BY jop.jop_priority ASC, obj.obj_name ASC
-;");
-		
+;";
+
+		$res = $this->db->query($req);
 		$ObjectList = Array();
 		$this->ObjectCsvLight = new ComplexData(array());
 		$this->ObjectCsv = new ComplexData(array());
@@ -162,15 +181,14 @@ ORDER BY jop.jop_priority ASC, obj.obj_name ASC
 					$temp_obj = new ObjectWithPrice($don['obj_id'], $don['obj_name'], $don['obj_type'], $don['obj_stock'], $don['fun_id'], $don['img_id'], 0, 0);
 				else
 					$temp_obj = new ObjectWithPrice($don['obj_id'], $don['obj_name'], $don['obj_type'], $don['obj_stock'], $don['fun_id'], $don['img_id'], 0, $don['credit']);
-				$this->ObjectList[] = $temp_obj;
-				$this->ObjectCsvLight->addLine($temp_obj->getDetailsLight());
-				$this->ObjectCsv->addLine($temp_obj->getDetails());
-			}
+			$this->ObjectList[] = $temp_obj;
+			$this->ObjectCsvLight->addLine($temp_obj->getDetailsLight());
+			$this->ObjectCsv->addLine($temp_obj->getDetails());
+		}
 			$this->state = 1;
 		} else {
 			$this->state = 0;
 		}
-
 		return $this->state;
 	}
 

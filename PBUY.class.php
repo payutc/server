@@ -216,14 +216,10 @@ class PBUY extends Buy {
 	 */
 	public function getProposition() {
 		if (isset($this->Seller)) {
-			if (isset($this->Buyer)) {
-				if ($this->isSeller() == 1) {
-					return parent::getProposition($this->Seller);
-				} else {
-					return $this->isSeller();
-				}
+			if ($this->isSeller() == 1) {
+				return parent::getProposition($this->Seller);
 			} else {
-				return 409;
+				return $this->isSeller();
 			}
 		} else {
 			return 408;
