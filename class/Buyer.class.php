@@ -80,12 +80,12 @@ class Buyer extends User {
 	public function addToCart(&$Object, $credit, $purchase_id) {
 		$this->Purchase_id[] = $purchase_id;
 		if (array_key_exists($Object->getId(), $this->Cart)) {
-			$this->Cart[$Object->getId()][quantity]++;
-			$this->Cart[$Object->getId()][credit] += $credit;
+			$this->Cart[$Object->getId()]['quantity']++;
+			$this->Cart[$Object->getId()]['credit'] += $credit;
 		} else {
-			$this->Cart[$Object->getId()][quantity] = 1;
-			$this->Cart[$Object->getId()][name] = $Object->getName();
-			$this->Cart[$Object->getId()][credit] = $credit;
+			$this->Cart[$Object->getId()]['quantity'] = 1;
+			$this->Cart[$Object->getId()]['name'] = $Object->getName();
+			$this->Cart[$Object->getId()]['credit'] = $credit;
 		}
 		
 		return 1;
