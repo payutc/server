@@ -254,11 +254,38 @@ class PBUY extends Buy {
 	 * @return int $state
 	 */
 	public function multiselect($obj_ids, $trace) {
-		if (isset($this->Buyer)) {
+		if ($this->isLoadedSeller()) {
 			$trace .= " via PBUY";
 			return parent::multiselect($obj_ids, $obj_credit, $trace, $this->Seller->getId());
 		}
 		else
+			return 409;
+	}
+
+	/**
+	 * Transaction complète,
+	 * 		1. load le buyer
+	 * 		2. multiselect
+	 * 		3. endTransaction
+	 * @param String $login
+	 * @param int $meanOfLogin
+	 * @param String $pass
+	 * @param String ip
+	 * @param String $obj_ids
+	 * @param String $trace
+	 * @return int $state
+	 */
+	public function transaction($login, $meanOfLogin, $pass, $ip, $obj_ids, $trace) {
+		if ($this->isLoadedSeller()) {
+			 $r = $this->loadBuyer($login, $meanOfLogin, $ip, $pass);
+			 if ($r!=1) return $r;
+			 $r = $this->multiselect($obj_ids, $trace);
+			 if ($r!=1) return $r;
+			 $r = $this->endTransaction();
+			 if ($r!=1) return $r;
+			 return 1;
+		}
+		else 
 			return 409;
 	}
 }

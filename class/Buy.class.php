@@ -285,15 +285,14 @@ class Buy extends WsdlBase {
 			$obj_id = trim($value);
 			$object = new Object($obj_id);
 			$price = Price::getPrice($this->Buyer, $this->Point, $object);
+			echo $obj_id."\n";
 			if (is_null($price)) {
+				die();
 				return -1;
 			}
 			$prices[$obj_id] = $price;
 		}
-		echo "COUCOU";
-		echo "<pre>";
-		print_r($prices);
-		echo "</pre>";
+		
 		foreach($prices as $key => $value) {
 			echo $key." ".$value." ".$operator_id."\n";
 			$return = $this->select($key, $value, $trace, $operator_id);
