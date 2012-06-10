@@ -54,28 +54,25 @@ class Mysql {
      
      */
     function query($query, $debugorarg, $debug = 0) {
-    	$debugorarg = array_map(addslashes, $debugorarg);
         if (is_array($debugorarg)) {
-            //TODO : virer le ou 1
-            if ($debug || 1) {
+            $debugorarg = array_map('addslashes', $debugorarg);
+
+            if ($debug) {
                 $this->trace(vsprintf($query, $debugorarg));
             }
-            //$var = fopen('/home/www-etu/losmysql','a');
-            //fwrite($var,$query);
             
             //TODO commenter ça... car bug... à suivre car important niveau sécu
-            //array_walk_recursive($debugorarg, 'mysql_escape_string');
+            foreach($debugorarg as &$parametre)
+                $parametre = mysql_real_escape_string($parametre, $this->connexion);
+            
             if (!$result = mysql_query(vsprintf($query, $debugorarg), $this->connexion)) {
                 $this->error();
             }
             return ($result);
         } else {
-            //TODO: virer le ou 1
-            if ($debugorarg || 1) {
+            if ($debugorarg) {
                 $this->trace($query);
             }
-            //$var = fopen('/home/www-etu/losmysql','a');
-            //fwrite($var,$query);
             if (!$result = mysql_query($query, $this->connexion)) {
                 $this->error();
             }
@@ -88,12 +85,9 @@ class Mysql {
     
     function fetchQueryToString($query, $debugorarg, $debug = 0) {
         if (is_array($debugorarg)) {
-            //TODO : virer le ou 1
-            if ($debug || 1) {
+            if ($debug) {
                 $this->trace(vsprintf($query, $debugorarg));
             }
-            //$var = fopen('/home/www-etu/losmysql','a');
-            //fwrite($var,$query);
             if (!$result = mysql_query(vsprintf($query, $debugorarg), $this->connexion)) {
                 $this->error();
             }
@@ -110,12 +104,9 @@ class Mysql {
             
             return ($retour);
         } else {
-            //TODO: virer le ou 1
-            if ($debugorarg || 1) {
+            if ($debugorarg) {
                 $this->trace($query);
             }
-            //$var = fopen('/home/www-etu/losmysql','a');
-            //fwrite($var,$query);
             if (!$result = mysql_query($query, $this->connexion)) {
                 $this->error();
             }
@@ -191,16 +182,12 @@ class Mysql {
         echo '<div style="background-color:#EEE;-moz-border-radius: 8px;border:2px black solid;" ><h3 style="background-color:#00DDDD;color:white;border:solid 1px black">Requette Mysql </h3><p style="">'.$requette.'</p></div>';
         
         $txt = "\n___________MYSQL______________\n".$requette;
-        //file_put_contents("/media/gros/share/trace.log",file_get_contents("/media/gros/share/trace.log").$txt);
     }
     //Affiche l'erreur sql
     function error() {
         global $_SERVER;
         echo '<div style="background-color:#DDD;font-weight:bold;-moz-border-radius: 8px;border:2px black solid;width:350px" onclick="this.style.display = \'none\';"><h1 style="background-color:#DD0000;color:white;border:solid 1px black">Erreur Mysql (n°'.mysql_errno().')</h1><p style="">'.mysql_error().'</p></div>';
-        $text = "\n ___________ERREUR____________________\nErreur n ".mysql_errno()." - ".date('r')." - ".$_SERVER["PHP_SELF"]."\n".mysql_error()."\n";
-        //$txt = "\n___________MYSQL______________\n".$requette;
-        //	file_put_contents("/media/gros/share/trace.log",file_get_contents("/media/gros/share/trace.log").$text);
-        
+        $text = "\n ___________ERREUR____________________\nErreur n ".mysql_errno()." - ".date('r')." - ".$_SERVER["PHP_SELF"]."\n".mysql_error()."\n";        
     }
 }
 
