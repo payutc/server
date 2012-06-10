@@ -185,12 +185,13 @@ class PBUY extends Buy {
 	*/
 	public function loadBuyer($data, $meanOfLogin, $ip, $pass) {
 		if (isset($this->Seller)) {
-			return parent::loadBuyer($data, $meanOfLogin, $pass, $ip);
+			$noPass = empty($pass);
+			return parent::loadBuyer($data, $meanOfLogin, $pass, $ip, $noPass);
 		} else {
 			return 408;
 		}
 	}
-			
+	
 	/**
 	 * Recharger un buyer.
 	 * 
