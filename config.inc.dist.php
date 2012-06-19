@@ -1,6 +1,6 @@
 <?php 
 /**
-    BuckUTT - Buckutt est un syst�me de paiement avec porte-monnaie �lectronique.
+    BuckUTT - Buckutt est un système de paiement avec porte-monnaie électronique.
     Copyright (C) 2011 BuckUTT <buckutt@utt.fr>
 
 	This file is part of BuckUTT
@@ -19,11 +19,25 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// Paramètres de BDD
+$_CONFIG['sql_host'] = "localhost";
+$_CONFIG['sql_db'] = "buckutt";
+$_CONFIG['sql_user'] = "root";
+$_CONFIG['sql_pass'] = "root";
 
- $_SQL['host'] = "localhost";
- $_SQL['base'] = "buckutt_dev";
+// Chemin vers le serveur CAS
+$_CONFIG['cas_url'] = "";
 
- $_SQL['user'] = "buckutt";
- $_SQL['pass'] = "chut, c'est un secret";
+// URL publique http(s) du serveur (avec le / final)
+$_CONFIG['server_url'] = "http://localhost/buckutt/";
+
+// Méthode de cache côté serveur pour les wsdl (mettre WSDL_CACHE_BOTH en prod)
+$_CONFIG['wsdl_cache'] = WSDL_CACHE_NONE;
+
+// Montant maximum à autoriser sur un compte (en cts)
+$_CONFIG['credit_max'] = 10000;
+
+// Montant minimum d'un rechargement
+$_CONFIG['rechargement_min'] = 1000;
 
 ?>

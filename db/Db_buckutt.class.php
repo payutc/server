@@ -13,7 +13,8 @@
 	* @author Sid ( CHATEAU Mathieu ) 
 	* @license PHP Version 5.0 {@link http://www.php.net/license/5_0.txt}
 	*/
-require_once 'db/config.inc.php';
+
+require_once 'config.inc.php';
 
 class Db_buckutt {
 	public $dbType;
@@ -49,11 +50,11 @@ class Db_buckutt {
      */
     public function getInstance()
     {
-	global $_SQL;
+		global $_CONFIG;
         if (! isset (self::$instance))
         {
             self::$instance = new Db_buckutt('mysql');
-            self::$instance->connect($_SQL['host'], $_SQL['base'], $_SQL['user'], $_SQL['pass']);
+            self::$instance->connect($_CONFIG['sql_host'], $_CONFIG['sql_db'], $_CONFIG['sql_user'], $_CONFIG['sql_pass']);
         }
         return self::$instance;
     }

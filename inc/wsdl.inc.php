@@ -40,8 +40,7 @@ if ( isset ($_GET['wsdl']))
 	$server->handle();
 } else
 {
-	$url = 'http://buckutt.dyndns.org/server/';
-	$server = new SoapServer($url.$name_class.'.class.php?wsdl', Array('cache_wsdl'=>WSDL_CACHE_NONE)); //TODO mettre WSDL_CACHE_BOTH sur le serveur
+	$server = new SoapServer($_CONFIG['server_url'].$name_class.'.class.php?wsdl', Array('cache_wsdl'=>$_CONFIG['wsdl_cache'])); //TODO mettre WSDL_CACHE_BOTH sur le serveur
 	$server->setClass($name_class);
 	$server->setPersistence(SOAP_PERSISTENCE_SESSION);
 	$server->handle();
