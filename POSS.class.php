@@ -138,7 +138,6 @@ class POSS extends Buy {
 	 * @param String $badge_id
 	 * @param String $obj_ids
 	 * @param String $trace
-	 * @param String $ip
 	 * @return int $state
 	 */
 	public function transaction($badge_id, $obj_ids, $trace) {
