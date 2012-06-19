@@ -65,7 +65,7 @@ class Buy extends WsdlBase {
 	* @param int $noPass[optional] 1 si connexion sans mot de passe (badgeage simple au foyer)
 	* @return int $state
 	*/
-	protected function loadBuyer($data, $meanOfLogin, $pass,  $ip = 0, $noPass = 0) {
+	public function loadBuyer($data, $meanOfLogin, $pass,  $ip = 0, $noPass = 0) {
 		$this->Buyer = new Buyer($data, $meanOfLogin, $pass, $ip, $noPass);
 		return $this->Buyer->getState();
 	}

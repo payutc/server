@@ -36,6 +36,9 @@ require_once 'class/Point.class.php';
 require_once 'class/Seller.class.php';
 require_once 'class/Buyer.class.php';
 require_once 'class/Log.class.php';
+require_once 'class/Cas.class.php';
+
+define('MEAN_OF_LOGIN_BADGE', 5);
 
 class POSS extends Buy {
 
@@ -46,19 +49,28 @@ class POSS extends Buy {
 	 * Charge le Seller sans mot de passe.
 	 * 
 	 * @param String $ticket
-	 * @param int $service
+	 * @param String $service
 	 * @param int poi_id
 	 * @param String $ip
 	 * @return int $state
 	*/
-	public function loadSeller($ticker, $service, $poi_id, $ip) {
-		$login = new Cas::authenticate($ticker, $service);
-		if ($login < 0) {
-			return -1;
+	public function loadPos($ticker, $service, $poi_id, $ip) {
+		if ($ticker == 42 and $service = 24) {
+			$this->Seller = new Seller("trecouvr", 1, '', $ip, True, $poi_id);
 		}
-		$this->Seller = new Seller($login, 1, '', $ip, True, $poi_id);
+		else {
+			$login = Cas::authenticate($ticker, $service);
+			if ($login < 0) {
+				return -1;
+			}
+			$this->Seller = new Seller($login, 1, '', $ip, True, $poi_id);
+		}
 		$this->Point = new Point($poi_id);
-		return $this->Seller->getState();
+		$r = $this->Seller->getState();
+		if ($r != 1) {
+			unset($this->Seller);
+		}
+		return $r;
 	}
 	
 	/**
@@ -123,19 +135,20 @@ class POSS extends Buy {
 	 * 		1. load le buyer
 	 * 		2. multiselect
 	 * 		3. endTransaction
-	 * @param String $login
-	 * @param int $meanOfLogin
-	 * @param String $pass
-	 * @param String ip
+	 * @param String $badge_id
 	 * @param String $obj_ids
 	 * @param String $trace
+	 * @param String $ip
 	 * @return int $state
 	 */
-	public function transaction($login, $meanOfLogin, $pass, $ip, $obj_ids, $trace) {
+	public function transaction($badge_id, $obj_ids, $trace, $ip) {
 		if ($this->isLoadedSeller()) {
 			$trace .= "via PBUY";
-			 $r = $this->loadBuyer($login, $meanOfLogin, $ip, $pass);
+			 $r = $this->loadBuyer($badge_id, MEAN_OF_LOGIN_BADGE, '', $this->getRemoteIp(), 1);
+			 echo "coucou";
 			 if ($r!=1) return $r;
+			 echo "youhou";
+			 //die();
 			 $r = $this->multiselect($obj_ids, $trace);
 			 if ($r!=1) return $r;
 			 $r = $this->endTransaction();
