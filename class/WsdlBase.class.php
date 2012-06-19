@@ -44,6 +44,10 @@ class WsdlBase {
 	public function __construct() {
 		$this->db = Db_buckutt::getInstance();
 	}
+
+	protected function getRemoteIp() {
+		return $_SERVER['REMOTE_ADDR'];
+	}
 	
 	/**
 	* Récupérer les informations sur une erreur à partir de son id.
