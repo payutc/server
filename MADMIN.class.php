@@ -51,17 +51,6 @@ class SADMIN extends WsdlBase {
         $this->db = Db_buckutt::getInstance();
     }
 
-	/**
-	 * Check si l'utilisateur est logged et peu utiliser la méthode
-	 */
-	private function checkUser() {
-		if($User->getState() == 1)
-			return 1;
-		else
-			exit();
-	}
-
-
    /**
 	 * Connecter le user avec un ticket CAS.
 	 * 

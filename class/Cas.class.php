@@ -4,9 +4,11 @@ require_once 'class/xmlToArrayParser.class.php';
 
 class Cas {
 
+	// TODO : Mettre l'url dans la conf
+	protected $cas_url = "https://cas.utc.fr/cas/";
+
 	public static function authenticate($ticket,$service) {
-		// TODO : Mettre l'url dans la conf
-		$url_validate = "https://cas.utc.fr/cas/serviceValidate?service=".$service."&ticket=".$ticket;
+		$url_validate = $this->cas_url."serviceValidate?service=".$service."&ticket=".$ticket;
 		$get_reponse = fopen($url_validate, "r");
 		$data=''; 
 		while(!feof($get_reponse)) 
@@ -18,6 +20,10 @@ class Cas {
 		else
 			$login = -1;
 		return $login;
+	}
+	
+	public static function getURl() {
+		return $this->cas_url;
 	}
 	
 }
