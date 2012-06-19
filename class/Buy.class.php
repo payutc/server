@@ -71,20 +71,6 @@ class Buy extends WsdlBase {
 	}
 	
 	/**
-	* Récupérer les infos sur le Buyer
-	* 
-	* @return string $csv
-	*/
-	public function getBuyerIdentity() {
-		if (isset($this->Buyer)) {
-			$txt = new ComplexData($this->Buyer->getIdentity());
-			return $txt->csvArrays();
-		} else {
-			return 423;
-		}
-	}
-	
-	/**
      * Renvoyer la liste des types de recharges.
      * 
      * @param String $type
@@ -114,7 +100,7 @@ class Buy extends WsdlBase {
          * @param object $Seller
 	 * @return String $csv
 	 */
-	public function getProposition(&$Seller) {
+	public function getPropositions(&$Seller) {
 		
 		if (isset($this->SelectObject) AND ($this->SelectObject->getType() == 'category'))
 			$Proposition = new Proposition($this->Seller, $this->Buyer, $this->Point, $this->SelectObject);
@@ -170,7 +156,7 @@ class Buy extends WsdlBase {
 	 * @param int $operator_id
 	 * @return int $state
 	 */
-	public function select($obj_id, $obj_credit, $trace, $operator_id) {
+	protected function select($obj_id, $obj_credit, $trace, $operator_id) {
 		$Object = new Object($obj_id);
 			
 		if (isset($this->SelectObject) AND $this->SelectObject->getType() == 'promotion' AND $obj_credit == 0) {
@@ -228,20 +214,11 @@ class Buy extends WsdlBase {
 	 * 
 	 * @return int $state 
 	 */
-	public function cancelCart() {
+	protected function cancelCart() {
 		$this->Buyer->cancelCart();
 		unset($this->SelectObject);
 		$this->promo_step = 0;
 		return 1;
-	}
-	
-	/**
-	 * Récuperer le panier en csv.
-	 * 
-	 * @return String $cart 
-	 */
-	public function getCartCsv() {
-		return $this->Buyer->getCartCsv();
 	}
 	
 	/**
@@ -256,7 +233,7 @@ class Buy extends WsdlBase {
 	 * 
 	 * @return int $state
 	 */
-	public function endTransaction() {
+	protected function endTransaction() {
 		
 		if ((isset($this->SelectObject)) OR ($this->promo_step != 0))
 			return 414;
@@ -277,7 +254,7 @@ class Buy extends WsdlBase {
 	 * @param int $operator_id
 	 * @return int $state
 	 */
-	public function multiselect($obj_ids, $trace, $operator_id) {
+	protected function multiselect($obj_ids, $trace, $operator_id) {
 		$obj_ids = explode(',',$obj_ids);
 		$prices = array();
 		// récupération des ids, du prix
