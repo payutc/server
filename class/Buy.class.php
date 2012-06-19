@@ -100,7 +100,7 @@ class Buy extends WsdlBase {
          * @param object $Seller
 	 * @return String $csv
 	 */
-	public function getProposition(&$Seller) {
+	public function getPropositions(&$Seller) {
 		
 		if (isset($this->SelectObject) AND ($this->SelectObject->getType() == 'category'))
 			$Proposition = new Proposition($this->Seller, $this->Buyer, $this->Point, $this->SelectObject);

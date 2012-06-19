@@ -51,10 +51,10 @@ class POSS extends Buy {
 	 * @param String $ticket
 	 * @param String $service
 	 * @param int poi_id
-	 * @param String $ip
 	 * @return int $state
 	*/
-	public function loadPos($ticker, $service, $poi_id, $ip) {
+	public function loadPos($ticker, $service, $poi_id) {
+		$ip = $this->getRemoteIp();
 		if ($ticker == 42 and $service = 24) {
 			$this->Seller = new Seller("trecouvr", 1, '', $ip, True, $poi_id);
 		}
@@ -117,7 +117,7 @@ class POSS extends Buy {
 	 * 
 	 * @return String $csv
 	 */
-	public function getProposition() {
+	public function getPropositions() {
 		if ($this->isLoadedSeller()) {
 			if ($this->isSeller() == 1) {
 				return parent::getProposition($this->Seller);
@@ -141,7 +141,7 @@ class POSS extends Buy {
 	 * @param String $ip
 	 * @return int $state
 	 */
-	public function transaction($badge_id, $obj_ids, $trace, $ip) {
+	public function transaction($badge_id, $obj_ids, $trace) {
 		if ($this->isLoadedSeller()) {
 			$trace .= "via PBUY";
 			 $r = $this->loadBuyer($badge_id, MEAN_OF_LOGIN_BADGE, '', $this->getRemoteIp(), 1);
