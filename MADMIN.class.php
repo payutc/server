@@ -37,7 +37,7 @@ require_once 'class/ComplexData.class.php';
 require_once 'class/Paybox.class.php';
 require_once 'class/Cas.class.php';
 
-class SADMIN extends WsdlBase {
+class MADMIN extends WsdlBase {
 
     private  $User;
     // TODO : mettre le maximum de credit dans la config.
@@ -50,8 +50,8 @@ class SADMIN extends WsdlBase {
     public function __construct() {
         $this->db = Db_buckutt::getInstance();
     }
-
-   /**
+    
+    /**
 	 * Connecter le user avec un ticket CAS.
 	 * 
 	 * @param String $ticket
@@ -274,7 +274,7 @@ class SADMIN extends WsdlBase {
 
 
 /*TEST DE SOAP-ISATION PAR CLASSE*/
-$name_class = 'SADMIN';
+$name_class = 'MADMIN';
 require('inc/wsdl.inc.php');
 
 ?>
