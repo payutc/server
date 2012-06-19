@@ -1,11 +1,12 @@
 <?
 
 require_once 'class/xmlToArrayParser.class.php';
+require_once 'config.inc.php';
 
 class Cas {
 
 	// TODO : Mettre l'url dans la conf
-	const cas_url = "https://cas.utc.fr/cas/";
+	const cas_url = $_CONFIG['cas_url'];
 
 	public static function authenticate($ticket,$service) {
 		$url_validate = Cas::cas_url."serviceValidate?service=".$service."&ticket=".$ticket;
