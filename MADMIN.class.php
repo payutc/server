@@ -59,7 +59,7 @@ class MADMIN extends WsdlBase {
 	 */
     public function loginCas($ticket, $service) {
 		$login = Cas::authenticate($ticket, $service);
-		$this->User = new User($login, 1, "", 0, 1);
+		$this->User = new User($login, 1, "", 0, 1, 0);
 		$this->Point = new Point(1);
 		return $this->User->getState();
     }
@@ -203,11 +203,9 @@ class MADMIN extends WsdlBase {
      * Fonction pour se blocker soi meme (en cas de perte/vol par exemple)
      * 1:Le compte a été changé
      * 440:L'utilisateur n'existe pas
-     * 441:Il ne s'agit pas du bon code PIN
-     * @param String $pin
      * @return int $state
      */
-    public function blockMe($pin) {
+    public function blockMe() {
 		if ($this->User->blockMe()) {
 			$state = 1;
 		} else { $state = 440; }    		
@@ -218,17 +216,23 @@ class MADMIN extends WsdlBase {
      * Fonction pour se déblocker soi meme (en cas de perte/vol par exemple)
      * 1:Le compte a été changé
      * 440:L'utilisateur n'existe pas
-     * 441:Il ne s'agit pas du bon code PIN
-     * @param String $pin
      * @return int $state
      */
-    public function deblock($pin) {
+    public function deblock() {
 		if ($this->User->deblock()) {
 			$state = 1;
 		} else { $state = 440; }    		
 		return $state;
     }
 	
+    /**
+    * Fonction pour connaitre l'état du compte (bloqué/débloqué)
+    * 
+    * @return int $valid
+    */
+    public function isBlocked() {
+        return $this->User->isblocked();
+    }
 	
 	
 	

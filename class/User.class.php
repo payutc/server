@@ -67,9 +67,10 @@ class User {
 	* @param string $pass
 	* @param string $ip[optional]
 	* @param int $noPass[optional] 1 si connexion sans mot de passe (badgeage simple au foyer)
+	* @param int $checkBlocked[optional] 0 si le fait d'être bloqué n'empéche pas la connexion (lorsqu'une carte est bloqué c'est pour payer on peut toujours accéder à casper/fantomette)
 	* @return int $state
 	*/
-	public function __construct($data, $meanOfLogin, $pass,  $ip = 0, $noPass = 0) {
+	public function __construct($data, $meanOfLogin, $pass,  $ip = 0, $noPass = 0, $checkBlocked = 1) {
 		$this->db = Db_buckutt::getInstance();
 		
 		//Test si on utilise le mean of login IDCarte et si oui ba on suprime le dernier chiffre
@@ -91,7 +92,7 @@ class User {
 		if ($this->db->affectedRows() == 1) {
 			$this->usr_fail_auth = $don['usr_fail_auth'];
 			//si utilisateur bloqué
-			if ($don['usr_blocked'] == 1) {
+			if ($don['usr_blocked'] == 1 && $checkBlocked == 1) {
 				$this->state = 403;
 				return $this->state;
 			}
@@ -306,7 +307,18 @@ class User {
 			return 1;
 		else
 			return 400;
-	}	
+	}
+
+	/**
+	* Fonction pour connaitre l'état du compte (bloqué/débloqué)
+	* 
+	* @return int $valid
+	*/
+	public function isBlocked() {
+		$don = $this->db->fetchArray($this->db->query("SELECT usr_fail_auth, usr_blocked FROM ts_user_usr WHERE usr_id = '%u';", Array($this->idUser)));
+		return $don['usr_blocked'];
+	}
+		
 	
 	/**
 	* Retourne un array avec l'identité du user et son appartenance ou non au BDE (Attention : grp_id = 1 et non BDE)
