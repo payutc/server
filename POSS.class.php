@@ -55,16 +55,11 @@ class POSS extends Buy {
 	*/
 	public function loadPos($ticket, $service, $poi_id) {
 		$ip = $this->getRemoteIp();
-		if ($ticket == 42 and $service = 24) {
-			$this->Seller = new Seller("trecouvr", 1, '', $ip, True, $poi_id);
+		$login = Cas::authenticate($ticket, $service);
+		if ($login < 0) {
+			return -1;
 		}
-		else {
-			$login = Cas::authenticate($ticket, $service);
-			if ($login < 0) {
-				return -1;
-			}
-			$this->Seller = new Seller($login, 1, '', $ip, True, $poi_id);
-		}
+		$this->Seller = new Seller($login, 1, '', $ip, True, $poi_id);
 		$this->Point = new Point($poi_id);
 		$r = $this->Seller->getState();
 		if ($r != 1) {

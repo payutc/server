@@ -1,14 +1,13 @@
 <?
 
 require_once 'class/xmlToArrayParser.class.php';
+require_once 'config.inc.php';
 
 class Cas {
 
-	// TODO : Mettre l'url dans la conf
-	const cas_url = "https://cas.utc.fr/cas/";
-
 	public static function authenticate($ticket,$service) {
-		$url_validate = Cas::cas_url."serviceValidate?service=".$service."&ticket=".$ticket;
+		global $_CONFIG;
+		$url_validate = $_CONFIG['cas_url']."serviceValidate?service=".$service."&ticket=".$ticket;
 		$get_reponse = fopen($url_validate, "r");
 		$data=''; 
 		while(!feof($get_reponse)) 
@@ -23,7 +22,8 @@ class Cas {
 	}
 	
 	public static function getURl() {
-		return Cas::cas_url;
+		global $_CONFIG;
+		return $_CONFIG['cas_url'];
 	}
 	
 }

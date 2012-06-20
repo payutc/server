@@ -36,12 +36,11 @@ require_once 'class/User.class.php';
 require_once 'class/ComplexData.class.php';
 require_once 'class/Paybox.class.php';
 require_once 'class/Cas.class.php';
+require_once 'config.inc.php';
 
 class MADMIN extends WsdlBase {
 
     private  $User;
-    // TODO : mettre le maximum de credit dans la config.
-    protected $MAX_CREDIT = 10000; //100 €
 
     /**
      * Constructeur qui chope la conexion a la DB
@@ -132,22 +131,55 @@ class MADMIN extends WsdlBase {
 		return $this->User->getLastname();
 	}
 
-	/**
-	* Fonction pour vérifier qu'un client peut recharger d'un certain montant
-	* Il n'est pas obligatoire de l'appeler avant reload($amount)
-	* Mais le retour de reload si on a pas le droit de recharger sera beaucoup moins "joli"
-	* 
-	* @param int $amount (en centimes)
-	* @return int $code
-	*/
-	public function canReload($amount) {
-		$Buyer_credit = $this->User->getCredit(); //évite de faire 2 fois de suite la même requête
-		if ($Buyer_credit >= $this->MAX_CREDIT)
-			return 450;
-		if (($Buyer_credit + $amount) > $this->MAX_CREDIT)
-			return 451;
-		return 1;
-	}
+    /**
+    * Fonction pour connaitre le montant minimum que l'on peut recharger
+    * 
+    * @return int $minimum
+    */
+    public function getMinReload() {
+        global $_CONFIG;
+        $Buyer_credit = $this->User->getCredit();
+        $max = $_CONFIG['credit_max'] - $Buyer_credit;
+        if($max < $_CONFIG['rechargement_min'])
+            return 0;
+        else
+            return $_CONFIG['rechargement_min'];
+    }
+
+    /**
+    * Fonction pour connaitre le montant maximum que l'on peut recharger
+    * 
+    * @return int $maximum
+    */
+    public function getMaxReload() {
+        global $_CONFIG;
+        $Buyer_credit = $this->User->getCredit();
+        $max = $_CONFIG['credit_max'] - $Buyer_credit;
+        if($max < $_CONFIG['rechargement_min'])
+            return 0;
+        else
+            return $max;
+    }
+
+    /**
+    * Fonction pour vérifier qu'un client peut recharger d'un certain montant
+    * Il n'est pas obligatoire de l'appeler avant reload($amount)
+    * Mais le retour de reload si on a pas le droit de recharger sera beaucoup moins "joli"
+    * 
+    * @param int $amount (en centimes)
+    * @return int $code
+    */
+    public function canReload($amount) {
+        global $_CONFIG;
+        if($amount < $_CONFIG['rechargement_min'])
+            return 452; // TODO : Créer un code d'erreur plus adapté !
+        $Buyer_credit = $this->User->getCredit();
+        if ($Buyer_credit >= $_CONFIG['credit_max'])
+            return 450;
+        if (($Buyer_credit + $amount) > $_CONFIG['credit_max'])
+            return 451;
+        return 1;
+    }
 
 	 /**
      * Fonction pour recharger un client.
