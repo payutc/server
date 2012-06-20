@@ -36,6 +36,7 @@ require_once 'class/User.class.php';
 require_once 'class/ComplexData.class.php';
 require_once 'class/Paybox.class.php';
 require_once 'class/Cas.class.php';
+require_once 'config.inc.php';
 
 class MADMIN extends WsdlBase {
 
@@ -136,6 +137,7 @@ class MADMIN extends WsdlBase {
     * @return int $minimum
     */
     public function getMinReload() {
+        global $_CONFIG;
         $Buyer_credit = $this->User->getCredit();
         $max = $_CONFIG['credit_max'] - $Buyer_credit;
         if($max < $_CONFIG['rechargement_min'])
@@ -150,6 +152,7 @@ class MADMIN extends WsdlBase {
     * @return int $maximum
     */
     public function getMaxReload() {
+        global $_CONFIG;
         $Buyer_credit = $this->User->getCredit();
         $max = $_CONFIG['credit_max'] - $Buyer_credit;
         if($max < $_CONFIG['rechargement_min'])
@@ -167,6 +170,7 @@ class MADMIN extends WsdlBase {
     * @return int $code
     */
     public function canReload($amount) {
+        global $_CONFIG;
         if($amount < $_CONFIG['rechargement_min'])
             return 452; // TODO : Créer un code d'erreur plus adapté !
         $Buyer_credit = $this->User->getCredit();

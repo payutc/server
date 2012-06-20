@@ -6,6 +6,7 @@ require_once 'config.inc.php';
 class Cas {
 
 	public static function authenticate($ticket,$service) {
+		global $_CONFIG;
 		$url_validate = $_CONFIG['cas_url']."serviceValidate?service=".$service."&ticket=".$ticket;
 		$get_reponse = fopen($url_validate, "r");
 		$data=''; 
@@ -21,6 +22,7 @@ class Cas {
 	}
 	
 	public static function getURl() {
+		global $_CONFIG;
 		return $_CONFIG['cas_url'];
 	}
 	
