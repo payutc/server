@@ -42,7 +42,7 @@ class Log
      * @param object $db
      * @return int $state
      */
-    public function write($message, $gravity=2, $db=0)
+    public static function write($message, $gravity=2, $db=0)
     {
         if ($db == 0)
 		{
