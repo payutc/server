@@ -234,40 +234,18 @@ class MADMIN extends WsdlBase {
         return $this->User->isblocked();
     }
 	
+    /**
+     * VIREMENT
+     * 
+     * @param int $amount montant du virement en centimes
+     * @param int $userID Id de la personne a qui l'on vire de l'argent.
+     * @return int $credit
+     */
+    public function transfert($amount, $userID) {
+        return 430;
+    }   
 	
 	
-	
-	
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Retourne un csv qui contient les id_fundation, id_point en fonction de ses droits
