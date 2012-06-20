@@ -25,7 +25,7 @@ $_CONFIG['sql_db'] = "buckutt";
 $_CONFIG['sql_user'] = "root";
 $_CONFIG['sql_pass'] = "root";
 
-// Chemin vers le serveur CAS
+// Chemin vers le serveur CAS (avec le / final)
 $_CONFIG['cas_url'] = "";
 
 // URL publique http(s) du serveur (avec le / final)
