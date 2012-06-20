@@ -124,7 +124,7 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
       if($CheckSig!=1) {
         Log::write("PAYBOX : La signature est fausse ! \n".print_r($_GET, true),10);
       } else {
-        $paybox_row = $db->fetchArray($db->query("SELECT usr_id, pay_step FROM t_paybox_pay WHERE pay_id = '%u'", array($ref)));
+        $paybox_row = $db->fetchArray($db->query("SELECT usr_id, pay_amount, pay_step FROM t_paybox_pay WHERE pay_id = '%u'", array($ref)));
         if ($db->affectedRows() != 1) {
           Log::write("PAYBOX : L'identifiant n'est pas présent dans la table t_paybox_pay \n".print_r($_GET, true),5);
         } else if ($paybox_row['pay_step'] != 'W') {
@@ -133,6 +133,12 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
           Log::write("PAYBOX : Paybox a retourné une erreur ! \n".print_r($_GET, true),5);
           $db->query("UPDATE t_paybox_pay SET pay_step = 'A', pay_date_retour = NOW(), pay_auto = '%s', pay_trans = '%s', pay_error = '%s' WHERE pay_id = '%u';", Array($auto,$trans,$erreur,$ref));
         } else {
+          if($amount != $paybox_row['pay_amount']) {
+            Log::write("PAYBOX : Paybox renvoit un montant de : $amount, mais le rechargement initial était de : ".$paybox_row['pay_amount']." \n".print_r($_GET, true),10);
+            // Du coup on incrémente le compte de la valeur renvoyé par paybox, et on log un rechargement de cette valeur...
+            // Pour le bien prions que ce log n'apparaitra jamais... DE toute façon si se log apparait, ce n'est pas une perte d'argent pour nous,
+            // Vu qu'on recharge bien le montant indiqué par paybox. Par contre si ce log apparait il est possible que l'user ait rechargé moins que la valeur minimum d'un rechargement ou plus que la valeur max...
+          }
           $db->query("UPDATE t_paybox_pay SET pay_step = 'V', pay_date_retour = NOW(), pay_auto = '%s', pay_trans = '%s', pay_error = '%s' WHERE pay_id = '%u';", Array($auto,$trans,$erreur,$ref));
           $db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id = '%u';", Array($amount, $paybox_row['usr_id']));
           $db->query(("INSERT INTO t_recharge_rec (rty_id, usr_id_buyer, usr_id_operator, poi_id, rec_date, rec_credit, rec_trace) VALUES ('%u', '%u', '%u', '%u', NOW(), '%u', '%s')"), array(3, $paybox_row['usr_id'], $paybox_row['usr_id'], 1, $amount, $ref));
