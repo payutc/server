@@ -120,7 +120,7 @@ class POSS extends Buy {
 	public function getPropositions() {
 		if ($this->isLoadedSeller()) {
 			if ($this->isSeller() == 1) {
-				return parent::getProposition($this->Seller);
+				return parent::getPropositions($this->Seller);
 			} else {
 				return $this->isSeller();
 			}
