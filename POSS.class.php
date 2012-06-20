@@ -53,13 +53,13 @@ class POSS extends Buy {
 	 * @param int poi_id
 	 * @return int $state
 	*/
-	public function loadPos($ticker, $service, $poi_id) {
+	public function loadPos($ticket, $service, $poi_id) {
 		$ip = $this->getRemoteIp();
-		if ($ticker == 42 and $service = 24) {
+		if ($ticket == 42 and $service = 24) {
 			$this->Seller = new Seller("trecouvr", 1, '', $ip, True, $poi_id);
 		}
 		else {
-			$login = Cas::authenticate($ticker, $service);
+			$login = Cas::authenticate($ticket, $service);
 			if ($login < 0) {
 				return -1;
 			}
