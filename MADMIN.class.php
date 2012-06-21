@@ -293,11 +293,16 @@ class MADMIN extends WsdlBase {
         } else if($this->User->getId() == $userID){
             return 464; // Petit malin, se virer de l'argent à soi même n'a aucun sens !
         } else {
-            $this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit - '%u') WHERE usr_id = '%u';", Array($amount, $this->User->getId()));
             $this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id = '%u';", Array($amount, $userID));
-            $this->db->query(("INSERT INTO t_virement_vir (vir_date, vir_amount, usr_id_from, usr_id_to) VALUES (NOW(), '%u', '%u', '%u')"), array($amount, $this->User->getId(), $userID));
-            return 1;
+            if ($this->db->affectedRows() != 1) {
+                return 465; // il n'y a pas d'utilisateur à qui verser l'argent...
+            } else {
+                $this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit - '%u') WHERE usr_id = '%u';", Array($amount, $this->User->getId()));
+                $this->db->query(("INSERT INTO t_virement_vir (vir_date, vir_amount, usr_id_from, usr_id_to) VALUES (NOW(), '%u', '%u', '%u')"), array($amount, $this->User->getId(), $userID));
+                return 1;
+            }
         }
+        return 401;
     }   
 	
 	
