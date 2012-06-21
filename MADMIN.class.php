@@ -80,7 +80,7 @@ class MADMIN extends WsdlBase {
 			}
 			return $txt->csvArrays();
 		} else {
-			return 400;
+			return $txt->csvArrays();
 		}
     }
 
@@ -100,8 +100,54 @@ class MADMIN extends WsdlBase {
 			}
 			return $txt->csvArrays();
 		} else {
-			return 400;
+			return $txt->csvArrays();
 		}
+    }
+
+    /**
+     * Fonction qui renvoie l'historique des virements emis de l'utilisateur entre 2 dates
+     * 
+     * @param int $date_start
+     * @param int $date_end
+     * @return string $csv
+     */
+    public function getHistoriqueVirementOut($date_start, $date_end) {
+        $txt = new ComplexData(array());
+        $res = $this->db->query("SELECT UNIX_TIMESTAMP(vir.vir_date) AS vir_date, vir.vir_amount, usr_to.usr_firstname, usr_to.usr_lastname 
+            FROM t_virement_vir vir, ts_user_usr usr_to  
+            WHERE vir.usr_id_to = usr_to.usr_id AND UNIX_TIMESTAMP(vir.vir_date) >= '%u' AND UNIX_TIMESTAMP(vir.vir_date) < '%u' AND vir.usr_id_from = '%u' ORDER BY vir.vir_date DESC"
+            , Array($date_start, $date_end, $this->User->getId()));
+        if ($this->db->affectedRows() >= 1) {
+            while ($don = $this->db->fetchArray($res)) {
+                $txt->addLine(array($don['vir_date'], $don['vir_amount'], $don['usr_firstname'], $don['usr_lastname'], "out"));
+            }
+            return $txt->csvArrays();
+        } else {
+            return $txt->csvArrays();
+        }
+    }
+
+    /**
+     * Fonction qui renvoie l'historique des virements reçu par l'utilisateur entre 2 dates
+     * 
+     * @param int $date_start
+     * @param int $date_end
+     * @return string $csv
+     */
+    public function getHistoriqueVirementIn($date_start, $date_end) {
+        $txt = new ComplexData(array());
+        $res = $this->db->query("SELECT UNIX_TIMESTAMP(vir.vir_date) AS vir_date, vir.vir_amount, usr_from.usr_firstname, usr_from.usr_lastname 
+            FROM t_virement_vir vir, ts_user_usr usr_from  
+            WHERE vir.usr_id_from = usr_from.usr_id AND UNIX_TIMESTAMP(vir.vir_date) >= '%u' AND UNIX_TIMESTAMP(vir.vir_date) < '%u' AND vir.usr_id_to = '%u' ORDER BY vir.vir_date DESC"
+            , Array($date_start, $date_end, $this->User->getId()));
+        if ($this->db->affectedRows() >= 1) {
+            while ($don = $this->db->fetchArray($res)) {
+                $txt->addLine(array($don['vir_date'], $don['vir_amount'], $don['usr_firstname'], $don['usr_lastname'], "in"));
+            }
+            return $txt->csvArrays();
+        } else {
+            return $txt->csvArrays();
+        }
     }	
 
      /**
@@ -239,10 +285,19 @@ class MADMIN extends WsdlBase {
      * 
      * @param int $amount montant du virement en centimes
      * @param int $userID Id de la personne a qui l'on vire de l'argent.
-     * @return int $credit
+     * @return int $error (1 c'est que tout va bien sinon faut aller voir le code d'erreur)
      */
     public function transfert($amount, $userID) {
-        return 430;
+        if($this->getCredit() < $amount) {
+            return 462; // PAS ASSEZ D'ARGENT
+        } else if($this->User->getId() == $userID){
+            return 464; // Petit malin, se virer de l'argent à soi même n'a aucun sens !
+        } else {
+            $this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit - '%u') WHERE usr_id = '%u';", Array($amount, $this->User->getId()));
+            $this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id = '%u';", Array($amount, $userID));
+            $this->db->query(("INSERT INTO t_virement_vir (vir_date, vir_amount, usr_id_from, usr_id_to) VALUES (NOW(), '%u', '%u', '%u')"), array($amount, $this->User->getId(), $userID));
+            return 1;
+        }
     }   
 	
 	
