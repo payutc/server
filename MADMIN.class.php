@@ -37,6 +37,7 @@ require_once 'class/ComplexData.class.php';
 require_once 'class/Paybox.class.php';
 require_once 'class/Cas.class.php';
 require_once 'config.inc.php';
+require_once 'class/Log.class.php';
 
 class MADMIN extends WsdlBase {
 
@@ -288,7 +289,10 @@ class MADMIN extends WsdlBase {
      * @return int $error (1 c'est que tout va bien sinon faut aller voir le code d'erreur)
      */
     public function transfert($amount, $userID) {
-        if($this->getCredit() < $amount) {
+        if($amount < 0) {
+            Log::write("TRANSFERT D'ARGENT : TENTATIVE DE FRAUDE... Montant négatif par l'userID ".$this->User->getId()." vers l'user ".$userID,10);
+            return 466; //C'est pas fair play de voler de l'argent à ces petits camarades...
+        } else if($this->getCredit() < $amount) {
             return 462; // PAS ASSEZ D'ARGENT
         } else if($this->User->getId() == $userID){
             return 464; // Petit malin, se virer de l'argent à soi même n'a aucun sens !
