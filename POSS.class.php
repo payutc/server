@@ -113,14 +113,10 @@ class POSS extends Buy {
 	 * @return String $csv
 	 */
 	public function getPropositions() {
-		if ($this->isLoadedSeller()) {
-			if ($this->isSeller() == 1) {
-				return parent::getPropositions($this->Seller);
-			} else {
-				return $this->isSeller();
-			}
+		if ($this->isSeller() == 1) {
+			return parent::getPropositions($this->Seller);
 		} else {
-			return 408;
+			return $this->isSeller();
 		}
 	}
 	
