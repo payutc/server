@@ -60,8 +60,10 @@ class MADMIN extends WsdlBase {
 	 */
     public function loginCas($ticket, $service) {
 		$login = Cas::authenticate($ticket, $service);
+        if ($login < 0) {
+            return -1;
+        }
 		$this->User = new User($login, 1, "", 0, 1, 0);
-		$this->Point = new Point(1);
 		return $this->User->getState();
     }
 
