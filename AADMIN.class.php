@@ -155,7 +155,24 @@ class AAdmin {
             	"name"=>$don['fun_name']);
         }
         return $fundations;
-	}	
+	}
+
+	/**
+	* Récuperer mes fundations (au sens de fundations sur les quels j'ai des droits)
+	* 
+	* @return array $fundation
+	*/
+	public function get_my_fundations() {
+		// TODO CHECK RIGHT GET FUNDATIONS
+		$fundations = array();
+		$res = $this->db->query("SELECT fun_id, fun_name FROM t_fundation_fun WHERE fun_removed = '0';");
+        while ($don = $this->db->fetchArray($res)) {
+            $fundations[]=array(
+            	"id"=>$don['fun_id'], 
+            	"name"=>$don['fun_name']);
+        }
+        return $fundations;
+	}
 
 
 	/*
