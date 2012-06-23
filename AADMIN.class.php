@@ -43,6 +43,7 @@ require_once 'class/User.class.php';
 	$right_fundation = array(2, 4, 5, 6);
 	$right_fundation_name = array("ADMIN", "GESARTICLE", "VENDRE", "TRESO");
 	$right_name_to_id = array("ADMIN"=>2, "GESARTICLE"=>6, "VENDRE"=>5, "TRESO"=>4);
+	$right_id_to_name = array(2=>"ADMIN", 6=>"GESARTICLE", 5=>"VENDRE", 4=>"TRESO");
 
 class AAdmin {
 	
@@ -85,18 +86,19 @@ class AAdmin {
     }
 	
 	/**
-	* Récupérer les informations sur une erreur à partir de son id.
+	* Récupérer un id d'utilisateur à partir d'un login
 	*
-	* @param int $id
-	* @return String $csv
+	* @param string $login
+	* @return array $return
 	*/
-	public function getErrorDetail($id) {
-		if (is_array($don = $this->db->fetchArray($this->db->query("SELECT err_code, err_name, err_description FROM ts_error_err WHERE err_code = '%u';", Array($id))))) {
-			$txt = new ComplexData(array($don['err_code'],$don['err_name'],$don['err_description']));
-			return $txt->csvArrays();
+	public function getUserIDfromLogin($login) {
+		$idUser = $this->db->result($this->db->query("SELECT usr_id FROM tj_usr_mol_jum WHERE jum_data='%s' AND mol_id='%u';", Array($login, 1)),0);
+		if ($this->db->affectedRows() == 1) {
+			return array("success"=>$idUser);
 		} else {
-			return "430";
+			return array("error"=>400, "error_msg"=>"Le login $login n'a donné aucun resultat.");
 		}
+		
 	}
 
 
@@ -307,6 +309,41 @@ class AAdmin {
 		return array("success"=>$id);
 	}
 
+	/**
+	* Supprime une categorie
+	*
+	* @param int $id
+	* @return array $result
+	*/
+	public function delete_categorie($id) {
+		// 1. GET THE ARTICLE
+		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
+FROM t_object_obj o
+LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
+LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.obj_type = 'category' AND o.obj_id = '%u';", array($id));
+        	if ($this->db->affectedRows() >= 1) {
+        		$don = $this->db->fetchArray($res);
+	        	$fundation=$don['fun_id'];
+	        } else {
+	        	return array("error"=>400, "error_msg"=>"La categorie à supprimer n'existe pas !");
+	       }		
+
+		// 2. TODO CHECK RIGHT "GESARTICLE" IN THIS FUNDATION
+
+	    // 3. CHECK THERE IS NO CHILDREN
+		$res = $this->db->query("SELECT o.obj_id
+FROM t_object_obj o, tj_object_link_oli WHERE o.obj_id = obj_id_child
+AND o.obj_removed = '0' AND obj_id_parent = '%u';", array($id));
+        	if ($this->db->affectedRows() >= 1) {
+	        	return array("error"=>400, "error_msg"=>"La categorie à encore des enfants!");
+	       }	
+
+
+	    // 4. REMOVE THE CATEGORY
+	    $this->db->query("UPDATE t_object_obj SET  `obj_removed` = '1' WHERE  `obj_id` = '%u';",array($id));
+
+		return array("success"=>"ok");
+	}
 
 	/**
 	* Retourne les categories
@@ -476,18 +513,13 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
         	if ($this->db->affectedRows() >= 1) {
         		$don = $this->db->fetchArray($res);
 	        	$fundation=$don['fun_id'];
-	        	$old_parent=$don['obj_id_parent'];
-	        	$old_price=$don['pri_credit'];
 	        } else {
 	        	return array("error"=>400, "error_msg"=>"L'article à supprimer n'existe pas !");
 	       }		
 
+		// 2. TODO CHECK RIGHT TO DELETE ARTICLE IN THIS FUNDATION
 
-		// 2. TODO CHECK RIGHT TO EDIT ARTICLE IN THIS FUNDATION
-
-		// 3. TODO REMOVE THE PRICE ? // THE LINK BETWEEN PARENT AND PRODUCT ?
-
-	    // 6. EDIT THE ARTICLE NAME AND STOCK
+	    // 3. REMOVE THE ARTICLE
 	    $this->db->query("UPDATE t_object_obj SET  `obj_removed` = '1' WHERE  `obj_id` = '%u';",array($id));
 
 		return array("success"=>"ok");
@@ -566,7 +598,7 @@ ORDER BY obj_name;", Array($id));
 		    return array("error"=>400, "error_msg"=>"Vous ne pouvez pas donner ce type de droit avec cette fonction.");
 		}
 		$right_id = $right_name_to_id[$right];
-		
+
 		// 2. CHECK USER IS ADMIN-FUNDATION OR ADMIN-PAYUTC
 		$res = $this->db->query("SELECT jur_id FROM tj_usr_rig_jur WHERE usr_id = '%u' AND (rig_id = '1' OR (rig_id = '2' AND fun_id = '%u'));", array($this->user->getId(), $fun_id));
     	if ($this->db->affectedRows() == 0) {
@@ -623,7 +655,7 @@ ORDER BY obj_name;", Array($id));
 	* @return array $result
 	*/
 	public function get_rights_fundation($fun_id){
-		global $right_admin, $right_fundation;
+		global $right_admin, $right_fundation, $right_id_to_name;
 		// 1. CHECK USER IS ADMIN-FUNDATION OR ADMIN-PAYUTC
 		$res = $this->db->query("SELECT jur_id FROM tj_usr_rig_jur WHERE usr_id = '%u' AND (rig_id = '1' OR (rig_id = '2' AND fun_id = '%u'));", array($this->user->getId(), $fun_id));
     	if ($this->db->affectedRows() == 0) {
@@ -632,13 +664,16 @@ ORDER BY obj_name;", Array($id));
 
         // 2. Puisqu'on a le droit, au travail
 		$rights = array();
-        $res = $this->db->query("SELECT usr_id, rig_id, fun_id
-FROM tj_usr_rig_jur
-WHERE fun_id = '%u' AND usr_id IS NOT NULL;", Array($fun_id));
+        $res = $this->db->query("SELECT u.usr_id, u.usr_firstname, u.usr_lastname, u.usr_nickname, j.rig_id, j.fun_id
+FROM tj_usr_rig_jur j, ts_user_usr u
+WHERE j.usr_id=u.usr_id AND fun_id = '%u' AND j.usr_id IS NOT NULL ORDER BY j.rig_id;", Array($fun_id));
         while ($don = $this->db->fetchArray($res)) {
             $rights[]=array(
             	"usr_id"=>$don['usr_id'], 
-            	"rig_id"=>$don['rig_id']);
+            	"usr_firstname"=>$don['usr_firstname'], 
+            	"usr_lastname"=>$don['usr_lastname'], 
+            	"usr_login"=>$don['usr_nickname'], 
+            	"rig_id"=>$right_id_to_name[$don['rig_id']]);
         }
         return array("success"=>$rights);
 	}
