@@ -129,7 +129,7 @@ class AAdmin {
 	* Ajoute une fundation
 	*
 	* @param string $nom
-	* @return int $fundation
+	* @return array $fundation
 	*/
 	public function add_fundation($nom) {
 		// TODO CHECK RIGHT ADD A FUNDATION
@@ -137,16 +137,16 @@ class AAdmin {
               $this->db->query(
                   "INSERT INTO  t_fundation_fun (`fun_id` ,`fun_name` ,`fun_removed`)VALUES (NULL ,  '%s',  '0');", 
                   array($nom)));
-		return $fundation_id;
+		return array("success"=>$fundation_id);
 	}	
 
 	/**
 	* Récuperer les fundations
 	* 
-	* @return array $fundation
+	* @return array $fundations
 	*/
 	public function get_fundations() {
-		// TODO CHECK RIGHT GET FUNDATIONS (Jusqu'a preuve du contraire ce droit est universel...)
+		// TODO CHECK RIGHT ON FUNDATIONS 
 		$fundations = array();
 		$res = $this->db->query("SELECT fun_id, fun_name FROM t_fundation_fun WHERE fun_removed = '0';");
         while ($don = $this->db->fetchArray($res)) {
@@ -154,24 +154,28 @@ class AAdmin {
             	"id"=>$don['fun_id'], 
             	"name"=>$don['fun_name']);
         }
-        return $fundations;
+        return array("success"=>$fundations);
 	}
 
 	/**
-	* Récuperer mes fundations (au sens de fundations sur les quels j'ai des droits)
+	* Récuperer les fundations
 	* 
+	* @param int $id
 	* @return array $fundation
 	*/
-	public function get_my_fundations() {
-		// TODO CHECK RIGHT GET FUNDATIONS
-		$fundations = array();
-		$res = $this->db->query("SELECT fun_id, fun_name FROM t_fundation_fun WHERE fun_removed = '0';");
-        while ($don = $this->db->fetchArray($res)) {
-            $fundations[]=array(
-            	"id"=>$don['fun_id'], 
-            	"name"=>$don['fun_name']);
+	public function get_fundation($id) {
+		// TODO CHECK RIGHT GET FUNDATION 
+		$res = $this->db->query("SELECT fun_id, fun_name FROM t_fundation_fun WHERE fun_removed = '0' AND fun_id = '%u';", array($id));
+        if ($this->db->affectedRows() >= 1) {
+        	$don = $this->db->fetchArray($res);
+	        return array("success" => 
+	        	array(
+            		"id"=>$don['fun_id'], 
+            		"name"=>$don['fun_name'])
+	        	);
+        } else {
+        	return array("error"=>421);
         }
-        return $fundations;
 	}
 
 
@@ -187,11 +191,24 @@ class AAdmin {
 	* @param string $nom
 	* @param int $parent
 	* @param int $fundation
-	* @return int $categorie
+	* @return array $categorie
 	*/
 	public function add_categorie($nom, $parent, $fundation) {
-		// TODO CHECK RIGHT ADD CATEGORIE ON FUNDATION
-		// TODO CHECK IF PARENT EXIST OR IF IT IS NULL
+		// 1. CHECK THE PARENT (AND IF TRUE SELECT THE TRUTH FUNDATION)
+		if($parent != null) {
+			$res = $this->db->query("SELECT fun_id FROM t_object_obj WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u';", array($parent));
+        	if ($this->db->affectedRows() >= 1) {
+        		$don = $this->db->fetchArray($res);
+	        	$fundation=$don['fun_id'];
+	        } else {
+	        	return array("error"=>400, "error_msg"=>"Le parent n'a pas été trouvé !");
+	        }
+		}
+
+		// 2. TODO CHECK RIGHT TO ADD CATEGORIE IN THIS FUNDATION
+
+
+		// 3. INSERTION DE LA CATEGORIE
 		$categorie_id = $this->db->insertId(
               $this->db->query(
                   "INSERT INTO t_object_obj (`obj_id`, `obj_name`, `obj_type`, `obj_stock`, `obj_single`, `img_id`, `fun_id`, `obj_removed`) 
@@ -202,8 +219,62 @@ class AAdmin {
                   "INSERT INTO tj_object_link_oli (`oli_id`, `obj_id_parent`, `obj_id_child`, `oli_step`, `oli_removed`) VALUES (NULL, '%u', '%u', '0', '0');", 
                   array($parent, $categorie_id));
 		}
-		return $categorie_id;
+
+		return array("success"=>$categorie_id);
 	}	
+
+
+	/**
+	* Edite une categorie
+	*
+	* @param int $id
+	* @param string $nom
+	* @param int $parent
+	* @return array $categorie
+	*/
+	public function edit_categorie($id, $nom, $parent) {
+		// 1. GET THE CATEGORIE
+		$res = $this->db->query("SELECT obj_id_parent, fun_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u';", array($id));
+        	if ($this->db->affectedRows() >= 1) {
+        		$don = $this->db->fetchArray($res);
+	        	$fundation=$don['fun_id'];
+	        	$old_parent=$don['obj_id_parent'];
+	        } else {
+	        	return array("error"=>400, "error_msg"=>"La catégorie à modifier n'existe pas !");
+	       }		
+
+
+		// 2. TODO CHECK RIGHT TO EDIT CATEGORIE IN THIS FUNDATION
+
+	    // 3. CHECK SI LE CHANGEMENT DE PARENT EST REALISABLE
+	    if($old_parent != $parent)
+	    {
+	    	if($parent == $id) {
+	    		return array("error"=>400, "error_msg"=>"Le parent ne peut pas être ta catégorie...");
+	    	}
+	    	$res = $this->db->query("SELECT fun_id FROM t_object_obj WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u';", array($parent));
+        	if ($this->db->affectedRows() >= 1) {
+        		$don = $this->db->fetchArray($res);
+	        	$new_fundation=$don['fun_id'];
+	        } else {
+	        	return array("error"=>400, "error_msg"=>"Le nouveau parent n'a pas été trouvé !");
+	        }
+	        if($new_fundation != $fundation) {
+	        	return array("error"=>400, "error_msg"=>"Impossible de mettre une catégorie dans une autre fundation...");
+	        }
+	    }
+
+		// 4. EDIT THE PARENT IF NECESSARY
+	    if($old_parent != $parent)
+	    {
+			return array("error"=>400, "error_msg"=>"Le changement de parent n'est pas encore codé !");
+		}
+
+	    // 5. EDIT THE CATEGORY
+	    $this->db->query("UPDATE t_object_obj SET  `obj_name` =  '%s' WHERE  `obj_id` = '%u';",array($nom, $id));
+
+		return array("success"=>$id);
+	}
 
 
 	/**
@@ -223,7 +294,7 @@ class AAdmin {
             	"parent_id"=>$don['obj_id_parent'],
             	"fun_id"=>$don['fun_id']);
         }
-        return $categories;
+        return array("success"=>$categories);
 	}
 
 	/**
@@ -237,13 +308,13 @@ class AAdmin {
 		$res = $this->db->query("SELECT obj_id, obj_name, obj_id_parent, fun_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u' ORDER BY obj_name;", array($nb));
         if ($this->db->affectedRows() >= 1) {
         	$don = $this->db->fetchArray($res);
-	        return array(
+	        return array("success"=>array(
             	"id"=>$don['obj_id'], 
             	"name"=>$don['obj_name'],
             	"parent_id"=>$don['obj_id_parent'],
-            	"fun_id"=>$don['fun_id']);
+            	"fun_id"=>$don['fun_id']));
 		} else {
-			return 402;
+			return array("error"=>"Cette catégorie ($nb) n'existe pas.");
 		}
 	}
 
@@ -289,14 +360,75 @@ class AAdmin {
                   array($article_id, $prix));
 
 			// ON RETOURNE L'ID D'ARTICLE
-			return $article_id;
+			return array("success"=>$article_id);
 
 
 		} else {
 			// LE PARENT N'EXISTE PAS
-			return 402;
+			return array("error"=>"Le parent demandé n'existe pas.");
 		}
 	}	
+
+	/**
+	* Edite un article
+	*
+	* @param int $id
+	* @param string $nom
+	* @param int $parent
+	* @param int $prix
+	* @param int $stock
+	* @return array $categorie
+	*/
+	public function edit_article($id, $nom, $parent, $prix, $stock) {
+		// 1. GET THE ARTICLE
+		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
+FROM t_object_obj o
+LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
+LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.obj_type = 'product' AND o.obj_id = '%u';", array($id));
+        	if ($this->db->affectedRows() >= 1) {
+        		$don = $this->db->fetchArray($res);
+	        	$fundation=$don['fun_id'];
+	        	$old_parent=$don['obj_id_parent'];
+	        	$old_price=$don['pri_credit'];
+	        } else {
+	        	return array("error"=>400, "error_msg"=>"L'article à modifier n'existe pas !");
+	       }		
+
+
+		// 2. TODO CHECK RIGHT TO EDIT ARTICLE IN THIS FUNDATION
+
+	    // 3. CHECK SI LE CHANGEMENT DE PARENT EST REALISABLE
+	    if($old_parent != $parent)
+	    {
+	    	$res = $this->db->query("SELECT fun_id FROM t_object_obj WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u';", array($parent));
+        	if ($this->db->affectedRows() >= 1) {
+        		$don = $this->db->fetchArray($res);
+	        	$new_fundation=$don['fun_id'];
+	        } else {
+	        	return array("error"=>400, "error_msg"=>"Le nouveau parent n'a pas été trouvé !");
+	        }
+	        if($new_fundation != $fundation) {
+	        	return array("error"=>400, "error_msg"=>"Impossible de mettre un article dans une autre fundation...");
+	        }
+	    }
+
+		// 4. EDIT THE PARENT IF NECESSARY
+	    if($old_parent != $parent)
+	    {
+			return array("error"=>400, "error_msg"=>"Le changement de parent n'est pas encore codé !");
+		}
+
+		// 5. EDIT THE PRICE IF NECESSARY
+		if($old_price != $prix)
+		{
+			return array("error"=>400, "error_msg"=>"Le changement de prix n'est pas encore codé !");
+		}
+
+	    // 6. EDIT THE ARTICLE NAME AND STOCK
+	    $this->db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_stock` = '%u' WHERE  `obj_id` = '%u';",array($nom, $stock, $id));
+
+		return array("success"=>$id);
+	}
 
 	/**
 	* Retourne les articles
@@ -320,7 +452,7 @@ ORDER BY obj_name;", Array());
             	"stock"=>$don['obj_stock'],
             	"price"=>$don['pri_credit']);
         }
-        return $articles;
+        return array("success"=>$articles);
 	}
 
 	/**
@@ -336,17 +468,18 @@ FROM t_object_obj o
 LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
 LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id 
 WHERE obj_removed = '0' AND o.obj_type = 'product' AND o.obj_id = '%u'
-ORDER BY obj_name;", Array($id));        if ($this->db->affectedRows() >= 1) {
+ORDER BY obj_name;", Array($id));
+        if ($this->db->affectedRows() >= 1) {
         	$don = $this->db->fetchArray($res);
-	        return array(
+	        return array("success"=>array(
             	"id"=>$don['obj_id'], 
             	"name"=>$don['obj_name'], 
             	"parent_id"=>$don['obj_id_parent'],
             	"fun_id"=>$don['fun_id'],
             	"stock"=>$don['obj_stock'],
-            	"price"=>$don['pri_credit']);
+            	"price"=>$don['pri_credit']));
 		} else {
-			return 402;
+			return array("error"=>"Cet article ($id) n'existe pas.");
 		}
 	}
 
