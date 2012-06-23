@@ -292,7 +292,7 @@ class AAdmin {
             	"id"=>$don['obj_id'], 
             	"name"=>$don['obj_name'],
             	"parent_id"=>$don['obj_id_parent'],
-            	"fun_id"=>$don['fun_id']);
+            	"fundation_id"=>$don['fun_id']);
         }
         return array("success"=>$categories);
 	}
@@ -312,7 +312,7 @@ class AAdmin {
             	"id"=>$don['obj_id'], 
             	"name"=>$don['obj_name'],
             	"parent_id"=>$don['obj_id_parent'],
-            	"fun_id"=>$don['fun_id']));
+            	"fundation_id"=>$don['fun_id']));
 		} else {
 			return array("error"=>"Cette catégorie ($nb) n'existe pas.");
 		}
@@ -448,7 +448,7 @@ ORDER BY obj_name;", Array());
             	"id"=>$don['obj_id'], 
             	"name"=>$don['obj_name'], 
             	"parent_id"=>$don['obj_id_parent'],
-            	"fun_id"=>$don['fun_id'],
+            	"fundation_id"=>$don['fun_id'],
             	"stock"=>$don['obj_stock'],
             	"price"=>$don['pri_credit']);
         }
@@ -475,7 +475,7 @@ ORDER BY obj_name;", Array($id));
             	"id"=>$don['obj_id'], 
             	"name"=>$don['obj_name'], 
             	"parent_id"=>$don['obj_id_parent'],
-            	"fun_id"=>$don['fun_id'],
+            	"fundation_id"=>$don['fun_id'],
             	"stock"=>$don['obj_stock'],
             	"price"=>$don['pri_credit']));
 		} else {
