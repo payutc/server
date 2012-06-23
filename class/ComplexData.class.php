@@ -75,7 +75,7 @@ class ComplexData {
 	        } else {
         	    $txt = $this->csvLine($this->array_data);
 		}
-	        return utf8_encode($txt);
+	        return $txt;
 	} else { return false; }
     }
     
