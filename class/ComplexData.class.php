@@ -75,7 +75,7 @@ class ComplexData {
 	        } else {
         	    $txt = $this->csvLine($this->array_data);
 		}
-	        return utf8_encode($txt);
+	        return $txt;
 	} else { return false; }
     }
     
@@ -86,7 +86,7 @@ class ComplexData {
      * @return string $csvLine
      */
     public function csvLine($line) {
-        return  utf8_encode('"'.implode('","', $line).'";'."\n");
+        return  '"'.implode('","', $line).'";'."\n";
     }
     
 }
