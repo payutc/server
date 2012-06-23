@@ -38,6 +38,12 @@ require_once 'class/Cas.class.php';
 require_once 'class/User.class.php';
 require_once 'class/User.class.php';
 
+// CONSTANTE POUR LES DROITS, A STOCKER DANS UN FICHIER A INCLURE
+	$right_admin = array(1, 2);
+	$right_fundation = array(2, 4, 5, 6);
+	$right_fundation_name = array("ADMIN", "GESARTICLE", "VENDRE", "TRESO");
+	$right_name_to_id = array("ADMIN"=>2, "GESARTICLE"=>6, "VENDRE"=>5, "TRESO"=>4);
+
 class AAdmin {
 	
 	protected $db;
@@ -178,6 +184,31 @@ class AAdmin {
         }
 	}
 
+	/**
+	* Récuperer les fundations ou j'ai le droit de faire...
+	* 
+	* @param string $right
+	* @return array $fundation
+	*/
+	public function get_fundations_with_right($right) {
+		global $right_admin, $right_fundation, $right_fundation_name, $right_name_to_id;
+		$fundations = array();
+
+		if(in_array($right, $right_fundation_name)) {
+			$res = $this->db->query("SELECT f.fun_id, f.fun_name 
+					FROM t_fundation_fun f, tj_usr_rig_jur r 
+					WHERE f.fun_id = r.fun_id AND r.usr_id = '%u' AND rig_id = '%u' GROUP BY f.fun_id, f.fun_name;", array($this->user->getId(), $right_name_to_id[$right]));
+		} else {
+			return array("error"=>400, "error_msg"=>"Le droit demandé n'a pas été reconnu.");
+		}
+
+        while ($don = $this->db->fetchArray($res)) {
+            $fundations[]=array(
+            	"id"=>$don['fun_id'], 
+            	"name"=>$don['fun_name']);
+        }
+        return array("success"=>$fundations);
+	}
 
 	/*
 
@@ -314,7 +345,7 @@ class AAdmin {
             	"parent_id"=>$don['obj_id_parent'],
             	"fundation_id"=>$don['fun_id']));
 		} else {
-			return array("error"=>"Cette catégorie ($nb) n'existe pas.");
+			return array("error"=>400, "error_msg"=>"Cette catégorie ($nb) n'existe pas.");
 		}
 	}
 
@@ -331,9 +362,9 @@ class AAdmin {
 	* @param int $stock
 	* @param int $parent
 	* @param int $prix
-	* @return int $categorie
+	* @return array $categorie
 	*/
-	public function add_article($nom, $stock, $parent, $prix) {
+	public function add_article($nom, $parent, $prix, $stock) {
 		// 1. GET THE PARENT
 		$res = $this->db->query("SELECT fun_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u' ORDER BY obj_name;", array($parent));
         if ($this->db->affectedRows() >= 1) {
@@ -431,6 +462,38 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 	}
 
 	/**
+	* Supprime un article
+	*
+	* @param int $id
+	* @return array $result
+	*/
+	public function delete_article($id) {
+		// 1. GET THE ARTICLE
+		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
+FROM t_object_obj o
+LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
+LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.obj_type = 'product' AND o.obj_id = '%u';", array($id));
+        	if ($this->db->affectedRows() >= 1) {
+        		$don = $this->db->fetchArray($res);
+	        	$fundation=$don['fun_id'];
+	        	$old_parent=$don['obj_id_parent'];
+	        	$old_price=$don['pri_credit'];
+	        } else {
+	        	return array("error"=>400, "error_msg"=>"L'article à supprimer n'existe pas !");
+	       }		
+
+
+		// 2. TODO CHECK RIGHT TO EDIT ARTICLE IN THIS FUNDATION
+
+		// 3. TODO REMOVE THE PRICE ? // THE LINK BETWEEN PARENT AND PRODUCT ?
+
+	    // 6. EDIT THE ARTICLE NAME AND STOCK
+	    $this->db->query("UPDATE t_object_obj SET  `obj_removed` = '1' WHERE  `obj_id` = '%u';",array($id));
+
+		return array("success"=>"ok");
+	}
+
+	/**
 	* Retourne les articles
 	* 
 	* @return array $articles
@@ -479,8 +542,105 @@ ORDER BY obj_name;", Array($id));
             	"stock"=>$don['obj_stock'],
             	"price"=>$don['pri_credit']));
 		} else {
-			return array("error"=>"Cet article ($id) n'existe pas.");
+			return array("error"=>400, "error_msg"=>"Cet article ($id) n'existe pas.");
 		}
+	}
+
+
+	/*
+	ICI LES FONCTIONS LIES AUX DROITS
+	*/
+
+	/**
+	* Donner un droit liant un user à une fundation.
+	*
+	* @param int $user_id
+	* @param string $right
+	* @param int $fun_id
+	* @return array $result
+	*/
+	public function set_right_fundation($user_id, $right, $fun_id){
+		global $right_admin, $right_fundation, $right_fundation_name, $right_name_to_id;
+		// 1. CHECK THE RIGHT CAN BE GIVEN BY THIS FUNCTION
+		if(!in_array($right, $right_fundation_name)) {
+		    return array("error"=>400, "error_msg"=>"Vous ne pouvez pas donner ce type de droit avec cette fonction.");
+		}
+		$right_id = $right_name_to_id[$right];
+		
+		// 2. CHECK USER IS ADMIN-FUNDATION OR ADMIN-PAYUTC
+		$res = $this->db->query("SELECT jur_id FROM tj_usr_rig_jur WHERE usr_id = '%u' AND (rig_id = '1' OR (rig_id = '2' AND fun_id = '%u'));", array($this->user->getId(), $fun_id));
+    	if ($this->db->affectedRows() == 0) {
+        	return array("error"=>400, "error_msg"=>"Vous n'avez pas le droit de donner ce droit.");
+        }
+
+        // 3. TODO :: VERIFIER QUE L'USER EXISTE ? (Si la DB check les foreign key, y'a pas besoin de le faire ici...)
+
+        // 4. Puisqu'on a le droit donnons le droit ^^
+		$jur_id = $this->db->insertId(
+              $this->db->query(
+                  "INSERT INTO tj_usr_rig_jur (`jur_id`, `usr_id`, `rig_id`, `per_id`, `fun_id`, `poi_id`, `jur_removed`) 
+                  VALUES (NULL, '%u', '%u', NULL, '%u', NULL, '0');", 
+                  array($user_id, $right_id, $fun_id)));        
+
+		return array("success"=>$jur_id);
+	}
+
+	/**
+	* Supprimer un droit
+	*
+	* @param int $user_id
+	* @param string $right
+	* @param int $fun_id
+	* @return array $result
+	*/
+	public function remove_right_fundation($user_id, $right, $fun_id){
+		global $right_admin, $right_fundation, $right_fundation_name, $right_name_to_id;
+		// 1. CHECK THE RIGHT CAN BE REMOVED BY THIS FUNCTION
+		if(!in_array($right, $right_fundation_name)) {
+		    return array("error"=>400, "error_msg"=>"Vous ne pouvez pas retirer ce type de droit avec cette fonction.");
+		}
+
+		$right_id = $right_name_to_id[$right];
+		// 2. CHECK USER IS ADMIN-FUNDATION OR ADMIN-PAYUTC
+		$res = $this->db->query("SELECT jur_id FROM tj_usr_rig_jur WHERE usr_id = '%u' AND (rig_id = '1' OR (rig_id = '2' AND fun_id = '%u'));", array($this->user->getId(), $fun_id));
+    	if ($this->db->affectedRows() == 0) {
+        	return array("error"=>400, "error_msg"=>"Vous n'avez pas le droit de retirer ce droit.");
+        }
+
+        // 4. Puisqu'on a le droit retirons le droit ^^
+		$jur_id = $this->db->insertId(
+              $this->db->query(
+                  "DELETE FROM tj_usr_rig_jur WHERE `usr_id` = '%u' AND `rig_id` = '%u' AND `fun_id` = '%u';", 
+                  array($user_id, $right_id, $fun_id)));        
+
+		return array("success"=>"deleted");
+	}
+
+	/**
+	* Récupérer les droits sur une fundation donné
+	*
+	* @param int $fun_id
+	* @return array $result
+	*/
+	public function get_rights_fundation($fun_id){
+		global $right_admin, $right_fundation;
+		// 1. CHECK USER IS ADMIN-FUNDATION OR ADMIN-PAYUTC
+		$res = $this->db->query("SELECT jur_id FROM tj_usr_rig_jur WHERE usr_id = '%u' AND (rig_id = '1' OR (rig_id = '2' AND fun_id = '%u'));", array($this->user->getId(), $fun_id));
+    	if ($this->db->affectedRows() == 0) {
+        	return array("error"=>400, "error_msg"=>"Vous n'avez pas le droit de demander ça.");
+        }
+
+        // 2. Puisqu'on a le droit, au travail
+		$rights = array();
+        $res = $this->db->query("SELECT usr_id, rig_id, fun_id
+FROM tj_usr_rig_jur
+WHERE fun_id = '%u' AND usr_id IS NOT NULL;", Array($fun_id));
+        while ($don = $this->db->fetchArray($res)) {
+            $rights[]=array(
+            	"usr_id"=>$don['usr_id'], 
+            	"rig_id"=>$don['rig_id']);
+        }
+        return array("success"=>$rights);
 	}
 
 
