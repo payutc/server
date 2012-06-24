@@ -149,12 +149,11 @@ class AAdmin {
 	}	
 
 	/**
-	* Récuperer les fundations
+	* Récuperer les fundations (ne nécessite pas de droit)
 	* 
 	* @return array $fundations
 	*/
 	public function get_fundations() {
-		// TODO CHECK RIGHT ON FUNDATIONS 
 		$fundations = array();
 		$res = $this->db->query("SELECT fun_id, fun_name FROM t_fundation_fun WHERE fun_removed = '0';");
         while ($don = $this->db->fetchArray($res)) {
@@ -166,13 +165,12 @@ class AAdmin {
 	}
 
 	/**
-	* Récuperer les fundations
+	* Récuperer une fundation (ne nécessite pas de droit)
 	* 
 	* @param int $id
 	* @return array $fundation
 	*/
 	public function get_fundation($id) {
-		// TODO CHECK RIGHT GET FUNDATION 
 		$res = $this->db->query("SELECT fun_id, fun_name FROM t_fundation_fun WHERE fun_removed = '0' AND fun_id = '%u';", array($id));
         if ($this->db->affectedRows() >= 1) {
         	$don = $this->db->fetchArray($res);
@@ -227,6 +225,8 @@ class AAdmin {
 	* @return array $categorie
 	*/
 	public function add_categorie($nom, $parent, $fundation) {
+		global $right_name_to_id;
+
 		// 1. CHECK THE PARENT (AND IF TRUE SELECT THE TRUTH FUNDATION)
 		if($parent != null) {
 			$res = $this->db->query("SELECT fun_id FROM t_object_obj WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u';", array($parent));
@@ -238,7 +238,13 @@ class AAdmin {
 	        }
 		}
 
-		// 2. TODO CHECK RIGHT TO ADD CATEGORIE IN THIS FUNDATION
+		// 2. CHECK RIGHT TO ADD CATEGORIE IN THIS FUNDATION
+		$res = $this->db->query("SELECT f.fun_id, f.fun_name 
+					FROM t_fundation_fun f, tj_usr_rig_jur r 
+					WHERE f.fun_id = r.fun_id AND r.usr_id = '%u' AND rig_id = '%u' AND f.fun_id = '%u';", array($this->user->getId(), $right_name_to_id["GESARTICLE"], $fundation));
+		if ($this->db->affectedRows() == 0) {
+	        return array("error"=>400, "error_msg"=>"Tu ne sembles pas avoir les droits pour ajouter une catégorie dans cette fundation !");
+	    }	
 
 
 		// 3. INSERTION DE LA CATEGORIE
@@ -266,18 +272,26 @@ class AAdmin {
 	* @return array $categorie
 	*/
 	public function edit_categorie($id, $nom, $parent) {
+		global $right_name_to_id;
 		// 1. GET THE CATEGORIE
-		$res = $this->db->query("SELECT obj_id_parent, fun_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u';", array($id));
+		$res = $this->db->query("SELECT obj_id_parent, fun_id, oli_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u';", array($id));
         	if ($this->db->affectedRows() >= 1) {
         		$don = $this->db->fetchArray($res);
 	        	$fundation=$don['fun_id'];
 	        	$old_parent=$don['obj_id_parent'];
+	        	$oli_id=$don['oli_id'];
 	        } else {
 	        	return array("error"=>400, "error_msg"=>"La catégorie à modifier n'existe pas !");
 	       }		
 
 
-		// 2. TODO CHECK RIGHT TO EDIT CATEGORIE IN THIS FUNDATION
+		// 2. CHECK RIGHT TO EDIT CATEGORIE IN THIS FUNDATION
+		$res = $this->db->query("SELECT f.fun_id, f.fun_name 
+					FROM t_fundation_fun f, tj_usr_rig_jur r 
+					WHERE f.fun_id = r.fun_id AND r.usr_id = '%u' AND rig_id = '%u' AND f.fun_id = '%u';", array($this->user->getId(), $right_name_to_id["GESARTICLE"], $fundation));
+		if ($this->db->affectedRows() == 0) {
+	        return array("error"=>400, "error_msg"=>"Tu ne sembles pas avoir les droits pour éditer une catégorie dans cette fundation !");
+	    }	
 
 	    // 3. CHECK SI LE CHANGEMENT DE PARENT EST REALISABLE
 	    if($old_parent != $parent)
@@ -300,7 +314,7 @@ class AAdmin {
 		// 4. EDIT THE PARENT IF NECESSARY
 	    if($old_parent != $parent)
 	    {
-			return array("error"=>400, "error_msg"=>"Le changement de parent n'est pas encore codé !");
+	    	$this->db->query("UPDATE tj_object_link_oli SET  `obj_id_parent` =  '%u' WHERE  `oli_id` = '%u';",array($parent, $oli_id));
 		}
 
 	    // 5. EDIT THE CATEGORY
@@ -316,6 +330,7 @@ class AAdmin {
 	* @return array $result
 	*/
 	public function delete_categorie($id) {
+		global $right_name_to_id;
 		// 1. GET THE ARTICLE
 		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
 FROM t_object_obj o
@@ -328,7 +343,13 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 	        	return array("error"=>400, "error_msg"=>"La categorie à supprimer n'existe pas !");
 	       }		
 
-		// 2. TODO CHECK RIGHT "GESARTICLE" IN THIS FUNDATION
+		// 2. CHECK RIGHT "GESARTICLE" IN THIS FUNDATION
+		$res = $this->db->query("SELECT f.fun_id, f.fun_name 
+					FROM t_fundation_fun f, tj_usr_rig_jur r 
+					WHERE f.fun_id = r.fun_id AND r.usr_id = '%u' AND rig_id = '%u' AND f.fun_id = '%u';", array($this->user->getId(), $right_name_to_id["GESARTICLE"], $fundation));
+		if ($this->db->affectedRows() == 0) {
+	        return array("error"=>400, "error_msg"=>"Tu ne sembles pas avoir les droits pour supprimer une catégorie dans cette fundation !");
+	    }	
 
 	    // 3. CHECK THERE IS NO CHILDREN
 		$res = $this->db->query("SELECT o.obj_id
@@ -352,9 +373,19 @@ AND o.obj_removed = '0' AND obj_id_parent = '%u';", array($id));
 	* @return array $categories
 	*/
 	public function get_categories() {
-		// TODO : OBTENIR QUE LES CATEGORIES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
+		global $right_name_to_id;
+		// OBTENIR QUE LES CATEGORIES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
 		$categories = array();
-		$res = $this->db->query("SELECT obj_id, obj_name, obj_id_parent, fun_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' ORDER BY obj_name;");
+		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id 
+FROM tj_usr_rig_jur tj, t_object_obj o
+LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
+WHERE 
+tj.fun_id = o.fun_id 
+AND obj_removed = '0' 
+AND obj_type = 'category' 
+AND tj.rig_id = '%u'
+AND usr_id = '%u'
+ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId()));
         while ($don = $this->db->fetchArray($res)) {
             $categories[]=array(
             	"id"=>$don['obj_id'], 
@@ -372,8 +403,18 @@ AND o.obj_removed = '0' AND obj_id_parent = '%u';", array($id));
 	* @return array $categories
 	*/
 	public function get_categorie($nb) {
-		// TODO : OBTENIR QUE LES CATEGORIES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
-		$res = $this->db->query("SELECT obj_id, obj_name, obj_id_parent, fun_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u' ORDER BY obj_name;", array($nb));
+		global $right_name_to_id;
+		// OBTENIR QUE LES CATEGORIES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
+$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id 
+FROM tj_usr_rig_jur tj, t_object_obj o
+LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
+WHERE 
+tj.fun_id = o.fun_id 
+AND obj_removed = '0' 
+AND obj_type = 'category' 
+AND tj.rig_id = '%u'
+AND usr_id = '%u'
+AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId(), $nb));
         if ($this->db->affectedRows() >= 1) {
         	$don = $this->db->fetchArray($res);
 	        return array("success"=>array(
@@ -382,7 +423,7 @@ AND o.obj_removed = '0' AND obj_id_parent = '%u';", array($id));
             	"parent_id"=>$don['obj_id_parent'],
             	"fundation_id"=>$don['fun_id']));
 		} else {
-			return array("error"=>400, "error_msg"=>"Cette catégorie ($nb) n'existe pas.");
+			return array("error"=>400, "error_msg"=>"Cette catégorie ($nb) n'existe pas, ou vous n'avez pas les droits dessus.");
 		}
 	}
 
@@ -542,7 +583,7 @@ ORDER BY obj_name;", Array());
             $articles[]=array(
             	"id"=>$don['obj_id'], 
             	"name"=>$don['obj_name'], 
-            	"parent_id"=>$don['obj_id_parent'],
+            	"categorie_id"=>$don['obj_id_parent'],
             	"fundation_id"=>$don['fun_id'],
             	"stock"=>$don['obj_stock'],
             	"price"=>$don['pri_credit']);
@@ -569,7 +610,7 @@ ORDER BY obj_name;", Array($id));
 	        return array("success"=>array(
             	"id"=>$don['obj_id'], 
             	"name"=>$don['obj_name'], 
-            	"parent_id"=>$don['obj_id_parent'],
+            	"categorie_id"=>$don['obj_id_parent'],
             	"fundation_id"=>$don['fun_id'],
             	"stock"=>$don['obj_stock'],
             	"price"=>$don['pri_credit']));
