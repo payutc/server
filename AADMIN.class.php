@@ -36,14 +36,14 @@ require_once 'class/Point.class.php';
 require_once 'class/ComplexData.class.php';
 require_once 'class/Cas.class.php';
 require_once 'class/User.class.php';
-require_once 'class/User.class.php';
+require_once 'class/PlageHoraire.class.php';
 
 // CONSTANTE POUR LES DROITS, A STOCKER DANS UN FICHIER A INCLURE
 	$right_admin = array(1, 2);
 	$right_fundation = array(2, 4, 5, 6);
 	$right_fundation_name = array("ADMIN", "GESARTICLE", "VENDRE", "TRESO");
-	$right_name_to_id = array("ADMIN"=>2, "GESARTICLE"=>6, "VENDRE"=>5, "TRESO"=>4);
-	$right_id_to_name = array(2=>"ADMIN", 6=>"GESARTICLE", 5=>"VENDRE", 4=>"TRESO");
+	$right_name_to_id = array("ADMIN"=>2, "GESARTICLE"=>6, "VENDRE"=>5, "TRESO"=>4, "POI-FUNDATION"=>7);
+	$right_id_to_name = array(2=>"ADMIN", 6=>"GESARTICLE", 5=>"VENDRE", 4=>"TRESO", 7=>"POI-FUNDATION");
 
 class AAdmin {
 	
@@ -395,6 +395,41 @@ ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId()
         }
         return array("success"=>$categories);
 	}
+
+	/**
+	* Retourne les categories d'un fundation
+	* 
+	* @param int $fun_id
+	* @param int $onlyFirstLevel
+	* @return array $categories
+	*/
+	public function get_categories_by_fundation_id($fun_id, $onlyFirstLevel) {
+		global $right_name_to_id;
+		$categories = array();
+		$level="";
+		if($onlyFirstLevel == 1) { $level = "AND oli.obj_id_parent IS NULL "; }
+		$res = $this->db->query("SELECT o.obj_id, o.obj_name, oli.obj_id_parent, o.fun_id 
+FROM tj_usr_rig_jur tj, t_object_obj o
+LEFT JOIN tj_object_link_oli oli ON o.obj_id = obj_id_child 
+WHERE 
+tj.fun_id = o.fun_id 
+AND obj_removed = '0' 
+AND obj_type = 'category' 
+AND tj.rig_id = '%u'
+AND usr_id = '%u'
+AND o.fun_id = '%u'
+$level
+ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId(), $fun_id));
+        while ($don = $this->db->fetchArray($res)) {
+            $categories[]=array(
+            	"id"=>$don['obj_id'], 
+            	"name"=>$don['obj_name'],
+            	"parent_id"=>$don['obj_id_parent'],
+            	"fundation_id"=>$don['fun_id']);
+        }
+        return array("success"=>$categories);
+	}
+
 
 	/**
 	* Retourne la categorie $nb
@@ -754,6 +789,87 @@ WHERE j.usr_id=u.usr_id AND fun_id = '%u' AND j.usr_id IS NOT NULL ORDER BY j.ri
         return array("success"=>$rights);
 	}
 
+	/*
+	ICI LES FONCTIONS LIES AUX POIS
+	*/
+
+	/** 
+	* Obtenir les pois d'une fundation
+	* @param int $fun_id
+	* @return array $result
+	*/
+	public function get_pois_fundation($fun_id) 
+	{
+		global $right_name_to_id;
+        $pois = array();
+        $res = $this->db->query("SELECT poi.poi_id, poi.poi_name
+FROM t_point_poi poi, tj_usr_rig_jur jur
+WHERE poi.poi_id = jur.poi_id AND fun_id = '%u' AND poi_removed = '0' AND jur.rig_id = '%u' ORDER BY poi_name;", Array($fun_id, $right_name_to_id["POI-FUNDATION"]));
+        while ($don = $this->db->fetchArray($res)) {
+            $pois[]=array(
+                "id"=>$don['poi_id'], 
+                "name"=>$don['poi_name']);
+        }
+        return array("success"=>$pois);
+	}
+
+	/*
+	ICI LES FONCTIONS LIES AUX PLAGE HORAIRE
+	*/
+
+	/**
+	* Ajouter une plage horaire
+	*
+	* @param int $time_start
+	* @param int $time_end
+	* @param int $poi_id
+	* @param int $fun_id
+	* @param string $name
+	* @return array $result
+	*/
+	public function add_plage_horaire($time_start, $time_end, $poi_id, $fun_id, $name)
+	{
+		$plage = new PlageHoraire($this->user, null, $time_start, $time_end, $poi_id, $fun_id, $name);
+		return $plage->insert();
+	}
+
+	/**
+	* Edite une plage horaire
+	*
+	* @param int $time_start
+	* @param int $time_end
+	* @param string $name
+	* @return array $result
+	*/
+	// TODO V0.2 ou V0.3 ...
+	/*public function edit_plage_horaire($id, $time_start, $time_end, $name)
+	{
+		$plage = new PlageHoraire($this->user, $id, $time_start, $time_end, NULL, NULL, $name);
+		return $plage->edit();
+	}*/
+
+	/** 
+	* Supprime une plage horaire
+	* @param int $id
+	* @return array $result
+	*/
+	public function rm_plage_horaire($id)
+	{
+		$plage = new PlageHoraire($this->user, $id, NULL, NULL, NULL, NULL, NULL);
+		return $plage->rm();
+	}
+
+
+	/** 
+	* Obtenir les plages horaires d'une fundation
+	* @param int $fun_id
+	* @return array $result
+	*/
+	public function get_plages_horaire_fundation($fun_id) 
+	{
+		$plage = new PlageHoraire($this->user, NULL, NULL, NULL, NULL, NULL, NULL);
+		return $plage->get_all_fundation($fun_id);
+	}
 
 
 }
