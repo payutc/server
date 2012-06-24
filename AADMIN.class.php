@@ -443,12 +443,20 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 	* @return array $categorie
 	*/
 	public function add_article($nom, $parent, $prix, $stock) {
+		global $right_name_to_id;
 		// 1. GET THE PARENT
 		$res = $this->db->query("SELECT fun_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u' ORDER BY obj_name;", array($parent));
         if ($this->db->affectedRows() >= 1) {
         	$don = $this->db->fetchArray($res);
 	        $fun_id=$don['fun_id'];
-	        // TODO CHECK IF USER HAD THE RIGHT TO ADD ARTICLE ON THIS FUNDATION
+	        
+	        // CHECK IF USER HAD THE RIGHT TO ADD ARTICLE ON THIS FUNDATION
+			$res = $this->db->query("SELECT f.fun_id, f.fun_name 
+						FROM t_fundation_fun f, tj_usr_rig_jur r 
+						WHERE f.fun_id = r.fun_id AND r.usr_id = '%u' AND rig_id = '%u' AND f.fun_id = '%u';", array($this->user->getId(), $right_name_to_id["GESARTICLE"], $fun_id));
+			if ($this->db->affectedRows() == 0) {
+		        return array("error"=>400, "error_msg"=>"Tu ne sembles pas avoir les droits pour ajouter un article dans cette fundation !");
+		    }	
 
 	        // 2. AJOUT DE L'ARTICLE
 	        // TODO : GERER QUAND LE STOCK EST A NULL ne pas mettre 0 mais NULL.
@@ -489,6 +497,7 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 	* @return array $categorie
 	*/
 	public function edit_article($id, $nom, $parent, $prix, $stock) {
+		global $right_name_to_id;
 		// 1. GET THE ARTICLE
 		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
 FROM t_object_obj o
@@ -504,7 +513,13 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 	       }		
 
 
-		// 2. TODO CHECK RIGHT TO EDIT ARTICLE IN THIS FUNDATION
+		// 2. CHECK RIGHT TO EDIT ARTICLE IN THIS FUNDATION
+		$res = $this->db->query("SELECT f.fun_id, f.fun_name 
+					FROM t_fundation_fun f, tj_usr_rig_jur r 
+					WHERE f.fun_id = r.fun_id AND r.usr_id = '%u' AND rig_id = '%u' AND f.fun_id = '%u';", array($this->user->getId(), $right_name_to_id["GESARTICLE"], $fundation));
+		if ($this->db->affectedRows() == 0) {
+	        return array("error"=>400, "error_msg"=>"Tu ne sembles pas avoir les droits pour editer un article dans cette fundation !");
+	    }	
 
 	    // 3. CHECK SI LE CHANGEMENT DE PARENT EST REALISABLE
 	    if($old_parent != $parent)
@@ -546,6 +561,7 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 	* @return array $result
 	*/
 	public function delete_article($id) {
+		global $right_name_to_id;
 		// 1. GET THE ARTICLE
 		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
 FROM t_object_obj o
@@ -558,7 +574,13 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 	        	return array("error"=>400, "error_msg"=>"L'article à supprimer n'existe pas !");
 	       }		
 
-		// 2. TODO CHECK RIGHT TO DELETE ARTICLE IN THIS FUNDATION
+		// 2. CHECK RIGHT TO DELETE ARTICLE IN THIS FUNDATION
+		$res = $this->db->query("SELECT f.fun_id, f.fun_name 
+					FROM t_fundation_fun f, tj_usr_rig_jur r 
+					WHERE f.fun_id = r.fun_id AND r.usr_id = '%u' AND rig_id = '%u' AND f.fun_id = '%u';", array($this->user->getId(), $right_name_to_id["GESARTICLE"], $fundation));
+		if ($this->db->affectedRows() == 0) {
+	        return array("error"=>400, "error_msg"=>"Tu ne sembles pas avoir les droits pour supprimer un article dans cette fundation !");
+	    }
 
 	    // 3. REMOVE THE ARTICLE
 	    $this->db->query("UPDATE t_object_obj SET  `obj_removed` = '1' WHERE  `obj_id` = '%u';",array($id));
@@ -572,13 +594,20 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 	* @return array $articles
 	*/
 	public function get_articles() {
+		global $right_name_to_id;
+		// OBTENIR QUE LES ARTICLES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
 		$articles = array();
-        $res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.obj_stock, p.pri_credit
-FROM t_object_obj o
+		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.obj_stock, p.pri_credit
+FROM tj_usr_rig_jur tj, t_object_obj o
 LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
 LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id 
-WHERE obj_removed = '0' AND obj_type = 'product' 
-ORDER BY obj_name;", Array());
+WHERE 
+tj.fun_id = o.fun_id 
+AND obj_removed = '0' 
+AND obj_type = 'product' 
+AND tj.rig_id = '%u'
+AND usr_id = '%u'
+ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId()));
         while ($don = $this->db->fetchArray($res)) {
             $articles[]=array(
             	"id"=>$don['obj_id'], 
@@ -598,13 +627,19 @@ ORDER BY obj_name;", Array());
 	* @return array $article
 	*/
 	public function get_article($id) {
-		// TODO : OBTENIR QUE LES ARTICLES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
+		global $right_name_to_id;
+		// OBTENIR QUE LES ARTICLES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
         $res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.obj_stock, p.pri_credit
-FROM t_object_obj o
+FROM tj_usr_rig_jur tj, t_object_obj o
 LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
 LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id 
-WHERE obj_removed = '0' AND o.obj_type = 'product' AND o.obj_id = '%u'
-ORDER BY obj_name;", Array($id));
+WHERE tj.fun_id = o.fun_id  
+AND obj_removed = '0' 
+AND o.obj_type = 'product' 
+AND o.obj_id = '%u' 
+AND tj.rig_id = '%u'
+AND usr_id = '%u'
+ORDER BY obj_name;", Array($id, $right_name_to_id["GESARTICLE"], $this->user->getId()));
         if ($this->db->affectedRows() >= 1) {
         	$don = $this->db->fetchArray($res);
 	        return array("success"=>array(
@@ -615,7 +650,7 @@ ORDER BY obj_name;", Array($id));
             	"stock"=>$don['obj_stock'],
             	"price"=>$don['pri_credit']));
 		} else {
-			return array("error"=>400, "error_msg"=>"Cet article ($id) n'existe pas.");
+			return array("error"=>400, "error_msg"=>"Cet article ($id) n'existe pas, ou vous n'avez pas les droits dessus.");
 		}
 	}
 
