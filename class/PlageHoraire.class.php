@@ -80,7 +80,15 @@ WHERE poi.poi_id = pla.poi_id AND pla.pla_id = '%u' ORDER BY pla.pla_start;", Ar
         if(!$right->check("POI-FUNDATION"))
             return array("error"=>400, "error_msg"=>"La fundation n'a pas le droti d'utiliser ce POI.");
         else {
-            // TODO VERIFIER QUE LA PLAGE N'ENTRE PAS EN COLISION
+            // VERIFICATION QUE LA PLAGE N'ENTRE PAS EN COLISION
+            $plages = array();
+            $res = $this->db->query("SELECT pla.pla_id, poi.poi_id, poi.poi_name, pla.pla_start, pla.pla_end, pla.pla_name
+    FROM t_plage_pla pla, t_point_poi poi
+    WHERE poi.poi_id = pla.poi_id AND pla.fun_id = '%u' AND pla.poi_id = '%u' AND pla.pla_start < '%u' AND pla.pla_end > '%u' ORDER BY pla.pla_start;", 
+    Array($this->fun_id, $this->poi_id, $this->time_end, $this->time_start));
+        if ($this->db->affectedRows() >= 1) {
+            return array("error"=>400, "error_msg"=>"Vous ne pouvez pas créer cette plage horaire, elle croise une autre plage sur le même point de vente.");
+        }
 
             // INSERTION
             $this->db->query(
