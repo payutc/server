@@ -71,7 +71,8 @@ class POSS2 {
 	 * @return array $state
 	*/
 	public function loadPos($ticket, $service, $poi_id, $fun_id) {
-		//$fun_id = 2;
+		if($fun_id == NULL)
+			$fun_id = 2; // TODO FAIRE UNE REQUETE POUR DEVINER QUEL EST LA FUNDATION (en general pour un poi donné et un user il y'a qu'un seul choix)
 		// TOUTE TENTATIVE DE LOADING, SUPPRIME UNE EVENTUELLE ANCIENNE SESSION
 		unset($this->Seller);
 		$ip = $this->getRemoteIp();
