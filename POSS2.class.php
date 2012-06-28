@@ -104,8 +104,13 @@ class POSS2 {
 	* @return array $state
 	*/
 	public function logout() {
-		unset($this->Seller);
-		return array("success"=>"ok");
+		if($this->isLoadedSeller)
+		{
+			unset($this->Seller);
+			return array("success"=>"ok");
+		} else {
+			return array("error"=>"Aucun seller n'est logué.");
+		}
 	}
 
 	/**
@@ -210,7 +215,7 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			return array("error"=>400, "error_msg"=>"Il n'y a pas de seller chargé.");
 		}
 	}
-	
+
 	/**
 	 * Transaction complète,
 	 * 		1. load le buyer
