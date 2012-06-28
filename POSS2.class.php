@@ -54,6 +54,14 @@ class POSS2 {
 	}
 
 	/**
+	 * Retourne l'url du CAS
+	 * @return array $url
+	 */
+	public function getCasUrl() {
+	 return array("success"=>Cas::getUrl());
+	}
+
+	/**
 	 * Charge le Seller sans mot de passe.
 	 * 
 	 * @param String $ticket
@@ -63,6 +71,7 @@ class POSS2 {
 	 * @return array $state
 	*/
 	public function loadPos($ticket, $service, $poi_id, $fun_id) {
+		//$fun_id = 2;
 		// TOUTE TENTATIVE DE LOADING, SUPPRIME UNE EVENTUELLE ANCIENNE SESSION
 		unset($this->Seller);
 		$ip = $this->getRemoteIp();
