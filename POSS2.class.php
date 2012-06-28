@@ -192,6 +192,26 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 	
 
 	/**
+	 * Obtenir les infos d'un buyer 
+	 *
+	 * @param String $badge_id
+	 * @return array $state
+	 */
+	public function getBuyerInfo($badge_id) {
+		if ($this->isLoadedSeller()) {
+			$buyer = new User($badge_id, MEAN_OF_LOGIN_BADGE, "", 0, 1, 1);
+			$state = $buyer->getState();
+			if($state == 403)
+				return array("error"=>403, "error_msg"=>"Ce badge à été bloqué. Il faut que l'utilisateur aille le débloquer sur internet.");
+			if($state != 1)
+				return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu...");
+			return array("success"=>array("firstname"=>$buyer->getFirstname(), "lastname"=>$buyer->getLastname(), "solde"=>$buyer->getCredit()));
+		} else {
+			return array("error"=>400, "error_msg"=>"Il n'y a pas de seller chargé.");
+		}
+	}
+	
+	/**
 	 * Transaction complète,
 	 * 		1. load le buyer
 	 * 		2. multiselect
