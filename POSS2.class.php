@@ -209,7 +209,7 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			// ON a déjà vérifier la liaison POI <=> Fundation <=> USER
 			// On vérifie que le produit fait bien partie de la fundation
 			// TODO : Vérifier la plage_horaire, le groupe alcool etc...
-			$objects_ids = explode(" ", $obj_ids);
+			$objects_ids = explode(" ", trim($obj_ids));
 			$obj_ids = array_unique($objects_ids);
 			$req = "SELECT o.obj_id, o.obj_name, o.obj_stock, o.obj_type, p.pri_credit
 FROM t_object_obj o
