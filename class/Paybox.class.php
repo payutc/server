@@ -80,7 +80,7 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
       $PBX .= " PBX_PORTEUR=".$this->User->getMail(); // mail du client
       //informations nécessaires aux traitements (réponse)
       $PBX .= " PBX_RETOUR=auto:A\;amount:M\;ident:R\;trans:T\;erreur:E\;sign:K";
-      $PBX .= " PBX_REPONDRE_A=".$_CONFIG['server_url']."/payboxretour.php";
+      $PBX .= " PBX_REPONDRE_A=".$_CONFIG['http_server_url']."/payboxretour.php";
       $PBX .= " PBX_EFFECTUE=$callback_url?paybox=effectue";
       $PBX .= " PBX_REFUSE=$callback_url?paybox=refuse";
       $PBX .= " PBX_ANNULE=$callback_url?paybox=annule";
