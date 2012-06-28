@@ -41,13 +41,12 @@ require_once 'class/CheckRight.class.php';
 
 define('MEAN_OF_LOGIN_BADGE', 5);
 
+
 class POSS2 {
 
 	protected $Seller;
 	protected $Point_id;
 	protected $Fun_id;
-
-
 
 	protected function getRemoteIp() {
 		return $_SERVER['REMOTE_ADDR'];
@@ -71,9 +70,6 @@ class POSS2 {
 	 * @return array $state
 	*/
 	public function loadPos($ticket, $service, $poi_id, $fun_id) {
-		if($fun_id == NULL)
-			$fun_id = 2; // TODO FAIRE UNE REQUETE POUR DEVINER QUEL EST LA FUNDATION (en general pour un poi donné et un user il y'a qu'un seul choix)
-		// TOUTE TENTATIVE DE LOADING, SUPPRIME UNE EVENTUELLE ANCIENNE SESSION
 		unset($this->Seller);
 		$ip = $this->getRemoteIp();
 		if($ticket == 42 && $service == 24)
@@ -90,7 +86,7 @@ class POSS2 {
 		}
 		$this->Point_id = $poi_id;
 		$this->Fun_id = $fun_id;
-		$right = new CheckRight($user->getId(), $this->Point_id, $this->Fun_id);
+		$right = new CheckRight($user->getId(), $this->Point_id, &$this->Fun_id);
 		if(!$right->check("VENDRE"))
             return array("error"=>400, "error_msg"=>"Vous n'avez pas le droit VENDRE sur cette fundation.");
         if(!$right->check("POI-FUNDATION"))
@@ -101,6 +97,17 @@ class POSS2 {
 		return array("success"=>"ok");
 	}
 	
+
+	/**
+	* Deconnexion
+	*
+	* @return array $state
+	*/
+	public function logout() {
+		unset($this->Seller);
+		return array("success"=>"ok");
+	}
+
 	/**
 	 * Check si le user est loggué
 	 * 
@@ -246,8 +253,10 @@ AND o.fun_id = '%u' AND (";
 			
 			foreach($objects_ids as $obj_id)
 	        {
+	        	// TODO FACTORISER L'INSERT
 	        	Db_buckutt::getInstance()->query(("INSERT INTO t_purchase_pur (pur_date, pur_type, obj_id, pur_price, usr_id_buyer, usr_id_seller, poi_id, fun_id, pur_ip) VALUES (NOW(), '%s', '%u', '%u', '%u', '%u', '%u', '%u', '%s')"), 
 	        		array("product", $obj_id, $articles[$obj_id]['pri_credit'], $buyer->getId(), $this->Seller->getId(), $this->Point_id, $this->Fun_id, $this->getRemoteIp()));
+	        	Db_buckutt::getInstance()->query("UPDATE t_object_obj SET obj_stock= (obj_stock - 1) WHERE obj_id='%u';", Array($obj_id));
 	        }
 
 	        // REtourner les infos sur l'utilisateur
