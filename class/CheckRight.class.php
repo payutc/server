@@ -33,7 +33,21 @@ class CheckRight {
         $this->db = Db_buckutt::getInstance();
         $this->user_id = $user_id;
         $this->poi_id = $poi_id;
-        $this->fun_id = $fun_id;
+        if($fun_id == NULL) {
+			$res = $this->db->query("SELECT tj1.fun_id FROM tj_usr_rig_jur tj1, tj_usr_rig_jur tj2 WHERE 
+			tj1.fun_id = tj2.fun_id
+			AND tj1.rig_id = '%u' 
+			AND tj1.usr_id = '%u'
+			AND tj2.rig_id = '%u'
+			AND tj2.poi_id = '%u'", array(5, $user_id, 7, $poi_id));
+			if ($this->db->affectedRows() >= 0) {
+				$don = $this->db->fetchArray($res);
+				$fun_id = $don['fun_id'];
+			}
+
+		}
+		$this->fun_id = $fun_id;
+
     }
 
     public function check($right) {
