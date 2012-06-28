@@ -78,7 +78,7 @@ WHERE poi.poi_id = pla.poi_id AND pla.pla_id = '%u' ORDER BY pla.pla_start;", Ar
         if(!$right->check("ADMIN"))
             return array("error"=>400, "error_msg"=>"Vous n'avez pas le droit ADMIN sur cette fundation.");
         if(!$right->check("POI-FUNDATION"))
-            return array("error"=>400, "error_msg"=>"La fundation n'a pas le droti d'utiliser ce POI.");
+            return array("error"=>400, "error_msg"=>"La fundation n'a pas le droit d'utiliser ce POI.");
         else {
             // VERIFICATION QUE LA PLAGE N'ENTRE PAS EN COLISION
             $plages = array();

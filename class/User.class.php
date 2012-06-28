@@ -331,7 +331,7 @@ class User {
 		} else{
 			$ajout= "/!\ pas BDE /!\ ";
 		}
-		return array($this->idUser, $this->getFirstname(), $this->getLastname(), ($ajout.$this->getNickname()), $this->getIdPhoto(), $this->credit);
+		return array($this->idUser, $this->getFirstname(), $this->getLastname(), $this->getNickname(), $this->getIdPhoto(), $this->credit);
 	}
 	
 	/**
