@@ -86,7 +86,7 @@ class ComplexData {
      * @return string $csvLine
      */
     public function csvLine($line) {
-        return  utf8_encode('"'.implode('","', $line).'";'."\n");
+        return  '"'.implode('","', $line).'";'."\n";
     }
     
 }

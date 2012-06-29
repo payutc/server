@@ -104,9 +104,10 @@ class POSS2 {
 	* @return array $state
 	*/
 	public function logout() {
-		if($this->isLoadedSeller)
+		if($this->isLoadedSeller())
 		{
 			unset($this->Seller);
+			session_destroy();
 			return array("success"=>"ok");
 		} else {
 			return array("error"=>"Aucun seller n'est logué.");
