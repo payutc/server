@@ -42,6 +42,7 @@ require_once 'class/Log.class.php';
 class MADMIN extends WsdlBase {
 
     private  $User;
+	private $loginToRegister;
 
     /**
      * Constructeur qui chope la conexion a la DB
@@ -56,15 +57,27 @@ class MADMIN extends WsdlBase {
 	 * 
 	 * @param String $ticket
 	 * @param String $service
-	 * @return int $state
+	 * @return array $state
 	 */
     public function loginCas($ticket, $service) {
 		$login = Cas::authenticate($ticket, $service);
         if ($login < 0) {
-            return -1;
+   			return array("error"=>-1, "error_msg"=>"Erreur de login CAS.");
         }
 		$this->User = new User($login, 1, "", 0, 1, 0);
-		return $this->User->getState();
+	
+		$r = $this->User->getState();
+		if($r == 405){
+			$this->loginToRegister = $login;
+			return array("error"=>$r, "error_msg"=>"Le user n'existe pas ici.");
+		}
+		elseif($r != 1) {
+			return array("error"=>$r, "error_msg"=>"Le user n'a pas pu être chargé.");
+		}
+		else {
+			return array("success"=>"ok");
+		}
+    }
     }
 
     /**
