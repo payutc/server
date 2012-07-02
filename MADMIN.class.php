@@ -85,6 +85,8 @@ class MADMIN extends WsdlBase {
 	 * @return array $state
 	 */
     public function register() {
+		global $_CONFIG;
+		
 		$this->User = new User($this->loginToRegister, 1, "", 0, 1, 0);
 	
 		$r = $this->User->getState();
@@ -94,7 +96,7 @@ class MADMIN extends WsdlBase {
 		}
 		
 		// On vérifie que le user est bien cotisant @TODO
-		if(!in_array($this->loginToRegister, $_CONFIG['users_demo'])){
+		if(!array_key_exists($this->loginToRegister, $_CONFIG['users_demo'])){
 			return array("error"=>400, "error_msg"=>"Le user n'est pas cotisant.");
 		}
 		
