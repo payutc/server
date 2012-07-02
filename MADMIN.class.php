@@ -110,7 +110,16 @@ class MADMIN extends WsdlBase {
         $this->db->query("INSERT INTO t_recharge_rec (rty_id, usr_id_buyer, usr_id_operator, poi_id, rec_date, rec_credit, rec_trace) VALUES ('%u', '%u', '%u', '%u', NOW(), '%u', '%s')", array(7, $userid, $userid, 1, $user[4], "Import demo"));
 		$this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id = '%u';", Array($user[4], $userid));
 		
-		return array("success"=>"ok");
+		// Maintenant on devrait pouvoir se logguer
+		$this->User = new User($this->loginToRegister, 1, "", 0, 1, 0);
+	
+		$r = $this->User->getState();
+		if($r != 1) {
+			return array("error"=>$r, "error_msg"=>"Le user n'a pas pu être chargé.");
+		}
+		else {
+			return array("success"=>"ok");
+		}
     }
 
     /**
