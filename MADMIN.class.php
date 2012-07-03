@@ -103,7 +103,7 @@ class MADMIN extends WsdlBase {
 		// On est là, on va pouvoir insérer
 		$user = $_CONFIG['users_demo'][$this->loginToRegister];
 		
-        $this->db->query("INSERT INTO ts_user_usr (usr_pwd, usr_firstname, usr_lastname, usr_nickname, usr_mail) VALUES ('81dc9bdb52d04dc20036dbd8313ed055', '%s', '%s', '%s', '%s')", array($user[0], $user[1], $this->loginToRegister, $user[3]));
+        $this->db->query("INSERT INTO ts_user_usr (usr_pwd, usr_firstname, usr_lastname, usr_nickname, usr_mail) VALUES ('81dc9bdb52d04dc20036dbd8313ed055', '%s', '%s', '%s', '%s')", array($user[1], $user[0], $this->loginToRegister, $user[3]));
 		$userid = $this->db->insertId();
 		$this->db->query("INSERT INTO tj_usr_mol_jum (usr_id, mol_id, jum_data) VALUES (%d, 1, '%s')", array($userid, $this->loginToRegister));
 		$this->db->query("INSERT INTO tj_usr_mol_jum (usr_id, mol_id, jum_data) VALUES (%d, 5, '%s')", array($userid, $user[2]));
