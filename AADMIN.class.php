@@ -69,6 +69,23 @@ class AAdmin {
 	 return Cas::getUrl();
 	}
 
+
+	/**
+	* Récupérer les informations sur une erreur à partir de son id.
+	*
+	* @param int $id
+	* @return String $csv
+	*/
+	public function getErrorDetail($id) {
+		if (is_array($don = $this->db->fetchArray($this->db->query("SELECT err_code, err_name, err_description FROM ts_error_err WHERE err_code = '%u';", Array($id))))) {
+			$txt = new ComplexData(array($don['err_code'],$don['err_name'],$don['err_description']));
+			return $txt->csvArrays();
+		} else {
+			return "430";
+		}
+	}
+	
+
 	/**
 	 * Connecter le user avec un ticket CAS.
 	 * 
