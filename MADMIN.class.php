@@ -100,6 +100,18 @@ class MADMIN extends WsdlBase {
 			return array("error"=>400, "error_msg"=>"Le user n'est pas cotisant.");
 		}
 		
+        // On récupére l'ancien solde et on le passe à zero.
+        $res = $this->db->query("SELECT osr_credit
+FROM `t_oldusr_osr` 
+WHERE osr_login = '%s'", Array($this->loginToRegister));
+        $solde = 0;
+        if ($this->db->affectedRows() >= 1) {
+            while ($don = $this->db->fetchArray($res)) {
+                $solde = $don['osr_credit'];
+            }
+        }
+
+
 		// On est là, on va pouvoir insérer
 		$user = $_CONFIG['users_demo'][$this->loginToRegister];
 		
@@ -110,7 +122,7 @@ class MADMIN extends WsdlBase {
 
 		
         $this->db->query("INSERT INTO t_recharge_rec (rty_id, usr_id_buyer, usr_id_operator, poi_id, rec_date, rec_credit, rec_trace) VALUES ('%u', '%u', '%u', '%u', NOW(), '%u', '%s')", array(7, $userid, $userid, 1, $user[4], "Import demo"));
-		$this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id = '%u';", Array($user[4], $userid));
+		$this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id = '%u';", Array($solde, $userid));
 		
 		// Maintenant on devrait pouvoir se logguer
 		$this->User = new User($this->loginToRegister, 1, "", 0, 1, 0);
