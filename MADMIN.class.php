@@ -111,17 +111,20 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
             }
         }
 
+        // TODO METTRE A 0 LE SOLDE
+
+        // Recuperer les infos de la DSI
+        $user = json_decode(file_get_contents("http://accounts.utc/picasso-ws/ws/getUserInfo?username=".$this->loginToRegister));
+
 
 		// On est là, on va pouvoir insérer
-		$user = $_CONFIG['users_demo'][$this->loginToRegister];
-		
-        $this->db->query("INSERT INTO ts_user_usr (usr_pwd, usr_firstname, usr_lastname, usr_nickname, usr_mail) VALUES ('81dc9bdb52d04dc20036dbd8313ed055', '%s', '%s', '%s', '%s')", array($user[1], $user[0], $this->loginToRegister, $user[3]));
+        $this->db->query("INSERT INTO ts_user_usr (usr_pwd, usr_firstname, usr_lastname, usr_nickname, usr_mail) VALUES ('81dc9bdb52d04dc20036dbd8313ed055', '%s', '%s', '%s', '%s')", array($user->firstName, $user->lastName, $user->username, $user->mail));
 		$userid = $this->db->insertId();
 		$this->db->query("INSERT INTO tj_usr_mol_jum (usr_id, mol_id, jum_data) VALUES (%d, 1, '%s')", array($userid, $this->loginToRegister));
-		$this->db->query("INSERT INTO tj_usr_mol_jum (usr_id, mol_id, jum_data) VALUES (%d, 5, '%s')", array($userid, $user[2]));
+		$this->db->query("INSERT INTO tj_usr_mol_jum (usr_id, mol_id, jum_data) VALUES (%d, 5, '%s')", array($userid, $user->cardSerialNumber));
 
 		
-        $this->db->query("INSERT INTO t_recharge_rec (rty_id, usr_id_buyer, usr_id_operator, poi_id, rec_date, rec_credit, rec_trace) VALUES ('%u', '%u', '%u', '%u', NOW(), '%u', '%s')", array(7, $userid, $userid, 1, $user[4], "Import demo"));
+        $this->db->query("INSERT INTO t_recharge_rec (rty_id, usr_id_buyer, usr_id_operator, poi_id, rec_date, rec_credit, rec_trace) VALUES ('%u', '%u', '%u', '%u', NOW(), '%u', '%s')", array(7, $userid, $userid, 1, $solde, "Import demo"));
 		$this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id = '%u';", Array($solde, $userid));
 		
 		// Maintenant on devrait pouvoir se logguer
