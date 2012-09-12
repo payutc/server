@@ -122,7 +122,7 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
 		$userid = $this->db->insertId();
 		$this->db->query("INSERT INTO tj_usr_mol_jum (usr_id, mol_id, jum_data) VALUES (%d, 1, '%s')", array($userid, $this->loginToRegister));
 		
-        $badge_id = $user->cardSerialNumber[6].$user->cardSerialNumber[7].$user->cardSerialNumber[4].$user->cardSerialNumber[5].$user->cardSerialNumber[3].$user->cardSerialNumber[2].$user->cardSerialNumber[1].$user->cardSerialNumber[0];
+        $badge_id = $user->cardSerialNumber[6].$user->cardSerialNumber[7].$user->cardSerialNumber[4].$user->cardSerialNumber[5].$user->cardSerialNumber[2].$user->cardSerialNumber[3].$user->cardSerialNumber[0].$user->cardSerialNumber[1];
         $this->db->query("INSERT INTO tj_usr_mol_jum (usr_id, mol_id, jum_data) VALUES (%d, 5, '%s')", array($userid, $badge_id));
 
 		
