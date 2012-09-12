@@ -95,10 +95,16 @@ class MADMIN extends WsdlBase {
 			return array("error"=>$r, "error_msg"=>"Le user existe déjà.");
 		}
 		
-		// On vérifie que le user est bien cotisant @TODO
-		if(!array_key_exists($this->loginToRegister, $_CONFIG['users_demo'])){
-			return array("error"=>400, "error_msg"=>"Le user n'est pas cotisant.");
-		}
+		// On vérifie que le user est bien cotisant
+
+        $array = json_decode(file_get_contents("http://assos.utc.fr/simde/api/v2.php?login=".$this->loginToRegister));
+        if($array->success == "ok") { 
+                if($type == "etudiant") // Les non etudiants sont membres d'honneur au bde normalement....
+                {
+                        $cotisant = ($array->data->cotisant == "true");
+                        if(!$cotisant) return array("error"=>400, "error_msg"=>"Le user n'est pas cotisant.");
+                }
+        }
 		
         // On récupére l'ancien solde et on le passe à zero.
         $res = $this->db->query("SELECT osr_credit
