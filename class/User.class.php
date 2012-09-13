@@ -553,11 +553,11 @@ class User {
 	* @return array $return
 	*/
 	public function getLastPurchase() {
-		$res = Db_buckutt::getInstance()->query("SELECT pur_id, obj_id, pur_price FROM t_purchase_pur WHERE UNIX_TIMESTAMP(pur_date) > (UNIX_TIMESTAMP(NOW()) - 900) AND usr_buyer_id = %u",array($this->idUser));
+		$res = Db_buckutt::getInstance()->query("SELECT pur_id, obj_id, pur_price FROM t_purchase_pur WHERE UNIX_TIMESTAMP(pur_date) > (UNIX_TIMESTAMP(NOW()) - 900) AND usr_id_buyer = %u",array($this->idUser));
 		$pur = array();
 		while ($don = Db_buckutt::getInstance()->fetchArray($res)) { $pur[$don['pur_id']] = $don;}
 		return $pur;
 	}
-	
+
 }
 ?>
