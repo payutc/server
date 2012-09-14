@@ -240,8 +240,8 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			if($res["usr_id_seller"] != $seller[0])
 				return array("error"=>400, "error_msg"=>"Tu ne peux pas annuler la vente d'un autre vendeur.");
 			// TODO CHECK TIME
-			$this->db->query("UPDATE t_purchase_pur SET pur_removed='1' WHERE pur_id='%u';", Array($purchase_id));
-			$this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id='%u';", Array($res["pur_price"], $res["usr_id_buyer"]));
+			Db_buckutt::getInstance()->query("UPDATE t_purchase_pur SET pur_removed='1' WHERE pur_id='%u';", Array($purchase_id));
+			Db_buckutt::getInstance()->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id='%u';", Array($res["pur_price"], $res["usr_id_buyer"]));
 
 
 			// RETOUR AVEC LES INFOS DE L'USER
