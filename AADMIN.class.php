@@ -494,7 +494,7 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 	* @param int $prix
 	* @return array $categorie
 	*/
-	public function add_article($nom, $parent, $prix, $stock) {
+	public function add_article($nom, $parent, $prix, $stock, $alcool) {
 		global $right_name_to_id;
 		// 1. GET THE PARENT
 		$res = $this->db->query("SELECT fun_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u' ORDER BY obj_name;", array($parent));
@@ -514,9 +514,9 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 	        // TODO : GERER QUAND LE STOCK EST A NULL ne pas mettre 0 mais NULL.
 	        $article_id = $this->db->insertId(
               $this->db->query(
-                  "INSERT INTO t_object_obj (`obj_id`, `obj_name`, `obj_type`, `obj_stock`, `obj_single`, `img_id`, `fun_id`, `obj_removed`) 
-                  VALUES (NULL, '%s', 'product', '%u', '0', NULL, '%u', '0');", 
-                  array($nom, $stock, $fun_id)));
+                  "INSERT INTO t_object_obj (`obj_id`, `obj_name`, `obj_type`, `obj_stock`, `obj_single`, `img_id`, `fun_id`, `obj_removed`, `obj_alcool`) 
+                  VALUES (NULL, '%s', 'product', '%u', '0', NULL, '%u', '0', '%u');", 
+                  array($nom, $stock, $fun_id, $alcool)));
 
 	        // 3. CREATION DU LIEN SUR LE PARENT
 			$this->db->query(
@@ -548,7 +548,7 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 	* @param int $stock
 	* @return array $categorie
 	*/
-	public function edit_article($id, $nom, $parent, $prix, $stock) {
+	public function edit_article($id, $nom, $parent, $prix, $stock, $alcool) {
 		global $right_name_to_id;
 		// 1. GET THE ARTICLE
 		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
@@ -601,7 +601,7 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 		}
 
 	    // 6. EDIT THE ARTICLE NAME AND STOCK
-	    $this->db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_stock` = '%u' WHERE  `obj_id` = '%u';",array($nom, $stock, $id));
+	    $this->db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_stock` = '%u', `obj_alcool` = '%u' WHERE  `obj_id` = '%u';",array($nom, $stock, $alcool, $id));
 
 		return array("success"=>$id);
 	}
@@ -649,7 +649,7 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 		global $right_name_to_id;
 		// OBTENIR QUE LES ARTICLES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
 		$articles = array();
-		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.obj_stock, p.pri_credit
+		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.obj_stock, o.obj_alcool, p.pri_credit
 FROM tj_usr_rig_jur tj, t_object_obj o
 LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
 LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id 
@@ -681,7 +681,7 @@ ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId()
 	public function get_article($id) {
 		global $right_name_to_id;
 		// OBTENIR QUE LES ARTICLES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
-        $res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.obj_stock, p.pri_credit
+        $res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.obj_stock, o.obj_alcool, p.pri_credit
 FROM tj_usr_rig_jur tj, t_object_obj o
 LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
 LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id 
