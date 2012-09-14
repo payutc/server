@@ -231,14 +231,35 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 	 */
 	public function cancel($purchase_id)
 	{
-		$req = Db_buckutt::getInstance()->query("SELECT pur_price, usr_id_buyer, usr_id_seller, pur_date FROM t_purchase_pur WHERE pur_id = %u",array($purchase_id));
-		$res = Db_buckutt::getInstance()->fetchArray($req);
-		$seller = $this->Seller->getIdentity();
-		if($res["usr_id_seller"] != $seller[0])
-			return array("error"=>400, "error_msg"=>"Tu ne peux pas annuler la vente d'un autre vendeur.");
-		// TODO CHECK TIME
-		$this->db->query("UPDATE t_purchase_pur SET pur_removed='1' WHERE pur_id='%u';", Array($purchase_id));
-		$this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id='%u';", Array($res["pur_price"], $res["usr_id_buyer"]));
+		if ($this->isLoadedSeller()) {
+
+			// ANNULATION
+			$req = Db_buckutt::getInstance()->query("SELECT pur_price, usr_id_buyer, usr_id_seller, pur_date FROM t_purchase_pur WHERE pur_id = %u",array($purchase_id));
+			$res = Db_buckutt::getInstance()->fetchArray($req);
+			$seller = $this->Seller->getIdentity();
+			if($res["usr_id_seller"] != $seller[0])
+				return array("error"=>400, "error_msg"=>"Tu ne peux pas annuler la vente d'un autre vendeur.");
+			// TODO CHECK TIME
+			$this->db->query("UPDATE t_purchase_pur SET pur_removed='1' WHERE pur_id='%u';", Array($purchase_id));
+			$this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id='%u';", Array($res["pur_price"], $res["usr_id_buyer"]));
+
+
+			// RETOUR AVEC LES INFOS DE L'USER
+			$buyer = new User($badge_id, MEAN_OF_LOGIN_BADGE, "", 0, 1, 1);
+			$state = $buyer->getState();
+			if($state == 403)
+				return array("error"=>403, "error_msg"=>"Ce badge à été bloqué. Il faut que l'utilisateur aille le débloquer sur internet.");
+			if($state != 1)
+				return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu...");
+			return array("success"=>array(
+										"firstname"=>$buyer->getFirstname(), 
+										"lastname"=>$buyer->getLastname(), 
+										"solde"=>$buyer->getCredit(),
+										"last_purchase"=>$buyer->getLastPurchase()
+								));
+		} else {
+			return array("error"=>400, "error_msg"=>"Il n'y a pas de seller chargé.");
+		}
 	}
 
 
