@@ -667,7 +667,8 @@ ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId()
             	"categorie_id"=>$don['obj_id_parent'],
             	"fundation_id"=>$don['fun_id'],
             	"stock"=>$don['obj_stock'],
-            	"price"=>$don['pri_credit']);
+            	"price"=>$don['pri_credit'],
+            	"alcool"=>$don['obj_alcool']);
         }
         return array("success"=>$articles);
 	}
@@ -700,7 +701,8 @@ ORDER BY obj_name;", Array($id, $right_name_to_id["GESARTICLE"], $this->user->ge
             	"categorie_id"=>$don['obj_id_parent'],
             	"fundation_id"=>$don['fun_id'],
             	"stock"=>$don['obj_stock'],
-            	"price"=>$don['pri_credit']));
+            	"price"=>$don['pri_credit'],
+            	"alcool"=>$don['obj_alcool']));
 		} else {
 			return array("error"=>400, "error_msg"=>"Cet article ($id) n'existe pas, ou vous n'avez pas les droits dessus.");
 		}
