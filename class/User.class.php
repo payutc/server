@@ -59,7 +59,8 @@ class User {
 	protected $droits = Array();
 	protected $db;
 	protected $adult;
-	
+	protected $msg_perso; // petit message imprimé en bas du ticket
+
 	/**
 	* Constructeur
 	* 
@@ -112,7 +113,7 @@ class User {
 	
 		//si on arrive jusque là, on peut charger le mec
 		$this->Ip = $ip;
-		$don = $this->db->fetchArray($this->db->query("SELECT usr_firstname, usr_lastname, usr_nickname, usr_adult, usr_mail, usr_credit, img_id FROM ts_user_usr WHERE usr_id = '%u';", Array($this->idUser)));		
+		$don = $this->db->fetchArray($this->db->query("SELECT usr_firstname, usr_lastname, usr_nickname, usr_adult, usr_msg_perso, usr_mail, usr_credit, img_id FROM ts_user_usr WHERE usr_id = '%u';", Array($this->idUser)));		
 		$this->lastname = $don['usr_lastname'];
 		$this->firstname = $don['usr_firstname'];
 		$this->nickname = $don['usr_nickname'];
@@ -120,6 +121,7 @@ class User {
 		$this->credit = $don['usr_credit'];
 		$this->idPhoto = $don['img_id'];
 		$this->adult = $don['usr_adult'];
+		$this->msg_perso = $don['usr_msg_perso'];
 			
 		$this->loadRights();
 	}
@@ -253,6 +255,15 @@ class User {
 	*/
 	public function getGroups() {
 		return $this->groups;
+	}
+
+	/**
+	* Retourne $msg_perso.
+	* 
+	* @return string $msg_perso
+	*/
+	public function getMsgPerso() {
+		return $this->msg_perso;
 	}
 	
 	/**

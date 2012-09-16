@@ -155,7 +155,8 @@ class POSS2 {
 	 */
 	public function getArticles() {
 		$isSeller = $this->isLoadedSeller();
-		if ($isSeller == 1) {
+		if ($isSeller '];
+== 1) {
 			//Proposition2::getAll($this->Seller, $this->Point_id, $this->Fun_id); <<-- Faudra copier coller la function dans une classe qui va bien et juste l'appeler...
 			$right_POI_FUNDATION = 7; // A IMPORTER DE JE NE SAIS OU.
 
@@ -332,7 +333,10 @@ AND o.fun_id = '%u' AND (";
 	        }
 
 	        // REtourner les infos sur l'utilisateur
-	        return array("success"=>array("firstname"=>$buyer->getFirstname(), "lastname"=>$buyer->getLastname(), "solde"=>$buyer->getCredit()));
+	        return array("success"=>array("firstname"=>$buyer->getFirstname(), 
+	        							  "lastname"=>$buyer->getLastname(), 
+	        							  "solde"=>$buyer->getCredit(),
+	        							  "msg_perso"=>$buyer->getMsgPerso()));
 
 
 		}
