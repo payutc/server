@@ -296,7 +296,7 @@ AND o.fun_id = '%u' AND (";
 			$alcool = false;
 	        while ($don = Db_buckutt::getInstance()->fetchArray($res)) 
 	        	{ 
-	        		if($don['o.obj_alcool'] > 0) { $alcool = true; }
+	        		if($don['obj_alcool'] > 0) { $alcool = true; }
 	        		$articles[$don['obj_id']] = $don;
 	        	}
 
