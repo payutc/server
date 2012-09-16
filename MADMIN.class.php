@@ -122,9 +122,10 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
         // Recuperer les infos de la DSI
         $user = json_decode(file_get_contents("http://accounts.utc/picasso-ws/ws/getUserInfo?username=".$this->loginToRegister));
 
+        if($user->legalAge) $adult = 1; else $adult = 0;
 
 		// On est là, on va pouvoir insérer
-        $this->db->query("INSERT INTO ts_user_usr (usr_pwd, usr_firstname, usr_lastname, usr_nickname, usr_mail) VALUES ('81dc9bdb52d04dc20036dbd8313ed055', '%s', '%s', '%s', '%s')", array($user->firstName, $user->lastName, $user->username, $user->mail));
+        $this->db->query("INSERT INTO ts_user_usr (usr_pwd, usr_firstname, usr_lastname, usr_nickname, usr_mail, usr_adult) VALUES ('81dc9bdb52d04dc20036dbd8313ed055', '%s', '%s', '%s', '%s', '%u')", array($user->firstName, $user->lastName, $user->username, $user->mail, $adult));
 		$userid = $this->db->insertId();
 		$this->db->query("INSERT INTO tj_usr_mol_jum (usr_id, mol_id, jum_data) VALUES (%d, 1, '%s')", array($userid, $this->loginToRegister));
 		

@@ -279,7 +279,7 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			// TODO : Vérifier la plage_horaire, le groupe alcool etc...
 			$objects_ids = explode(" ", trim($obj_ids));
 			$obj_ids = array_unique($objects_ids);
-			$req = "SELECT o.obj_id, o.obj_name, o.obj_stock, o.obj_type, p.pri_credit
+			$req = "SELECT o.obj_id, o.obj_name, o.obj_stock, o.obj_type, o.obj_alcool, p.pri_credit
 FROM t_object_obj o
 LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id 
 WHERE 
@@ -292,7 +292,12 @@ AND o.fun_id = '%u' AND (";
 			$req .= ")";
 			$res = Db_buckutt::getInstance()->query($req, array_merge(array($this->Fun_id),$obj_ids));
 			$articles = array();
-	        while ($don = Db_buckutt::getInstance()->fetchArray($res)) { $articles[$don['obj_id']] = $don;}
+			$alcool = false;
+	        while ($don = Db_buckutt::getInstance()->fetchArray($res)) 
+	        	{ 
+	        		if($don['o.obj_alcool'] > 0) { $alcool = true; }
+	        		$articles[$don['obj_id']] = $don;
+	        	}
 
 	        $total = 0;
 	        foreach($objects_ids as $obj_id)
@@ -303,6 +308,12 @@ AND o.fun_id = '%u' AND (";
 	        	} else {
 	        		return array("error"=>400, "error_msg"=>"L'article $obj_id n'est pas disponible à la vente.");
 	        	}
+	        }
+
+	        // Si alcool, vérifier que le buyer est majeur
+	        if($alcool) 
+	        {
+	        	if(!$buyer->isAdult()) { return array("error"=>400, "error_msg"=>"L'utilisateur est mineur il ne peut pas acheter d'alcool !", "usr_info"=>array("firstname"=>$buyer->getFirstname(), "lastname"=>$buyer->getLastname(), "solde"=>$buyer->getCredit())); }
 	        }
 
 			// Verifier que le buyer a assez d'argent

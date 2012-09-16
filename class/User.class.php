@@ -58,6 +58,7 @@ class User {
 	protected $max_fail_auth = 3; // Nombre max de mauvaises authentifications successives
 	protected $droits = Array();
 	protected $db;
+	protected $adult;
 	
 	/**
 	* Constructeur
@@ -111,13 +112,14 @@ class User {
 	
 		//si on arrive jusque là, on peut charger le mec
 		$this->Ip = $ip;
-		$don = $this->db->fetchArray($this->db->query("SELECT usr_firstname, usr_lastname, usr_nickname, usr_mail, usr_credit, img_id FROM ts_user_usr WHERE usr_id = '%u';", Array($this->idUser)));		
+		$don = $this->db->fetchArray($this->db->query("SELECT usr_firstname, usr_lastname, usr_nickname, usr_adult, usr_mail, usr_credit, img_id FROM ts_user_usr WHERE usr_id = '%u';", Array($this->idUser)));		
 		$this->lastname = $don['usr_lastname'];
 		$this->firstname = $don['usr_firstname'];
 		$this->nickname = $don['usr_nickname'];
 		$this->mail = $don['usr_mail'];
 		$this->credit = $don['usr_credit'];
 		$this->idPhoto = $don['img_id'];
+		$this->adult = $don['usr_adult'];
 			
 		$this->loadRights();
 	}
@@ -546,6 +548,25 @@ class User {
 			return 454;
 	}
 
+
+	/** 
+	*
+	*	Retourne si l'utilisateur est majeur
+	*
+	* @return bool $adult
+	*/
+	public function isAdult() {
+		if($this->adult == 1) { return true; } else {
+			// On verifie via l'api de la dsi si le statut de la personne à changé.
+			$user = json_decode(file_get_contents("http://accounts.utc/picasso-ws/ws/getUserInfo?username=".$this->loginToRegister));
+			if($user->legalAge) {
+				$this->db->query("UPDATE ts_user_usr SET usr_adult = '%u' WHERE usr_id = '%u';", Array(1, $this->idUser));
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
 
 	/**
 	* REtourner les derniers achats pour eventuel annulation
