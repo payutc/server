@@ -313,7 +313,7 @@ AND o.fun_id = '%u' AND (";
 	        // Si alcool, vérifier que le buyer est majeur
 	        if($alcool) 
 	        {
-	        	if(!$buyer->isAdult()) { return array("error"=>400, "error_msg"=>"L'utilisateur est mineur il ne peut pas acheter d'alcool !", "usr_info"=>array("firstname"=>$buyer->getFirstname(), "lastname"=>$buyer->getLastname(), "solde"=>$buyer->getCredit())); }
+	        	if($buyer->isAdult() == 0) { return array("error"=>400, "error_msg"=>"L'utilisateur est mineur il ne peut pas acheter d'alcool !", "usr_info"=>array("firstname"=>$buyer->getFirstname(), "lastname"=>$buyer->getLastname(), "solde"=>$buyer->getCredit())); }
 	        }
 
 			// Verifier que le buyer a assez d'argent

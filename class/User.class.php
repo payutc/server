@@ -564,17 +564,17 @@ class User {
 	*
 	*	Retourne si l'utilisateur est majeur
 	*
-	* @return bool $adult
+	* @return int $adult
 	*/
 	public function isAdult() {
-		if($this->adult == 1) { return true; } else {
+		if($this->adult == 1) { return 1; } else {
 			// On verifie via l'api de la dsi si le statut de la personne à changé.
 			$user = json_decode(file_get_contents("http://accounts.utc/picasso-ws/ws/getUserInfo?username=".$this->loginToRegister));
-			if($user->legalAge) {
+			if($user->legalAge == true) {
 				$this->db->query("UPDATE ts_user_usr SET usr_adult = '%u' WHERE usr_id = '%u';", Array(1, $this->idUser));
-				return true;
+				return 1;
 			} else {
-				return false;
+				return 0;
 			}
 		}
 	}
