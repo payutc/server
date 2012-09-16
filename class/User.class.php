@@ -575,7 +575,7 @@ class User {
 				return 1;
 			} else {
 				$this->db->query("UPDATE ts_user_usr SET usr_adult = '%u' WHERE usr_id = '%u';", Array(0, $this->idUser));
-				return 0;
+				return 2;
 			}
 		}
 	}
