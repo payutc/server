@@ -244,7 +244,7 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			// TODO CHECK TIME
 			Db_buckutt::getInstance()->query("UPDATE t_purchase_pur SET pur_removed='1' WHERE pur_id='%u';", Array($purchase_id));
 			Db_buckutt::getInstance()->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id='%u';", Array($res["pur_price"], $res["usr_id_buyer"]));
-			Db_buckutt::getInstance()->query("UPDATE t_object_obj SET obj_stock = (obj_stock - 1) WHERE obj_id='%u';", Array($res["obj_id"]));
+			Db_buckutt::getInstance()->query("UPDATE t_object_obj SET obj_stock = (obj_stock + 1) WHERE obj_id='%u';", Array($res["obj_id"]));
 
 		} else {
 			return array("error"=>400, "error_msg"=>"Il n'y a pas de seller chargé.");
