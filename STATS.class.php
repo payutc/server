@@ -125,6 +125,17 @@ obj_type = 'product'", array());
 	}
 
 
+	/** 
+	* Stats de base sur le nombre de personne et la sommde d'argent sur leur compte
+	*
+	* @return array $data
+	*/
+	public function stat_argent() {
+		$res = $this->db->query("SELECT COUNT( * ) , SUM( usr_credit ) FROM  `ts_user_usr`;");
+        $don = $this->db->fetchArray($res);
+        return array("success"=>$don);
+	}
+
 }
 
 
