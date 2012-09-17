@@ -332,10 +332,13 @@ AND o.fun_id = '%u' AND (";
 	        }
 
 	        // REtourner les infos sur l'utilisateur
+	        $msg = $buyer->getMsgPerso();
+	        if($msg == "") { $msg = "PICASSO'UTC :: T'es en retard"; }
+
 	        return array("success"=>array("firstname"=>$buyer->getFirstname(), 
 	        							  "lastname"=>$buyer->getLastname(), 
 	        							  "solde"=>$buyer->getCredit(),
-	        							  "msg_perso"=>$buyer->getMsgPerso()));
+	        							  "msg_perso"=>$msg));
 
 
 		}
