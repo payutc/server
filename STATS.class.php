@@ -79,8 +79,7 @@ class STATS {
 FROM t_object_obj o
 LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id 
 WHERE 
-obj_removed = '0' 
-AND obj_type = 'product'", array());
+obj_type = 'product'", array());
         while ($don = $this->db->fetchArray($res)) {
             $articles[]=array(
             	"id"=>$don['obj_id'], 
@@ -98,7 +97,7 @@ AND obj_type = 'product'", array());
 	*/
 	public function get_transactions() {
 		$transactions = array();
-		$res = $this->db->query("SELECT obj_id, usr_id_buyer, pur_date FROM t_purchase_pur;");
+		$res = $this->db->query("SELECT obj_id, usr_id_buyer, pur_date FROM t_purchase_pur WHERE pur_removed = '0';");
         while ($don = $this->db->fetchArray($res)) {
             $transactions[]=array(
             	"obj_id"=>$don['obj_id'], 
