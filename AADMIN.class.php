@@ -597,7 +597,7 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 		// 5. EDIT THE PRICE IF NECESSARY
 		if($old_price != $prix)
 		{
-			return array("error"=>400, "error_msg"=>"Le changement de prix n'est pas encore codé !");
+			return array("error"=>400, "error_msg"=>"Le changement de prix n'est pas encore codé ! $old_price => $prix");
 		}
 
 	    // 6. EDIT THE ARTICLE NAME AND STOCK
