@@ -278,7 +278,7 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 					$state = $buyer->getState();
 					if($state == 1) {
 						// UPDATE BADGE_ID
-						$this->db->query("UPDATE tj_usr_mol_jum SET jum_data = '%s' WHERE usr_id='%u' AND mol_id='%u'", array($badge_id, $buyer->getId(), MEAN_OF_LOGIN_BADGE));
+						Db_buckutt::getInstance()->query("UPDATE tj_usr_mol_jum SET jum_data = '%s' WHERE usr_id='%u' AND mol_id='%u'", array($badge_id, $buyer->getId(), MEAN_OF_LOGIN_BADGE));
 					} else {
 						return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu...");
 					}
