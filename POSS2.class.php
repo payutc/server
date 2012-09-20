@@ -272,7 +272,7 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			{
 				// CHECK BADGE ID IN API
 				$badge_id_dsi = $badge_id[6].$badge_id[7].$badge_id[4].$badge_id[5].$badge_id[2].$badge_id[3].$badge_id[0].$badge_id[1];
-				$user = json_decode(file_get_contents("http://accounts-test.utc/picasso-ws/ws/cardLookup?serialNumber=".$badge_id_dsi));
+				$user = json_decode(file_get_contents("http://accounts.utc/picasso-ws/ws/cardLookup?serialNumber=".$badge_id_dsi));
 				if($user->username) {
 					$buyer = new User($user->username, MEAN_OF_LOGIN_NICKNAME, "", 0, 1, 1);
 					$state = $buyer->getState();
