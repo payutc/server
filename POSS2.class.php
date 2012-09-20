@@ -40,7 +40,7 @@ require_once 'class/Cas.class.php';
 require_once 'class/CheckRight.class.php';
 
 define('MEAN_OF_LOGIN_BADGE', 5);
-
+define('MEAN_OF_LOGIN_NICKNAME', 1);
 
 class POSS2 {
 
@@ -268,11 +268,29 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			// Verifier que le buyer existe
 			$buyer = new User($badge_id, MEAN_OF_LOGIN_BADGE, "", 0, 1, 1);
 			$state = $buyer->getState();
+			if($state != 1)
+			{
+				// CHECK BADGE ID IN API
+				$badge_id_dsi = $badge_id[6].$badge_id[7].$badge_id[4].$badge_id[5].$badge_id[2].$badge_id[3].$badge_id[0].$badge_id[1];
+				$user = json_decode(file_get_contents("http://accounts-test.utc/picasso-ws/ws/cardLookup?serialNumber=".$badge_id_dsi));
+				if($user->username) {
+					$buyer = new User($user->username, MEAN_OF_LOGIN_NICKNAME, "", 0, 1, 1);
+					$state = $buyer->getState();
+					if($state == 1) {
+						// UPDATE BADGE_ID
+						$this->db->query("UPDATE tj_usr_mol_jum SET jum_data = '%s' WHERE usr_id='%u' AND mol_id='%u'", array($badge_id, $buyer->getId(), MEAN_OF_LOGIN_BADGE));
+					} else {
+						return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu...");
+					}
+				} else {
+					return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu..."); 
+				}
+			}
+		
 			if($state == 403)
 				return array("error"=>403, "error_msg"=>"Ce badge à été bloqué. Il faut que l'utilisateur aille le débloquer sur internet.");
-			if($state != 1)
-				return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu..."); // Enfait y'a pas que le badge qui peut entrer la mais bon c'est le plus fréquent...
-			
+
+
 			// Verifier que les objets sont en vente (+ leurs prix)
 			// ON a déjà vérifier la liaison POI <=> Fundation <=> USER
 			// On vérifie que le produit fait bien partie de la fundation
