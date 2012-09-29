@@ -72,10 +72,7 @@ class POSS2 {
 	public function loadPos($ticket, $service, $poi_id, $fun_id) {
 		unset($this->Seller);
 		$ip = $this->getRemoteIp();
-		if($ticket == 42 && $service == 24)
-			$login = "trecouvr";
-		else
-			$login = Cas::authenticate($ticket, $service);
+		$login = Cas::authenticate($ticket, $service);
 		if ($login < 0) {
 			return array("error"=>-1, "error_msg"=>"Erreur de login CAS.");
 		}
