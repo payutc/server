@@ -373,8 +373,7 @@ AND o.fun_id = '%u' AND (";
 		// Récupération de l'objet image
 		$image = new Image($img_id);
 		
-		// Création de deux ressources GD (un pour l'originale, un pour la resized)
-		$newgd = imagecreatetruecolor($outw, $outh);
+		// Création de l'image GD originale
 		$oldgd = imagecreatefromstring($image->getContent());
 		
 		// Handle no resize
@@ -382,6 +381,9 @@ AND o.fun_id = '%u' AND (";
 			$outw = imagesx($oldgd);
 		if($outh == 0)
 			$outh = imagesy($oldgd);
+		
+		// Création de l'image GD à sortir
+		$newgd = imagecreatetruecolor($outw, $outh);
 		
 		// Redimensionnement
 		imagecopyresampled($newgd, $oldgd, 0, 0, 0, 0, $outw, $outh, imagesx($oldgd), imagesy($oldgd));
