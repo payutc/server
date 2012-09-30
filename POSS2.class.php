@@ -360,6 +360,38 @@ AND o.fun_id = '%u' AND (";
 		else 
 			return array("error"=>400, "error_msg"=>"Il n'y a pas de seller chargé.");
 	}
+	
+	/**
+	 * Récupérer les infos sur une image.
+	 * 
+	 * @param int $img_id
+	 * @param int $outw Largeur de l'image
+	 * @param int $outh Hauteur de l'image
+	 * @return String $csv
+	 */
+	public function getImage64($img_id, $outw, $outh) {
+		// Récupération de l'objet image
+		$image = new Image($img_id);
+		
+		// Création de deux ressources GD (un pour l'originale, un pour la resized)
+		$newgd = imagecreatetruecolor($outw, $outh);
+		$oldgd = imagecreatefromstring($image->getContent());
+		
+		// Redimensionnement
+		imagecopyresampled($newgd, $oldgd, 0, 0, 0, 0, $outw, $outh, imagesx($oldgd), imagesy($oldgd));
+		
+		// Récupération et encodage en base64
+		ob_start();
+		imagepng($newgd);
+		$output = base64_encode(ob_get_contents());
+		ob_end_clean();
+		
+		// Retour s'il y a une image correcte
+		if($output != false)
+			return array("success"=> $output);
+		else
+			return array("error"=>400, "error_msg"=>"Image non trouvée.");
+	}
 }
 
 /*SOAP-ISATION PAR CLASSE*/
