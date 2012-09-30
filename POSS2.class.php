@@ -369,13 +369,19 @@ AND o.fun_id = '%u' AND (";
 	 * @param int $outh Hauteur de l'image
 	 * @return array $csv
 	 */
-	public function getImage64($img_id, $outw, $outh) {
+	public function getImage64($img_id, $outw = 0, $outh = 0) {
 		// Récupération de l'objet image
 		$image = new Image($img_id);
 		
 		// Création de deux ressources GD (un pour l'originale, un pour la resized)
 		$newgd = imagecreatetruecolor($outw, $outh);
 		$oldgd = imagecreatefromstring($image->getContent());
+		
+		// Handle no resize
+		if($outw == 0)
+			$outw = imagesx($oldgd);
+		if($outh == 0)
+			$outh = imagesy($oldgd);
 		
 		// Redimensionnement
 		imagecopyresampled($newgd, $oldgd, 0, 0, 0, 0, $outw, $outh, imagesx($oldgd), imagesy($oldgd));
