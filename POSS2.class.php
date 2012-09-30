@@ -367,7 +367,7 @@ AND o.fun_id = '%u' AND (";
 	 * @param int $img_id
 	 * @param int $outw Largeur de l'image
 	 * @param int $outh Hauteur de l'image
-	 * @return String $csv
+	 * @return array $csv
 	 */
 	public function getImage64($img_id, $outw, $outh) {
 		// Récupération de l'objet image
