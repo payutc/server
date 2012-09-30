@@ -74,12 +74,12 @@ class Image
 				$this->width = $don['img_width'];
 				$this->length = $don['img_length'];
 				$this->content = $don['img_content'];
+				$this->state = 1;
 			}
 			else {
 				$this->state = 400;
 			}
 		}
-		return $this->state;
 	}
 
 	/**
