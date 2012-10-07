@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Created by PropelDataDumpTask.-->
+<dataset name="all">
+  <TsUserUsr Id="1" Pwd="81dc9bdb52d04dc20036dbd8313ed055" Firstname="Thomas" Lastname="RECOUVREUX" Nickname="trecouvr" Adult="1" Mail="thomas.recouvreux@etu.utc.fr" Credit="5000" Temporary="0" FailAuth="0" Blocked="0"/>
+  <TsUserUsr Id="2" Pwd="81dc9bdb52d04dc20036dbd8313ed055" Firstname="Matthieu" Lastname="GUFFROY" Nickname="mguffroy" Adult="1" Mail="matthieu.guffroy@etu.utc.fr" Credit="156" Temporary="0" FailAuth="0" Blocked="0" MsgPerso="Hello World Ceci est un message super long ...... Plus de 54caracteres il parrait !"/>
+  <TFundationFun Id="1" Name="BDE UTC" Removed="0"/>
+  <TFundationFun Id="2" Name="PICASSO" Removed="0"/>
+  <TFundationFun Id="3" Name="POLAR" Removed="0"/>
+  <TObjectObj Id="1" Name="Softs" Type="category" Single="0" Tva="0" Alcool="0" FunId="2" Removed="0"/>
+  <TObjectObj Id="2" Name="Coca" Type="product" Stock="20" Single="0" Tva="0" Alcool="0" FunId="2" Removed="0"/>
+  <TPointPoi Id="1" Name="PAYBOX" Removed="0"/>
+  <TPointPoi Id="46" Name="Caisse Pic 1" Removed="0"/>
+  <TPointPoi Id="47" Name="Caisse Pic 2" Removed="0"/>
+  <TPointPoi Id="48" Name="Smartphone 1" Removed="0"/>
+  <TPointPoi Id="49" Name="Smartphone 2" Removed="0"/>
+  <TPointPoi Id="50" Name="Internet cotisation BDE" Removed="0"/>
+  <TPointPoi Id="51" Name="Caisse du pic" Removed="0"/>
+  <TPricePri Id="1" ObjId="2" Credit="70" Removed="0"/>
+  <TRechargeTypeRty RtyId="1" Name="TPE" Type="PBUY" Removed="0"/>
+  <TRechargeTypeRty RtyId="2" Name="Espece" Type="PBUY" Removed="0"/>
+  <TRechargeTypeRty RtyId="3" Name="Internet" Type="SBUY" Removed="0"/>
+  <TRechargeTypeRty RtyId="4" Name="Cheque" Type="PBUY" Removed="0"/>
+  <TRechargeTypeRty RtyId="5" Name="Nature" Removed="0"/>
+  <TRechargeTypeRty RtyId="6" Name="Ecocup" Removed="0"/>
+  <TRechargeTypeRty RtyId="7" Name="Report" Removed="0"/>
+  <TsMeanOfLoginMol Id="1" Name="login etu" Removed="0"/>
+  <TsMeanOfLoginMol Id="2" Name="id etudiant" Removed="0"/>
+  <TsMeanOfLoginMol Id="3" Name="id buckutt" Removed="0"/>
+  <TsMeanOfLoginMol Id="4" Name="carte_etu" Removed="0"/>
+  <TsMeanOfLoginMol Id="5" Name="uid_carte_utc" Removed="0"/>
+  <TsRightRig Id="1" Name="bloqueur" Description="blockman et deblockman de compte of buckutt" Admin="1" Removed="0"/>
+  <TsRightRig Id="2" Name="fund_trezo" Description="accede aux bilans financier de la fundation ! (id_fundation neccessaire)" Admin="0" Removed="0"/>
+  <TsRightRig Id="4" Name="reloader" Description="le rechargeur qui a le droit de mettre des tunes !" Admin="1" Removed="0"/>
+  <TsRightRig Id="5" Name="droit_admin" Description="le chef de buckutt qui peut donner ou retirer tout les droits de tout buckutt in all the universe !" Admin="1" Removed="0"/>
+  <TsRightRig Id="6" Name="fund_chef" Description="le chef d'une fondation, ce droit donne le droit de donner des droits concernant sa propre fundation (donc li��un id_fundation)" Admin="0" Removed="0"/>
+  <TsRightRig Id="7" Name="buckutt_trezo" Description="le tresorier de tout buckutt tout complet !" Admin="1" Removed="0"/>
+  <TsRightRig Id="8" Name="credit_admin" Description="le mec qui fait ce qu'il veut sur les credits des gens, il mets et retire �l'oeil !" Admin="1" Removed="0"/>
+  <TsRightRig Id="9" Name="point_admin" Description="le mec qui a le pouvoir d'ajouter et supprimer des points, c'est un truc au dessus des fundation" Admin="1" Removed="0"/>
+  <TsRightRig Id="10" Name="vente_admin" Description="le mec qui a le droit d'ajouter/supprimer des objets, des categories, des prix et des ventes sur le compte de sa fundation (id_fundation neccessaire)" Admin="0" Removed="0"/>
+  <TsRightRig Id="11" Name="seller" Description="le vendeur d'une fundation (id_point + id_fundation neccessaires)" Admin="0" Removed="0"/>
+  <TsRightRig Id="13" Name="resp_fundations" Description="le monsieur qui dit qui a le droit de gerer quelle fundation (resp c&amp;a du bde par exemple)" Admin="1" Removed="0"/>
+  <TsRightRig Id="14" Name="group_editor" Description="le mec qui a le droit de creer des groupes pour le compte de sa fundation (li��un id_fundation) (ex le mec qui entre les cotisants bde)" Admin="0" Removed="0"/>
+  <TsRightRig Id="15" Name="mode_manuel" Description="droit d'ajouter des id sur peggy sans badger" Admin="1" Removed="0"/>
+  <TjObjectLinkOli Id="1" ObjIdParent="1" ObjIdChild="2" Step="0" Removed="0"/>
+  <TjUsrMolJum UsrId="1" MolId="1" Data="trecouvr"/>
+  <TjUsrMolJum UsrId="2" MolId="1" Data="mguffroy"/>
+  <TjUsrMolJum UsrId="1" MolId="5" Data=""/>
+  <TjUsrMolJum UsrId="2" MolId="5" Data="ABABABAB"/>
+  <TjUsrRigJur Id="1" UsrId="1" RigId="2" FunId="2" Removed="0"/>
+  <TjUsrRigJur Id="2" UsrId="1" RigId="5" FunId="2" Removed="0"/>
+  <TsErrorErr Code="0" Name="Vous n'avez pas suffisamment d'argent !" Description="Impossible de d" Removed="0"/>
+  <TsErrorErr Code="400" Name="erreur inconue" Description="euhhh erreur trop compliqu" Removed="0"/>
+  <TsErrorErr Code="401" Name="erreur fatale" Description="erreur qui normalement on a absolument jamais (genre un truc qui doit marcher " Removed="0"/>
+  <TsErrorErr Code="402" Name="proposition inexistante" Description="proposition donn" Removed="0"/>
+  <TsErrorErr Code="403" Name="utilisateur bloque" Description="Utilisateur bloqu" Removed="0"/>
+  <TsErrorErr Code="404" Name="seller pas le droit" Description="D" Removed="0"/>
+  <TsErrorErr Code="405" Name="utilisateur non trouv" Description="Utilisateur non trouv" Removed="0"/>
+  <TsErrorErr Code="406" Name="password faux" Description="Mot de passe incorrect." Removed="0"/>
+  <TsErrorErr Code="407" Name="droits buckutt absents" Description="t'as cru que t'etais buckutt_admin mais en fait non !" Removed="0"/>
+  <TsErrorErr Code="408" Name="seller pas charg" Description="D" Removed="0"/>
+  <TsErrorErr Code="409" Name="pas de buyer" Description="Acheteur perdu. Il faut repasser sa carte." Removed="0"/>
+  <TsErrorErr Code="410" Name="promo objets deja liste" Description="on demande les objets du step suivant de la promo alors qu'on les a d" Removed="0"/>
+  <TsErrorErr Code="411" Name="promo corrompue" Description="la promo est corrompue, ya ni objet ni categorie mais ya bien un step" Removed="0"/>
+  <TsErrorErr Code="412" Name="pruduit absent de la promo" Description="c con, ya des trucs mais " Removed="0"/>
+  <TsErrorErr Code="413" Name="erreur sql dans une promo" Description="erreur sql zarb dans getObjects de promo" Removed="0"/>
+  <TsErrorErr Code="414" Name="action pas terminee" Description="Tu dois terminer de saisir les produits de la promo avant de cliquer sur terminer!" Removed="0"/>
+  <TsErrorErr Code="415" Name="pu de stock pour promo" Description="ya une etape dans la promo o" Removed="0"/>
+  <TsErrorErr Code="419" Name="pas de stock" Description="Plus de produit en stock, d" Removed="0"/>
+  <TsErrorErr Code="420" Name="point inexistant" Description="le point il existe pas chez moi !" Removed="0"/>
+  <TsErrorErr Code="421" Name="fundation inexistante" Description="la fundation elle existe pas chez moi !" Removed="0"/>
+  <TsErrorErr Code="422" Name="Image inexistante" Description="L'image n'existe pas chez moi !" Removed="0"/>
+  <TsErrorErr Code="423" Name="preseller pas charg" Description="" Removed="0"/>
+  <TsErrorErr Code="424" Name="seller ne peut recharger" Description="le seller n'est pas capable de reloader alors fuck !" Removed="0"/>
+  <TsErrorErr Code="430" Name="erreur non repertori" Description="va falloir appeller un buckutt admin !" Removed="0"/>
+  <TsErrorErr Code="440" Name="L'utilisateur n'existe pas" Description="L'utilisateur n'existe pas" Removed="0"/>
+  <TsErrorErr Code="441" Name="Il ne s'agit pas du bon code PIN" Description="Code PIN incorrect !" Removed="0"/>
+  <TsErrorErr Code="450" Name="compte deja max" Description="Le plafond maximum autoris" Removed="0"/>
+  <TsErrorErr Code="451" Name="rechargement trop important" Description="Impossible de recharger autant, tu d" Removed="0"/>
+  <TsErrorErr Code="452" Name="type recharge inexistant" Description="on veut recharger par un moyen qui n'existe pas alors moi je dis tu bluff !" Removed="0"/>
+  <TsErrorErr Code="453" Name="droit inexistant" Description="ce droit n'est pas un droit ! c'est pas que le mec ne l'a pas c'est plut" Removed="0"/>
+  <TsErrorErr Code="454" Name="nest pas reloader" Description="Tu n'as pas le droit de recharger des comptes." Removed="0"/>
+  <TsErrorErr Code="455" Name="pas point manager" Description="ne peut pas bouger de point, il n'en a pas le droit" Removed="0"/>
+  <TsErrorErr Code="456" Name="nest pas autoris" Description="Aucun acc" Removed="0"/>
+  <TsErrorErr Code="457" Name="pas mode manuel" Description="n'a pas le droit d'ajouter des id manuellement" Removed="0"/>
+  <TsErrorErr Code="459" Name="promo en cours" Description="Tu dois finir de s" Removed="0"/>
+  <TsErrorErr Code="460" Name="Instance d" Description="L'objet, vente, groupe, prix, cat" Removed="0"/>
+  <TsErrorErr Code="461" Name="prix pu dactualite" Description="Le prix a chang" Removed="0"/>
+  <TsErrorErr Code="462" Name="pas assez de sous" Description="D" Removed="0"/>
+  <TsErrorErr Code="463" Name="fondation non chargee" Description="La fondation n as pas ete chargee" Removed="0"/>
+  <TsErrorErr Code="464" Name="Petit malin" Description="Se virer de l'argent " Removed="0"/>
+  <TsErrorErr Code="465" Name="Destinataire du virement inexistant" Description="La personne " Removed="0"/>
+  <TsErrorErr Code="466" Name="Le vol d'argent n'est pas tol" Description="Cette tentative " Removed="0"/>
+</dataset>
