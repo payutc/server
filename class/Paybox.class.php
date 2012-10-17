@@ -127,9 +127,9 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
         $paybox_row = $db->fetchArray($db->query("SELECT usr_id, pay_amount, pay_step FROM t_paybox_pay WHERE pay_id = '%u'", array($ref)));
         if ($db->affectedRows() != 1) {
           Log::write("PAYBOX : L'identifiant n'est pas présent dans la table t_paybox_pay \n".print_r($_GET, true),5);
-     /* } else if ($paybox_row['pay_step'] != 'W') {
+      } else if ($paybox_row['pay_step'] == 'V') {
           Log::write("PAYBOX : Ce rechargement n'est pas en attente ! (Tentative de double rechargement ?) \n".print_r($_GET, true),5);
-     */ } else if($erreur != '00000') {
+      } else if($erreur != '00000') {
           Log::write("PAYBOX : Paybox a retourné une erreur ! \n".print_r($_GET, true),5);
           $db->query("UPDATE t_paybox_pay SET pay_step = 'A', pay_date_retour = NOW(), pay_auto = '%s', pay_trans = '%s', pay_error = '%s' WHERE pay_id = '%u';", Array($auto,$trans,$erreur,$ref));
         } else {
