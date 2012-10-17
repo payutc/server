@@ -38,6 +38,7 @@ require_once 'class/Paybox.class.php';
 require_once 'class/Cas.class.php';
 require_once 'config.inc.php';
 require_once 'class/Log.class.php';
+require_once 'lib/ginger-client/Ginger.class.php';
 
 class MADMIN extends WsdlBase {
 
@@ -79,33 +80,34 @@ class MADMIN extends WsdlBase {
 		}
     }
 	
-	 /**
-	 * Enregistrer le user précédemment déclaré en CAS
-	 * 
-	 * @return array $state
-	 */
+     /**
+     * Enregistrer le user précédemment déclaré en CAS
+     * 
+     * @return array $state
+     */
     public function register() {
-		global $_CONFIG;
-		
-		$this->User = new User($this->loginToRegister, 1, "", 0, 1, 0);
+	global $_CONFIG;
 	
-		$r = $this->User->getState();
-		
-		if($r != 405){
-			return array("error"=>$r, "error_msg"=>"Le user existe déjà.");
-		}
-		
-		// On vérifie que le user est bien cotisant
+	$this->User = new User($this->loginToRegister, 1, "", 0, 1, 0);
 
-        $array = json_decode(file_get_contents("http://assos.utc.fr/simde/api/v2.php?login=".$this->loginToRegister));
-        if($array->success == "ok") { 
-                if($type == "etudiant") // Les non etudiants sont membres d'honneur au bde normalement....
-                {
-                        $cotisant = ($array->data->cotisant == "true");
-                        if(!$cotisant) return array("error"=>400, "error_msg"=>"Le user n'est pas cotisant.");
-                }
-        }
-		
+	$r = $this->User->getState();
+	
+	if($r != 405){
+	    return array("error"=>$r, "error_msg"=>"Le user existe déjà.");
+	}
+	
+	// On vérifie que le user est bien cotisant
+	$ginger = new Ginger($_CONFIG['ginger_key']);
+	try {
+	    $user = $ginger->getUser($login);
+	}
+	catch (Exception $ex) {
+	    return array("error"=>400, "error_msg"=>"Utilisateur introuvable dans Ginger");
+	}
+	if (!($user->is_cotisant)) {
+	    return array("error"=>400, "error_msg"=>"L'utilisateur n'est pas cotisant");
+	}
+	
         // On récupére l'ancien solde et on le passe à zero.
         $res = $this->db->query("SELECT osr_credit
 FROM `t_oldusr_osr` 
@@ -119,10 +121,8 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
 
         // TODO METTRE A 0 LE SOLDE
 
-        // Recuperer les infos de la DSI
-        $user = json_decode(file_get_contents("http://accounts.utc/picasso-ws/ws/getUserInfo?username=".$this->loginToRegister));
-
-        if($user->legalAge) $adult = 1; else $adult = 0;
+	
+        if($user->is_adulte) $adult = 1; else $adult = 0;
 
 		// On est là, on va pouvoir insérer
         $this->db->query("INSERT INTO ts_user_usr (usr_pwd, usr_firstname, usr_lastname, usr_nickname, usr_mail, usr_adult) VALUES ('81dc9bdb52d04dc20036dbd8313ed055', '%s', '%s', '%s', '%s', '%u')", array($user->firstName, $user->lastName, $user->username, $user->mail, $adult));

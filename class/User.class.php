@@ -36,7 +36,7 @@ require_once 'class/ComplexData.class.php';
 require_once 'class/Log.class.php';
 require_once 'db/Db_buckutt.class.php';
 require_once 'db/Mysql.class.php';
-
+require_once 'lib/ginger-client/Ginger.class.php';
 /**
  * classe user
  */
@@ -567,10 +567,20 @@ class User {
 	* @return int $adult
 	*/
 	public function isAdult() {
-		if($this->adult == 1) { return 1; } else {
+		global $_CONFIG;
+		if($this->adult == 1) {
+			return 1;
+		}
+		else {
 			// On verifie via l'api de la dsi si le statut de la personne à changé.
-			$user = json_decode(file_get_contents("http://accounts.utc/picasso-ws/ws/getUserInfo?username=".$this->nickname));
-			if($user->legalAge == 1) {
+			$ginger = new Ginger($_CONFIG['ginger_key']);
+			try {
+				$user = $ginger->getUser($login);
+			}
+			catch (Exception $ex) {
+				return 0;
+			}
+			if($user->is_adulte) {
 				$this->db->query("UPDATE ts_user_usr SET usr_adult = '%u' WHERE usr_id = '%u';", Array(1, $this->idUser));
 				return 1;
 			} else {

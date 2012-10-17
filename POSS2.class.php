@@ -38,6 +38,7 @@ require_once 'class/Buyer.class.php';
 require_once 'class/Log.class.php';
 require_once 'class/Cas.class.php';
 require_once 'class/CheckRight.class.php';
+require_once 'lib/ginger-client/Ginger.class.php';
 
 define('MEAN_OF_LOGIN_BADGE', 5);
 define('MEAN_OF_LOGIN_NICKNAME', 1);
@@ -259,6 +260,7 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 	 * @return array $state
 	 */
 	public function transaction($badge_id, $obj_ids) {
+		global $_CONFIG;
 		if ($this->isLoadedSeller()) {
 			$right_POI_FUNDATION = 7; // TODO IMPORTER D'AILLEURS
 
@@ -269,7 +271,13 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			{
 				// CHECK BADGE ID IN API
 				$badge_id_dsi = $badge_id[6].$badge_id[7].$badge_id[4].$badge_id[5].$badge_id[2].$badge_id[3].$badge_id[0].$badge_id[1];
-				$user = json_decode(file_get_contents("http://accounts.utc/picasso-ws/ws/cardLookup?serialNumber=".$badge_id_dsi));
+				$ginger = new Ginger($_CONFIG['ginger_key']);
+				try {
+					$user = $ginger->getUser($badge_id_dsi);
+				}
+				catch (Exception $ex) {
+					return array("error"=>$ex->getCode(), "error_msg"=>"Utilisateur introuvable dans Ginger");
+				}
 				if($user->username) {
 					$buyer = new User($user->username, MEAN_OF_LOGIN_NICKNAME, "", 0, 1, 1);
 					$state = $buyer->getState();
