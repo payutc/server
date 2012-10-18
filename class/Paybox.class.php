@@ -44,7 +44,7 @@ class Paybox {
 
       $pay_id = $this->db->insertId(
               $this->db->query(
-                  "INSERT INTO  `payutc`.`t_paybox_pay` (
+                  "INSERT INTO  `t_paybox_pay` (
 `pay_id` ,
 `usr_id` ,
 `pay_step` ,
