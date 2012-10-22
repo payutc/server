@@ -99,10 +99,10 @@ class MADMIN extends WsdlBase {
 	// On vérifie que le user est bien cotisant
 	$ginger = new Ginger($_CONFIG['ginger_key']);
 	try {
-	    $user = $ginger->getUser($login);
+	    $user = $ginger->getUser($this->loginToRegister);
 	}
 	catch (Exception $ex) {
-	    return array("error"=>400, "error_msg"=>"Utilisateur introuvable dans Ginger");
+	    return array("error"=>400, "error_msg"=>"Utilisateur introuvable dans Ginger (".$ex->getCode().")");
 	}
 	if (!($user->is_cotisant)) {
 	    return array("error"=>400, "error_msg"=>"L'utilisateur n'est pas cotisant");
@@ -125,12 +125,11 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
         if($user->is_adulte) $adult = 1; else $adult = 0;
 
 		// On est là, on va pouvoir insérer
-        $this->db->query("INSERT INTO ts_user_usr (usr_pwd, usr_firstname, usr_lastname, usr_nickname, usr_mail, usr_adult) VALUES ('81dc9bdb52d04dc20036dbd8313ed055', '%s', '%s', '%s', '%s', '%u')", array($user->firstName, $user->lastName, $user->username, $user->mail, $adult));
+        $this->db->query("INSERT INTO ts_user_usr (usr_pwd, usr_firstname, usr_lastname, usr_nickname, usr_mail, usr_adult) VALUES ('81dc9bdb52d04dc20036dbd8313ed055', '%s', '%s', '%s', '%s', '%u')", array($user->prenom, $user->nom, $user->login, $user->mail, $adult));
 		$userid = $this->db->insertId();
 		$this->db->query("INSERT INTO tj_usr_mol_jum (usr_id, mol_id, jum_data) VALUES (%d, 1, '%s')", array($userid, $this->loginToRegister));
 		
-        $badge_id = $user->cardSerialNumber[6].$user->cardSerialNumber[7].$user->cardSerialNumber[4].$user->cardSerialNumber[5].$user->cardSerialNumber[2].$user->cardSerialNumber[3].$user->cardSerialNumber[0].$user->cardSerialNumber[1];
-        $this->db->query("INSERT INTO tj_usr_mol_jum (usr_id, mol_id, jum_data) VALUES (%d, 5, '%s')", array($userid, $badge_id));
+        $this->db->query("INSERT INTO tj_usr_mol_jum (usr_id, mol_id, jum_data) VALUES (%d, 5, '%s')", array($userid, $user->badge_uid));
 
 		
         $this->db->query("INSERT INTO t_recharge_rec (rty_id, usr_id_buyer, usr_id_operator, poi_id, rec_date, rec_credit, rec_trace) VALUES ('%u', '%u', '%u', '%u', NOW(), '%u', '%s')", array(7, $userid, $userid, 1, $solde, "Import demo"));

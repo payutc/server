@@ -575,7 +575,7 @@ class User {
 			// On verifie via l'api de la dsi si le statut de la personne à changé.
 			$ginger = new Ginger($_CONFIG['ginger_key']);
 			try {
-				$user = $ginger->getUser($login);
+				$user = $ginger->getUser($this->nickname);
 			}
 			catch (Exception $ex) {
 				return 0;

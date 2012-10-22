@@ -270,16 +270,15 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			if($state != 1)
 			{
 				// CHECK BADGE ID IN API
-				$badge_id_dsi = $badge_id[6].$badge_id[7].$badge_id[4].$badge_id[5].$badge_id[2].$badge_id[3].$badge_id[0].$badge_id[1];
 				$ginger = new Ginger($_CONFIG['ginger_key']);
 				try {
-					$user = $ginger->getUser($badge_id_dsi);
+					$user = $ginger->getUser($badge_id);
 				}
 				catch (Exception $ex) {
-					return array("error"=>$ex->getCode(), "error_msg"=>"Utilisateur introuvable dans Ginger");
+					return array("error"=>$ex->getCode(), "error_msg"=>"Badge introuvable");
 				}
-				if($user->username) {
-					$buyer = new User($user->username, MEAN_OF_LOGIN_NICKNAME, "", 0, 1, 1);
+				if($user->login) {
+					$buyer = new User($user->login, MEAN_OF_LOGIN_NICKNAME, "", 0, 1, 1);
 					$state = $buyer->getState();
 					if($state == 1) {
 						// UPDATE BADGE_ID
