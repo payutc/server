@@ -57,4 +57,7 @@ $_CONFIG['PBX_EXE'] = "/usr/share/buckutt/modulev3.cgi";
 // CLEF PUBLIQUE PAYBOX
 $_CONFIG['PBX_PUBPEM'] = "somewhere/pubkey.pem";
 
+
+$_CONFIG['ginger_key'] = "abc";
+
 ?>
