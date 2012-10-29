@@ -116,7 +116,7 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
       $ref_pos = strrpos( $ref, ';' );
       $ref = substr($ref,0,$ref_pos);
 
-      $auto=$_GET['auto'];
+      $auto= !empty($_GET['auto']) ? $_GET['auto'] : '';
       $trans=$_GET['trans'];
       $erreur=$_GET['erreur'];
       $db = Db_buckutt::getInstance();
