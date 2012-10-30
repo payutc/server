@@ -53,33 +53,20 @@ class Mysql {
      debug == 1 => on affiche la requete
      
      */
-    function query($query, $debugorarg, $debug = 0) {
-        if (is_array($debugorarg)) {
-            $debugorarg = array_map('addslashes', $debugorarg);
+    function query($query, $args, $debug = 0) {
+		if ($debug) {
+			$this->trace(vsprintf($query, $args));
+		}
 
-            if ($debug) {
-                $this->trace(vsprintf($query, $debugorarg));
-            }
-            
-            //TODO commenter ça... car bug... à suivre car important niveau sécu
-            foreach($debugorarg as &$parametre)
-                $parametre = mysql_real_escape_string($parametre, $this->connexion);
-            
-            if (!$result = mysql_query(vsprintf($query, $debugorarg), $this->connexion)) {
-                $this->error();
-            }
-            return ($result);
-        } else {
-            if ($debugorarg) {
-                $this->trace($query);
-            }
-            if (!$result = mysql_query($query, $this->connexion)) {
-                $this->error();
-            }
-            return ($result);
-        }
+		foreach($args as &$parametre){
+			$parametre = mysql_real_escape_string($parametre, $this->connexion);
+		}
 
-        
+		if (!$result = mysql_query(vsprintf($query, $args), $this->connexion)) {
+			$this->error();
+		}
+		
+		return $result;
     }
 
     
