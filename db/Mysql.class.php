@@ -42,10 +42,10 @@ class Mysql {
             $this->error();
             exit;
         }
-        //      mysql_query("SET NAMES 'utf8'", $this->connexion);
-        //      mysql_query("SET CHARACTER SET utf8", $this->connexion);
-        return ($result);
-        
+		
+        mysql_set_charset("utf8", $this->connexion);
+		
+		return $result;
     }
     
     /**
@@ -53,20 +53,22 @@ class Mysql {
      debug == 1 => on affiche la requete
      
      */
-    function query($query, $args, $debug = 0) {
-		if ($debug) {
-			$this->trace(vsprintf($query, $args));
-		}
+    function query($query, $args = array(), $debug = 0) {
+        if($debug) {
+            $this->trace(vsprintf($query, $args));
+        }
 
-		foreach($args as &$parametre){
-			$parametre = mysql_real_escape_string($parametre, $this->connexion);
-		}
+        if(!empty($args)){
+            foreach($args as &$parametre){
+                $parametre = mysql_real_escape_string($parametre, $this->connexion);
+            }
+        }
 
-		if (!$result = mysql_query(vsprintf($query, $args), $this->connexion)) {
-			$this->error();
-		}
-		
-		return $result;
+        if(!$result = mysql_query(vsprintf($query, $args), $this->connexion)) {
+            $this->error();
+        }
+
+        return $result;
     }
 
     
