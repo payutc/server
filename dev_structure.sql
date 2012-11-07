@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `tj_object_link_oli` (
   PRIMARY KEY (`oli_id`),
   KEY `obj_id_parent` (`obj_id_parent`),
   KEY `obj_id_child` (`obj_id_child`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Liens entre objets' AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liens entre objets' AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `tj_obj_poi_jop` (
   `jop_priority` int(11) NOT NULL DEFAULT '100',
   `poi_id` int(11) unsigned NOT NULL COMMENT 'Identifiant du point de vente',
   PRIMARY KEY (`obj_id`,`poi_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Disponibilité du produit en fonction du point';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Disponibilité du produit en fonction du point';
 
 -- --------------------------------------------------------
 
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `tj_usr_grp_jug` (
   KEY `per_id` (`per_id`),
   KEY `grp_id` (`grp_id`),
   KEY `usr_id` (`usr_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Liens d''appartenance des utilisateurs aux groupes' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liens d''appartenance des utilisateurs aux groupes' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -70,10 +70,10 @@ CREATE TABLE IF NOT EXISTS `tj_usr_grp_jug` (
 CREATE TABLE IF NOT EXISTS `tj_usr_mol_jum` (
   `usr_id` int(11) unsigned NOT NULL COMMENT 'Identifiant de l''utilisateur',
   `mol_id` int(11) unsigned NOT NULL COMMENT 'Identifiant du mode de connexion (type de mean_of_login)',
-  `jum_data` varchar(200) COLLATE utf8_bin NOT NULL COMMENT 'Identifiant concret de l''utilisateur (login, idEtu...)',
+  `jum_data` varchar(200) COLLATE utf8_general_ci NOT NULL COMMENT 'Identifiant concret de l''utilisateur (login, idEtu...)',
   PRIMARY KEY (`usr_id`,`mol_id`,`jum_data`),
   KEY `mol_id` (`mol_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Différents identifiants des utilisateurs';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Différents identifiants des utilisateurs';
 
 -- --------------------------------------------------------
 
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `tj_usr_rig_jur` (
   KEY `per_id` (`per_id`),
   KEY `fun_id` (`fun_id`),
   KEY `poi_id` (`poi_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Liens entre utilisateurs et droits' AUTO_INCREMENT=30 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liens entre utilisateurs et droits' AUTO_INCREMENT=30 ;
 
 -- --------------------------------------------------------
 
@@ -108,13 +108,13 @@ CREATE TABLE IF NOT EXISTS `tj_usr_rig_jur` (
 CREATE TABLE IF NOT EXISTS `ts_callback_cal` (
   `cal_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant du callback',
   `pro_id` int(11) unsigned NOT NULL COMMENT 'Identifiant du produit acheté',
-  `cal_request` varchar(250) COLLATE utf8_bin NOT NULL COMMENT 'Requête HTTP à effectuer lors de l''achat',
+  `cal_request` varchar(250) COLLATE utf8_general_ci NOT NULL COMMENT 'Requête HTTP à effectuer lors de l''achat',
   `mol_id` int(11) unsigned NOT NULL COMMENT 'Identifiant du moyen de connexion à envoyer',
   `cal_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si le callback est supprimé',
   PRIMARY KEY (`cal_id`),
   KEY `pro_id` (`pro_id`),
   KEY `mol_id` (`mol_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Callback à exécuter lors de l''achat de certains produits' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Callback à exécuter lors de l''achat de certains produits' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -124,11 +124,11 @@ CREATE TABLE IF NOT EXISTS `ts_callback_cal` (
 
 CREATE TABLE IF NOT EXISTS `ts_error_err` (
   `err_code` int(5) unsigned NOT NULL COMMENT 'Code de l''erreur',
-  `err_name` varchar(40) COLLATE utf8_bin NOT NULL COMMENT 'Nom de l''erreur',
-  `err_description` text COLLATE utf8_bin NOT NULL COMMENT 'Description de l''erreur',
+  `err_name` varchar(40) COLLATE utf8_general_ci NOT NULL COMMENT 'Nom de l''erreur',
+  `err_description` text COLLATE utf8_general_ci NOT NULL COMMENT 'Description de l''erreur',
   `err_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si l''erreur est supprimée',
   PRIMARY KEY (`err_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Erreurs rencontrables lors de l''utilisation';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Erreurs rencontrables lors de l''utilisation';
 
 -- --------------------------------------------------------
 
@@ -138,13 +138,13 @@ CREATE TABLE IF NOT EXISTS `ts_error_err` (
 
 CREATE TABLE IF NOT EXISTS `ts_image_img` (
   `img_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant de l''image',
-  `img_mime` varchar(20) COLLATE utf8_bin NOT NULL COMMENT 'Format de l''image',
+  `img_mime` varchar(20) COLLATE utf8_general_ci NOT NULL COMMENT 'Format de l''image',
   `img_width` int(5) unsigned NOT NULL COMMENT 'Largeur de l''image',
   `img_length` int(5) unsigned NOT NULL COMMENT 'Longueur de l''image',
   `img_content` mediumblob NOT NULL COMMENT 'Contenu de l''image',
   `img_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si l''image est supprimée',
   PRIMARY KEY (`img_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Images des utilisateurs et des produits' AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Images des utilisateurs et des produits' AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -156,9 +156,9 @@ CREATE TABLE IF NOT EXISTS `ts_log_log` (
   `log_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant du log',
   `log_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Date et heure de l''évènement',
   `log_gravity` tinyint(1) unsigned NOT NULL COMMENT 'Gravité de l''évènement',
-  `log_message` text COLLATE utf8_bin NOT NULL COMMENT 'Contenu',
+  `log_message` text COLLATE utf8_general_ci NOT NULL COMMENT 'Contenu',
   PRIMARY KEY (`log_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Journal des évènements' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Journal des évènements' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -168,10 +168,10 @@ CREATE TABLE IF NOT EXISTS `ts_log_log` (
 
 CREATE TABLE IF NOT EXISTS `ts_mean_of_login_mol` (
   `mol_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant du mode de connexion',
-  `mol_name` varchar(40) COLLATE utf8_bin NOT NULL COMMENT 'Nom du mode de connexion',
+  `mol_name` varchar(40) COLLATE utf8_general_ci NOT NULL COMMENT 'Nom du mode de connexion',
   `mol_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si le mode de connexion est supprimé',
   PRIMARY KEY (`mol_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Moyens de connexion' AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Moyens de connexion' AUTO_INCREMENT=6 ;
 
 -- --------------------------------------------------------
 
@@ -181,12 +181,12 @@ CREATE TABLE IF NOT EXISTS `ts_mean_of_login_mol` (
 
 CREATE TABLE IF NOT EXISTS `ts_right_rig` (
   `rig_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant du droit',
-  `rig_name` varchar(40) COLLATE utf8_bin NOT NULL COMMENT 'Nom du droit',
-  `rig_description` text COLLATE utf8_bin NOT NULL COMMENT 'Description du droit',
+  `rig_name` varchar(40) COLLATE utf8_general_ci NOT NULL COMMENT 'Nom du droit',
+  `rig_description` text COLLATE utf8_general_ci NOT NULL COMMENT 'Description du droit',
   `rig_admin` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 s''il s''agit d''un droit d''administrateur',
   `rig_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si le droit est supprimé',
   PRIMARY KEY (`rig_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Droits des utilisateurs' AUTO_INCREMENT=16 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Droits des utilisateurs' AUTO_INCREMENT=16 ;
 
 -- --------------------------------------------------------
 
@@ -196,21 +196,21 @@ CREATE TABLE IF NOT EXISTS `ts_right_rig` (
 
 CREATE TABLE IF NOT EXISTS `ts_user_usr` (
   `usr_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant utilisateur',
-  `usr_pwd` varchar(100) COLLATE utf8_bin DEFAULT NULL COMMENT 'Mot de passe',
-  `usr_firstname` varchar(40) COLLATE utf8_bin DEFAULT NULL COMMENT 'Prénom',
-  `usr_lastname` varchar(40) COLLATE utf8_bin DEFAULT NULL COMMENT 'Nom',
-  `usr_nickname` varchar(200) COLLATE utf8_bin DEFAULT NULL COMMENT 'Surnom',
+  `usr_pwd` varchar(100) COLLATE utf8_general_ci DEFAULT NULL COMMENT 'Mot de passe',
+  `usr_firstname` varchar(40) COLLATE utf8_general_ci DEFAULT NULL COMMENT 'Prénom',
+  `usr_lastname` varchar(40) COLLATE utf8_general_ci DEFAULT NULL COMMENT 'Nom',
+  `usr_nickname` varchar(200) COLLATE utf8_general_ci DEFAULT NULL COMMENT 'Surnom',
   `usr_adult` int(1) DEFAULT NULL,
-  `usr_mail` varchar(200) COLLATE utf8_bin DEFAULT NULL COMMENT 'Adresse mail de l''utilisateur',
+  `usr_mail` varchar(200) COLLATE utf8_general_ci DEFAULT NULL COMMENT 'Adresse mail de l''utilisateur',
   `usr_credit` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'Crédit',
   `img_id` int(11) unsigned DEFAULT NULL COMMENT 'Identifiant de l''image',
   `usr_temporary` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 s''il s''agit d''un utilisateur temporaire',
   `usr_fail_auth` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'Nombre d''échec d''authentification depuis la dernière réussite',
   `usr_blocked` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si l''utilisateur est bloqué',
-  `usr_msg_perso` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `usr_msg_perso` varchar(255) COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`usr_id`),
   KEY `img_id` (`img_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Utilisateurs' AUTO_INCREMENT=10505 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Utilisateurs' AUTO_INCREMENT=10505 ;
 
 -- --------------------------------------------------------
 
@@ -220,10 +220,10 @@ CREATE TABLE IF NOT EXISTS `ts_user_usr` (
 
 CREATE TABLE IF NOT EXISTS `t_fundation_fun` (
   `fun_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant de l''organisme',
-  `fun_name` varchar(40) COLLATE utf8_bin NOT NULL COMMENT 'Nom de l''organisme',
+  `fun_name` varchar(40) COLLATE utf8_general_ci NOT NULL COMMENT 'Nom de l''organisme',
   `fun_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si l''organisme est supprimé',
   PRIMARY KEY (`fun_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Organismes' AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Organismes' AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -233,14 +233,14 @@ CREATE TABLE IF NOT EXISTS `t_fundation_fun` (
 
 CREATE TABLE IF NOT EXISTS `t_group_grp` (
   `grp_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant du groupe',
-  `grp_name` varchar(40) COLLATE utf8_bin NOT NULL COMMENT 'Nom du groupe',
+  `grp_name` varchar(40) COLLATE utf8_general_ci NOT NULL COMMENT 'Nom du groupe',
   `grp_open` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si un utilisateur peut s''y incrire tout seul',
   `grp_public` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 s''il est utilisable par tous les organismes',
   `fun_id` int(11) unsigned NOT NULL COMMENT 'Identifiant de son organisme',
   `grp_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si le groupe est supprimé',
   PRIMARY KEY (`grp_id`),
   KEY `fun_id` (`fun_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Groupes d''utilisateurs' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Groupes d''utilisateurs' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -250,8 +250,8 @@ CREATE TABLE IF NOT EXISTS `t_group_grp` (
 
 CREATE TABLE IF NOT EXISTS `t_object_obj` (
   `obj_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant de l''objet',
-  `obj_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT 'Nom de l''objet',
-  `obj_type` enum('product','category','promotion') COLLATE utf8_bin NOT NULL COMMENT 'Type de l''objet',
+  `obj_name` varchar(100) COLLATE utf8_general_ci NOT NULL COMMENT 'Nom de l''objet',
+  `obj_type` enum('product','category','promotion') COLLATE utf8_general_ci NOT NULL COMMENT 'Type de l''objet',
   `obj_stock` int(11) DEFAULT NULL COMMENT 'Stock, NULL si indéfini',
   `obj_single` tinyint(1) unsigned NOT NULL COMMENT '1 si l''objet ne peut être acheté qu''une fois',
   `obj_tva` int(4) NOT NULL COMMENT 'Tva (pas en pourcent mais en pourmille)',
@@ -262,7 +262,7 @@ CREATE TABLE IF NOT EXISTS `t_object_obj` (
   PRIMARY KEY (`obj_id`),
   KEY `img_id` (`img_id`),
   KEY `fun_id` (`fun_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Objets' AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Objets' AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -275,7 +275,7 @@ CREATE TABLE IF NOT EXISTS `t_oldusr_osr` (
   `osr_credit` float DEFAULT NULL,
   `osr_date` datetime DEFAULT NULL,
   UNIQUE KEY `osr_login` (`osr_login`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
 
@@ -296,7 +296,7 @@ CREATE TABLE IF NOT EXISTS `t_paybox_pay` (
   `pay_mobile` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1=rechargement sur mobile',
   `pay_error` varchar(5) CHARACTER SET latin1 DEFAULT NULL COMMENT 'Code erreur retourné par paubox',
   PRIMARY KEY (`pay_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -313,7 +313,7 @@ CREATE TABLE IF NOT EXISTS `t_period_per` (
   `per_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si la période est supprimée',
   PRIMARY KEY (`per_id`),
   KEY `fun_id` (`fun_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Périodes de vente' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Périodes de vente' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -327,9 +327,9 @@ CREATE TABLE IF NOT EXISTS `t_plage_pla` (
   `poi_id` int(11) NOT NULL,
   `pla_start` int(4) NOT NULL,
   `pla_end` int(4) NOT NULL,
-  `pla_name` varchar(100) COLLATE utf8_bin NOT NULL,
+  `pla_name` varchar(100) COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`pla_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -339,10 +339,10 @@ CREATE TABLE IF NOT EXISTS `t_plage_pla` (
 
 CREATE TABLE IF NOT EXISTS `t_point_poi` (
   `poi_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant du point',
-  `poi_name` varchar(40) COLLATE utf8_bin NOT NULL COMMENT 'Nom du point',
+  `poi_name` varchar(40) COLLATE utf8_general_ci NOT NULL COMMENT 'Nom du point',
   `poi_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si le point est supprimé',
   PRIMARY KEY (`poi_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Points de vente' AUTO_INCREMENT=54 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Points de vente' AUTO_INCREMENT=54 ;
 
 -- --------------------------------------------------------
 
@@ -361,7 +361,7 @@ CREATE TABLE IF NOT EXISTS `t_price_pri` (
   KEY `obj_id` (`obj_id`),
   KEY `grp_id` (`grp_id`),
   KEY `per_id` (`per_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Prix des objets' AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Prix des objets' AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
@@ -372,21 +372,21 @@ CREATE TABLE IF NOT EXISTS `t_price_pri` (
 CREATE TABLE IF NOT EXISTS `t_purchase_pur` (
   `pur_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant de l''achat',
   `pur_date` datetime NOT NULL COMMENT 'Date et heure de l''achat',
-  `pur_type` enum('product','promotion') COLLATE utf8_bin NOT NULL DEFAULT 'product' COMMENT 'Type d''achat (produit ou promotion)',
+  `pur_type` enum('product','promotion') COLLATE utf8_general_ci NOT NULL DEFAULT 'product' COMMENT 'Type d''achat (produit ou promotion)',
   `obj_id` int(11) unsigned NOT NULL COMMENT 'Identifiant de l''objet acheté',
   `pur_price` int(8) unsigned NOT NULL COMMENT 'Prix d''achat',
   `usr_id_buyer` int(11) unsigned NOT NULL COMMENT 'Identifiant de l''acheteur',
   `usr_id_seller` int(11) unsigned NOT NULL COMMENT 'Identifiant du vendeur',
   `poi_id` int(11) unsigned NOT NULL COMMENT 'Identifiant du point de vente',
   `fun_id` int(11) unsigned NOT NULL COMMENT 'Identifiant de l''organisme vendeur',
-  `pur_ip` varchar(15) COLLATE utf8_bin NOT NULL COMMENT 'Adresse IP du poste de vente',
+  `pur_ip` varchar(15) COLLATE utf8_general_ci NOT NULL COMMENT 'Adresse IP du poste de vente',
   `pur_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si l''achat a été supprimé',
   PRIMARY KEY (`pur_id`),
   KEY `fun_id` (`fun_id`),
   KEY `poi_id` (`poi_id`),
   KEY `usr_id_buyer` (`usr_id_buyer`),
   KEY `usr_id_seller` (`usr_id_seller`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Achats de produits' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Achats de produits' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -402,14 +402,14 @@ CREATE TABLE IF NOT EXISTS `t_recharge_rec` (
   `poi_id` int(11) unsigned NOT NULL COMMENT 'Identifiant du point de rechargement sur lequel le rechargement a été effectué',
   `rec_date` datetime NOT NULL COMMENT 'Date et heure du rechargement',
   `rec_credit` smallint(5) unsigned NOT NULL COMMENT 'Montant du rechargement',
-  `rec_trace` varchar(250) COLLATE utf8_bin DEFAULT NULL COMMENT 'Trace comme n° du transfert sherlock''s ou poste client',
+  `rec_trace` varchar(250) COLLATE utf8_general_ci DEFAULT NULL COMMENT 'Trace comme n° du transfert sherlock''s ou poste client',
   `rec_removed` tinyint(1) unsigned NOT NULL COMMENT '1 si le rechargement est supprimé',
   PRIMARY KEY (`rec_id`),
   KEY `rty_id` (`rty_id`),
   KEY `poi_id` (`poi_id`),
   KEY `usr_id_buyer` (`usr_id_buyer`),
   KEY `usr_id_operator` (`usr_id_operator`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Rechargements' AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Rechargements' AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
@@ -419,11 +419,11 @@ CREATE TABLE IF NOT EXISTS `t_recharge_rec` (
 
 CREATE TABLE IF NOT EXISTS `t_recharge_type_rty` (
   `rty_id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant du type de rechargement',
-  `rty_name` varchar(40) COLLATE utf8_bin NOT NULL COMMENT 'Nom du type de rechargement',
-  `rty_type` enum('PBUY','SBUY') COLLATE utf8_bin DEFAULT NULL COMMENT 'WSDL auquel est rattaché ce type de rechargement',
+  `rty_name` varchar(40) COLLATE utf8_general_ci NOT NULL COMMENT 'Nom du type de rechargement',
+  `rty_type` enum('PBUY','SBUY') COLLATE utf8_general_ci DEFAULT NULL COMMENT 'WSDL auquel est rattaché ce type de rechargement',
   `rty_removed` tinyint(4) NOT NULL DEFAULT '0' COMMENT '1 si le type de rechargement a été supprimé',
   PRIMARY KEY (`rty_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Type de rechargement' AUTO_INCREMENT=8 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Type de rechargement' AUTO_INCREMENT=8 ;
 
 -- --------------------------------------------------------
 
@@ -433,14 +433,14 @@ CREATE TABLE IF NOT EXISTS `t_recharge_type_rty` (
 
 CREATE TABLE IF NOT EXISTS `t_sale_sal` (
   `sal_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant de la vente',
-  `sal_name` varchar(100) COLLATE utf8_bin DEFAULT NULL COMMENT 'Nom de la vente',
+  `sal_name` varchar(100) COLLATE utf8_general_ci DEFAULT NULL COMMENT 'Nom de la vente',
   `per_id` int(11) unsigned NOT NULL COMMENT 'Identifiant de la période de vente',
   `obj_id` int(11) unsigned NOT NULL COMMENT 'Identifiant de l''objet en vente',
   `sal_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si la vente est supprimée',
   PRIMARY KEY (`sal_id`),
   KEY `per_id` (`per_id`),
   KEY `obj_id` (`obj_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Ventes de produits ou de promotions' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Ventes de produits ou de promotions' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -456,9 +456,9 @@ CREATE TABLE IF NOT EXISTS `t_sherlocks_she` (
   `she_date` datetime NOT NULL,
   `she_parent_id` int(5) DEFAULT NULL,
   `she_state` int(5) NOT NULL,
-  `she_trace` text COLLATE utf8_bin NOT NULL,
+  `she_trace` text COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`she_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Logs sherlocks' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Logs sherlocks' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -473,7 +473,7 @@ CREATE TABLE IF NOT EXISTS `t_virement_vir` (
   `usr_id_from` int(11) NOT NULL,
   `usr_id_to` int(11) NOT NULL,
   PRIMARY KEY (`vir_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Virements entre utilisateurs' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Virements entre utilisateurs' AUTO_INCREMENT=1 ;
 
 --
 -- Contraintes pour les tables exportées
