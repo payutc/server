@@ -141,7 +141,7 @@
     <column name="pur_id" phpName="Id" type="INTEGER" sqlType="int(11) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="pur_date" phpName="Date" type="TIMESTAMP" required="true"/>
     <column name="pur_type" phpName="Type" type="CHAR" sqlType="enum('product','promotion')" required="true" defaultValue="product"/>
-    <column name="obj_id" phpName="ObjId" type="INTEGER" sqlType="int(11) unsigned" required="true"/>
+    <column name="obj_id" phpName="ItemId" type="INTEGER" sqlType="int(11) unsigned" required="true"/>
     <column name="pur_price" phpName="Price" type="INTEGER" size="8" sqlType="int(8) unsigned" required="true"/>
     <column name="usr_id_buyer" phpName="UsrIdBuyer" type="INTEGER" sqlType="int(11) unsigned" required="true"/>
     <column name="usr_id_seller" phpName="UsrIdSeller" type="INTEGER" sqlType="int(11) unsigned" required="true"/>
@@ -149,7 +149,7 @@
     <column name="fun_id" phpName="FunId" type="INTEGER" sqlType="int(11) unsigned" required="true"/>
     <column name="pur_ip" phpName="Ip" type="VARCHAR" size="15" required="true"/>
     <column name="pur_removed" phpName="Removed" type="BOOLEAN" size="1" sqlType="tinyint(1) unsigned" required="true" defaultValue="false"/>
-    <foreign-key foreignTable="t_object_obj" phpName="Object" name="t_purchase_pur_ibfk_5" onUpdate="CASCADE">
+    <foreign-key foreignTable="t_object_obj" phpName="Item" name="t_purchase_pur_ibfk_5" onUpdate="CASCADE">
       <reference local="obj_id" foreign="obj_id"/>
     </foreign-key>
     <foreign-key foreignTable="ts_user_usr" phpName="Buyer" name="t_purchase_pur_ibfk_1" onUpdate="CASCADE">

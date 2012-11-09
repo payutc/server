@@ -247,8 +247,8 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 				$res->setRemoved(1);
 				$buyer = $res->getBuyer();
 				$buyer->setCredit($buyer->getCredit() + $res->getPrice());
-				$object = $res->getObject();
-				$object->setStock($objects->getStock() + 1);
+				$item = $res->getItem();
+				$item->setStock($item->getStock() + 1);
 				$res->save();
 				$conn->commit();
 			}
