@@ -232,17 +232,30 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 		if ($this->isLoadedSeller()) {
 
 			// ANNULATION
-			$req = Db_buckutt::getInstance()->query("SELECT pur_price, usr_id_buyer, usr_id_seller, pur_date, pur_removed, obj_id FROM t_purchase_pur WHERE pur_id = %u",array($purchase_id));
-			$res = Db_buckutt::getInstance()->fetchArray($req);
+			$purchase = PurchaseQuery::findById($purchase_id);
+			if (!$purchase)
+				return array("error"=>404, "error_msg"=>"Article non trouvé.");
+			
 			$seller = $this->Seller->getIdentity();
-			if($res["usr_id_seller"] != $seller[0])
+			if($res->getUsrIdSeller() != $seller[0])
 				return array("error"=>400, "error_msg"=>"Tu ne peux pas annuler la vente d'un autre vendeur.");
-			if($res["pur_removed"] == 1)
+			if($res->getRemoved() == 1)
 				return array("error"=>400, "error_msg"=>"Cette vente à déjà été annulé...");
 			// TODO CHECK TIME
-			Db_buckutt::getInstance()->query("UPDATE t_purchase_pur SET pur_removed='1' WHERE pur_id='%u';", Array($purchase_id));
-			Db_buckutt::getInstance()->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id='%u';", Array($res["pur_price"], $res["usr_id_buyer"]));
-			Db_buckutt::getInstance()->query("UPDATE t_object_obj SET obj_stock = (obj_stock + 1) WHERE obj_id='%u';", Array($res["obj_id"]));
+			$conn = Propel::getConnection(UserPeer::DATABASE_NAME);
+			try {
+				$res->setRemoved(1);
+				$buyer = $res->getBuyer();
+				$buyer->setCredit($buyer->getCredit() + $res->getPrice());
+				$object = $res->getObject();
+				$object->setStock($objects->getStock() + 1);
+				$res->save();
+				$conn->commit();
+			}
+			catch (Exception $e) {
+				$con->rollback();
+				return array("error"=>400, "error_msg"=>"Une erreur est survenue, l'annulation a échouée.");
+			}
 
 		} else {
 			return array("error"=>400, "error_msg"=>"Il n'y a pas de seller chargé.");
