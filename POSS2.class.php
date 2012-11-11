@@ -245,11 +245,8 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			$conn = Propel::getConnection(UserPeer::DATABASE_NAME);
 			try {
 				$res->setRemoved(1);
-				$buyer = $res->getBuyer();
-				$buyer->setCredit($buyer->getCredit() + $res->getPrice());
-				$item = $res->getItem();
-				$item->setStock($item->getStock() + 1);
-				$res->save();
+				UserPeer::incrementCredit($res->getBuyerId(), $res->getPrice());
+				ItemPeer::incrementStock($res->getStockId(), 1);
 				$conn->commit();
 			}
 			catch (Exception $e) {

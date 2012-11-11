@@ -18,4 +18,19 @@ use Payutc\om\BaseItemPeer;
  */
 class ItemPeer extends BaseItemPeer
 {
+	public static function incrementStock($id, $value)
+	{
+		$con = Propel::getConnection(AdsPeer::DATABASE_NAME);
+		$query = 'UPDATE '.ItemPeer::TABLE_NAME.
+					' SET '.ItemPeer::OBJ_STOCK.' = '.ItemPeer::OBJ_STOCK.' + '.$value
+					' WHERE '.ItemPeer::OBJ_ID.' = '.$id;
+		sfContext::getInstance()->getLogger()->crit($query);
+		$stmt = $con->prepare($query);
+		return $stmt->execute();
+	}
+
+	public static function decrementStock($id, $value)
+	{
+		return UserPeer::incrementCredit($id, -$value);
+	}
 }
