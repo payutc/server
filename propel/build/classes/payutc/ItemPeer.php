@@ -3,7 +3,9 @@
 namespace Payutc;
 
 use Payutc\om\BaseItemPeer;
-
+use \Criteria;
+use \Propel;
+use \PropelPDO;
 
 /**
  * Skeleton subclass for performing query and update operations on the 't_object_obj' table.
@@ -18,19 +20,33 @@ use Payutc\om\BaseItemPeer;
  */
 class ItemPeer extends BaseItemPeer
 {
-	public static function incrementStock($id, $value)
+	public static function incrementStock($selectCriteria, $value, PropelPDO $con = null)
 	{
-		$con = Propel::getConnection(AdsPeer::DATABASE_NAME);
-		$query = 'UPDATE '.ItemPeer::TABLE_NAME.
-					' SET '.ItemPeer::OBJ_STOCK.' = '.ItemPeer::OBJ_STOCK.' + '.$value
-					' WHERE '.ItemPeer::OBJ_ID.' = '.$id;
-		sfContext::getInstance()->getLogger()->crit($query);
-		$stmt = $con->prepare($query);
-		return $stmt->execute();
+		$value = (int) $value;
+		
+        if ($con === null) {
+            $con = Propel::getConnection(self::DATABASE_NAME, Propel::CONNECTION_WRITE);
+        }
+        
+        $selectCriteria->add(self::OBJ_STOCK, array('raw' => self::OBJ_STOCK . ' + ?', 'value' => $value), Criteria::CUSTOM_EQUAL);
+
+		return self::doUpdate($selectCriteria,$con);
 	}
 
-	public static function decrementStock($id, $value)
+	public static function decrementStock($selectCriteria, $value, PropelPDO $conn = null)
 	{
-		return UserPeer::incrementCredit($id, -$value);
+		return UserPeer::incrementStock($selectCriteria, -$value, $conn);
+	}
+
+	public static function incrementStockById($id, $value, PropelPDO $con = null)
+	{
+        $c = new Criteria(self::DATABASE_NAME);
+        $c->add(self::OBJ_ID, $id);
+        return self::incrementStock($c, $value, $con);
+	}
+
+	public static function decrementStockById($id, $value, PropelPDO $con = null)
+	{
+        return self::incrementStockById($id, -$value, $con);
 	}
 }

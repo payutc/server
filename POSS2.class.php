@@ -242,16 +242,17 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			if($res->getRemoved() == 1)
 				return array("error"=>400, "error_msg"=>"Cette vente à déjà été annulé...");
 			// TODO CHECK TIME
-			$conn = Propel::getConnection(UserPeer::DATABASE_NAME);
+			$con = Propel::getConnection(PurchasePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 			try {
 				$res->setRemoved(1);
-				UserPeer::incrementCredit($res->getBuyerId(), $res->getPrice());
-				ItemPeer::incrementStock($res->getStockId(), 1);
+				$res->save();
+				UserPeer::incrementCreditById($res->getBuyerId(), $res->getPrice());
+				ItemPeer::incrementStockById($res->getStockId(), 1);
 				$conn->commit();
 			}
 			catch (Exception $e) {
 				$con->rollback();
-				return array("error"=>400, "error_msg"=>"Une erreur est survenue, l'annulation a échouée.");
+				return array("error"=>400, "error_msg"=>"Une erreur est survenue, l'annulation a échouée. ".$e->getMessage());
 			}
 
 		} else {
@@ -310,19 +311,13 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			// On vérifie que le produit fait bien partie de la fundation
 			// TODO : Vérifier la plage_horaire, le groupe alcool etc...
 			$objects_ids = explode(" ", trim($obj_ids));
-			$obj_ids = array_unique($objects_ids);
-			$req = "SELECT o.obj_id, o.obj_name, o.obj_stock, o.obj_type, o.obj_alcool, p.pri_credit
-FROM t_object_obj o
-LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id 
-WHERE 
-obj_removed = '0'
-AND o.fun_id = '%u' AND (";
-			foreach($obj_ids as $id) {
-				$req .= " o.obj_id = '%u' OR";
-			}
-			$req = substr($req, 0, -2);
-			$req .= ")";
-			$res = Db_buckutt::getInstance()->query($req, array_merge(array($this->Fun_id),$obj_ids));
+			$articles = ItemsQuery::create()
+							->filterByRemoved(0)
+							->filterByFunId($this->Fun_id)
+							->filterById(array_unique($objects_ids);)
+							->find()
+			
+			
 			$articles = array();
 			$alcool = false;
 	        while ($don = Db_buckutt::getInstance()->fetchArray($res)) 
