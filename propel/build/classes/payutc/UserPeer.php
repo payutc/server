@@ -3,7 +3,9 @@
 namespace Payutc;
 
 use Payutc\om\BaseUserPeer;
-
+use \Criteria;
+use \Propel;
+use \PropelPDO;
 
 /**
  * Skeleton subclass for performing query and update operations on the 'ts_user_usr' table.
@@ -18,19 +20,33 @@ use Payutc\om\BaseUserPeer;
  */
 class UserPeer extends BaseUserPeer
 {
-	public static function incrementCredit($id, $value)
+	public static function incrementCredit($selectCriteria, $value, PropelPDO $con = null)
 	{
-		$con = Propel::getConnection(AdsPeer::DATABASE_NAME);
-		$query = 'UPDATE '.UserPeer::TABLE_NAME.
-					' SET '.UserPeer::USR_CREDIT.' = '.UserPeer::USR_CREDIT.' + '.$value
-					' WHERE '.UserPeer::USR_ID.' = '.$id;
-		sfContext::getInstance()->getLogger()->crit($query);
-		$stmt = $con->prepare($query);
-		return $stmt->execute();
+		$value = (int) $value;
+		
+        if ($con === null) {
+            $con = Propel::getConnection(self::DATABASE_NAME, Propel::CONNECTION_WRITE);
+        }
+        
+        $selectCriteria->add(self::USR_CREDIT, array('raw' => self::USR_CREDIT . ' + ?', 'value' => $value), Criteria::CUSTOM_EQUAL);
+
+		return self::doUpdate($selectCriteria,$con);
 	}
 
-	public static function decrementCredit($id, $value)
+	public static function decrementCredit($selectCriteria, $value, PropelPDO $conn = null)
 	{
-		return UserPeer::incrementCredit($id, -$value);
+		return UserPeer::incrementCredit($selectCriteria, -$value, $conn);
+	}
+
+	public static function incrementCreditById($id, $value, PropelPDO $con = null)
+	{
+        $c = new Criteria(self::DATABASE_NAME);
+        $c->add(self::USR_ID, $id);
+        return self::incrementCredit($c, $value, $con);
+	}
+
+	public static function decrementCreditById($id, $value, PropelPDO $con = null)
+	{
+        return self::incrementCreditById($id, -$value, $con);
 	}
 }
