@@ -58,6 +58,9 @@ $_CONFIG['PBX_EXE'] = "/usr/share/buckutt/modulev3.cgi";
 $_CONFIG['PBX_PUBPEM'] = "somewhere/pubkey.pem";
 
 
+// Configuration de ginger (outil cotisant)
+// Indiquer true au deuxième paramètre pour les tests
 $_CONFIG['ginger_key'] = "abc";
+$_CONFIG['skip_ginger'] = false;
 
 ?>
