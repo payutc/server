@@ -941,18 +941,6 @@ WHERE poi.poi_id = jur.poi_id AND fun_id = '%u' AND poi_removed = '0' AND jur.ri
 		return $this->get_summary_for_accounting_period($day, $month, $year, $day, $month, $year);
 	}
 
-
-	/** 
-	* Retourne la liste des transactions effectuées lors d'une journée
-	*
-	* @return array $data
-	*/
-	public function stat_day($day, $month, $year) {
-		$res = $this->db->query("SELECT COUNT( * ) , SUM( usr_credit ) FROM  `ts_user_usr`;");
-        $don = $this->db->fetchArray($res);
-        return array("success"=>$don);
-	}
-
 }
 
 
