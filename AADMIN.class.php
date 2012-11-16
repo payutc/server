@@ -890,6 +890,68 @@ WHERE poi.poi_id = jur.poi_id AND fun_id = '%u' AND poi_removed = '0' AND jur.ri
 		return $plage->get_all_fundation($fun_id);
 	}
 
+	/** 
+	* Retourne pour chaque jour de chaque mois chaque produit avec 
+	* l'argent qu'il a rapporté, sa catégorie, sa fondation etc...
+	*
+	* @return array $data
+	*/
+	public function get_summary_for_accounting_period($day, $month, $year, $day2, $month2, $year2) {
+
+		$query = "
+		SELECT t.obj_id, 
+			   o.obj_name, parent.obj_name as categorie, 
+			   o.obj_removed as objet_deleted, COUNT(*) as nombre, 
+			   SUM(pur_price/100) as montant_total, fun.fun_name, 
+
+			   DAY(pur_date) as jour, 
+			   MONTH(pur_date) as mois, 
+			   WEEK(pur_date) as semaine,
+			   YEAR(pur_date) as annee
+		
+		FROM t_purchase_pur t, t_object_obj o, t_object_obj parent, tj_object_link_oli link, t_fundation_fun fun
+		WHERE t.obj_id = o.obj_id 
+		AND fun.fun_id = t.fun_id
+		AND link.obj_id_child = o.obj_id 
+		AND link.obj_id_parent = parent.obj_id 
+		AND link.oli_removed = 0 
+		AND pur_removed = 0 
+
+		AND DATE(pur_date) BETWEEN '" . $year . "-" . $month . "-" . $day . "' AND '" . $year2 . "-" . $month2 . "-" . $day2 . "'  
+		GROUP BY obj_id, DAY(pur_date), MONTH(pur_date)
+		ORDER BY fun_name, mois, jour ASC
+        	";
+
+        $pois = Array();
+        $res = $this->db->query($query);
+        while ($don = $this->db->fetchArray($res)) {
+            $pois[]=$don;
+        }
+
+        return array("success"=>$pois, "query"=>$query);
+	}
+
+	/** 
+	* Retourne pour chaque jour de chaque mois chaque produit avec 
+	* l'argent qu'il a rapporté, sa catégorie, sa fondation etc...
+	*
+	* @return array $data
+	*/
+	public function get_summary_for_accounting($day, $month, $year) {
+		return $this->get_summary_for_accounting_period($day, $month, $year, $day, $month, $year);
+	}
+
+
+	/** 
+	* Retourne la liste des transactions effectuées lors d'une journée
+	*
+	* @return array $data
+	*/
+	public function stat_day($day, $month, $year) {
+		$res = $this->db->query("SELECT COUNT( * ) , SUM( usr_credit ) FROM  `ts_user_usr`;");
+        $don = $this->db->fetchArray($res);
+        return array("success"=>$don);
+	}
 
 }
 
