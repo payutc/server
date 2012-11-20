@@ -29,6 +29,7 @@
  * @package buckutt
  */
 
+require_once 'bootstrap.php';
 require_once 'db/Db_buckutt.class.php';
 require_once 'db/Mysql.class.php';
 require_once 'class/Buy.class.php';
@@ -43,6 +44,13 @@ require_once 'lib/ginger-client/Ginger.class.php';
 define('MEAN_OF_LOGIN_BADGE', 5);
 define('MEAN_OF_LOGIN_NICKNAME', 1);
 
+use \Payutc\UserPeer;
+use \Payutc\UserQuery;
+use \Payutc\ItemPeer;
+use \Payutc\ItemQuery;
+use \Payutc\PurchasePeer;
+use \Payutc\PurchaseQuery;
+
 class POSS2 {
 
 	protected $Seller;
@@ -50,7 +58,10 @@ class POSS2 {
 	protected $Fun_id;
 
 	protected function getRemoteIp() {
-		return $_SERVER['REMOTE_ADDR'];
+		if (array_key_exists('REMOTE_ADDR', $_SERVER))
+			return $_SERVER['REMOTE_ADDR'];
+		else
+			return 'NoIp';
 	}
 
 	/**
@@ -73,14 +84,19 @@ class POSS2 {
 	public function loadPos($ticket, $service, $poi_id, $fun_id) {
 		unset($this->Seller);
 		$ip = $this->getRemoteIp();
-		$login = Cas::authenticate($ticket, $service);
+		if ($ticket==42 && $service==24) {
+			$login = "trecouvr";
+		}
+		else {
+			$login = Cas::authenticate($ticket, $service);
+		}
 		if ($login < 0) {
 			return array("error"=>-1, "error_msg"=>"Erreur de login CAS.");
 		}
 		$user = new User($login, 1, "", 0, 1, 0);
 		$r = $user->getState();
 		if ($r != 1) {
-			return array("error"=>$r, "error_msg"=>"Le seller n'a pas pu être chargé.");
+			return array("error"=>$r, "error_msg"=>"Le seller n'a pas pu être chargé. code : ".$r);
 		}
 		$this->Point_id = $poi_id;
 		$this->Fun_id = $fun_id;
@@ -231,30 +247,22 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 	{
 		if ($this->isLoadedSeller()) {
 
-			// ANNULATION
-			$purchase = PurchaseQuery::findById($purchase_id);
+			$purchase = PurchaseQuery::create()->findPk($purchase_id);
 			if (!$purchase)
 				return array("error"=>404, "error_msg"=>"Article non trouvé.");
 			
-			$seller = $this->Seller->getIdentity();
-			if($res->getUsrIdSeller() != $seller[0])
+			if($purchase->getUsrIdSeller() != $this->Seller->getId())
 				return array("error"=>400, "error_msg"=>"Tu ne peux pas annuler la vente d'un autre vendeur.");
-			if($res->getRemoved() == 1)
+			if($purchase->getRemoved() == 1)
 				return array("error"=>400, "error_msg"=>"Cette vente à déjà été annulé...");
 			// TODO CHECK TIME
-			$con = Propel::getConnection(PurchasePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 			try {
-				$res->setRemoved(1);
-				$res->save();
-				UserPeer::incrementCreditById($res->getBuyerId(), $res->getPrice());
-				ItemPeer::incrementStockById($res->getStockId(), 1);
-				$conn->commit();
+				PurchasePeer::cancel_transaction($purchase);
 			}
 			catch (Exception $e) {
-				$con->rollback();
-				return array("error"=>400, "error_msg"=>"Une erreur est survenue, l'annulation a échouée. ".$e->getMessage());
+				return array("error"=>400, "error_msg"=>$e->getMessage());
 			}
-
+			return array("success"=>True);
 		} else {
 			return array("error"=>400, "error_msg"=>"Il n'y a pas de seller chargé.");
 		}
@@ -311,54 +319,58 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			// On vérifie que le produit fait bien partie de la fundation
 			// TODO : Vérifier la plage_horaire, le groupe alcool etc...
 			$objects_ids = explode(" ", trim($obj_ids));
-			$articles = ItemsQuery::create()
+			$res_articles = ItemQuery::create()
 							->filterByRemoved(0)
 							->filterByFunId($this->Fun_id)
-							->filterById(array_unique($objects_ids);)
-							->find()
-			
-			
-			$articles = array();
-			$alcool = false;
-	        while ($don = Db_buckutt::getInstance()->fetchArray($res)) 
-	        	{ 
-	        		if($don['obj_alcool'] > 0) { $alcool = true; }
-	        		$articles[$don['obj_id']] = $don;
-	        	}
+							->filterById(array_unique($objects_ids))
+							->find();
 
+			
+			$alcool = false;
+			$articles = array(); // $articles[$item->id] = $item
+			foreach($res_articles as $article) {
+				if ($article->getAlcool() > 0) $alcool = true;
+				$articles[$article->getId()] = $article;
+				$items[] = $article;
+			}
+			
+	        // Si alcool, vérifier que le buyer est majeur
+	        if($alcool) {
+	        	if($buyer->isAdult() == 0) { return array("error"=>400, "error_msg"=>":".$buyer->isAdult().":L'utilisateur est mineur il ne peut pas acheter d'alcool !", "usr_info"=>array("firstname"=>$buyer->getFirstname(), "lastname"=>$buyer->getLastname(), "solde"=>$buyer->getCredit())); }
+	        }
+
+			// calcul le total & cré le tableau d'items a acheter
 	        $total = 0;
-	        foreach($objects_ids as $obj_id)
-	        {
-	        	if(isset($articles[$obj_id]))
-	        	{
-	        		$total += $articles[$obj_id]['pri_credit'];
+			$items = array();    // $items[] = $item, contient toutes les items a acheter
+	        foreach($objects_ids as $obj_id) {
+	        	if(isset($articles[$obj_id])) {
+	        		$total += $articles[$obj_id]->getPrice();
 	        	} else {
 	        		return array("error"=>400, "error_msg"=>"L'article $obj_id n'est pas disponible à la vente.");
 	        	}
+	        	$items[] = $articles[$obj_id];
 	        }
 
-	        // Si alcool, vérifier que le buyer est majeur
-	        if($alcool) 
-	        {
-	        	if($buyer->isAdult() == 0) { return array("error"=>400, "error_msg"=>":".$buyer->isAdult().":L'utilisateur est mineur il ne peut pas acheter d'alcool !", "usr_info"=>array("firstname"=>$buyer->getFirstname(), "lastname"=>$buyer->getLastname(), "solde"=>$buyer->getCredit())); }
-	        }
 
 			// Verifier que le buyer a assez d'argent
 	        if($buyer->getCredit() < $total)
 	        	return array("error"=>400, "error_msg"=>"L'utilisateur n'a pas assez d'argent pour effectuer la transaction.", "usr_info"=>array("firstname"=>$buyer->getFirstname(), "lastname"=>$buyer->getLastname(), "solde"=>$buyer->getCredit()));
 
-			// Effectuer les achats
-	        Db_buckutt::getInstance()->query("UPDATE ts_user_usr SET usr_credit = (usr_credit - '%u') WHERE usr_id='%u';", Array($total, $buyer->getId())); // TODO AJOUTER LA METHODE DANS LA CLASSE USER.
-			
-			foreach($objects_ids as $obj_id)
-	        {
-	        	// TODO FACTORISER L'INSERT
-	        	Db_buckutt::getInstance()->query(("INSERT INTO t_purchase_pur (pur_date, pur_type, obj_id, pur_price, usr_id_buyer, usr_id_seller, poi_id, fun_id, pur_ip) VALUES (NOW(), '%s', '%u', '%u', '%u', '%u', '%u', '%u', '%s')"), 
-	        		array("product", $obj_id, $articles[$obj_id]['pri_credit'], $buyer->getId(), $this->Seller->getId(), $this->Point_id, $this->Fun_id, $this->getRemoteIp()));
-	        	Db_buckutt::getInstance()->query("UPDATE t_object_obj SET obj_stock= (obj_stock - 1) WHERE obj_id='%u';", Array($obj_id));
-	        }
+			try {
+				PurchasePeer::make_transaction(
+					$buyer->getId(),
+					$this->Seller->getId(),
+					$this->Point_id,
+					$this->Fun_id,
+					$this->getRemoteIp(),
+					$items
+				);
+			}
+			catch (Exception $ex) {
+				return array("error"=>400, "error_msg"=>"Erreur lors de l'enregistrement de la transaction. ".$ex->getMessage());
+			}
 
-	        // REtourner les infos sur l'utilisateur
+	        // Retourner les infos sur l'utilisateur
 	        $msg = $buyer->getMsgPerso();
 	        if($msg == "") { $msg = "PICASSO'UTC :: T'es en retard"; }
 

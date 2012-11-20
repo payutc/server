@@ -24,11 +24,11 @@ class UserPeer extends BaseUserPeer
 	{
 		$value = (int) $value;
 		
-        if ($con === null) {
-            $con = Propel::getConnection(self::DATABASE_NAME, Propel::CONNECTION_WRITE);
-        }
-        
-        $selectCriteria->add(self::USR_CREDIT, array('raw' => self::USR_CREDIT . ' + ?', 'value' => $value), Criteria::CUSTOM_EQUAL);
+		if ($con === null) {
+		    $con = Propel::getConnection(self::DATABASE_NAME, Propel::CONNECTION_WRITE);
+		}
+		
+		$selectCriteria->add(self::USR_CREDIT, array('raw' => self::USR_CREDIT . ' + ?', 'value' => $value), Criteria::CUSTOM_EQUAL);
 
 		return self::doUpdate($selectCriteria,$con);
 	}

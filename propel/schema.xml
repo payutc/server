@@ -31,10 +31,10 @@
     <column name="img_id" phpName="ImgId" type="INTEGER" sqlType="int(11) unsigned" required="false"/>
     <column name="fun_id" phpName="FunId" type="INTEGER" sqlType="int(11) unsigned" required="true"/>
     <column name="obj_removed" phpName="Removed" type="BOOLEAN" size="1" sqlType="tinyint(1) unsigned" required="true" defaultValue="false"/>
-    <foreign-key foreignTable="t_fundation_fun" name="t_object_obj_ibfk_3" onUpdate="CASCADE">
+    <foreign-key foreignTable="t_fundation_fun" phpName="Fundation" name="t_object_obj_ibfk_3" onUpdate="CASCADE">
       <reference local="fun_id" foreign="fun_id"/>
     </foreign-key>
-    <foreign-key foreignTable="ts_image_img" name="t_object_obj_ibfk_1">
+    <foreign-key foreignTable="ts_image_img" phpName="Image" name="t_object_obj_ibfk_1">
       <reference local="img_id" foreign="img_id"/>
     </foreign-key>
     <index name="img_id">

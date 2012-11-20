@@ -24,18 +24,18 @@ class ItemPeer extends BaseItemPeer
 	{
 		$value = (int) $value;
 		
-        if ($con === null) {
-            $con = Propel::getConnection(self::DATABASE_NAME, Propel::CONNECTION_WRITE);
-        }
-        
-        $selectCriteria->add(self::OBJ_STOCK, array('raw' => self::OBJ_STOCK . ' + ?', 'value' => $value), Criteria::CUSTOM_EQUAL);
+		if ($con === null) {
+		    $con = Propel::getConnection(self::DATABASE_NAME, Propel::CONNECTION_WRITE);
+		}
 
+		$selectCriteria->add(self::OBJ_STOCK, array('raw' => self::OBJ_STOCK . ' + ?', 'value' => $value), Criteria::CUSTOM_EQUAL);
+		
 		return self::doUpdate($selectCriteria,$con);
 	}
 
 	public static function decrementStock($selectCriteria, $value, PropelPDO $conn = null)
 	{
-		return UserPeer::incrementStock($selectCriteria, -$value, $conn);
+		return self::incrementStock($selectCriteria, -$value, $conn);
 	}
 
 	public static function incrementStockById($id, $value, PropelPDO $con = null)

@@ -18,4 +18,7 @@ use Payutc\om\BaseItem;
  */
 class Item extends BaseItem
 {
+	public function getPrice() {
+		return $this->getPrices()->getFirst()->getCredit();
+	}
 }
