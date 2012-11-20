@@ -97,10 +97,10 @@ class MADMIN extends WsdlBase {
 	}
 	
 	// On vérifie que le user est bien cotisant
-	$ginger = new Ginger($_CONFIG['ginger_key']);
 	try {
-        if(empty($_CONFIG['skip_ginger']) || !$_CONFIG['skip_ginger'])
+        if(!empty($_CONFIG['ginger_key']))
         {
+            $ginger = new Ginger($_CONFIG['ginger_key']);
             $user = $ginger->getUser($this->loginToRegister);
         }
         else 

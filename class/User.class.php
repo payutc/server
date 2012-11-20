@@ -571,7 +571,7 @@ class User {
 		if($this->adult == 1) {
 			return 1;
 		}
-		else {
+		else if(!empty($_CONFIG['ginger_key'])){
 			// On verifie via l'api de la dsi si le statut de la personne à changé.
 			$ginger = new Ginger($_CONFIG['ginger_key']);
 			try {
@@ -588,6 +588,7 @@ class User {
 				return 0;
 			}
 		}
+		return 1;
 	}
 
 	/**

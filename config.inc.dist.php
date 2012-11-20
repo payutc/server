@@ -59,8 +59,7 @@ $_CONFIG['PBX_PUBPEM'] = "somewhere/pubkey.pem";
 
 
 // Configuration de ginger (outil cotisant)
-// Indiquer true au deuxième paramètre pour les tests
+// Laisser la clé vide pour désactiver les appels à ginger
 $_CONFIG['ginger_key'] = "abc";
-$_CONFIG['skip_ginger'] = false;
 
 ?>
