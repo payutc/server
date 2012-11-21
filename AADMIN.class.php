@@ -902,7 +902,7 @@ WHERE poi.poi_id = jur.poi_id AND fun_id = '%u' AND poi_removed = '0' AND jur.ri
 		SELECT t.obj_id,
 			   o.obj_name, parent.obj_name as categorie,
 			   o.obj_removed as objet_deleted, COUNT(*) as nombre,
-			   SUM(pur_price/100) as montant_total, fun.fun_name,
+			   SUM(pur_price) as montant_total, fun.fun_name,
 
 			   DAY(pur_date) as jour,
 			   MONTH(pur_date) as mois,
@@ -928,7 +928,7 @@ WHERE poi.poi_id = jur.poi_id AND fun_id = '%u' AND poi_removed = '0' AND jur.ri
             $pois[]=$don;
         }
 
-        return array("success"=>$pois, "query"=>$query);
+        return array("success"=>$pois);
 	}
 
 	/**
