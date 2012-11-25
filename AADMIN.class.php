@@ -896,7 +896,22 @@ WHERE poi.poi_id = jur.poi_id AND fun_id = '%u' AND poi_removed = '0' AND jur.ri
 	*
 	* @return array $data
 	*/
-	public function get_summary_for_accounting_period($day, $month, $year, $day2, $month2, $year2) {
+	public function get_CA_period($day, $month, $year, $day2, $month2, $year2, $fundation_id) {
+		global $right_name_to_id;
+
+		// 2. CHECK RIGHT TO TRESO for this particular fundation
+		$res = $this->db->query("SELECT f.fun_id, f.fun_name
+					FROM t_fundation_fun f, tj_usr_rig_jur r
+					WHERE f.fun_id = r.fun_id 
+					AND r.usr_id = '%u' 
+					AND rig_id = '%u' 
+					AND f.fun_id = '%u';", 
+					array($this->user->getId(), $right_name_to_id["TRESO"], $fundation_id));
+		
+		if ($this->db->affectedRows() == 0) {
+	        return array("error"=>400, 
+	        			 "error_msg"=>"Tu ne sembles pas avoir les droits pour regarder la trésorerie pour cette fondation !");
+	    }
 
 		$query = "
 		SELECT t.obj_id,
@@ -916,14 +931,13 @@ WHERE poi.poi_id = jur.poi_id AND fun_id = '%u' AND poi_removed = '0' AND jur.ri
 		AND link.obj_id_parent = parent.obj_id
 		AND link.oli_removed = 0
 		AND pur_removed = 0
-
 		AND DATE(pur_date) BETWEEN '%u-%u-%u' AND '%u-%u-%u'
-		GROUP BY obj_id, DAY(pur_date), MONTH(pur_date)
-		ORDER BY fun_name, mois, jour ASC
-        	";
+		AND t.fun_id = %u
+		GROUP BY obj_id
+		ORDER BY fun_name, mois, jour ASC";
 
         $pois = Array();
-        $res = $this->db->query($query, Array($year, $month, $day, $year2, $month2, $day2));
+        $res = $this->db->query($query, Array($year, $month, $day, $year2, $month2, $day2, $fundation_id));
         while ($don = $this->db->fetchArray($res)) {
             $pois[]=$don;
         }
@@ -937,8 +951,8 @@ WHERE poi.poi_id = jur.poi_id AND fun_id = '%u' AND poi_removed = '0' AND jur.ri
 	*
 	* @return array $data
 	*/
-	public function get_summary_for_accounting($day, $month, $year) {
-		return $this->get_summary_for_accounting_period($day, $month, $year, $day, $month, $year);
+	public function get_CA($day, $month, $year, $fundation_id) {
+		return $this->get_CA_period($day, $month, $year, $day, $month, $year, $fundation_id);
 	}
 
 }
