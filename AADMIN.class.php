@@ -1,10 +1,10 @@
-<?php 
+<?php
 /**
     BuckUTT - Buckutt est un système de paiement avec porte-monnaie électronique.
     Copyright (C) 2011 BuckUTT <buckutt@utt.fr>
 
 	This file is part of BuckUTT
-	
+
     BuckUTT is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -21,7 +21,7 @@
 
 /**
  * AAdmin.class
- * 
+ *
  * Classe permettant de tout administrer
  * @author BuckUTT <buckutt@utt.fr>, payutc <payutc@assos.utc.fr>
  * @version 3.0
@@ -46,13 +46,13 @@ require_once 'class/PlageHoraire.class.php';
 	$right_id_to_name = array(2=>"ADMIN", 6=>"GESARTICLE", 5=>"VENDRE", 4=>"TRESO", 7=>"POI-FUNDATION");
 
 class AAdmin {
-	
+
 	protected $db;
 	protected $user;
-	
+
 	/**
 	 * Constructeur.
-	 */   
+	 */
 	public function __construct() {
 		$this->db = Db_buckutt::getInstance();
 	}
@@ -84,11 +84,11 @@ class AAdmin {
 			return "430";
 		}
 	}
-	
+
 
 	/**
 	 * Connecter le user avec un ticket CAS.
-	 * 
+	 *
 	 * @param String $ticket
 	 * @param String $service
 	 * @return int $state
@@ -101,7 +101,7 @@ class AAdmin {
 		$this->user = new User($login, 1, "", 0, 1, 0);
 		return $this->user->getState();
     }
-	
+
 	/**
 	* Récupérer un id d'utilisateur à partir d'un login
 	*
@@ -115,7 +115,7 @@ class AAdmin {
 		} else {
 			return array("error"=>400, "error_msg"=>"Le login $login n'a donné aucun resultat.");
 		}
-		
+
 	}
 
 
@@ -127,7 +127,7 @@ class AAdmin {
 
 	/**
 	* Retourne le firstname
-	* 
+	*
 	* @return string $firstname
 	*/
 	public function getFirstname() {
@@ -136,7 +136,7 @@ class AAdmin {
 
 	/**
 	* Retourne le lastname
-	* 
+	*
 	* @return string $lastname
 	*/
 	public function getLastname() {
@@ -160,14 +160,14 @@ class AAdmin {
 		// TODO CHECK RIGHT ADD A FUNDATION
 		$fundation_id = $this->db->insertId(
               $this->db->query(
-                  "INSERT INTO  t_fundation_fun (`fun_id` ,`fun_name` ,`fun_removed`)VALUES (NULL ,  '%s',  '0');", 
+                  "INSERT INTO  t_fundation_fun (`fun_id` ,`fun_name` ,`fun_removed`)VALUES (NULL ,  '%s',  '0');",
                   array($nom)));
 		return array("success"=>$fundation_id);
-	}	
+	}
 
 	/**
 	* Récuperer les fundations (ne nécessite pas de droit)
-	* 
+	*
 	* @return array $fundations
 	*/
 	public function get_fundations() {
@@ -175,7 +175,7 @@ class AAdmin {
 		$res = $this->db->query("SELECT fun_id, fun_name FROM t_fundation_fun WHERE fun_removed = '0';");
         while ($don = $this->db->fetchArray($res)) {
             $fundations[]=array(
-            	"id"=>$don['fun_id'], 
+            	"id"=>$don['fun_id'],
             	"name"=>$don['fun_name']);
         }
         return array("success"=>$fundations);
@@ -183,7 +183,7 @@ class AAdmin {
 
 	/**
 	* Récuperer une fundation (ne nécessite pas de droit)
-	* 
+	*
 	* @param int $id
 	* @return array $fundation
 	*/
@@ -191,9 +191,9 @@ class AAdmin {
 		$res = $this->db->query("SELECT fun_id, fun_name FROM t_fundation_fun WHERE fun_removed = '0' AND fun_id = '%u';", array($id));
         if ($this->db->affectedRows() >= 1) {
         	$don = $this->db->fetchArray($res);
-	        return array("success" => 
+	        return array("success" =>
 	        	array(
-            		"id"=>$don['fun_id'], 
+            		"id"=>$don['fun_id'],
             		"name"=>$don['fun_name'])
 	        	);
         } else {
@@ -203,7 +203,7 @@ class AAdmin {
 
 	/**
 	* Récuperer les fundations ou j'ai le droit de faire...
-	* 
+	*
 	* @param string $right
 	* @return array $fundation
 	*/
@@ -212,8 +212,8 @@ class AAdmin {
 		$fundations = array();
 
 		if(in_array($right, $right_fundation_name)) {
-			$res = $this->db->query("SELECT f.fun_id, f.fun_name 
-					FROM t_fundation_fun f, tj_usr_rig_jur r 
+			$res = $this->db->query("SELECT f.fun_id, f.fun_name
+					FROM t_fundation_fun f, tj_usr_rig_jur r
 					WHERE f.fun_id = r.fun_id AND r.usr_id = '%u' AND rig_id = '%u' GROUP BY f.fun_id, f.fun_name;", array($this->user->getId(), $right_name_to_id[$right]));
 		} else {
 			return array("error"=>400, "error_msg"=>"Le droit demandé n'a pas été reconnu.");
@@ -221,7 +221,7 @@ class AAdmin {
 
         while ($don = $this->db->fetchArray($res)) {
             $fundations[]=array(
-            	"id"=>$don['fun_id'], 
+            	"id"=>$don['fun_id'],
             	"name"=>$don['fun_name']);
         }
         return array("success"=>$fundations);
@@ -256,28 +256,28 @@ class AAdmin {
 		}
 
 		// 2. CHECK RIGHT TO ADD CATEGORIE IN THIS FUNDATION
-		$res = $this->db->query("SELECT f.fun_id, f.fun_name 
-					FROM t_fundation_fun f, tj_usr_rig_jur r 
+		$res = $this->db->query("SELECT f.fun_id, f.fun_name
+					FROM t_fundation_fun f, tj_usr_rig_jur r
 					WHERE f.fun_id = r.fun_id AND r.usr_id = '%u' AND rig_id = '%u' AND f.fun_id = '%u';", array($this->user->getId(), $right_name_to_id["GESARTICLE"], $fundation));
 		if ($this->db->affectedRows() == 0) {
 	        return array("error"=>400, "error_msg"=>"Tu ne sembles pas avoir les droits pour ajouter une catégorie dans cette fundation !");
-	    }	
+	    }
 
 
 		// 3. INSERTION DE LA CATEGORIE
 		$categorie_id = $this->db->insertId(
               $this->db->query(
-                  "INSERT INTO t_object_obj (`obj_id`, `obj_name`, `obj_type`, `obj_stock`, `obj_single`, `img_id`, `fun_id`, `obj_removed`) 
-                  VALUES (NULL, '%s', 'category', NULL, '0', NULL, '%u', '0');", 
+                  "INSERT INTO t_object_obj (`obj_id`, `obj_name`, `obj_type`, `obj_stock`, `obj_single`, `img_id`, `fun_id`, `obj_removed`)
+                  VALUES (NULL, '%s', 'category', NULL, '0', NULL, '%u', '0');",
                   array($nom, $fundation)));
 		if($parent != NULL) {
 			$this->db->query(
-                  "INSERT INTO tj_object_link_oli (`oli_id`, `obj_id_parent`, `obj_id_child`, `oli_step`, `oli_removed`) VALUES (NULL, '%u', '%u', '0', '0');", 
+                  "INSERT INTO tj_object_link_oli (`oli_id`, `obj_id_parent`, `obj_id_child`, `oli_step`, `oli_removed`) VALUES (NULL, '%u', '%u', '0', '0');",
                   array($parent, $categorie_id));
 		}
 
 		return array("success"=>$categorie_id);
-	}	
+	}
 
 
 	/**
@@ -299,16 +299,16 @@ class AAdmin {
 	        	$oli_id=$don['oli_id'];
 	        } else {
 	        	return array("error"=>400, "error_msg"=>"La catégorie à modifier n'existe pas !");
-	       }		
+	       }
 
 
 		// 2. CHECK RIGHT TO EDIT CATEGORIE IN THIS FUNDATION
-		$res = $this->db->query("SELECT f.fun_id, f.fun_name 
-					FROM t_fundation_fun f, tj_usr_rig_jur r 
+		$res = $this->db->query("SELECT f.fun_id, f.fun_name
+					FROM t_fundation_fun f, tj_usr_rig_jur r
 					WHERE f.fun_id = r.fun_id AND r.usr_id = '%u' AND rig_id = '%u' AND f.fun_id = '%u';", array($this->user->getId(), $right_name_to_id["GESARTICLE"], $fundation));
 		if ($this->db->affectedRows() == 0) {
 	        return array("error"=>400, "error_msg"=>"Tu ne sembles pas avoir les droits pour éditer une catégorie dans cette fundation !");
-	    }	
+	    }
 
 	    // 3. CHECK SI LE CHANGEMENT DE PARENT EST REALISABLE
 	    if($old_parent != $parent)
@@ -351,22 +351,22 @@ class AAdmin {
 		// 1. GET THE ARTICLE
 		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
 FROM t_object_obj o
-LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
+LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child
 LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.obj_type = 'category' AND o.obj_id = '%u';", array($id));
         	if ($this->db->affectedRows() >= 1) {
         		$don = $this->db->fetchArray($res);
 	        	$fundation=$don['fun_id'];
 	        } else {
 	        	return array("error"=>400, "error_msg"=>"La categorie à supprimer n'existe pas !");
-	       }		
+	       }
 
 		// 2. CHECK RIGHT "GESARTICLE" IN THIS FUNDATION
-		$res = $this->db->query("SELECT f.fun_id, f.fun_name 
-					FROM t_fundation_fun f, tj_usr_rig_jur r 
+		$res = $this->db->query("SELECT f.fun_id, f.fun_name
+					FROM t_fundation_fun f, tj_usr_rig_jur r
 					WHERE f.fun_id = r.fun_id AND r.usr_id = '%u' AND rig_id = '%u' AND f.fun_id = '%u';", array($this->user->getId(), $right_name_to_id["GESARTICLE"], $fundation));
 		if ($this->db->affectedRows() == 0) {
 	        return array("error"=>400, "error_msg"=>"Tu ne sembles pas avoir les droits pour supprimer une catégorie dans cette fundation !");
-	    }	
+	    }
 
 	    // 3. CHECK THERE IS NO CHILDREN
 		$res = $this->db->query("SELECT o.obj_id
@@ -374,7 +374,7 @@ FROM t_object_obj o, tj_object_link_oli WHERE o.obj_id = obj_id_child
 AND o.obj_removed = '0' AND obj_id_parent = '%u';", array($id));
         	if ($this->db->affectedRows() >= 1) {
 	        	return array("error"=>400, "error_msg"=>"La categorie à encore des enfants!");
-	       }	
+	       }
 
 
 	    // 4. REMOVE THE CATEGORY
@@ -385,27 +385,27 @@ AND o.obj_removed = '0' AND obj_id_parent = '%u';", array($id));
 
 	/**
 	* Retourne les categories
-	* 
-	* 
+	*
+	*
 	* @return array $categories
 	*/
 	public function get_categories() {
 		global $right_name_to_id;
 		// OBTENIR QUE LES CATEGORIES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
 		$categories = array();
-		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id 
+		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id
 FROM tj_usr_rig_jur tj, t_object_obj o
-LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
-WHERE 
-tj.fun_id = o.fun_id 
-AND obj_removed = '0' 
-AND obj_type = 'category' 
+LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child
+WHERE
+tj.fun_id = o.fun_id
+AND obj_removed = '0'
+AND obj_type = 'category'
 AND tj.rig_id = '%u'
 AND usr_id = '%u'
 ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId()));
         while ($don = $this->db->fetchArray($res)) {
             $categories[]=array(
-            	"id"=>$don['obj_id'], 
+            	"id"=>$don['obj_id'],
             	"name"=>$don['obj_name'],
             	"parent_id"=>$don['obj_id_parent'],
             	"fundation_id"=>$don['fun_id']);
@@ -415,7 +415,7 @@ ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId()
 
 	/**
 	* Retourne les categories d'un fundation
-	* 
+	*
 	* @param int $fun_id
 	* @param int $onlyFirstLevel
 	* @return array $categories
@@ -425,13 +425,13 @@ ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId()
 		$categories = array();
 		$level="";
 		if($onlyFirstLevel == 1) { $level = "AND oli.obj_id_parent IS NULL "; }
-		$res = $this->db->query("SELECT o.obj_id, o.obj_name, oli.obj_id_parent, o.fun_id 
+		$res = $this->db->query("SELECT o.obj_id, o.obj_name, oli.obj_id_parent, o.fun_id
 FROM tj_usr_rig_jur tj, t_object_obj o
-LEFT JOIN tj_object_link_oli oli ON o.obj_id = obj_id_child 
-WHERE 
-tj.fun_id = o.fun_id 
-AND obj_removed = '0' 
-AND obj_type = 'category' 
+LEFT JOIN tj_object_link_oli oli ON o.obj_id = obj_id_child
+WHERE
+tj.fun_id = o.fun_id
+AND obj_removed = '0'
+AND obj_type = 'category'
 AND tj.rig_id = '%u'
 AND usr_id = '%u'
 AND o.fun_id = '%u'
@@ -439,7 +439,7 @@ $level
 ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId(), $fun_id));
         while ($don = $this->db->fetchArray($res)) {
             $categories[]=array(
-            	"id"=>$don['obj_id'], 
+            	"id"=>$don['obj_id'],
             	"name"=>$don['obj_name'],
             	"parent_id"=>$don['obj_id_parent'],
             	"fundation_id"=>$don['fun_id']);
@@ -450,27 +450,27 @@ ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId()
 
 	/**
 	* Retourne la categorie $nb
-	* 
+	*
 	* @param int $nb
 	* @return array $categories
 	*/
 	public function get_categorie($nb) {
 		global $right_name_to_id;
 		// OBTENIR QUE LES CATEGORIES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
-$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id 
+$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id
 FROM tj_usr_rig_jur tj, t_object_obj o
-LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
-WHERE 
-tj.fun_id = o.fun_id 
-AND obj_removed = '0' 
-AND obj_type = 'category' 
+LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child
+WHERE
+tj.fun_id = o.fun_id
+AND obj_removed = '0'
+AND obj_type = 'category'
 AND tj.rig_id = '%u'
 AND usr_id = '%u'
 AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId(), $nb));
         if ($this->db->affectedRows() >= 1) {
         	$don = $this->db->fetchArray($res);
 	        return array("success"=>array(
-            	"id"=>$don['obj_id'], 
+            	"id"=>$don['obj_id'],
             	"name"=>$don['obj_name'],
             	"parent_id"=>$don['obj_id_parent'],
             	"fundation_id"=>$don['fun_id']));
@@ -501,31 +501,31 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
         if ($this->db->affectedRows() >= 1) {
         	$don = $this->db->fetchArray($res);
 	        $fun_id=$don['fun_id'];
-	        
+
 	        // CHECK IF USER HAD THE RIGHT TO ADD ARTICLE ON THIS FUNDATION
-			$res = $this->db->query("SELECT f.fun_id, f.fun_name 
-						FROM t_fundation_fun f, tj_usr_rig_jur r 
+			$res = $this->db->query("SELECT f.fun_id, f.fun_name
+						FROM t_fundation_fun f, tj_usr_rig_jur r
 						WHERE f.fun_id = r.fun_id AND r.usr_id = '%u' AND rig_id = '%u' AND f.fun_id = '%u';", array($this->user->getId(), $right_name_to_id["GESARTICLE"], $fun_id));
 			if ($this->db->affectedRows() == 0) {
 		        return array("error"=>400, "error_msg"=>"Tu ne sembles pas avoir les droits pour ajouter un article dans cette fundation !");
-		    }	
+		    }
 
 	        // 2. AJOUT DE L'ARTICLE
 	        // TODO : GERER QUAND LE STOCK EST A NULL ne pas mettre 0 mais NULL.
 	        $article_id = $this->db->insertId(
               $this->db->query(
-                  "INSERT INTO t_object_obj (`obj_id`, `obj_name`, `obj_type`, `obj_stock`, `obj_single`, `img_id`, `fun_id`, `obj_removed`, `obj_alcool`) 
-                  VALUES (NULL, '%s', 'product', '%u', '0', NULL, '%u', '0', '%u');", 
+                  "INSERT INTO t_object_obj (`obj_id`, `obj_name`, `obj_type`, `obj_stock`, `obj_single`, `img_id`, `fun_id`, `obj_removed`, `obj_alcool`)
+                  VALUES (NULL, '%s', 'product', '%u', '0', NULL, '%u', '0', '%u');",
                   array($nom, $stock, $fun_id, $alcool)));
 
 	        // 3. CREATION DU LIEN SUR LE PARENT
 			$this->db->query(
-                  "INSERT INTO tj_object_link_oli (`oli_id`, `obj_id_parent`, `obj_id_child`, `oli_step`, `oli_removed`) VALUES (NULL, '%u', '%u', '0', '0');", 
+                  "INSERT INTO tj_object_link_oli (`oli_id`, `obj_id_parent`, `obj_id_child`, `oli_step`, `oli_removed`) VALUES (NULL, '%u', '%u', '0', '0');",
                   array($parent, $article_id));
 
 			// 4. AJOUT DU PRIX
 			$this->db->query(
-                  "INSERT INTO  t_price_pri (`pri_id`, `obj_id`, `grp_id`, `per_id`, `pri_credit`, `pri_removed`) VALUES ( NULL ,  '%u', NULL , NULL ,  '%u',  '0');", 
+                  "INSERT INTO  t_price_pri (`pri_id`, `obj_id`, `grp_id`, `per_id`, `pri_credit`, `pri_removed`) VALUES ( NULL ,  '%u', NULL , NULL ,  '%u',  '0');",
                   array($article_id, $prix));
 
 			// ON RETOURNE L'ID D'ARTICLE
@@ -536,7 +536,7 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 			// LE PARENT N'EXISTE PAS
 			return array("error"=>"Le parent demandé n'existe pas.");
 		}
-	}	
+	}
 
 	/**
 	* Edite un article
@@ -553,7 +553,7 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 		// 1. GET THE ARTICLE
 		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
 FROM t_object_obj o
-LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
+LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child
 LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.obj_type = 'product' AND o.obj_id = '%u';", array($id));
         	if ($this->db->affectedRows() >= 1) {
         		$don = $this->db->fetchArray($res);
@@ -562,16 +562,16 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 	        	$old_price=$don['pri_credit'];
 	        } else {
 	        	return array("error"=>400, "error_msg"=>"L'article à modifier n'existe pas !");
-	       }		
+	       }
 
 
 		// 2. CHECK RIGHT TO EDIT ARTICLE IN THIS FUNDATION
-		$res = $this->db->query("SELECT f.fun_id, f.fun_name 
-					FROM t_fundation_fun f, tj_usr_rig_jur r 
+		$res = $this->db->query("SELECT f.fun_id, f.fun_name
+					FROM t_fundation_fun f, tj_usr_rig_jur r
 					WHERE f.fun_id = r.fun_id AND r.usr_id = '%u' AND rig_id = '%u' AND f.fun_id = '%u';", array($this->user->getId(), $right_name_to_id["GESARTICLE"], $fundation));
 		if ($this->db->affectedRows() == 0) {
 	        return array("error"=>400, "error_msg"=>"Tu ne sembles pas avoir les droits pour editer un article dans cette fundation !");
-	    }	
+	    }
 
 	    // 3. CHECK SI LE CHANGEMENT DE PARENT EST REALISABLE
 	    if($old_parent != $parent)
@@ -617,18 +617,18 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 		// 1. GET THE ARTICLE
 		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
 FROM t_object_obj o
-LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
+LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child
 LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.obj_type = 'product' AND o.obj_id = '%u';", array($id));
         	if ($this->db->affectedRows() >= 1) {
         		$don = $this->db->fetchArray($res);
 	        	$fundation=$don['fun_id'];
 	        } else {
 	        	return array("error"=>400, "error_msg"=>"L'article à supprimer n'existe pas !");
-	       }		
+	       }
 
 		// 2. CHECK RIGHT TO DELETE ARTICLE IN THIS FUNDATION
-		$res = $this->db->query("SELECT f.fun_id, f.fun_name 
-					FROM t_fundation_fun f, tj_usr_rig_jur r 
+		$res = $this->db->query("SELECT f.fun_id, f.fun_name
+					FROM t_fundation_fun f, tj_usr_rig_jur r
 					WHERE f.fun_id = r.fun_id AND r.usr_id = '%u' AND rig_id = '%u' AND f.fun_id = '%u';", array($this->user->getId(), $right_name_to_id["GESARTICLE"], $fundation));
 		if ($this->db->affectedRows() == 0) {
 	        return array("error"=>400, "error_msg"=>"Tu ne sembles pas avoir les droits pour supprimer un article dans cette fundation !");
@@ -642,7 +642,7 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 
 	/**
 	* Retourne les articles
-	* 
+	*
 	* @return array $articles
 	*/
 	public function get_articles() {
@@ -651,19 +651,19 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 		$articles = array();
 		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.obj_stock, o.obj_alcool, p.pri_credit
 FROM tj_usr_rig_jur tj, t_object_obj o
-LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
-LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id 
-WHERE 
-tj.fun_id = o.fun_id 
-AND obj_removed = '0' 
-AND obj_type = 'product' 
+LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child
+LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id
+WHERE
+tj.fun_id = o.fun_id
+AND obj_removed = '0'
+AND obj_type = 'product'
 AND tj.rig_id = '%u'
 AND usr_id = '%u'
 ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId()));
         while ($don = $this->db->fetchArray($res)) {
             $articles[]=array(
-            	"id"=>$don['obj_id'], 
-            	"name"=>$don['obj_name'], 
+            	"id"=>$don['obj_id'],
+            	"name"=>$don['obj_name'],
             	"categorie_id"=>$don['obj_id_parent'],
             	"fundation_id"=>$don['fun_id'],
             	"stock"=>$don['obj_stock'],
@@ -675,7 +675,7 @@ ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId()
 
 	/**
 	* Retourne un article
-	* 
+	*
 	* @param int $id
 	* @return array $article
 	*/
@@ -684,20 +684,20 @@ ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId()
 		// OBTENIR QUE LES ARTICLES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
         $res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.obj_stock, o.obj_alcool, p.pri_credit
 FROM tj_usr_rig_jur tj, t_object_obj o
-LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
-LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id 
-WHERE tj.fun_id = o.fun_id  
-AND obj_removed = '0' 
-AND o.obj_type = 'product' 
-AND o.obj_id = '%u' 
+LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child
+LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id
+WHERE tj.fun_id = o.fun_id
+AND obj_removed = '0'
+AND o.obj_type = 'product'
+AND o.obj_id = '%u'
 AND tj.rig_id = '%u'
 AND usr_id = '%u'
 ORDER BY obj_name;", Array($id, $right_name_to_id["GESARTICLE"], $this->user->getId()));
         if ($this->db->affectedRows() >= 1) {
         	$don = $this->db->fetchArray($res);
 	        return array("success"=>array(
-            	"id"=>$don['obj_id'], 
-            	"name"=>$don['obj_name'], 
+            	"id"=>$don['obj_id'],
+            	"name"=>$don['obj_name'],
             	"categorie_id"=>$don['obj_id_parent'],
             	"fundation_id"=>$don['fun_id'],
             	"stock"=>$don['obj_stock'],
@@ -740,9 +740,9 @@ ORDER BY obj_name;", Array($id, $right_name_to_id["GESARTICLE"], $this->user->ge
         // 4. Puisqu'on a le droit donnons le droit ^^
 		$jur_id = $this->db->insertId(
               $this->db->query(
-                  "INSERT INTO tj_usr_rig_jur (`jur_id`, `usr_id`, `rig_id`, `per_id`, `fun_id`, `poi_id`, `jur_removed`) 
-                  VALUES (NULL, '%u', '%u', NULL, '%u', NULL, '0');", 
-                  array($user_id, $right_id, $fun_id)));        
+                  "INSERT INTO tj_usr_rig_jur (`jur_id`, `usr_id`, `rig_id`, `per_id`, `fun_id`, `poi_id`, `jur_removed`)
+                  VALUES (NULL, '%u', '%u', NULL, '%u', NULL, '0');",
+                  array($user_id, $right_id, $fun_id)));
 
 		return array("success"=>$jur_id);
 	}
@@ -772,8 +772,8 @@ ORDER BY obj_name;", Array($id, $right_name_to_id["GESARTICLE"], $this->user->ge
         // 4. Puisqu'on a le droit retirons le droit ^^
 		$jur_id = $this->db->insertId(
               $this->db->query(
-                  "DELETE FROM tj_usr_rig_jur WHERE `usr_id` = '%u' AND `rig_id` = '%u' AND `fun_id` = '%u';", 
-                  array($user_id, $right_id, $fun_id)));        
+                  "DELETE FROM tj_usr_rig_jur WHERE `usr_id` = '%u' AND `rig_id` = '%u' AND `fun_id` = '%u';",
+                  array($user_id, $right_id, $fun_id)));
 
 		return array("success"=>"deleted");
 	}
@@ -799,10 +799,10 @@ FROM tj_usr_rig_jur j, ts_user_usr u
 WHERE j.usr_id=u.usr_id AND fun_id = '%u' AND j.usr_id IS NOT NULL ORDER BY j.rig_id;", Array($fun_id));
         while ($don = $this->db->fetchArray($res)) {
             $rights[]=array(
-            	"usr_id"=>$don['usr_id'], 
-            	"usr_firstname"=>$don['usr_firstname'], 
-            	"usr_lastname"=>$don['usr_lastname'], 
-            	"usr_login"=>$don['usr_nickname'], 
+            	"usr_id"=>$don['usr_id'],
+            	"usr_firstname"=>$don['usr_firstname'],
+            	"usr_lastname"=>$don['usr_lastname'],
+            	"usr_login"=>$don['usr_nickname'],
             	"rig_id"=>$right_id_to_name[$don['rig_id']]);
         }
         return array("success"=>$rights);
@@ -812,12 +812,12 @@ WHERE j.usr_id=u.usr_id AND fun_id = '%u' AND j.usr_id IS NOT NULL ORDER BY j.ri
 	ICI LES FONCTIONS LIES AUX POIS
 	*/
 
-	/** 
+	/**
 	* Obtenir les pois d'une fundation
 	* @param int $fun_id
 	* @return array $result
 	*/
-	public function get_pois_fundation($fun_id) 
+	public function get_pois_fundation($fun_id)
 	{
 		global $right_name_to_id;
         $pois = array();
@@ -826,7 +826,7 @@ FROM t_point_poi poi, tj_usr_rig_jur jur
 WHERE poi.poi_id = jur.poi_id AND fun_id = '%u' AND poi_removed = '0' AND jur.rig_id = '%u' ORDER BY poi_name;", Array($fun_id, $right_name_to_id["POI-FUNDATION"]));
         while ($don = $this->db->fetchArray($res)) {
             $pois[]=array(
-                "id"=>$don['poi_id'], 
+                "id"=>$don['poi_id'],
                 "name"=>$don['poi_name']);
         }
         return array("success"=>$pois);
@@ -867,7 +867,7 @@ WHERE poi.poi_id = jur.poi_id AND fun_id = '%u' AND poi_removed = '0' AND jur.ri
 		return $plage->edit();
 	}*/
 
-	/** 
+	/**
 	* Supprime une plage horaire
 	* @param int $id
 	* @return array $result
@@ -879,17 +879,81 @@ WHERE poi.poi_id = jur.poi_id AND fun_id = '%u' AND poi_removed = '0' AND jur.ri
 	}
 
 
-	/** 
+	/**
 	* Obtenir les plages horaires d'une fundation
 	* @param int $fun_id
 	* @return array $result
 	*/
-	public function get_plages_horaire_fundation($fun_id) 
+	public function get_plages_horaire_fundation($fun_id)
 	{
 		$plage = new PlageHoraire($this->user, NULL, NULL, NULL, NULL, NULL, NULL);
 		return $plage->get_all_fundation($fun_id);
 	}
 
+	/**
+	* Retourne pour chaque jour de chaque mois chaque produit avec
+	* l'argent qu'il a rapporté, sa catégorie, sa fondation etc...
+	*
+	* @return array $data
+	*/
+	public function get_CA_period($day, $month, $year, $day2, $month2, $year2, $fundation_id) {
+		global $right_name_to_id;
+
+		// 2. CHECK RIGHT TO TRESO for this particular fundation
+		$res = $this->db->query("SELECT f.fun_id, f.fun_name
+					FROM t_fundation_fun f, tj_usr_rig_jur r
+					WHERE f.fun_id = r.fun_id 
+					AND r.usr_id = '%u' 
+					AND rig_id = '%u' 
+					AND f.fun_id = '%u';", 
+					array($this->user->getId(), $right_name_to_id["TRESO"], $fundation_id));
+		
+		if ($this->db->affectedRows() == 0) {
+	        return array("error"=>400, 
+	        			 "error_msg"=>"Tu ne sembles pas avoir les droits pour regarder la trésorerie pour cette fondation !");
+	    }
+
+		$query = "
+		SELECT t.obj_id,
+			   o.obj_name, parent.obj_name as categorie,
+			   o.obj_removed as objet_deleted, COUNT(*) as nombre,
+			   SUM(pur_price) as montant_total, fun.fun_name,
+
+			   DAY(pur_date) as jour,
+			   MONTH(pur_date) as mois,
+			   WEEK(pur_date) as semaine,
+			   YEAR(pur_date) as annee
+
+		FROM t_purchase_pur t, t_object_obj o, t_object_obj parent, tj_object_link_oli link, t_fundation_fun fun
+		WHERE t.obj_id = o.obj_id
+		AND fun.fun_id = t.fun_id
+		AND link.obj_id_child = o.obj_id
+		AND link.obj_id_parent = parent.obj_id
+		AND link.oli_removed = 0
+		AND pur_removed = 0
+		AND DATE(pur_date) BETWEEN '%u-%u-%u' AND '%u-%u-%u'
+		AND t.fun_id = %u
+		GROUP BY obj_id
+		ORDER BY fun_name, mois, jour ASC";
+
+        $pois = Array();
+        $res = $this->db->query($query, Array($year, $month, $day, $year2, $month2, $day2, $fundation_id));
+        while ($don = $this->db->fetchArray($res)) {
+            $pois[]=$don;
+        }
+
+        return array("success"=>$pois);
+	}
+
+	/**
+	* Retourne pour chaque jour de chaque mois chaque produit avec
+	* l'argent qu'il a rapporté, sa catégorie, sa fondation etc...
+	*
+	* @return array $data
+	*/
+	public function get_CA($day, $month, $year, $fundation_id) {
+		return $this->get_CA_period($day, $month, $year, $day, $month, $year, $fundation_id);
+	}
 
 }
 
