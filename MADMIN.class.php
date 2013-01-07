@@ -97,9 +97,22 @@ class MADMIN extends WsdlBase {
 	}
 	
 	// On vérifie que le user est bien cotisant
-	$ginger = new Ginger($_CONFIG['ginger_key']);
 	try {
-	    $user = $ginger->getUser($this->loginToRegister);
+        if(!empty($_CONFIG['ginger_key']))
+        {
+            $ginger = new Ginger($_CONFIG['ginger_key']);
+            $user = $ginger->getUser($this->loginToRegister);
+        }
+        else 
+        {
+            $user = new StdClass;
+            $user->login = $this->loginToRegister;
+            $user->prenom = "Test";
+            $user->nom = "User";
+            $user->email = "payutc-test@assos.utc.fr";
+            $user->badge_uid = "123456AB";
+            $user->is_cotisant = true;
+        }
 	}
 	catch (Exception $ex) {
 	    return array("error"=>400, "error_msg"=>"Utilisateur introuvable dans Ginger (".$ex->getCode().")");

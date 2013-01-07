@@ -286,7 +286,7 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			// Verifier que le buyer existe
 			$buyer = new User($badge_id, MEAN_OF_LOGIN_BADGE, "", 0, 1, 1);
 			$state = $buyer->getState();
-			if($state != 1)
+			if($state != 1 && !empty($_CONFIG['ginger_key']))
 			{
 				// CHECK BADGE ID IN API
 				$ginger = new Ginger($_CONFIG['ginger_key']);
