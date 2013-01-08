@@ -1,1 +1,8 @@
 config.inc.php
+payutc-conf.php
+vendor/
+composer.phar
+composer.lock
+/propel/build/conf
+/propel/build/classes/payutc/om
+/propel/build/classes/payutc/map
