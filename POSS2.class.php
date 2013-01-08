@@ -272,7 +272,7 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 				// CHECK BADGE ID IN API
 				$ginger = new Ginger($_CONFIG['ginger_key']);
 				try {
-					$user = $ginger->getUser($badge_id);
+					$user = $ginger->getCard($badge_id);
 				}
 				catch (Exception $ex) {
 					return array("error"=>$ex->getCode(), "error_msg"=>"Badge introuvable");
