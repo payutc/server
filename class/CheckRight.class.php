@@ -28,7 +28,7 @@ class CheckRight {
 	 * @param string $right
 	 * @return void
      */
-    public function __construct($user_id, $poi_id, $fun_id)
+    public function __construct($user_id, $poi_id, &$fun_id)
     {
         $this->db = Db_buckutt::getInstance();
         $this->user_id = $user_id;
