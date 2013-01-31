@@ -84,7 +84,7 @@ class POSS2 {
 		}
 		$this->Point_id = $poi_id;
 		$this->Fun_id = $fun_id;
-		$right = new CheckRight($user->getId(), $this->Point_id, &$this->Fun_id);
+		$right = new CheckRight($user->getId(), $this->Point_id, $this->Fun_id);
 		if(!$right->check("VENDRE"))
             return array("error"=>400, "error_msg"=>"Vous n'avez pas le droit VENDRE sur cette fundation.");
         if(!$right->check("POI-FUNDATION"))
