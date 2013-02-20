@@ -320,6 +320,9 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
             return 450;
         if (($Buyer_credit + $amount) > $_CONFIG['credit_max'])
             return 451;
+        if(!$this->User->isCotisant()){
+            return 467;
+        }
         return 1;
     }
 
