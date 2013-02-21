@@ -445,9 +445,3 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
 }
 
 
-
-/*TEST DE SOAP-ISATION PAR CLASSE*/
-$name_class = 'MADMIN';
-require('inc/wsdl.inc.php');
-
-?>

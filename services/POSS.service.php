@@ -151,8 +151,3 @@ class POSS extends Buy {
 	}
 }
 
-/*SOAP-ISATION PAR CLASSE*/
-$name_class = 'POSS';
-require ('inc/wsdl.inc.php');
-
-?>

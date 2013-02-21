@@ -957,7 +957,3 @@ WHERE poi.poi_id = jur.poi_id AND fun_id = '%u' AND poi_removed = '0' AND jur.ri
 
 }
 
-
-$name_class = 'AADMIN';
-require('inc/wsdl.inc.php');
-?>

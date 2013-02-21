@@ -409,8 +409,3 @@ AND o.fun_id = '%u' AND (";
 	}
 }
 
-/*SOAP-ISATION PAR CLASSE*/
-$name_class = 'POSS2';
-require ('inc/wsdl.inc.php');
-
-?>

@@ -139,6 +139,3 @@ obj_type = 'product'", array());
 }
 
 
-$name_class = 'STATS';
-require('inc/wsdl.inc.php');
-?>
