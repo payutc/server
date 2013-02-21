@@ -81,10 +81,7 @@ function call_user_func_named($function_or_array, $params)
 
 
 
-$app = new \Slim\Slim(array(
-    'mode' => 'developement',
-    'debug' => true
-));
+$app = new \Slim\Slim($_CONFIG['slim_config']);
 
 // error handler
 $app->error(function (\Exception $e) use ($app, $error_mapping) {
