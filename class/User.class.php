@@ -60,6 +60,8 @@ class User {
 	protected $db;
 	protected $adult;
 	protected $msg_perso; // petit message imprimé en bas du ticket
+    
+	protected $gingerUser; // Résultat de ginger
 
 	/**
 	* Constructeur
@@ -567,28 +569,31 @@ class User {
 	* @return int $adult
 	*/
 	public function isAdult() {
-		global $_CONFIG;
-		if($this->adult == 1) {
-			return 1;
-		}
-		else if(!empty($_CONFIG['ginger_key'])){
-			// On verifie via l'api de la dsi si le statut de la personne à changé.
-			$ginger = new Ginger($_CONFIG['ginger_key']);
-			try {
-				$user = $ginger->getUser($this->nickname);
-			}
-			catch (Exception $ex) {
-				return 0;
-			}
-			if($user->is_adulte) {
-				$this->db->query("UPDATE ts_user_usr SET usr_adult = '%u' WHERE usr_id = '%u';", Array(1, $this->idUser));
-				return 1;
-			} else {
-				$this->db->query("UPDATE ts_user_usr SET usr_adult = '%u' WHERE usr_id = '%u';", Array(0, $this->idUser));
-				return 0;
-			}
-		}
-		return 1;
+        try {
+            $this->initGinger();
+        }
+        catch (Exception $ex) {
+            return 0;
+        }
+        
+        return $this->gingerUser->is_adulte;
+	}
+    
+    /** 
+	*
+	*	Retourne si l'utilisateur est cotisant BDE
+	*
+	* @return int $adult
+	*/
+	public function isCotisant() {
+        try {
+            $this->initGinger();
+        }
+        catch (Exception $ex) {
+            return 0;
+        }
+        
+        return $this->gingerUser->is_cotisant;
 	}
 
 	/**
@@ -602,6 +607,51 @@ class User {
 		while ($don = Db_buckutt::getInstance()->fetchArray($res)) { $pur[$don['pur_id']] = $don;}
 		return $pur;
 	}
-
+    
+    /**
+	* Initialiser ginger avec un moyen d'identification (login ou uid).
+    * Attention à bien catch l'ApiException
+	*
+	* @return void
+	*/
+    private function initGinger(){
+        global $_CONFIG;
+        if(empty($this->gingerUser)){
+            if(!empty($_CONFIG['ginger_key'])){
+                // Initialiser ginger, éventuellement avec une URL perso
+                if(!empty($_CONFIG['ginger_url'])){
+                    $ginger = new Ginger($_CONFIG['ginger_key'], $_CONFIG['ginger_url']);
+                }
+                else {
+                    $ginger = new Ginger($_CONFIG['ginger_key']);
+                }
+                
+                // Récupérer le user dans ginger
+                $this->gingerUser = $ginger->getUser($this->nickname);
+            }
+            else {
+                // Génération d'un faux user
+                $this->gingerUser = new StdClass;
+                $this->gingerUser->login = $this->nickname;
+                $this->gingerUser->prenom = "Test";
+                $this->gingerUser->nom = "User";
+                $this->gingerUser->email = "payutc-test@assos.utc.fr";
+                $this->gingerUser->badge_uid = "123456AB";
+                $this->gingerUser->is_cotisant = true;
+                $this->gingerUser->is_adulte = true;
+            }
+        }
+    }
+    
+    /**
+	* Permet de set directement le ginger user de ce user si on l'a déjà,
+    * par exemple si on l'a identifié avec un badge (et donc une requête ginger)
+    *
+	* @return void
+	*/
+    public function setGingerUser($gingerData){
+        $this->gingerUser = $gingerData;
+    }
+    
 }
 ?>
