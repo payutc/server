@@ -109,7 +109,7 @@ class MADMIN extends WsdlBase {
             $user->login = $this->loginToRegister;
             $user->prenom = "Test";
             $user->nom = "User";
-            $user->email = "payutc-test@assos.utc.fr";
+            $user->mail = "payutc-test@assos.utc.fr";
             $user->badge_uid = "123456AB";
             $user->is_cotisant = true;
         }
