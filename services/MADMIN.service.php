@@ -86,43 +86,43 @@ class MADMIN extends WsdlBase {
      * @return array $state
      */
     public function register() {
-    	global $_CONFIG;
+		global $_CONFIG;
 	
-    	$this->User = new User($this->loginToRegister, 1, "", 0, 1, 0);
+		$this->User = new User($this->loginToRegister, 1, "", 0, 1, 0);
 
-    	$r = $this->User->getState();
+		$r = $this->User->getState();
 	
-    	if($r != 405){
-    	    return array("error"=>$r, "error_msg"=>"Le user existe déjà.");
-    	}
+		if($r != 405){
+		    return array("error"=>$r, "error_msg"=>"Le user existe déjà.");
+		}
 	
-    	// On vérifie que le user est bien cotisant
-    	try {
-            if(!empty($_CONFIG['ginger_key']))
-            {
-                $ginger = new Ginger($_CONFIG['ginger_key']);
-                $user = $ginger->getUser($this->loginToRegister);
-            }
-            else 
-            {
-                $user = new StdClass;
-                $user->login = $this->loginToRegister;
-                $user->prenom = "Test";
-                $user->nom = "User";
-                $user->email = "payutc-test@assos.utc.fr";
-                $user->badge_uid = "123456AB";
-                $user->is_cotisant = true;
-            }
-    	}
-    	catch (Exception $ex) {
-    	    return array("error"=>400, "error_msg"=>"Utilisateur introuvable dans Ginger (".$ex->getCode().")");
-    	}
-    	if (!($user->is_cotisant)) {
-    	    return array("error"=>400, "error_msg"=>"L'utilisateur n'est pas cotisant");
-    	}
-        if(empty($user->badge_uid)) {	
-            return array("error"=>400, "error_msg"=>"L'utilisateur n'a pas de badge déclaré. Contactez payutc@assos.utc.fr");
-        }
+		// On vérifie que le user est bien cotisant
+		try {
+	        if(!empty($_CONFIG['ginger_key']))
+	        {
+	            $ginger = new Ginger($_CONFIG['ginger_key']);
+	            $user = $ginger->getUser($this->loginToRegister);
+	        }
+	        else 
+	        {
+	            $user = new StdClass;
+	            $user->login = $this->loginToRegister;
+	            $user->prenom = "Test";
+	            $user->nom = "User";
+	            $user->email = "payutc-test@assos.utc.fr";
+	            $user->badge_uid = "123456AB";
+	            $user->is_cotisant = true;
+	        }
+		}
+		catch (Exception $ex) {
+		    return array("error"=>400, "error_msg"=>"Utilisateur introuvable dans Ginger (".$ex->getCode().")");
+		}
+		if (!($user->is_cotisant)) {
+		    return array("error"=>400, "error_msg"=>"L'utilisateur n'est pas cotisant");
+		}
+		if(empty($user->badge_uid)) {	
+			return array("error"=>400, "error_msg"=>"L'utilisateur n'a pas de badge déclaré. Contactez payutc@assos.utc.fr");
+		}
 	
         // On récupére l'ancien solde et on le passe à zero.
         $res = $this->db->query("SELECT osr_credit
