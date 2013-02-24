@@ -62,4 +62,8 @@ $_CONFIG['PBX_PUBPEM'] = "somewhere/pubkey.pem";
 // Laisser la clé vide pour désactiver les appels à ginger
 $_CONFIG['ginger_key'] = "abc";
 
-?>
+
+$_CONFIG['slim_config'] = array(
+	'mode' => 'developement',
+	'debug' => true
+);
