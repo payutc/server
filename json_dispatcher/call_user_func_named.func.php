@@ -14,8 +14,6 @@ function call_user_func_named($function_or_array, $params)
 		$reflection_class = new ReflectionClass($class);
 		if (!$reflection_class->hasMethod($function)) {
 			throw new ServiceMethodNotFound('La fonction '.$function.' n\'existe pas');
-			//trigger_error('call to unexisting function '.$function[1], E_USER_ERROR);
-			//return NULL;
 		}
 		$reflect = $reflection_class->getMethod($function);
 		if ($reflect->isPrivate() or $reflect->isProtected()) {
@@ -26,8 +24,6 @@ function call_user_func_named($function_or_array, $params)
 		$function = $function_or_array;
 		if (!function_exists($function)) {
 			throw new ServiceMethodNotFound('La fonction '.$function.'n\'existe pas');
-			//trigger_error('call to unexisting function '.$function, E_USER_ERROR);
-			//return NULL;
 		}
 		$reflect = new ReflectionFunction($function);
 	}
@@ -47,8 +43,6 @@ function call_user_func_named($function_or_array, $params)
 		else {
 			// missing required parameter: mark an error and exit
 			throw new ServiceMissingMethodArgument('Le parametre "'.$pname.'" est requis');
-			//trigger_error(sprintf('call to %s missing parameter nr. %d', $function, $i+1), E_USER_ERROR);
-			//return NULL;
 		}
 	}
 	return call_user_func_array($function_or_array, $real_params);
