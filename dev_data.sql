@@ -60,7 +60,8 @@ INSERT INTO `ts_error_err` (`err_code`, `err_name`, `err_description`, `err_remo
 (463, 'fondation non chargee', 'La fondation n as pas ete chargee', 0),
 (464, 'Petit malin', 'Se virer de l''argent à soi même n''a aucun sens... ', 0),
 (465, 'Destinataire du virement inexistant', 'La personne à qui vous souhaitez verser de l''argent n''existe pas...', 0),
-(466, 'Le vol d''argent n''est pas toléré ici !', 'Cette tentative à été enregistré...', 0);
+(466, 'Le vol d''argent n''est pas toléré ici !', 'Cette tentative à été enregistré...', 0),
+(467, 'Utilisateur non cotisant', 'payutc est réservé aux cotisants du BDE, tu dois être cotisant pour recharger. Contacte le BDE pour savoir comment cotiser.', 0);
 
 
 --

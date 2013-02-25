@@ -109,7 +109,7 @@ class MADMIN extends WsdlBase {
             $user->login = $this->loginToRegister;
             $user->prenom = "Test";
             $user->nom = "User";
-            $user->email = "payutc-test@assos.utc.fr";
+            $user->mail = "payutc-test@assos.utc.fr";
             $user->badge_uid = "123456AB";
             $user->is_cotisant = true;
         }
@@ -320,6 +320,9 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
             return 450;
         if (($Buyer_credit + $amount) > $_CONFIG['credit_max'])
             return 451;
+        if(!$this->User->isCotisant()){
+            return 467;
+        }
         return 1;
     }
 
