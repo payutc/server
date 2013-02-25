@@ -635,7 +635,7 @@ class User {
                 $this->gingerUser->login = $this->nickname;
                 $this->gingerUser->prenom = "Test";
                 $this->gingerUser->nom = "User";
-                $this->gingerUser->email = "payutc-test@assos.utc.fr";
+                $this->gingerUser->mail = "payutc-test@assos.utc.fr";
                 $this->gingerUser->badge_uid = "123456AB";
                 $this->gingerUser->is_cotisant = true;
                 $this->gingerUser->is_adulte = true;
