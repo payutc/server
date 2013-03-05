@@ -487,7 +487,7 @@ CREATE TABLE IF NOT EXISTS `tj_app_fun_afu` (
   `app_id` int(11) NOT NULL COMMENT 'Id de l''application concerné',
   `fun_id` int(11) NOT NULL COMMENT 'Identifiant de la fundation',
   `afu_service` varchar(15) NOT NULL COMMENT 'Nom du service (de la classe exposé)',
-  `afu_removed` int(1) NOT NULL DEFAULT '0',
+  `afu_removed` datetime DEFAULT NULL,
   PRIMARY KEY (`afu_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Droits qu''une fundation donne à une fundation sur un service donné' AUTO_INCREMENT=1 ;
 
@@ -502,7 +502,7 @@ CREATE TABLE IF NOT EXISTS `tj_usr_fun_ufu` (
   `usr_id` int(11) NOT NULL,
   `fun_id` int(11) NOT NULL,
   `ufu_service` varchar(15) NOT NULL COMMENT 'service exposé (nom de la classe)',
-  `ufu_removed` int(1) NOT NULL DEFAULT '0',
+  `ufu_removed` datetime DEFAULT NULL,
   PRIMARY KEY (`ufu_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liaison entre un user/une fundation et un service.' AUTO_INCREMENT=1 ;
 
@@ -519,9 +519,9 @@ CREATE TABLE IF NOT EXISTS `t_application_app` (
   `app_name` varchar(100) NOT NULL,
   `app_desc` text,
   `app_creator` varchar(8) NOT NULL COMMENT 'Login utc de l''utilisateur ayant crée la clef.',
-  `app_lastuse` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date de la dernière utilisation de cette clef.',
-  `app_created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Date de création de la clef',
-  `app_removed` int(1) NOT NULL DEFAULT '0' COMMENT 'Est ce que la clef est supprimé.',
+  `app_lastuse` datetime NOT NULL COMMENT 'Date de la dernière utilisation de cette clef.',
+  `app_created` datetime NOT NULL COMMENT 'Date de création de la clef',
+  `app_removed` datetime DEFAULT NULL COMMENT 'Est ce que la clef est supprimé.',
   PRIMARY KEY (`app_id`),
   UNIQUE KEY `app_key` (`app_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liste des applications et leurs clefs.' AUTO_INCREMENT=1 ;
