@@ -48,7 +48,7 @@ class Db_buckutt {
      * Recupere une instance de DB
      * @return object $instance
      */
-    public function getInstance()
+    public static function getInstance()
     {
 		global $_CONFIG;
         if (! isset (self::$instance))
