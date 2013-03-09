@@ -160,7 +160,7 @@ class POSS2 {
 			$propositions = array();
 			$articles = array();
 			$cats = array();
-			$res = Db_buckutt::getInstance()->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.obj_stock, o.obj_type, p.pri_credit
+			$res = Db_buckutt::getInstance()->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.obj_stock, o.obj_type, p.pri_credit, o.img_id
 FROM tj_usr_rig_jur jur, t_object_obj o
 LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
 LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id 
@@ -183,7 +183,8 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 		            	"name"=>$don['obj_name'], 
 		            	"categorie_id"=>$don['obj_id_parent'],
 		            	"stock"=>$don['obj_stock'],
-		            	"price"=>$don['pri_credit']);
+		            	"price"=>$don['pri_credit'],
+		            	"image"=>$don['img_id']);
 	        }
 
         	return array("success"=>array("categories"=>$cats, "articles"=>$articles));
