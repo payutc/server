@@ -30,23 +30,29 @@ $app = new \Slim\Slim($_CONFIG['slim_config']);
 // error handler
 $app->error(function (\Exception $e) use ($app, $error_mapping) {
 	$cls = get_class($e);
+	$http_code = null;
 	if (array_key_exists($cls, $error_mapping)) {
+		$http_code = 400;
 		$aaa = $error_mapping[$cls];
 		if (is_callable($aaa)) {
 			$err_array = $aaa($e);
 		}
 		else if (is_int($aaa)) {
-			$err_array = array('http_code' => $aaa, 'err_code' => $aaa, 'err_msg' => $e->getMessage());
+			$err_array = array('err_code' => $aaa, 'err_msg' => $e->getMessage());
 		}
 		else if (is_array($aaa)) {
 			$err_array = $aaa;
 		}
+		else {
+			$http_code = null;
+		}
 	}
-	else {
-		$err_array = array('http_code' => 500, 'err_code' => 500, 'err_msg' => $e->getMessage());
+	if ($http_code === null) {
+		$http_code = 500;
+		$err_array = array('err_code' => 500, 'err_msg' => $e->getMessage());
 	}
 	$app->contentType('application/json; charset=utf-8');
-	$app->response()->status($err_array['http_code']);
+	$app->response()->status($http_code);
 	echo json_encode($err_array);
 });
 
