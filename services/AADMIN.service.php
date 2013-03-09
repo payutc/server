@@ -954,6 +954,30 @@ WHERE poi.poi_id = jur.poi_id AND fun_id = '%u' AND poi_removed = '0' AND jur.ri
 	public function get_CA($day, $month, $year, $fundation_id) {
 		return $this->get_CA_period($day, $month, $year, $day, $month, $year, $fundation_id);
 	}
+  
+	/**
+	* Ajouter l'image d'un article
+	*
+	* @param string $image
+	* @return int $result
+	*/
+  public function uploadImage($image){
+    $oldgd = imagecreatefromstring(base64_decode($image));
+    error_log($image);
+    
+    ob_start();
+    imagepng($oldgd);
+    $imagedata = ob_get_contents();
+    ob_end_clean();
+    
+    $img = new Image(0, "image/png", imagesx($oldgd), imagesy($oldgd), $imagedata);
+    
+    if($img->getState() != 1){
+      return $img->getState();
+    }
+    
+    return $img->getId();
+  }
 
 }
 
