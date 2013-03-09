@@ -492,9 +492,10 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 	* @param int $stock
 	* @param int $parent
 	* @param int $prix
+	* @param int $image
 	* @return array $categorie
 	*/
-	public function add_article($nom, $parent, $prix, $stock, $alcool) {
+	public function add_article($nom, $parent, $prix, $stock, $alcool, $image) {
 		global $right_name_to_id;
 		// 1. GET THE PARENT
 		$res = $this->db->query("SELECT fun_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u' ORDER BY obj_name;", array($parent));
@@ -512,11 +513,16 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 
 	        // 2. AJOUT DE L'ARTICLE
 	        // TODO : GERER QUAND LE STOCK EST A NULL ne pas mettre 0 mais NULL.
+          $image = intval($image);
+          if(empty($image)){
+            $image = "NULL";
+          }
+
 	        $article_id = $this->db->insertId(
               $this->db->query(
                   "INSERT INTO t_object_obj (`obj_id`, `obj_name`, `obj_type`, `obj_stock`, `obj_single`, `img_id`, `fun_id`, `obj_removed`, `obj_alcool`)
-                  VALUES (NULL, '%s', 'product', '%u', '0', NULL, '%u', '0', '%u');",
-                  array($nom, $stock, $fun_id, $alcool)));
+                  VALUES (NULL, '%s', 'product', '%u', '0',  %s, '%u', '0', '%u');",
+                  array($nom, $stock, $image, $fun_id, $alcool)));
 
 	        // 3. CREATION DU LIEN SUR LE PARENT
 			$this->db->query(
@@ -546,9 +552,10 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 	* @param int $parent
 	* @param int $prix
 	* @param int $stock
+	* @param int $image
 	* @return array $categorie
 	*/
-	public function edit_article($id, $nom, $parent, $prix, $stock, $alcool) {
+	public function edit_article($id, $nom, $parent, $prix, $stock, $alcool, $image) {
 		global $right_name_to_id;
 		// 1. GET THE ARTICLE
 		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
@@ -601,7 +608,11 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 		}
 
 	    // 6. EDIT THE ARTICLE NAME AND STOCK
-	    $this->db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_stock` = '%u', `obj_alcool` = '%u' WHERE  `obj_id` = '%u';",array($nom, $stock, $alcool, $id));
+      $image = intval($image);
+      if(empty($image)){
+        $image = "NULL";
+      }
+	    $this->db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_stock` = '%u', `obj_alcool` = '%u', `img_id` = %s WHERE  `obj_id` = '%u';",array($nom, $stock, $alcool, $image, $id));
 
 		return array("success"=>$id);
 	}
