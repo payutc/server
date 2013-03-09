@@ -6,4 +6,5 @@ $services = array(
 	'AADMIN' => 'services/AADMIN.service.php',
 	'MADMIN' => 'services/MADMIN.service.php',
 	'STATS' => 'services/STATS.service.php',
+	'KEY' => 'services/KEY.service.php'
 );
