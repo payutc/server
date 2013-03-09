@@ -38,7 +38,7 @@ $app->error(function (\Exception $e) use ($app, $error_mapping) {
 			$err_array = $aaa($e);
 		}
 		else if (is_int($aaa)) {
-			$err_array = array('err_code' => $aaa, 'err_msg' => $e->getMessage());
+			$err_array = array('type' => $cls, 'code' => $aaa, 'message' => $e->getMessage());
 		}
 		else if (is_array($aaa)) {
 			$err_array = $aaa;
@@ -49,11 +49,15 @@ $app->error(function (\Exception $e) use ($app, $error_mapping) {
 	}
 	if ($http_code === null) {
 		$http_code = 500;
-		$err_array = array('err_code' => 500, 'err_msg' => $e->getMessage());
+		$err_array = array(
+			'type' => 'InternalServerError', 
+			'code' => 500,
+			'message' => $e->getMessage()
+		);
 	}
 	$app->contentType('application/json; charset=utf-8');
 	$app->response()->status($http_code);
-	echo json_encode($err_array);
+	echo json_encode(array('error' => $err_array));
 });
 
 // service handler

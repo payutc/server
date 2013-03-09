@@ -7,7 +7,11 @@ $error_mapping = array(
 	'ServiceMethodForbidden' => 403,
 	'ServiceMissingMethodArgument' => 400,
 	'PossException' => function(PossException $e) {
-		return array('err_code' => $e->err_code, 'err_msg' => $e->getMessage());
+		return array(
+			'type' => 'PossException', 
+			'code' => $e->err_code, 
+			'message' => $e->getMessage()
+		);
 	}
 );
 
