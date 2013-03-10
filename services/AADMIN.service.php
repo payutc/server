@@ -495,7 +495,7 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 	* @param int $image
 	* @return array $categorie
 	*/
-	public function add_article($nom, $parent, $prix, $stock, $alcool, $image) {
+	public function add_article($nom, $parent, $prix, $stock, $alcool, $image = 0) {
 		global $right_name_to_id;
 		// 1. GET THE PARENT
 		$res = $this->db->query("SELECT fun_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u' ORDER BY obj_name;", array($parent));
@@ -555,7 +555,7 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 	* @param int $image 0 pour conserver la valeur actuelle, -1 pour la supprimer, id dans la table image sinon
 	* @return array $categorie
 	*/
-	public function edit_article($id, $nom, $parent, $prix, $stock, $alcool, $image) {
+	public function edit_article($id, $nom, $parent, $prix, $stock, $alcool, $image = 0) {
 		global $right_name_to_id;
 		// 1. GET THE ARTICLE
 		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
