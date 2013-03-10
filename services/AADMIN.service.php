@@ -552,7 +552,7 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 	* @param int $parent
 	* @param int $prix
 	* @param int $stock
-	* @param int $image
+	* @param int $image 0 pour conserver la valeur actuelle, -1 pour la supprimer, id dans la table image sinon
 	* @return array $categorie
 	*/
 	public function edit_article($id, $nom, $parent, $prix, $stock, $alcool, $image) {
@@ -608,11 +608,13 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 		}
 
 	    // 6. EDIT THE ARTICLE NAME AND STOCK
-      $image = intval($image);
-      if(empty($image)){
-        $image = "NULL";
-      }
-	    $this->db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_stock` = '%u', `obj_alcool` = '%u', `img_id` = %s WHERE  `obj_id` = '%u';",array($nom, $stock, $alcool, $image, $id));
+        $image = intval($image);
+        if($image == 0) {
+          $image = "`img_id`";
+        } else if ($image == -1) {
+          $image = "NULL";
+        }
+        $this->db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_stock` = '%u', `obj_alcool` = '%u', `img_id` = %s WHERE `obj_id` = '%u';",array($nom, $stock, $alcool, $image, $id));
 
 		return array("success"=>$id);
 	}
