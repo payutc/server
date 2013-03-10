@@ -38,6 +38,7 @@ class Image
 	private $width;
 	private $length;
 	private $content;
+	private $state;
 	protected $db;
 	
 	/**
@@ -90,6 +91,16 @@ class Image
 	public function getContent()
 	{
 		return $this->content;
+	}
+  
+	/**
+	* Retourne $state
+	* 
+	* @return string $state
+	*/
+	public function getState()
+	{
+		return $this->state;
 	}
 
 	/**
