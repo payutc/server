@@ -36,7 +36,7 @@ require_once 'class/ComplexData.class.php';
 require_once 'class/Log.class.php';
 require_once 'db/Db_buckutt.class.php';
 require_once 'db/Mysql.class.php';
-require_once 'lib/ginger-client/Ginger.class.php';
+
 /**
  * classe user
  */
@@ -620,10 +620,10 @@ class User {
             if(!empty($_CONFIG['ginger_key'])){
                 // Initialiser ginger, éventuellement avec une URL perso
                 if(!empty($_CONFIG['ginger_url'])){
-                    $ginger = new Ginger($_CONFIG['ginger_key'], $_CONFIG['ginger_url']);
+                    $ginger = new \Ginger\Client\GingerClient($_CONFIG['ginger_key'], $_CONFIG['ginger_url']);
                 }
                 else {
-                    $ginger = new Ginger($_CONFIG['ginger_key']);
+                    $ginger = new \Ginger\Client\GingerClient($_CONFIG['ginger_key']);
                 }
                 
                 // Récupérer le user dans ginger

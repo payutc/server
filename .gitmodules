@@ -1,3 +1,0 @@
-[submodule "lib/ginger-client"]
-	path = lib/ginger-client
-	url = git://github.com/simde-utc/ginger-client.git
