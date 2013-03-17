@@ -695,7 +695,7 @@ ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId()
 	public function get_article($id) {
 		global $right_name_to_id;
 		// OBTENIR QUE LES ARTICLES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
-        $res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.obj_stock, o.obj_alcool, p.pri_credit
+        $res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.obj_stock, o.obj_alcool, p.pri_credit, o.img_id
 FROM tj_usr_rig_jur tj, t_object_obj o
 LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child
 LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id
@@ -715,7 +715,8 @@ ORDER BY obj_name;", Array($id, $right_name_to_id["GESARTICLE"], $this->user->ge
             	"fundation_id"=>$don['fun_id'],
             	"stock"=>$don['obj_stock'],
             	"price"=>$don['pri_credit'],
-            	"alcool"=>$don['obj_alcool']));
+            	"alcool"=>$don['obj_alcool'],
+            	"image"=>$don['img_id']));
 		} else {
 			return array("error"=>400, "error_msg"=>"Cet article ($id) n'existe pas, ou vous n'avez pas les droits dessus.");
 		}
