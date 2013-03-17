@@ -28,7 +28,6 @@
  * @version 2.0
  * @package buckutt
  */
-require_once 'class/User.class.php';
 
 class FAdminUser extends User {
 protected $fundation;

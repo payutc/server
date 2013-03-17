@@ -29,15 +29,6 @@
  * @package buckutt
  */
 
-require_once 'db/Db_buckutt.class.php';
-require_once 'db/Mysql.class.php';
-require_once 'class/Buy.class.php';
-require_once 'class/Point.class.php';
-require_once 'class/Seller.class.php';
-require_once 'class/Buyer.class.php';
-require_once 'class/Log.class.php';
-require_once 'class/Cas.class.php';
-require_once 'class/CheckRight.class.php';
 
 define('MEAN_OF_LOGIN_BADGE', 5);
 define('MEAN_OF_LOGIN_NICKNAME', 1);

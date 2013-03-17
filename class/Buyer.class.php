@@ -30,7 +30,6 @@
 
 //TODO tester dans chaque méthode si state = 1, sinon on poutre
 
-require_once 'class/User.class.php';
 
 class Buyer extends User {
 	

@@ -28,7 +28,6 @@
  * @package buckutt
  */
 
-require_once 'class/Object.class.php';
 
 class ObjectWithPrice extends Object {
 	

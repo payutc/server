@@ -30,12 +30,6 @@
 
 //TODO tester dans chaque méthode si state = 1, sinon on poutre
 
-require_once 'class/Group.class.php';
-require_once 'class/Image.class.php';
-require_once 'class/ComplexData.class.php';
-require_once 'class/Log.class.php';
-require_once 'db/Db_buckutt.class.php';
-require_once 'db/Mysql.class.php';
 
 /**
  * classe user

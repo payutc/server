@@ -28,15 +28,6 @@
 * @package buckutt
 */
 
-require_once 'config.inc.php';
-require_once 'db/Db_buckutt.class.php';
-require_once 'db/Mysql.class.php';
-require_once 'class/Image.class.php';
-require_once 'class/Point.class.php';
-require_once 'class/User.class.php';
-require_once 'class/Cas.class.php';
-require_once 'class/Application.class.php';
-require_once 'class/User.class.php';
 
 class ServiceBase {
     protected $db;
