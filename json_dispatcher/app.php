@@ -1,4 +1,8 @@
 <?php
+session_start();
+if (!isset($_SESSION['services'])) {
+	$_SESSION['services'] = array();
+}
 
 
 require_once 'config.inc.php';
@@ -26,25 +30,34 @@ $app = new \Slim\Slim($_CONFIG['slim_config']);
 // error handler
 $app->error(function (\Exception $e) use ($app, $error_mapping) {
 	$cls = get_class($e);
+	$http_code = null;
 	if (array_key_exists($cls, $error_mapping)) {
+		$http_code = 400;
 		$aaa = $error_mapping[$cls];
 		if (is_callable($aaa)) {
-			$code_n_data = $aaa($e);
+			$err_array = $aaa($e);
 		}
 		else if (is_int($aaa)) {
-			$code_n_data = array($aaa, $e->getMessage());
+			$err_array = array('type' => $cls, 'code' => $aaa, 'message' => $e->getMessage());
 		}
 		else if (is_array($aaa)) {
-			$code_n_data = $aaa;
+			$err_array = $aaa;
+		}
+		else {
+			$http_code = null;
 		}
 	}
-	else {
-		$app->contentType('text/plain; charset=utf-8');
-		$code_n_data = array(500, $e->getMessage());
+	if ($http_code === null) {
+		$http_code = 500;
+		$err_array = array(
+			'type' => 'InternalServerError', 
+			'code' => 500,
+			'message' => $e->getMessage()
+		);
 	}
 	$app->contentType('application/json; charset=utf-8');
-	$app->response()->status($code_n_data[0]);
-	echo json_encode(array('code'=>$code_n_data[0], 'data'=>$code_n_data[1]));
+	$app->response()->status($http_code);
+	echo json_encode(array('error' => $err_array));
 });
 
 // service handler
@@ -54,17 +67,29 @@ function handler($services, $service, $method)
 	$app->contentType('application/json; charset=utf-8');
 	if (array_key_exists($service, $services)) {
 		require_once $services[$service];
-		$obj = new $service;
+		if (!array_key_exists($service, $_SESSION['services'])) {
+			$obj = new $service;
+		}
+		else {
+			$obj = unserialize($_SESSION['services'][$service]);
+		}
 		$a = call_user_func_named(array($obj, $method), $_REQUEST);
+		$_SESSION[$service] = serialize($obj);
 		echo json_encode($a);
 	}
 	else {
-		throw new ServiceNotFound('Service $service does not exist');
+		throw new ServiceNotFound("Service $service does not exist");
 	}
 }
+
+// create app
 $app->get('/:service/:method', function($service, $method) use ($services) {
 	handler($services, $service, $method);
 });
 $app->post('/:service/:method', function($service, $method) use ($services) {
 	handler($services, $service, $method);
 });
+
+
+
+
