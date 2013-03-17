@@ -1,5 +1,6 @@
 {
 	"require": {
 		"slim/slim": "2.*"
-	}
+	},
+    "include-path": ["./"]
 }
