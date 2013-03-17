@@ -1,8 +1,4 @@
 <?php
-session_start();
-if (!isset($_SESSION['services'])) {
-	$_SESSION['services'] = array();
-}
 
 
 require_once 'config.inc.php';
@@ -67,14 +63,13 @@ function handler($services, $service, $method)
 	$app->contentType('application/json; charset=utf-8');
 	if (array_key_exists($service, $services)) {
 		require_once $services[$service];
-		if (!array_key_exists($service, $_SESSION['services'])) {
-			$obj = new $service;
-		}
-		else {
-			$obj = unserialize($_SESSION['services'][$service]);
-		}
+        session_start();
+        if (!isset($_SESSION['services']))
+            $_SESSION['services'] = array();
+		if (!array_key_exists($service, $_SESSION['services']))
+			$_SESSION['services'][$service] = new $service;
+		$obj = $_SESSION['services'][$service];
 		$a = call_user_func_named(array($obj, $method), $_REQUEST);
-		$_SESSION[$service] = serialize($obj);
 		echo json_encode($a);
 	}
 	else {
