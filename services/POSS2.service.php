@@ -38,7 +38,6 @@ require_once 'class/Buyer.class.php';
 require_once 'class/Log.class.php';
 require_once 'class/Cas.class.php';
 require_once 'class/CheckRight.class.php';
-require_once 'lib/ginger-client/Ginger.class.php';
 
 define('MEAN_OF_LOGIN_BADGE', 5);
 define('MEAN_OF_LOGIN_NICKNAME', 1);
@@ -271,7 +270,7 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			if($state != 1 && !empty($_CONFIG['ginger_key']))
 			{
 				// CHECK BADGE ID IN API
-				$ginger = new Ginger($_CONFIG['ginger_key']);
+				$ginger = new \Ginger\Client\GingerClient($_CONFIG['ginger_key']);
 				try {
 					$user = $ginger->getCard($badge_id);
 				}

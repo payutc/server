@@ -38,7 +38,6 @@ require_once 'class/Paybox.class.php';
 require_once 'class/Cas.class.php';
 require_once 'config.inc.php';
 require_once 'class/Log.class.php';
-require_once 'lib/ginger-client/Ginger.class.php';
 
 class MADMIN extends WsdlBase {
 
@@ -100,7 +99,7 @@ class MADMIN extends WsdlBase {
 		try {
 	        if(!empty($_CONFIG['ginger_key']))
 	        {
-	            $ginger = new Ginger($_CONFIG['ginger_key']);
+	            $ginger = new \Ginger\Client\GingerClient($_CONFIG['ginger_key']);
 	            $user = $ginger->getUser($this->loginToRegister);
 	        }
 	        else 
