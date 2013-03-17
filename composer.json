@@ -3,5 +3,8 @@
 		"slim/slim": "2.*",
 		"ginger/client": "2.*"
 	},
-    "include-path": ["./"]
+    "include-path": ["./"],
+    "autoload": {
+        "classmap": ["class/", "db/", "services/"]
+    }
 }

@@ -1,6 +1,5 @@
 <?php 
 
-require_once 'services/POSS2.service.php';
 
 class PossException extends Exception {
 	public $err_code;

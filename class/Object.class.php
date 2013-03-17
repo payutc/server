@@ -29,8 +29,6 @@
  * @version 2.0
  * @package buckutt
  */
-require_once 'db/Db_buckutt.class.php';
-require_once 'db/Mysql.class.php';
 
 class Object {
 
