@@ -111,7 +111,7 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
       // Verification de la signature (1 = BON)
       $CheckSig = Paybox::PbxVerSign( $data, $_CONFIG['PBX_PUBPEM'] );
 
-      $amount=$_GET['amount'];
+      $amount = !empty($_GET['amount']) ? intval($_GET['amount']) : 0;
       $ref = base64_decode($_GET['ident']);
       $ref_pos = strrpos( $ref, ';' );
       $ref = substr($ref,0,$ref_pos);
