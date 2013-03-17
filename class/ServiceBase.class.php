@@ -33,17 +33,109 @@ require_once 'db/Db_buckutt.class.php';
 require_once 'db/Mysql.class.php';
 require_once 'class/Image.class.php';
 require_once 'class/Point.class.php';
-require_once 'class/ComplexData.class.php';
+require_once 'class/User.class.php';
 require_once 'class/Cas.class.php';
+require_once 'class/Application.class.php';
+require_once 'class/User.class.php';
 
 class ServiceBase {
     protected $db;
+    protected $user;
+    protected $application;
 	
     /**
     * Constructeur
     */   
     public function __construct() {
         $this->db = Db_buckutt::getInstance();
+    }
+
+    /**
+	 * Connecter le user avec un ticket CAS.
+	 * 
+	 * @param String $ticket
+	 * @param String $service
+	 * @return array $state
+	 */
+    public function loginCas($ticket, $service) {
+		$login = Cas::authenticate($ticket, $service);
+        if ($login < 0) {
+   			return array("error"=>-1, "error_msg"=>"Erreur de login CAS.");
+        }
+		$this->user = new User($login, 1, "", 0, 1, 0);
+
+		$r = $this->user->getState();
+		if($r == 405){
+			$this->loginToRegister = $login;
+			return array("error"=> array( "message"=>"Le user n'existe pas ici.", "code" => $r));
+		}
+		elseif($r != 1) {
+			return array("error"=> array( "message"=>"Le user n'a pas pu être chargé.", "code" => $r));
+		}
+		else {
+			return array("success"=>"ok");
+		}
+    }
+
+	/**
+	* Deconnexion
+	*
+	* @return array $state
+	*/
+	public function logout() {
+        if($this->user)
+			unset($this->user);
+        if($this->app)
+            unset($this->application);
+        session_destroy();
+        return "ok";
+	}
+
+
+    /**
+    * Retourne l'url du CAS
+    * @return String $url
+    */
+    public function getCasUrl() {
+        return Cas::getUrl();
+    }
+
+    /**
+    * Recupere le statut de la connexion courante
+    * @return array $status
+    */
+    public function getStatus() {
+        if($this->application)
+            $app = $this->application->to_array();
+        else
+            $app = null;
+        if($this->user)
+            $user = $this->user->getNickname();
+        else
+            $user = null;
+        return array("application" => $app, "user" => $user);
+    }
+
+    /**
+     * Verifie qu'un user et/ou une app ont été loggé
+     * Sinon throw une exception 
+     */
+    protected function checkUserApp($user=true, $app=true) {
+        if($user && !$this->user)
+            throw new Exception("Vous devez connecter un utilisateur ! (method loginCas)");
+        if($app && !$this->application)
+            throw new Exception("Vous devez connecter une application ! (method loginApp)");
+    }
+
+    /**
+     * Authentifie une clef d'application
+     */
+    public function loginApp($key) {
+        $service = get_class($this);
+        $application = new Application();
+        $application->from_key($key); // Throw an exception if Application doesn't exists...
+        $this->application = $application;
+        return "ok";
     }
 
     /**
@@ -64,13 +156,5 @@ class ServiceBase {
         else {
             return "";
         }
-    }
-
-    /**
-    * Retourne l'url du CAS
-    * @return String $url
-    */
-    public function getCasUrl() {
-        return Cas::getUrl();
     }
 }
