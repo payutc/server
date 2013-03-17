@@ -86,7 +86,7 @@ class ServiceBase {
         if($this->user)
 			unset($this->user);
         if($this->app)
-            unset($this->app);
+            unset($this->application);
         session_destroy();
         return "ok";
 	}
