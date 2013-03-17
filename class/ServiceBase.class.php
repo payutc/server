@@ -105,8 +105,15 @@ class ServiceBase {
     * @return array $status
     */
     public function getStatus() {
-        
-        return array("application" => $this->application->to_array(), "user" => $this->user->getNickname());
+        if($this->application)
+            $app = $this->application->to_array();
+        else
+            $app = null;
+        if($this->user)
+            $user = $this->user->getNickname();
+        else
+            $user = null;
+        return array("application" => $app, "user" => $user);
     }
 
     /**

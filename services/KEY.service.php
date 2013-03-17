@@ -44,7 +44,7 @@
 	 */
 	 public function get_current_user_applications() {
         // On a besoin d'avoir un user logged
-        //$this->checkUserApp(true, false);
+        $this->checkUserApp(true, false);
         
 		return "toto";
 	 }
