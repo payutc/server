@@ -6,6 +6,7 @@
  *
  */
  require_once 'class/Application.class.php';
+ require_once 'class/ApplicationList.class.php';
  require_once 'class/ServiceBase.class.php';
  
  class KEY extends ServiceBase {
@@ -45,8 +46,10 @@
 	 public function get_current_user_applications() {
         // On a besoin d'avoir un user logged
         $this->checkUserApp(true, false);
-        
-		return "toto";
+        $application_list = new ApplicationList();
+        $application_list->from_login($this->user->getNickname());
+        // On retourne la liste d'applications (mais sans la clef, car on ne ne veut pas qu'un service "malintentioné" puisse récupérer les clefs d'un user).
+		return $application_list->to_array($key=0);
 	 }
 	
  }

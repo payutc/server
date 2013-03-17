@@ -101,18 +101,20 @@ class Application {
     /*
      * to_array()
      */
-    public function to_array()
+    public function to_array($key=1)
     {
         $application = Array(
             "app_id" => $this->app_id,
             "app_url" => $this->app_url,
-            "app_key" => $this->app_key,
             "app_name" => $this->app_name,
             "app_desc" => $this->app_desc,
             "app_creator" => $this->app_creator,
             "app_lastuse" => $this->app_lastuse,
             "app_created" => $this->app_created);
+        if($key)
+            $application["app_key"] = $this->app_key;
         return $application;
     }
 	
 }
+
