@@ -20,7 +20,8 @@
 	* @return string la clef
 	*/
 	public function register_application($app_url, $app_name, $app_desc=null) {
-        $this->checkUserApp(true, true);
+        // Pour déclarer une nouvelle application on a besoin d'un user, mais pas d'être une application.
+        $this->checkUserApp(true, false);
 		$application = new Application();
 		$application->from_array(Array(
             "app_id" => null,
@@ -42,8 +43,10 @@
 	 * @return Array (liste d'applications)
 	 */
 	 public function get_current_user_applications() {
-        $this->checkUserConnected();
-		return Array("toto");
+        // On a besoin d'avoir un user logged
+        //$this->checkUserApp(true, false);
+        
+		return "toto";
 	 }
 	
  }

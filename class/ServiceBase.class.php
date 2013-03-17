@@ -33,9 +33,10 @@ require_once 'db/Db_buckutt.class.php';
 require_once 'db/Mysql.class.php';
 require_once 'class/Image.class.php';
 require_once 'class/Point.class.php';
-require_once 'class/ComplexData.class.php';
+require_once 'class/User.class.php';
 require_once 'class/Cas.class.php';
 require_once 'class/Application.class.php';
+require_once 'class/User.class.php';
 
 class ServiceBase {
     protected $db;
@@ -61,15 +62,15 @@ class ServiceBase {
         if ($login < 0) {
    			return array("error"=>-1, "error_msg"=>"Erreur de login CAS.");
         }
-		$this->User = new User($login, 1, "", 0, 1, 0);
-	
+		$this->user = new User($login, 1, "", 0, 1, 0);
+
 		$r = $this->user->getState();
 		if($r == 405){
 			$this->loginToRegister = $login;
-			return array("error"=>$r, "error_msg"=>"Le user n'existe pas ici.");
+			return array("error"=> array( "message"=>"Le user n'existe pas ici.", "code" => $r));
 		}
 		elseif($r != 1) {
-			return array("error"=>$r, "error_msg"=>"Le user n'a pas pu être chargé.");
+			return array("error"=> array( "message"=>"Le user n'a pas pu être chargé.", "code" => $r));
 		}
 		else {
 			return array("success"=>"ok");
@@ -77,19 +78,17 @@ class ServiceBase {
     }
 
 	/**
-	* Deconnexion (utilisateur)
+	* Deconnexion
 	*
 	* @return array $state
 	*/
 	public function logout() {
-		if($this->isLoadedSeller())
-		{
-			unset($this->Seller);
-			session_destroy();
-			return array("success"=>"ok", "url"=>Cas::getUrl()."/logout");
-		} else {
-			return array("error"=>"Aucun seller n'est logué.");
-		}
+        if($this->user)
+			unset($this->user);
+        if($this->app)
+            unset($this->app);
+        session_destroy();
+        return "ok";
 	}
 
 
@@ -99,6 +98,15 @@ class ServiceBase {
     */
     public function getCasUrl() {
         return Cas::getUrl();
+    }
+
+    /**
+    * Recupere le statut de la connexion courante
+    * @return array $status
+    */
+    public function getStatus() {
+        
+        return array("application" => $this->application, "user" => $this->user);
     }
 
     /**
@@ -122,15 +130,6 @@ class ServiceBase {
         $this->application = $application;
         return "ok";
     }
-    
-    /**
-     * Déconnecte une application
-     */
-     public function logoutApp() {
-        $this->application = null;
-        return "ok";
-     }
-
 
     /**
     * Retourne la véritable IP du client
