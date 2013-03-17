@@ -54,12 +54,16 @@ function handler($services, $service, $method)
 	$app->contentType('application/json; charset=utf-8');
 	if (array_key_exists($service, $services)) {
 		require_once $services[$service];
-		$obj = new $service;
-		$a = call_user_func_named(array($obj, $method), $_REQUEST);
+        session_start();
+        if(!array_key_exists('services', $_SESSION))
+            $_SESSION["services"] = array();
+        if(!array_key_exists($service, $_SESSION['services']))
+            $_SESSION["services"][$service] = new $service;
+        $a = call_user_func_named(array($_SESSION["services"][$service], $method), $_REQUEST);
 		echo json_encode($a);
 	}
 	else {
-		throw new ServiceNotFound('Service $service does not exist');
+		throw new ServiceNotFound("Service $service does not exist");
 	}
 }
 $app->get('/:service/:method', function($service, $method) use ($services) {
