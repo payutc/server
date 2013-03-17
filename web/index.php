@@ -1,23 +1,18 @@
 <?php
 
+// Include all dependencies
+require_once '../vendor/autoload.php';
 
 require_once 'config.inc.php';
 
-
-// Include all dependencies
-require_once 'vendor/autoload.php';
-
 // Include call_user_func_named
-require_once 'call_user_func_named.func.php';
+require_once 'json_dispatcher/call_user_func_named.func.php';
 
 // Include error mapping
-require_once 'error_mapping.inc.php';
+require_once 'json_dispatcher/error_mapping.inc.php';
 
 // include services list
-require_once 'services.inc.php';
-
-
-
+require_once 'json_dispatcher/services.inc.php';
 
 
 
@@ -84,6 +79,10 @@ $app->get('/:service/:method', function($service, $method) use ($services) {
 $app->post('/:service/:method', function($service, $method) use ($services) {
 	handler($services, $service, $method);
 });
+
+
+// run app
+$app->run();
 
 
 
