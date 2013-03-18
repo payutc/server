@@ -5,9 +5,6 @@
  * Ce service expose des méthodes pour déclarer des applications 
  *
  */
- require_once 'class/Application.class.php';
- require_once 'class/ApplicationList.class.php';
- require_once 'class/ServiceBase.class.php';
  
  class KEY extends ServiceBase {
 	 

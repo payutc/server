@@ -14,7 +14,6 @@
 	* @license PHP Version 5.0 {@link http://www.php.net/license/5_0.txt}
 	*/
 
-require_once 'config.inc.php';
 
 class Db_buckutt {
 	public $dbType;

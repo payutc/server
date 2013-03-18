@@ -1,7 +1,5 @@
 <?php
 
-require_once 'class/xmlToArrayParser.class.php';
-require_once 'config.inc.php';
 
 class Cas {
 

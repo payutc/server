@@ -29,10 +29,6 @@
  * @package buckutt
  */
 
-require_once 'db/Db_buckutt.class.php';
-require_once 'db/Mysql.class.php';
-require_once 'class/Group.class.php';
-require_once 'class/Object.class.php';
 
 class Price {
 	

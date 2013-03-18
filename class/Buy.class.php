@@ -28,15 +28,6 @@
  * @package buckutt
  */
 
-require_once 'db/Db_buckutt.class.php';
-require_once 'db/Mysql.class.php';
-require_once 'class/WsdlBase.class.php';
-require_once 'class/Proposition.class.php';
-require_once 'class/Buyer.class.php';
-require_once 'class/Point.class.php';
-require_once 'class/ComplexData.class.php';
-require_once 'class/Price.class.php';
-require_once 'class/Object.class.php';
 
 class Buy extends WsdlBase {
 	
