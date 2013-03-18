@@ -33,9 +33,9 @@
 
 if ( isset ($_GET['wsdl']))
 {
-	//set_include_path(dirname( __FILE__ ).'/');
-	require 'Zend/Soap/AutoDiscover.php';
-	$server = new Zend_Soap_AutoDiscover();
+	$server = new \Zend\Soap\AutoDiscover();
+	// This was the default value in Zend 1.*
+	$server->setUri('http://' .$_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME']);
 	$server->setClass($name_class);
 	$server->handle();
 } else
