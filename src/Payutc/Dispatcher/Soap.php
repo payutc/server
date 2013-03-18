@@ -29,20 +29,24 @@
  * @package buckutt
  */
 
-//TODO vérifier sur le serveur le réglage de cache wsdl
+namespace Payutc\Dispatcher;
 
-if ( isset ($_GET['wsdl']))
-{
-	$server = new \Zend\Soap\AutoDiscover();
-	// This was the default value in Zend 1.*
-	$server->setUri('http://' .$_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME']);
-	$server->setClass($name_class);
-	$server->handle();
-} else
-{
-	$server = new SoapServer($_CONFIG['server_url'].$name_class.'.class.php?wsdl', Array('cache_wsdl'=>$_CONFIG['wsdl_cache'])); //TODO mettre WSDL_CACHE_BOTH sur le serveur
-	$server->setClass($name_class);
-	$server->setPersistence(SOAP_PERSISTENCE_SESSION);
-	$server->handle();
+class Soap {
+    public function handle($name_class){
+        global $_CONFIG;
+        
+        if (isset($_GET['wsdl'])) {
+            $server = new \Zend\Soap\AutoDiscover();
+            // This was the default value in Zend 1.*
+            $server->setUri('http://' .$_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME']);
+            $server->setClass($name_class);
+            $server->handle();
+        } else {
+            $server = new \SoapServer($_CONFIG['server_url'].$name_class.'.class.php?wsdl', array('cache_wsdl' => $_CONFIG['wsdl_cache']));
+            $server->setClass($name_class);
+            $server->setPersistence(SOAP_PERSISTENCE_SESSION);
+            $server->handle();
+        }
+    }
 }
 ?>
