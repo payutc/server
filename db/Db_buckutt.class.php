@@ -35,12 +35,10 @@ class Db_buckutt {
 
 	public final function  __construct ($type) {
 		$this->type = $type;
-		if(class_exists(strtolower($type))){
-			$this->dbType = new $type();
-			return true;
-		}else{
-			return false;
-		}
+
+        $this->dbType = new $type();
+
+		return true;
 	}
     
     /**
@@ -52,7 +50,7 @@ class Db_buckutt {
 		global $_CONFIG;
         if (! isset (self::$instance))
         {
-            self::$instance = new Db_buckutt('mysql');
+            self::$instance = new Db_buckutt('Mysql');
             self::$instance->connect($_CONFIG['sql_host'], $_CONFIG['sql_db'], $_CONFIG['sql_user'], $_CONFIG['sql_pass']);
         }
         return self::$instance;
