@@ -3,8 +3,8 @@
     BuckUTT - Buckutt est un système de paiement avec porte-monnaie électronique.
     Copyright (C) 2011 BuckUTT <buckutt@utt.fr>
 
-	This file is part of BuckUTT
-	
+    This file is part of BuckUTT
+    
     BuckUTT is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -32,7 +32,7 @@
 class MADMIN extends WsdlBase {
 
     private  $User;
-	private $loginToRegister;
+    private $loginToRegister;
 
     /**
      * Constructeur qui chope la conexion a la DB
@@ -43,76 +43,76 @@ class MADMIN extends WsdlBase {
     }
     
     /**
-	 * Connecter le user avec un ticket CAS.
-	 * 
-	 * @param String $ticket
-	 * @param String $service
-	 * @return array $state
-	 */
+     * Connecter le user avec un ticket CAS.
+     * 
+     * @param String $ticket
+     * @param String $service
+     * @return array $state
+     */
     public function loginCas($ticket, $service) {
-		$login = Cas::authenticate($ticket, $service);
+        $login = Cas::authenticate($ticket, $service);
         if ($login < 0) {
-   			return array("error"=>-1, "error_msg"=>"Erreur de login CAS.");
+               return array("error"=>-1, "error_msg"=>"Erreur de login CAS.");
         }
-		$this->User = new User($login, 1, "", 0, 1, 0);
-	
-		$r = $this->User->getState();
-		if($r == 405){
-			$this->loginToRegister = $login;
-			return array("error"=>$r, "error_msg"=>"Le user n'existe pas ici.");
-		}
-		elseif($r != 1) {
-			return array("error"=>$r, "error_msg"=>"Le user n'a pas pu être chargé.");
-		}
-		else {
-			return array("success"=>"ok");
-		}
+        $this->User = new User($login, 1, "", 0, 1, 0);
+    
+        $r = $this->User->getState();
+        if($r == 405){
+            $this->loginToRegister = $login;
+            return array("error"=>$r, "error_msg"=>"Le user n'existe pas ici.");
+        }
+        elseif($r != 1) {
+            return array("error"=>$r, "error_msg"=>"Le user n'a pas pu être chargé.");
+        }
+        else {
+            return array("success"=>"ok");
+        }
     }
-	
+    
      /**
      * Enregistrer le user précédemment déclaré en CAS
      * 
      * @return array $state
      */
     public function register() {
-		global $_CONFIG;
-	
-		$this->User = new User($this->loginToRegister, 1, "", 0, 1, 0);
+        global $_CONFIG;
+    
+        $this->User = new User($this->loginToRegister, 1, "", 0, 1, 0);
 
-		$r = $this->User->getState();
-	
-		if($r != 405){
-		    return array("error"=>$r, "error_msg"=>"Le user existe déjà.");
-		}
-		
-		// On vérifie que le user est bien cotisant
-		try {
-	        if(!empty($_CONFIG['ginger_key']))
-	        {
-	            $ginger = new \Ginger\Client\GingerClient($_CONFIG['ginger_key']);
-	            $user = $ginger->getUser($this->loginToRegister);
-	        }
-	        else 
-	        {
-	            $user = new StdClass;
-	            $user->login = $this->loginToRegister;
-	            $user->prenom = "Test";
-	            $user->nom = "User";
-	            $user->mail = "payutc-test@assos.utc.fr";
-	            $user->badge_uid = "123456AB";
-	            $user->is_cotisant = true;
-	        }
-		}
-		catch (Exception $ex) {
-		    return array("error"=>400, "error_msg"=>"Utilisateur introuvable dans Ginger (".$ex->getCode().")");
-		}
-		if (!($user->is_cotisant)) {
-		    return array("error"=>400, "error_msg"=>"L'utilisateur n'est pas cotisant");
-		}
-		if(empty($user->badge_uid)) {	
-			return array("error"=>400, "error_msg"=>"L'utilisateur n'a pas de badge déclaré. Contactez payutc@assos.utc.fr");
-		}
-	
+        $r = $this->User->getState();
+    
+        if($r != 405){
+            return array("error"=>$r, "error_msg"=>"Le user existe déjà.");
+        }
+        
+        // On vérifie que le user est bien cotisant
+        try {
+            if(!empty($_CONFIG['ginger_key']))
+            {
+                $ginger = new \Ginger\Client\GingerClient($_CONFIG['ginger_key']);
+                $user = $ginger->getUser($this->loginToRegister);
+            }
+            else 
+            {
+                $user = new StdClass;
+                $user->login = $this->loginToRegister;
+                $user->prenom = "Test";
+                $user->nom = "User";
+                $user->mail = "payutc-test@assos.utc.fr";
+                $user->badge_uid = "123456AB";
+                $user->is_cotisant = true;
+            }
+        }
+        catch (Exception $ex) {
+            return array("error"=>400, "error_msg"=>"Utilisateur introuvable dans Ginger (".$ex->getCode().")");
+        }
+        if (!($user->is_cotisant)) {
+            return array("error"=>400, "error_msg"=>"L'utilisateur n'est pas cotisant");
+        }
+        if(empty($user->badge_uid)) {    
+            return array("error"=>400, "error_msg"=>"L'utilisateur n'a pas de badge déclaré. Contactez payutc@assos.utc.fr");
+        }
+    
         // On récupére l'ancien solde et on le passe à zero.
         $res = $this->db->query("SELECT osr_credit
 FROM `t_oldusr_osr` 
@@ -126,30 +126,30 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
 
         // TODO METTRE A 0 LE SOLDE
 
-	
+    
         if($user->is_adulte) $adult = 1; else $adult = 0;
 
-		// On est là, on va pouvoir insérer
+        // On est là, on va pouvoir insérer
         $this->db->query("INSERT INTO ts_user_usr (usr_pwd, usr_firstname, usr_lastname, usr_nickname, usr_mail, usr_adult) VALUES ('81dc9bdb52d04dc20036dbd8313ed055', '%s', '%s', '%s', '%s', '%u')", array($user->prenom, $user->nom, $user->login, $user->mail, $adult));
-		$userid = $this->db->insertId();
-		$this->db->query("INSERT INTO tj_usr_mol_jum (usr_id, mol_id, jum_data) VALUES (%d, 1, '%s')", array($userid, $this->loginToRegister));
-		
+        $userid = $this->db->insertId();
+        $this->db->query("INSERT INTO tj_usr_mol_jum (usr_id, mol_id, jum_data) VALUES (%d, 1, '%s')", array($userid, $this->loginToRegister));
+        
         $this->db->query("INSERT INTO tj_usr_mol_jum (usr_id, mol_id, jum_data) VALUES (%d, 5, '%s')", array($userid, $user->badge_uid));
 
-		
+        
         $this->db->query("INSERT INTO t_recharge_rec (rty_id, usr_id_buyer, usr_id_operator, poi_id, rec_date, rec_credit, rec_trace) VALUES ('%u', '%u', '%u', '%u', NOW(), '%u', '%s')", array(7, $userid, $userid, 1, $solde, "Import demo"));
-		$this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id = '%u';", Array($solde, $userid));
-		
-		// Maintenant on devrait pouvoir se logguer
-		$this->User = new User($this->loginToRegister, 1, "", 0, 1, 0);
-	
-		$r = $this->User->getState();
-		if($r != 1) {
-			return array("error"=>$r, "error_msg"=>"Le user n'a pas pu être chargé.");
-		}
-		else {
-			return array("success"=>"ok");
-		}
+        $this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id = '%u';", Array($solde, $userid));
+        
+        // Maintenant on devrait pouvoir se logguer
+        $this->User = new User($this->loginToRegister, 1, "", 0, 1, 0);
+    
+        $r = $this->User->getState();
+        if($r != 1) {
+            return array("error"=>$r, "error_msg"=>"Le user n'a pas pu être chargé.");
+        }
+        else {
+            return array("success"=>"ok");
+        }
     }
 
     /**
@@ -160,16 +160,16 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      * @return string $csv
      */
     public function getHistoriqueAchats($date_start, $date_end) {
-		$txt = new ComplexData(array());
+        $txt = new ComplexData(array());
         $res = $this->db->query("SELECT UNIX_TIMESTAMP(pur.pur_date) AS pur_date, obj.obj_name, usr.usr_firstname, usr.usr_lastname, poi.poi_name, fun.fun_name, pur.pur_price FROM t_purchase_pur pur, t_object_obj obj, t_point_poi poi, ts_user_usr usr, t_fundation_fun fun WHERE pur.obj_id = obj.obj_id AND pur.poi_id = poi.poi_id AND pur.usr_id_seller = usr.usr_id AND pur.fun_id = fun.fun_id AND UNIX_TIMESTAMP(pur.pur_date) >= '%u' AND UNIX_TIMESTAMP(pur.pur_date) < '%u' AND usr_id_buyer = '%u' AND pur.pur_removed = '0' ORDER BY pur.pur_date DESC", Array($date_start, $date_end, $this->User->getId()));
-		if ($this->db->affectedRows() >= 1) {
-			while ($don = $this->db->fetchArray($res)) {
-				$txt->addLine(array($don['pur_date'], $don['obj_name'], $don['usr_firstname'], $don['usr_lastname'], $don['poi_name'], $don['fun_name'], $don['pur_price']));
-			}
-			return $txt->csvArrays();
-		} else {
-			return $txt->csvArrays();
-		}
+        if ($this->db->affectedRows() >= 1) {
+            while ($don = $this->db->fetchArray($res)) {
+                $txt->addLine(array($don['pur_date'], $don['obj_name'], $don['usr_firstname'], $don['usr_lastname'], $don['poi_name'], $don['fun_name'], $don['pur_price']));
+            }
+            return $txt->csvArrays();
+        } else {
+            return $txt->csvArrays();
+        }
     }
 
     /**
@@ -180,16 +180,16 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      * @return string $csv
      */
     public function getHistoriqueRecharge($date_start, $date_end) {
-		$txt = new ComplexData(array());
+        $txt = new ComplexData(array());
         $res = $this->db->query("SELECT UNIX_TIMESTAMP(rec.rec_date) AS rec_date, rty.rty_name, usr.usr_firstname, usr.usr_lastname, poi.poi_name, rec.rec_credit FROM t_recharge_rec rec, t_recharge_type_rty rty, t_point_poi poi, ts_user_usr usr WHERE rec.rty_id = rty.rty_id AND rec.poi_id = poi.poi_id AND rec.usr_id_operator = usr.usr_id AND UNIX_TIMESTAMP(rec.rec_date) >= '%u' AND UNIX_TIMESTAMP(rec.rec_date) < '%u' AND rec.usr_id_buyer = '%u' AND rec.rec_removed = '0' ORDER BY rec.rec_date DESC", Array($date_start, $date_end, $this->User->getId()));
-		if ($this->db->affectedRows() >= 1) {
-			while ($don = $this->db->fetchArray($res)) {
-				$txt->addLine(array($don['rec_date'], $don['rty_name'], $don['usr_firstname'], $don['usr_lastname'], $don['poi_name'], $don['rec_credit']));
-			}
-			return $txt->csvArrays();
-		} else {
-			return $txt->csvArrays();
-		}
+        if ($this->db->affectedRows() >= 1) {
+            while ($don = $this->db->fetchArray($res)) {
+                $txt->addLine(array($don['rec_date'], $don['rty_name'], $don['usr_firstname'], $don['usr_lastname'], $don['poi_name'], $don['rec_credit']));
+            }
+            return $txt->csvArrays();
+        } else {
+            return $txt->csvArrays();
+        }
     }
 
     /**
@@ -236,7 +236,7 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
         } else {
             return $txt->csvArrays();
         }
-    }	
+    }    
 
      /**
      * Renvoi le crédit du user.
@@ -245,25 +245,25 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      */
     public function getCredit() {
         return $this->User->getCredit();
-    }	
+    }    
 
-	/**
-	* Retourne le firstname
-	* 
-	* @return string $firstname
-	*/
-	public function getFirstname() {
-		return $this->User->getFirstname();
-	}
+    /**
+    * Retourne le firstname
+    * 
+    * @return string $firstname
+    */
+    public function getFirstname() {
+        return $this->User->getFirstname();
+    }
 
-	/**
-	* Retourne le lastname
-	* 
-	* @return string $lastname
-	*/
-	public function getLastname() {
-		return $this->User->getLastname();
-	}
+    /**
+    * Retourne le lastname
+    * 
+    * @return string $lastname
+    */
+    public function getLastname() {
+        return $this->User->getLastname();
+    }
 
     /**
     * Fonction pour connaitre le montant minimum que l'on peut recharger
@@ -318,7 +318,7 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
         return 1;
     }
 
-	 /**
+     /**
      * Fonction pour recharger un client.
      * 
      * @param int $amount (en centimes)
@@ -327,10 +327,10 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      */
      
     public function reload($amount, $callbackUrl) {
-			  // Peut-il se recharger d'un tel montant
-			  $auth = $this->canReload($amount);
-			  if($auth != 1)
-					return "<error>".$this->getErrorDetail($auth)."</error>";
+              // Peut-il se recharger d'un tel montant
+              $auth = $this->canReload($amount);
+              if($auth != 1)
+                    return "<error>".$this->getErrorDetail($auth)."</error>";
 
         $pb = new Paybox($this->User);
         return $pb->execute($amount, $callbackUrl);
@@ -343,10 +343,10 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      * @return int $state
      */
     public function blockMe() {
-		if ($this->User->blockMe()) {
-			$state = 1;
-		} else { $state = 440; }    		
-		return $state;
+        if ($this->User->blockMe()) {
+            $state = 1;
+        } else { $state = 440; }            
+        return $state;
     }
     
     /**
@@ -356,12 +356,12 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      * @return int $state
      */
     public function deblock() {
-		if ($this->User->deblock()) {
-			$state = 1;
-		} else { $state = 440; }    		
-		return $state;
+        if ($this->User->deblock()) {
+            $state = 1;
+        } else { $state = 440; }            
+        return $state;
     }
-	
+    
     /**
     * Fonction pour connaitre l'état du compte (bloqué/débloqué)
     * 
@@ -370,7 +370,7 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
     public function isBlocked() {
         return $this->User->isblocked();
     }
-	
+    
     /**
      * VIREMENT
      * 
@@ -398,8 +398,8 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
         }
         return 401;
     }   
-	
-	
+    
+    
 
     /**
      * Retourne un csv qui contient les id_fundation, id_point en fonction de ses droits
@@ -408,20 +408,20 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      */    
     public function getDroits($droit = '') {
         if (isset($this->user)) {
-	        $txt = new ComplexData(array());
-	        if ($droit == '') {
-               	foreach ($this->user->getDroits() as $don) {
-		            $txt->addLine(array($don['droit'], $don['fundation']->getId(), $don['fundation']->getName(), $don['id_point']));
-	            }
-	        } else {
-	        	foreach ($this->user->getDroits() as $i => $don) {
-    	    		$key = in_array($droit, $don);
-    	    		if ($key) {
-    	    			$txt->addLine(array($don['fundation']->getId(), $don['fundation']->getName(), $don['id_point']));
-    	    		}
-        		}
-        	}
-      		return $txt->csvArrays();
+            $txt = new ComplexData(array());
+            if ($droit == '') {
+                   foreach ($this->user->getDroits() as $don) {
+                    $txt->addLine(array($don['droit'], $don['fundation']->getId(), $don['fundation']->getName(), $don['id_point']));
+                }
+            } else {
+                foreach ($this->user->getDroits() as $i => $don) {
+                    $key = in_array($droit, $don);
+                    if ($key) {
+                        $txt->addLine(array($don['fundation']->getId(), $don['fundation']->getName(), $don['id_point']));
+                    }
+                }
+            }
+              return $txt->csvArrays();
         } else {
             return 409;
         }
@@ -433,27 +433,27 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
     * @return array $state
     */
     public function setMsgPerso($newMsgPerso) {
-		if (mb_check_encoding($newMsgPerso, 'UTF-8')) {
-			if (strlen($newMsgPerso) < 255){
-				$this->db->query("UPDATE ts_user_usr SET usr_msg_perso = '%s' WHERE usr_id = '%u';", Array($newMsgPerso, $this->User->getId()));
-				if ($this->db->affectedRows() == 1) {
-					return array("success"=>"ok");
-				}
-				else {
-					return array("error"=>400, "error_msg"=>"Erreur dans l'insertion dans la base de donnée");
-				}
-			}
-			else {
-				return array("error"=>400, "error_msg"=>"Le message envoyé est trop long (255 caractères max)");
-			}
-		}
-		else {
-			return array("error"=>400, "error_msg"=>"Le message envoyé n'est pas en UTF-8");
-		}
+        if (mb_check_encoding($newMsgPerso, 'UTF-8')) {
+            if (strlen($newMsgPerso) < 255){
+                $this->db->query("UPDATE ts_user_usr SET usr_msg_perso = '%s' WHERE usr_id = '%u';", Array($newMsgPerso, $this->User->getId()));
+                if ($this->db->affectedRows() == 1) {
+                    return array("success"=>"ok");
+                }
+                else {
+                    return array("error"=>400, "error_msg"=>"Erreur dans l'insertion dans la base de donnée");
+                }
+            }
+            else {
+                return array("error"=>400, "error_msg"=>"Le message envoyé est trop long (255 caractères max)");
+            }
+        }
+        else {
+            return array("error"=>400, "error_msg"=>"Le message envoyé n'est pas en UTF-8");
+        }
     }
-	
+    
 
-	
+    
 
 
 
