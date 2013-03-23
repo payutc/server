@@ -98,7 +98,7 @@ class POSS2 {
 			session_destroy();
 			return array("success"=>"ok", "url"=>Cas::getUrl()."/logout");
 		} else {
-			return array("error"=>"Aucun seller n'est logué.");
+			return array("error"=>"1401", "error_msg"=>"Aucun seller n'est logué.");
 		}
 	}
 
