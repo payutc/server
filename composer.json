@@ -6,6 +6,9 @@
 	},
     "include-path": ["./"],
     "autoload": {
-        "classmap": ["class/", "db/", "services/"]
+        "classmap": ["class/", "db/", "services/"],
+        "psr-0": {
+            "Payutc": "src/"
+        }
     }
 }
