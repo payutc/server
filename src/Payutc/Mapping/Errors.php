@@ -9,7 +9,7 @@ class Errors {
         	'ServiceMethodNotFound' => 404,
         	'ServiceMethodForbidden' => 403,
         	'ServiceMissingMethodArgument' => 400,
-        	'PossException' => function(PossException $e) {
+        	'PossException' => function(\PossException $e) {
         		return array(
         			'type' => 'PossException', 
         			'code' => $e->err_code, 
