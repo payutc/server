@@ -21,7 +21,7 @@
         // Pour déclarer une nouvelle application on a besoin d'un user, mais pas d'être une application.
         $this->checkRight(true, false);
 		$application = new Application();
-		$application->from_array(Array(
+		$application->fromArray(Array(
             "app_id" => null,
             "app_url" => $app_url,
             "app_key" => null,
@@ -32,7 +32,7 @@
             "app_created" => null
         ));
         $application->insert();
-		return $application->to_array();
+		return $application->toArray();
 	}
 	
 	/**

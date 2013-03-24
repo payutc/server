@@ -34,7 +34,7 @@ class Application {
     /**
      * Init the application from DB for a given key
      */
-	public function from_key($key) {
+	public function fromKey($key) {
         $this->app_key = $key;
         $query = $this->db->query("SELECT app_id, app_url, app_key, app_name, app_desc, app_creator, app_lastuse, 
                                 app_created FROM t_application_app WHERE app_key = '%s' and app_removed is NULL;", 
@@ -43,13 +43,13 @@ class Application {
         if ($this->db->affectedRows() != 1) {
             throw new Exception("La clef d'application n'a pas été reconnu !");
         }
-        $this->from_array($row);
+        $this->fromArray($row);
     }
     
     /*
      * Init the application from a given id
      */
-    public function from_id($id) {
+    public function fromId($id) {
         $this->app_id = $id;
         $query = $this->db->query("SELECT app_id, app_url, app_key, app_name, app_desc, app_creator, app_lastuse, 
                                 app_created FROM t_application_app WHERE app_id = '%u' and app_removed is NULL;", 
@@ -58,13 +58,13 @@ class Application {
         if ($this->db->affectedRows() != 1) {
             throw new Exception("Il n'existe pas d'application correspondant à cet ID !");
         }
-        $this->from_array($row);
+        $this->fromArray($row);
     }
     
     /*
      * For a given row, instantiate the Application attributes
      */
-    public function from_array($row) {
+    public function fromArray($row) {
         $this->app_id = $row['app_id'];
         $this->app_url = $row['app_url'];
         $this->app_key = $row['app_key'];
@@ -79,7 +79,7 @@ class Application {
     /*
      * Function for creating a key...
      */
-    private function rand_sha1($length) {
+    private function randSha1($length) {
         $max = ceil($length / 40);
         $random = '';
         for ($i = 0; $i < $max; $i ++) {
@@ -94,7 +94,7 @@ class Application {
     public function insert()
     {
         // Calculate a key
-        $this->app_key = $this->rand_sha1(32);
+        $this->app_key = $this->randSha1(32);
         $this->db->query("INSERT INTO t_application_app (app_url, app_key, app_name, app_desc, app_creator, app_created) VALUES('%s', '%s', '%s', '%s', '%s', NOW());", 
                          Array($this->app_url, $this->app_key, $this->app_name, $this->app_desc, $this->app_creator));
 		if ($this->db->affectedRows() != 1)
@@ -104,11 +104,11 @@ class Application {
     }
     
     /*
-     * to_array()
+     * toArray()
      * key represent if we want or not output the key.
      * by default we don't want !
      */
-    public function to_array($key=0)
+    public function toArray($key=0)
     {
         $application = Array(
             "app_id" => $this->app_id,
@@ -137,14 +137,14 @@ class Application {
         if ($db->affectedRows() >= 1) {
 			while ($don = $db->fetchArray($query)) {
                 $app = new Application();
-                $app->from_array($don);
+                $app->fromArray($don);
 				array_push($apps, $app);
 			}
         }
         $result = array();
         foreach($apps as $app)
         {
-            array_push($result, $app->to_array($key=$key));
+            array_push($result, $app->toArray($key=$key));
         }
         return $result;
     }

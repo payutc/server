@@ -98,7 +98,7 @@ class ServiceBase {
     */
     public function getStatus() {
         if($this->application)
-            $app = $this->application->to_array($key=0);
+            $app = $this->application->toArray($key=0);
         else
             $app = null;
         if($this->user)
@@ -173,7 +173,7 @@ class ServiceBase {
     public function loginApp($key) {
         $service = get_class($this);
         $application = new Application();
-        $application->from_key($key); // Throw an exception if Application doesn't exists...
+        $application->fromKey($key); // Throw an exception if Application doesn't exists...
         $this->application = $application;
         return "ok";
     }
