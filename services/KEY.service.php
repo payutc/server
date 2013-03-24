@@ -17,9 +17,9 @@
 	* @param array (array containing application information)
 	* @return string la clef
 	*/
-	public function register_application($app_url, $app_name, $app_desc=null) {
+	public function registerApplication($app_url, $app_name, $app_desc=null) {
         // Pour déclarer une nouvelle application on a besoin d'un user, mais pas d'être une application.
-        $this->checkUserApp(true, false);
+        $this->checkRight(true, false);
 		$application = new Application();
 		$application->from_array(Array(
             "app_id" => null,
@@ -40,9 +40,9 @@
 	 * 
 	 * @return Array (liste d'applications)
 	 */
-	 public function get_current_user_applications() {
+	 public function getCurrentUserApplications() {
         // On a besoin d'avoir un user logged
-        $this->checkUserApp(true, false);
+        $this->checkRight(true, false);
         $application_list = new ApplicationList();
         $application_list->from_login($this->user->getNickname());
         // On retourne la liste d'applications (mais sans la clef, car on ne ne veut pas qu'un service "malintentioné" puisse récupérer les clefs d'un user).
