@@ -46,8 +46,7 @@ class Soap {
         
         if (isset($_GET['wsdl'])) {
             $server = new \Zend\Soap\AutoDiscover();
-            // This was the default value in Zend 1.*
-            $server->setUri('http://' .$_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME']);
+            $server->setUri($_CONFIG['server_url'].$name_class.'.class.php');
             $server->setClass($name_class);
             $server->handle();
         } else {
