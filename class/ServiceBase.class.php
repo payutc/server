@@ -116,10 +116,10 @@ class ServiceBase {
      * La première ligne des fonctions exposé doit être:
      * $this->checkRight();
      * Si l'on ne veut pas checker l'application (cas d'un service autorisé à tout le monde, comme KEY par exemple on fait :)
-     * $this->checkRight($app=false);
+     * $this->checkRight(false);
      * Si l'on ne veut pas checker le user (cas d'un service ne dépendant pas d'un user, comme un service permettant de lister les articles sur un site web par exemple)
-     * $this->checkRight($user=false);
-     * Si votre fonction est ouverte à tout le monde, ne rien mette ou mettre: $this->checkRight($user=false, $app=false) sera équivalent.
+     * $this->checkRight(true, false);
+     * Si votre fonction est ouverte à tout le monde, ne rien mette ou mettre: $this->checkRight(false, false) sera équivalent.
      * 
      * Lorsque votre fonction travaille sur une fundation, vous devez passer le $fun_id pour que l'on vérifie si l'user et/ou l'app ont les droits sur la fundations
      * Lorsque les droits ne sont pas satisfait cette fonction throw une exception et donc interromps l'execution de votre fonction proprement. 
@@ -130,18 +130,18 @@ class ServiceBase {
             if(!$this->user)
                 throw new Exception("Vous devez connecter un utilisateur ! (method loginCas)");
             // Check if App_id <=> Fun_id <=> Service_name exists in ApplicationRight
-            UserRight::check($user_id = $this->user->getId(),
-                             $service_name = $this->service_name,
-                             $fundation_id = $fun_id);
+            UserRight::check($this->user->getId(),
+                             $this->service_name,
+                             $fun_id);
         }
         if($app)
         {
             if(!$this->application)
                 throw new Exception("Vous devez connecter une application ! (method loginApp)");
             // Check if App_id <=> Fun_id <=> Service_name exists in ApplicationRight
-            ApplicationRight::check($application_id = $this->application->getId(),
-                                    $service_name = $this->service_name,
-                                    $fundation_id = $fun_id);
+            ApplicationRight::check($this->application->getId(),
+                                    $this->service_name,
+                                    $fun_id);
         }
         return true;
     }
