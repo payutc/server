@@ -41,20 +41,21 @@ class Soap {
             throw new \Payutc\Exception\ServiceNotFound("Service $name_class does not exist");
         }
         
-        $res = $app->response();
-        $res['Content-Type'] = 'text/xml';
-        
         if (isset($_GET['wsdl'])) {
             $server = new \Zend\Soap\AutoDiscover();
             $server->setUri($_CONFIG['server_url'].$name_class.'.class.php');
             $server->setClass($name_class);
             $server->handle();
         } else {
-            $server = new \SoapServer($_CONFIG['server_url'].$name_class.'.class.php?wsdl', array('cache_wsdl' => $_CONFIG['wsdl_cache']));
+            $server = new \Zend\Soap\Server($_CONFIG['server_url'].$name_class.'.class.php?wsdl', array('cache_wsdl' => $_CONFIG['wsdl_cache']));
             $server->setClass($name_class);
             $server->setPersistence(SOAP_PERSISTENCE_SESSION);
             $server->handle();
         }
+        
+        // Virer les Content-Type de Zend et ajout avec Slim (sinon il rajoute text/html)
+        header_remove("Content-Type");
+        $res = $app->response();
+        $res['Content-Type'] = 'text/xml';
     }
 }
-?>
