@@ -19,7 +19,7 @@ class ApplicationList {
     /**
      * Get applications for a given user
      */
-	public function from_login($login) {
+	public function fromLogin($login) {
         $apps = array();
         $query = $this->db->query("SELECT app_id, app_url, app_key, app_name, app_desc, app_creator, app_lastuse, 
                                 app_created FROM t_application_app WHERE app_creator = '%s' and app_removed is NULL;", 
@@ -27,7 +27,7 @@ class ApplicationList {
         if ($this->db->affectedRows() >= 1) {
 			while ($don = $this->db->fetchArray($query)) {
                 $app = new Application();
-                $app->from_array($don);
+                $app->fromArray($don);
 				array_push($apps, $app);
 			}
         }
@@ -37,11 +37,11 @@ class ApplicationList {
     /**
      * Extract Application under an array format
      */
-    public function to_array($key=0) {
+    public function toArray($key=0) {
         $return = array();
         foreach($this->apps as $app)
         {
-            array_push($return, $app->to_array($key=$key));
+            array_push($return, $app->toArray($key=$key));
         }
         return $return;
     }

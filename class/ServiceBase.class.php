@@ -28,17 +28,18 @@
 * @package buckutt
 */
 
-
 class ServiceBase {
     protected $db;
     protected $user;
     protected $application;
+    protected $service_name;  // Nom du service
 	
     /**
     * Constructeur
     */   
     public function __construct() {
         $this->db = Db_buckutt::getInstance();
+        $this->service_name = get_class($this);
     }
 
     /**
@@ -51,7 +52,7 @@ class ServiceBase {
     public function loginCas($ticket, $service) {
 		$login = Cas::authenticate($ticket, $service);
         if ($login < 0) {
-   			return array("error"=>-1, "error_msg"=>"Erreur de login CAS.");
+   			return array("error"=> array( "message"=>"Erreur de login cas", "code" => -1));
         }
 		$this->user = new User($login, 1, "", 0, 1, 0);
 
@@ -79,7 +80,7 @@ class ServiceBase {
         if($this->app)
             unset($this->application);
         session_destroy();
-        return "ok";
+        return true;
 	}
 
 
@@ -97,7 +98,7 @@ class ServiceBase {
     */
     public function getStatus() {
         if($this->application)
-            $app = $this->application->to_array();
+            $app = $this->application->toArray(0);
         else
             $app = null;
         if($this->user)
@@ -108,14 +109,62 @@ class ServiceBase {
     }
 
     /**
-     * Verifie qu'un user et/ou une app ont été loggé
-     * Sinon throw une exception 
+     * Verifie qu'un user et/ou une app ont les droits sur le service courant (et sur la fundation si précisé)
+     * Par défaut vérifie et les droits de l'appli et les droits de l'user sur le service
+     *
+     * Dans les fonctions il faut l'utiliser ainsi:
+     * La première ligne des fonctions exposé doit être:
+     * $this->checkRight();
+     * Si l'on ne veut pas checker l'application (cas d'un service autorisé à tout le monde, comme KEY par exemple on fait :)
+     * $this->checkRight(false);
+     * Si l'on ne veut pas checker le user (cas d'un service ne dépendant pas d'un user, comme un service permettant de lister les articles sur un site web par exemple)
+     * $this->checkRight(true, false);
+     * Si votre fonction est ouverte à tout le monde, ne rien mette ou mettre: $this->checkRight(false, false) sera équivalent.
+     * 
+     * Lorsque votre fonction travaille sur une fundation, vous devez passer le $fun_id pour que l'on vérifie si l'user et/ou l'app ont les droits sur la fundations
+     * Lorsque les droits ne sont pas satisfait cette fonction throw une exception et donc interromps l'execution de votre fonction proprement. 
      */
-    protected function checkUserApp($user=true, $app=true) {
-        if($user && !$this->user)
-            throw new Exception("Vous devez connecter un utilisateur ! (method loginCas)");
-        if($app && !$this->application)
-            throw new Exception("Vous devez connecter une application ! (method loginApp)");
+    public function checkRight($user=true, $app=true, $fun_id=false) {
+        if($user)
+        {
+            if(!$this->user)
+                throw new Exception("Vous devez connecter un utilisateur ! (method loginCas)");
+            // Check if App_id <=> Fun_id <=> Service_name exists in ApplicationRight
+            UserRight::check($this->user->getId(),
+                             $this->service_name,
+                             $fun_id);
+        }
+        if($app)
+        {
+            if(!$this->application)
+                throw new Exception("Vous devez connecter une application ! (method loginApp)");
+            // Check if App_id <=> Fun_id <=> Service_name exists in ApplicationRight
+            ApplicationRight::check($this->application->getId(),
+                                    $this->service_name,
+                                    $fun_id);
+        }
+        return true;
+    }
+
+    /**
+     * Retourne les fundations sur les quels on a les droits pour travailer
+     * Selon tout les droit en vigueur
+     * @return array()
+     */
+    public function getFundations() {
+        // Verification sur le droits avant toute choses
+        $this->checkRight();
+        // On recupere les fundations pour l'user et l'application
+        $fundations_for_user = UserRight::getFundations($this->user->getId(), 
+                                                        $this->service_name);
+        $fundations_for_app = ApplicationRight::getFundations($this->application->getId(),
+                                                              $this->service_name);
+        // On fait un ET logique entre les deux arrays
+        $fundations = array();
+        foreach($fundations_for_user as $fun_id => $fundation)
+            if(array_key_exists($fun_id, $fundations_for_app))
+                $fundations[$fun_id] = $fundation;
+        return $fundations;
     }
 
     /**
@@ -124,9 +173,9 @@ class ServiceBase {
     public function loginApp($key) {
         $service = get_class($this);
         $application = new Application();
-        $application->from_key($key); // Throw an exception if Application doesn't exists...
+        $application->fromKey($key); // Throw an exception if Application doesn't exists...
         $this->application = $application;
-        return "ok";
+        return true;
     }
 
     /**
