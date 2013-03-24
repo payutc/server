@@ -8,9 +8,6 @@
  */
 
 
-require_once 'db/Db_buckutt.class.php';
-require_once 'db/Mysql.class.php';
-
 class ApplicationRight {
     protected $db;
 
