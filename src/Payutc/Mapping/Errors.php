@@ -5,10 +5,10 @@ namespace Payutc\Mapping;
 class Errors {
     public static function get(){
         return array(
-        	'ServiceNotFound' => 404,
-        	'ServiceMethodNotFound' => 404,
-        	'ServiceMethodForbidden' => 403,
-        	'ServiceMissingMethodArgument' => 400,
+        	'Payutc\Exception\ServiceNotFound' => 404,
+        	'Payutc\Exception\ServiceMethodNotFound' => 404,
+        	'Payutc\Exception\ServiceMethodForbidden' => 403,
+        	'Payutc\Exception\ServiceMissingMethodArgument' => 400,
         	'PossException' => function(\PossException $e) {
         		return array(
         			'type' => 'PossException', 
