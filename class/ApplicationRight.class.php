@@ -36,7 +36,7 @@ class ApplicationRight {
             else
                 throw new \Exception("L'application_id $application_id n'a les droits $service_name sur aucune fundation");
 	    }
-        return "ok";
+        return true;
     }
 
     /**

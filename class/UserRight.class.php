@@ -34,7 +34,7 @@ class UserRight {
             else
                 throw new \Exception("Le user_id $user_id n'a les droits $service_name sur aucune fundation");
 	    }
-        return "ok";
+        return true;
     }
     
     /**

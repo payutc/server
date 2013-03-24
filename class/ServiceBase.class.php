@@ -80,7 +80,7 @@ class ServiceBase {
         if($this->app)
             unset($this->application);
         session_destroy();
-        return "ok";
+        return true;
 	}
 
 
@@ -143,7 +143,7 @@ class ServiceBase {
                                     $service_name = $this->service_name,
                                     $fundation_id = $fun_id);
         }
-        return "ok";
+        return true;
     }
 
     /**
@@ -175,7 +175,7 @@ class ServiceBase {
         $application = new Application();
         $application->fromKey($key); // Throw an exception if Application doesn't exists...
         $this->application = $application;
-        return "ok";
+        return true;
     }
 
     /**
