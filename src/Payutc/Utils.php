@@ -29,11 +29,6 @@
 
 namespace Payutc;
 
-class ServiceNotFound extends \Exception {}
-class ServiceMethodNotFound extends \Exception {}
-class ServiceMethodForbidden extends \Exception {}
-class ServiceMissingMethodArgument extends \Exception {}
-
 class Utils
 {
     public static function call_user_func_named($function_or_array, $params)
@@ -43,17 +38,17 @@ class Utils
     		$function = $function_or_array[1];
     		$reflection_class = new \ReflectionClass($class);
     		if (!$reflection_class->hasMethod($function)) {
-    			throw new ServiceMethodNotFound('La fonction '.$function.' n\'existe pas');
+    			throw new \Payutc\Exception\ServiceMethodNotFound('La fonction '.$function.' n\'existe pas');
     		}
     		$reflect = $reflection_class->getMethod($function);
     		if ($reflect->isPrivate() or $reflect->isProtected()) {
-    			throw new ServiceMethodForbidden('La fonction '.$function.' n\'est pas publique');
+    			throw new \Payutc\Exception\ServiceMethodForbidden('La fonction '.$function.' n\'est pas publique');
     		}
     	}
     	else {
     		$function = $function_or_array;
     		if (!function_exists($function)) {
-    			throw new ServiceMethodNotFound('La fonction '.$function.'n\'existe pas');
+    			throw new \Payutc\Exception\ServiceMethodNotFound('La fonction '.$function.'n\'existe pas');
     		}
     		$reflect = new \ReflectionFunction($function);
     	}
@@ -72,7 +67,7 @@ class Utils
     		}
     		else {
     			// missing required parameter: mark an error and exit
-    			throw new ServiceMissingMethodArgument('Le parametre "'.$pname.'" est requis');
+    			throw new \Payutc\Exception\ServiceMissingMethodArgument('Le parametre "'.$pname.'" est requis');
     		}
     	}
     	return call_user_func_array($function_or_array, $real_params);

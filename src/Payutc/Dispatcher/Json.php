@@ -48,7 +48,7 @@ class Json
     		echo json_encode($a);
     	}
     	else {
-    		throw new ServiceNotFound("Service $service does not exist");
+    		throw new \Payutc\Exception\ServiceNotFound("Service $service does not exist");
     	}
     }
     
