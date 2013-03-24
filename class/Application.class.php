@@ -25,6 +25,13 @@ class Application {
     }
     
     /**
+     * Get ID
+     */
+    public function getId() {
+        return $this->app_id;
+    }
+
+    /**
      * Init the application from DB for a given key
      */
 	public function from_key($key) {
@@ -98,8 +105,10 @@ class Application {
     
     /*
      * to_array()
+     * key represent if we want or not output the key.
+     * by default we don't want !
      */
-    public function to_array($key=1)
+    public function to_array($key=0)
     {
         $application = Array(
             "app_id" => $this->app_id,
@@ -113,6 +122,33 @@ class Application {
             $application["app_key"] = $this->app_key;
         return $application;
     }
+
+    /*
+     * getAll()
+     * 
+     * Return all applications under array format
+     */
+    public static function getAll($key=0)
+    {
+        $apps = array();
+        $db = Db_buckutt::getInstance();
+        $query = $db->query("SELECT app_id, app_url, app_key, app_name, app_desc, app_creator, app_lastuse, 
+                                app_created FROM t_application_app WHERE app_removed is NULL;");	
+        if ($db->affectedRows() >= 1) {
+			while ($don = $db->fetchArray($query)) {
+                $app = new Application();
+                $app->from_array($don);
+				array_push($apps, $app);
+			}
+        }
+        $result = array();
+        foreach($apps as $app)
+        {
+            array_push($result, $app->to_array($key=$key));
+        }
+        return $result;
+    }
+
 	
 }
 
