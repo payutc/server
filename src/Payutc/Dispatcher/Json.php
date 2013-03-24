@@ -86,5 +86,29 @@ class Json
     	$app->response()->status($http_code);
     	echo json_encode(array('error' => $err_array));
     }
+
+	public static function fatalHandler() {
+		
+		$error = error_get_last();
+		
+		if( $error !== NULL) {
+			$defaults = array(
+				"file" => "unknown file",
+				"message" => "shutdown",
+				"type" => E_CORE_ERROR,
+				"line" => 0
+			);
+			$error = array_merge($defaults, $error);
+			header('Content-type: application/json; charset=utf-8');
+			ob_end_clean();
+			echo json_encode(array(
+				'error' => array(
+					'type' => 'InternalServerError',
+					'code' => 501,
+					'message' => $error["message"],
+					'dump' => $error
+				)
+			));
+		}
+	}
 }
-?>
