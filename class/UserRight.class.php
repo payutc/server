@@ -108,7 +108,7 @@ class UserRight {
 	* Supprimer le droit
 	* 
 	*/
-	public function removeRight($usr_id, $service, $fun_id) {
+	public static function removeRight($usr_id, $service, $fun_id) {
         $db = Db_buckutt::getInstance();
 		$db->query("UPDATE tj_usr_fun_ufu SET ufu_removed=NOW() WHERE fun_id='%u' AND usr_id='%u' AND ufu_service='%s';", Array($fun_id, $usr_id, $service));
 		if ($db->affectedRows() == 0) {

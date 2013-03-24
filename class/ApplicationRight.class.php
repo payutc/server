@@ -100,7 +100,7 @@ class ApplicationRight {
 	* Supprimer le droit
 	* 
 	*/
-	public function removeRight($app_id, $service, $fun_id) {
+	public static function removeRight($app_id, $service, $fun_id) {
         $db = Db_buckutt::getInstance();
 		$db->query("UPDATE tj_app_fun_afu SET afu_removed=NOW() WHERE fun_id='%u' AND app_id='%u' AND afu_service='%s';", Array($fun_id, $app_id, $service));
 		if ($db->affectedRows() == 0) {
