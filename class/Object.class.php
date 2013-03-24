@@ -1,37 +1,29 @@
-<?php 
+<?php
 /**
-    BuckUTT - Buckutt est un système de paiement avec porte-monnaie électronique.
-    Copyright (C) 2011 BuckUTT <buckutt@utt.fr>
-
-	This file is part of BuckUTT
-	
-    BuckUTT is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    BuckUTT is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
+ BuckUTT - Buckutt est un système de paiement avec porte-monnaie électronique.
+ Copyright (C) 2011 BuckUTT <buckutt@utt.fr>
+ This file is part of BuckUTT
+ BuckUTT is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ BuckUTT is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 /**
  * Object.class
- * 
+ *
  * Classe pour les objets.
  * 3 types : product, category (object avec des childs) et promotion (object avec des step, et un prix)
  * @author BuckUTT <buckutt@utt.fr>
  * @version 2.0
  * @package buckutt
  */
-
 class Object {
-
     protected $obj_id;
     protected $obj_name;
     protected $obj_type;
@@ -43,11 +35,11 @@ class Object {
     protected $Parent;
     protected $db;
     protected $state;
-
     //TODO réfléchir à l'utilité d'envoyer un objet Fundation et non seulement l'id. Idem pour l'image.
+    
     /**
      * Constructeur du groupe.
-     * 
+     *
      * @param int $obj_id
      * @param string $obj_name
      * @param string $obj_type
@@ -58,8 +50,7 @@ class Object {
      * @param int $pre_load
      * @return int $state;
      */
-    public function __construct($obj_id=0, $obj_name='', $obj_type='', $obj_stock=0, $fun_id=0, $img_id=0, $obj_single=0, $pre_load=0) {
-
+    public function __construct($obj_id = 0, $obj_name = '', $obj_type = '', $obj_stock = 0, $fun_id = 0, $img_id = 0, $obj_single = 0, $pre_load = 0) {
         $this->db = Db_buckutt::getInstance();
         //Création d'object
         if ($obj_id == 0) {
@@ -95,23 +86,18 @@ class Object {
         }
         $this->loadParent();
         $this->loadChild();
-
         return $this->state;
     }
-
     /**
      * Retourne quelques détails sur l'objet (nom, type, id_image)
      * (avant, retournait name / id_category, id_image)
-     * 
+     *
      * @return array $Details
      */
     public function getDetailsLight() {
-        if ($this->state == 1)
-            return array($this->obj_name, $this->obj_type, $this->img_id);
-        else
-            return $this->state;
+        if ($this->state == 1) return array($this->obj_name, $this->obj_type, $this->img_id);
+        else return $this->state;
     }
-
     /**
      * Retourne tous les détails de l'objet
      * (avant : $arrayLight, array($this->isunique, $this->stock, $this->categorie->getNameFundation(), $this->date_end)
@@ -121,11 +107,8 @@ class Object {
         if ($this->state == 1) {
             $array = array($this->obj_name, $this->obj_type, $this->obj_stock, $this->obj_single, $this->img_id, $this->fun_id);
             return $array;
-        }
-        else
-            return $this->state;
+        } else return $this->state;
     }
-
     /**
      * Retourne $obj_id.
      *
@@ -134,7 +117,6 @@ class Object {
     public function getId() {
         return $this->obj_id;
     }
-
     /**
      * Retourne $obj_name.
      *
@@ -143,7 +125,6 @@ class Object {
     public function getName() {
         return $this->obj_name;
     }
-
     /**
      * Retourne $obj_type.
      *
@@ -152,7 +133,6 @@ class Object {
     public function getType() {
         return $this->obj_type;
     }
-
     /**
      * Retourne $obj_stock.
      *
@@ -161,7 +141,6 @@ class Object {
     public function getStock() {
         return $this->obj_stock;
     }
-
     /**
      * Retourne $obj_single.
      *
@@ -170,7 +149,6 @@ class Object {
     public function getSingle() {
         return $this->obj_single;
     }
-
     /**
      * Retourne $img_id.
      *
@@ -179,7 +157,6 @@ class Object {
     public function getImgId() {
         return $this->img_id;
     }
-
     /**
      * Retourne $fun_id.
      *
@@ -188,7 +165,6 @@ class Object {
     public function getFunId() {
         return $this->fun_id;
     }
-
     /**
      * Retourne $Parent.
      *
@@ -197,7 +173,6 @@ class Object {
     public function getParent() {
         return $this->Parent;
     }
-
     /**
      * Retourne $Child.
      *
@@ -206,7 +181,6 @@ class Object {
     public function getChild() {
         return $this->Child;
     }
-
     /**
      * Retourne $state.
      *
@@ -215,10 +189,9 @@ class Object {
     public function getState() {
         return $this->state;
     }
-
     /**
      * Change le $obj_name.
-     * 
+     *
      * @param string $obj_name
      * @return int $state
      */
@@ -231,7 +204,6 @@ class Object {
             $this->state = 400;
         }
     }
-
     /**
      * Change le $obj_type.
      *
@@ -247,10 +219,9 @@ class Object {
             $this->state = 400;
         }
     }
-
     /**
      * Change le $obj_stock.
-     * 
+     *
      * @param int $obj_stock
      * @return int $state
      */
@@ -263,14 +234,13 @@ class Object {
             $this->state = 400;
         }
     }
-
     /**
      * Décremente le $obj_stock.
      *
      * @return int $state
      */
     public function decStock() {
-        if ($this->obj_stock != -1) {
+        if ($this->obj_stock != - 1) {
             $this->db->query("UPDATE t_object_obj SET obj_stock= (obj_stock - 1) WHERE obj_id='%u';", Array($this->obj_id));
             if ($this->db->affectedRows() == 1) {
                 $this->obj_stock = $obj_stock;
@@ -278,10 +248,8 @@ class Object {
             } else {
                 return 0;
             }
-        } else
-            return 1;
+        } else return 1;
     }
-
     /**
      * Change le $obj_single.
      *
@@ -297,10 +265,9 @@ class Object {
             $this->state = 400;
         }
     }
-
     /**
      * Change le $img_id.
-     * 
+     *
      * @param int $img_id
      * @return int $state
      */
@@ -313,7 +280,6 @@ class Object {
             $this->state = 400;
         }
     }
-
     /**
      * Change le $fun_id.
      *
@@ -329,10 +295,9 @@ class Object {
             $this->state = 400;
         }
     }
-
     /**
      * Supprimer l'objet
-     * 
+     *
      * @return int $state
      */
     public function remove() {
@@ -344,7 +309,6 @@ class Object {
         }
         return $this->state;
     }
-
     /**
      * Charge les parents.
      *
@@ -362,7 +326,6 @@ class Object {
             return 0;
         }
     }
-
     /**
      * Charge les enfants.
      *
@@ -380,10 +343,9 @@ class Object {
             return 0;
         }
     }
-
     /**
      * Ajoute un enfant.
-     * 
+     *
      * @param int $obj_child_id
      * @return int $state
      */
@@ -392,13 +354,11 @@ class Object {
         if ($this->db->affectedRows() == 1) {
             $this->loadChild();
             return 1;
-        } else
-            return 0;
+        } else return 0;
     }
-
     /**
      * Ajoute un parent.
-     * 
+     *
      * @param int $obj_parent_id
      * @return int $state
      */
@@ -407,13 +367,11 @@ class Object {
         if ($this->db->affectedRows() == 1) {
             $this->loadParent();
             return 1;
-        } else
-            return 0;
+        } else return 0;
     }
-
     /**
      * Ajoute un enfant à une promo.
-     * 
+     *
      * @param int $obj_child_id
      * @param int $step
      * @return int $state
@@ -422,10 +380,8 @@ class Object {
         $this->db->query("INSERT INTO tj_object_link_oli (obj_id_parent, obj_id_child, oli_step) VALUES('%u', '%u', '%u');", Array($this->obj_id, $obj_child_id, $step));
         if ($this->db->affectedRows() == 1) {
             return 1;
-        } else
-            return 0;
+        } else return 0;
     }
-
     /**
      * Retire un enfant.
      *
@@ -437,10 +393,8 @@ class Object {
         if ($this->db->affectedRows() == 1) {
             $this->loadChild();
             return 1;
-        } else
-            return 0;
+        } else return 0;
     }
-
     /**
      * Retire un parent.
      *
@@ -452,10 +406,8 @@ class Object {
         if ($this->db->affectedRows() == 1) {
             $this->loadParent();
             return 1;
-        } else
-            return 0;
+        } else return 0;
     }
-
     /**
      * Retire tous les enfants.
      *
@@ -466,10 +418,8 @@ class Object {
         if ($this->db->affectedRows() == 1) {
             $this->loadChild();
             return 1;
-        } else
-            return 0;
+        } else return 0;
     }
-
     /**
      * Retire tous les parents.
      *
@@ -480,10 +430,8 @@ class Object {
         if ($this->db->affectedRows() == 1) {
             $this->loadParent();
             return 1;
-        } else
-            return 0;
+        } else return 0;
     }
-
     /**
      * Dit si l'objet est une promotion
      * @return Boolean check
@@ -495,7 +443,6 @@ class Object {
             return false;
         }
     }
-
     /**
      * Dit si l'objet est un objet classique
      * @return Boolean check
@@ -507,7 +454,6 @@ class Object {
             return false;
         }
     }
-
     /**
      * Dit si l'objet est une category
      * @return Boolean check
@@ -523,12 +469,9 @@ class Object {
      * donne le nombre de steps qui existent dans la bdd sur une promotion
      * @return int nbSteps
      */
-    public function getPromotionStepCount(){
+    public function getPromotionStepCount() {
         $req = $this->db->query("SELECT obj_id_parent, obj_id_child, oli_step FROM tj_object_link_oli WHERE obj_id_parent = '%u' GROUP BY oli_step;", Array($this->obj_id));
         return $this->db->numRows($req);
     }
-
-
 }
-
 ?>
