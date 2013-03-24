@@ -28,8 +28,11 @@ class POSS2WithExceptions extends POSS2
 			$error_msg = $r["error_msg"];
 			throw new PossException($error, $error_msg);
 		}
+		else if (is_array($r) and array_key_exists("success", $r)) {
+				return $r["success"];
+		}
 		else {
-			return $r["success"];
+				return $r;
 		}
 	}
 	
