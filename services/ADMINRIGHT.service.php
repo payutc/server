@@ -58,7 +58,7 @@
 	public function setUserRight($usr_login, $service, $fun_id){
         $this->checkRight($user=true, $app=true, $fun_id=$fun_id);
         // L'utilisateur à les droits de donner ce droit :)
-        return UserRight::setRight($usr_login, $service, $fun_id)." TOTO3754";
+        return UserRight::setRight($usr_login, $service, $fun_id);
 	}
 
 	/**
