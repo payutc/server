@@ -34,6 +34,15 @@ namespace Payutc\Dispatcher;
 class Soap {
     public function handle($name_class){
         global $_CONFIG;
+        $app = \Slim\Slim::getInstance();
+        
+        $services = \Payutc\Mapping\Services::get();
+        if (!array_key_exists($name_class, $services)) {
+            throw new \Payutc\Exception\ServiceNotFound("Service $name_class does not exist");
+        }
+        
+        $res = $app->response();
+        $res['Content-Type'] = 'text/xml';
         
         if (isset($_GET['wsdl'])) {
             $server = new \Zend\Soap\AutoDiscover();
