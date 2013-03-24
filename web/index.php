@@ -6,14 +6,14 @@ require_once 'config.inc.php';
 
 $app = new \Slim\Slim($_CONFIG['slim_config']);
 
-// error handler
-$app->error(function (\Exception $e) {
-    $dispatcher = new \Payutc\Dispatcher\Json();
-    $dispatcher->handleError($e);
-});
-
 // JSON route
-$app->map('/:service/:method', function($service, $method) {
+$app->map('/:service/:method', function($service, $method) use ($app) {
+    // JSON Error handler
+    $app->error(function (\Exception $e) {
+        $dispatcher = new \Payutc\Dispatcher\Json();
+        $dispatcher->handleError($e);
+    });
+    
     $dispatcher = new \Payutc\Dispatcher\Json();
     $dispatcher->handleService($service, $method);
 })->via('GET', 'POST');
