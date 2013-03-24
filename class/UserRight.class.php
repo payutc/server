@@ -99,7 +99,7 @@ class UserRight {
         // STEP2, insert
         $db->query("INSERT INTO tj_usr_fun_ufu (usr_id, fun_id, ufu_service) VALUES('%u', '%u', '%s');", Array($usr_id, $fun_id, $service));
         if ($db->affectedRows() != 1) {
-			throw new Exception("Le droit n'a pas pu être ajouté pour une raison inconnu.");
+			throw new Exception("Une erreur s'est produite lors de l'ajout du droit.");
 		}
         return $db->insertId();
     }
@@ -112,7 +112,7 @@ class UserRight {
         $db = Db_buckutt::getInstance();
 		$db->query("UPDATE tj_usr_fun_ufu SET ufu_removed=NOW() WHERE fun_id='%u' AND usr_id='%u' AND ufu_service='%s';", Array($fun_id, $usr_id, $service));
 		if ($db->affectedRows() == 0) {
-			throw new Exception("Le droit n'a pas pu être supprimé pour une raison inconnu.");
+			throw new Exception("Une erreur s'est produite lors de la supression du droit.");
 		}	
 	}
 

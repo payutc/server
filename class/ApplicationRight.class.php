@@ -91,7 +91,7 @@ class ApplicationRight {
         $db = Db_buckutt::getInstance();
         $db->query("INSERT INTO tj_app_fun_afu (app_id, fun_id, afu_service) VALUES('%u', '%u', '%s');", Array($app_id, $fun_id, $service));
         if ($db->affectedRows() != 1) {
-			throw new Exception("Le droit n'a pas pu être ajouté pour une raison inconnu.");
+			throw new Exception("Une erreur s'est produite lors de l'ajout du droit.");
 		}
         return $db->insertId();
     }
@@ -104,7 +104,7 @@ class ApplicationRight {
         $db = Db_buckutt::getInstance();
 		$db->query("UPDATE tj_app_fun_afu SET afu_removed=NOW() WHERE fun_id='%u' AND app_id='%u' AND afu_service='%s';", Array($fun_id, $app_id, $service));
 		if ($db->affectedRows() == 0) {
-			throw new Exception("Le droit n'a pas pu être supprimé pour une raison inconnu.");
+			throw new Exception("Une erreur s'est produite lors de la supression du droit.");
 		}	
 	}
 }
