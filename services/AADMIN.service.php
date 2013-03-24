@@ -36,7 +36,7 @@
 	$right_name_to_id = array("ADMIN"=>2, "GESARTICLE"=>6, "VENDRE"=>5, "TRESO"=>4, "POI-FUNDATION"=>7);
 	$right_id_to_name = array(2=>"ADMIN", 6=>"GESARTICLE", 5=>"VENDRE", 4=>"TRESO", 7=>"POI-FUNDATION");
 
-class AAdmin {
+class AADMIN {
 
 	protected $db;
 	protected $user;
