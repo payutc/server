@@ -13,7 +13,7 @@ class Cas {
 		if(isset($parsed->array['cas:serviceResponse']['cas:authenticationSuccess']['cas:user'])) 
 			return $parsed->array['cas:serviceResponse']['cas:authenticationSuccess']['cas:user']; 
 		else
-			return -1;
+			throw new Exception($data);
 	}
 	
 	public static function getURl() {
