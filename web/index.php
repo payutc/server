@@ -8,13 +8,13 @@ $app = new \Slim\Slim($_CONFIG['slim_config']);
 
 // JSON route
 $app->map('/:service/:method', function($service, $method) use ($app) {
+    $dispatcher = new \Payutc\Dispatcher\Json();
+
     // JSON Error handler
-    $app->error(function (\Exception $e) {
-        $dispatcher = new \Payutc\Dispatcher\Json();
+    $app->error(function (\Exception $e) use ($dispatcher) {
         $dispatcher->handleError($e);
     });
     
-    $dispatcher = new \Payutc\Dispatcher\Json();
     $dispatcher->handleService($service, $method);
 })->via('GET', 'POST');
 
