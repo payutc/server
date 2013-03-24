@@ -15,13 +15,13 @@ $app->error(function (\Exception $e) {
 // JSON route
 $app->map('/:service/:method', function($service, $method) {
     $dispatcher = new \Payutc\Dispatcher\Json();
-	$dispatcher->handleService($service, $method);
+    $dispatcher->handleService($service, $method);
 })->via('GET', 'POST');
 
 // SOAP route
 $app->map('/:service.class.php', function($service) {
     $dispatcher = new \Payutc\Dispatcher\Soap();
-	$dispatcher->handle($service);
+    $dispatcher->handle($service);
 })->via('GET', 'POST');
 
 // run app
