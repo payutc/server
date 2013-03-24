@@ -98,7 +98,7 @@ class ServiceBase {
     */
     public function getStatus() {
         if($this->application)
-            $app = $this->application->toArray($key=0);
+            $app = $this->application->toArray(0);
         else
             $app = null;
         if($this->user)

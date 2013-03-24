@@ -46,7 +46,7 @@
         $application_list = new ApplicationList();
         $application_list->from_login($this->user->getNickname());
         // On retourne la liste d'applications (mais sans la clef, car on ne ne veut pas qu'un service "malintentioné" puisse récupérer les clefs d'un user).
-		return $application_list->to_array($key=0);
+		return $application_list->to_array(0);
 	 }
 	
  }
