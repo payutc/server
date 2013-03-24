@@ -87,7 +87,7 @@ class Json
     	echo json_encode(array('error' => $err_array));
     }
 
-	public static function fatal_handler() {
+	public static function fatalHandler() {
 		
 		$error = error_get_last();
 		
