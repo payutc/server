@@ -45,16 +45,18 @@ class Soap {
             $server = new \Zend\Soap\AutoDiscover();
             $server->setUri($_CONFIG['server_url'].$name_class.'.class.php');
             $server->setClass($name_class);
-            $server->handle();
+            echo $server->toXml();
         } else {
             $server = new \Zend\Soap\Server($_CONFIG['server_url'].$name_class.'.class.php?wsdl', array('cache_wsdl' => $_CONFIG['wsdl_cache']));
             $server->setClass($name_class);
             $server->setPersistence(SOAP_PERSISTENCE_SESSION);
             $server->handle();
+            
+            // Retirer les Content-Type de Zend
+            header_remove("Content-Type");
         }
         
-        // Virer les Content-Type de Zend et ajout avec Slim (sinon il rajoute text/html)
-        header_remove("Content-Type");
+        // Ajout du Content-Type avec Slim (sinon il rajoute text/html)
         $res = $app->response();
         $res['Content-Type'] = 'text/xml';
     }
