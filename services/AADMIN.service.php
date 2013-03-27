@@ -513,7 +513,7 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 	        $article_id = $this->db->insertId(
               $this->db->query(
                   "INSERT INTO t_object_obj (`obj_id`, `obj_name`, `obj_type`, `obj_stock`, `obj_single`, `img_id`, `fun_id`, `obj_removed`, `obj_alcool`)
-                  VALUES (NULL, '%s', 'product', '%u', '0',  %s, '%u', '0', '%u');",
+                  VALUES (NULL, '%s', 'product', '%d', '0',  %s, '%u', '0', '%u');",
                   array($nom, $stock, $image, $fun_id, $alcool)));
 
 	        // 3. CREATION DU LIEN SUR LE PARENT
@@ -606,7 +606,7 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
         } else if ($image == -1) {
           $image = "NULL";
         }
-        $this->db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_stock` = '%u', `obj_alcool` = '%u', `img_id` = %s WHERE `obj_id` = '%u';",array($nom, $stock, $alcool, $image, $id));
+        $this->db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_stock` = '%d', `obj_alcool` = '%u', `img_id` = %s WHERE `obj_id` = '%u';",array($nom, $stock, $alcool, $image, $id));
 
 		return array("success"=>$id);
 	}
