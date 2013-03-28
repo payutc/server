@@ -478,6 +478,23 @@ class MADMIN {
     public function getMsgPerso($funID) {
         return $this->User->getMsgPerso($funID);
     }
+
+	/**
+	 * Check si le user est loggué
+	 * 
+	 * @return Array $userDetails
+	 */
+    public function getUserDetails() {
+        if($this->User->getState() != 1) {
+            return array();
+        } else {
+            return array(
+                "firstname" => $this->getFirstname(),
+                "lastname" => $this->getLastname(),
+                "credit" => $this->getCredit()
+            );
+        }
+    }
 }
 
 
