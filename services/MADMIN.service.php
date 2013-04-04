@@ -432,15 +432,26 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
     * @param String $newMsgPerso
     * @return array $state
     */
-    public function setMsgPerso($newMsgPerso) {
-        if (mb_check_encoding($newMsgPerso, 'UTF-8')) {
-            if (strlen($newMsgPerso) < 255){
-                $this->db->query("UPDATE ts_user_usr SET usr_msg_perso = '%s' WHERE usr_id = '%u';", Array($newMsgPerso, $this->User->getId()));
-                if ($this->db->affectedRows() == 1) {
-                    return array("success"=>"ok");
+    public function setMsgPerso($msgPerso, $funID=-1) {
+        if (mb_check_encoding($msgPerso, 'UTF-8')) {
+            if (strlen($msgPerso) < 255){
+                if ($funID!=-1) {
+                    $this->db->query("INSERT INTO tj_usr_fun_uft (usr_id, fun_id, msg_perso) VALUES ('%u', '%u', '%s') ON DUPLICATE KEY UPDATE msg_perso='%s'", Array($this->User->getId(), $funID, $msgPerso, $msgPerso));
+                    if($this->db->affectedRows() != 1 AND $this->db->affectRows() != 2) {
+                        return array("error"=>400, "error_msg"=>"Le message envoyé est trop long (255 caractères max)");
+                    }
+                    else {
+                        return array("sucess"=>"ok");
+                    }
                 }
                 else {
-                    return array("error"=>400, "error_msg"=>"Erreur dans l'insertion dans la base de donnée");
+                    $this->db->query("INSERT INTO tj_usr_fun_uft (usr_id, fun_id, msg_perso) VALUES ('%u', NULL, '%s') ON DUPLICATE KEY UPDATE msg_perso='%s'", Array($this->User->getId(), $msgPerso, $msgPerso));
+                    if($this->db->affectedRows() != 1 AND $this->db->affectRows() != 2) {
+                        return array("error"=>400, "error_msg"=>"Le message envoyé est trop long (255 caractères max)");
+                    }
+                    else {
+                        return array("sucess"=>"ok");
+                    }
                 }
             }
             else {
@@ -452,16 +463,20 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
         }
     }
     
-
-    
-
-
-
-
-
-
-
-
+    /**
+    * Fonction pour récupèrer le message perso d'un utilisateur
+    * L'ordre de recherche du message perso est :
+    *   - utilisateur + fundation
+    *   - utilisateur
+    *   - fundation
+    *   - message "perso" par défaut
+    * 
+    * @param  int $funID
+    * @return String $msgPerso
+    */
+    public function getMsgPerso($funID) {
+        return $this->User->getMsgPerso($funID);
+    }
 }
 
 

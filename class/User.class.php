@@ -105,11 +105,10 @@ class User {
 			if ($this->checkPass($pass) != 1)
 				return $this->state;
 		}
-		
-	
-		//si on arrive jusque là, on peut charger le mec
+        
+        //si on arrive jusque là, on peut charger le mec
 		$this->Ip = $ip;
-		$don = $this->db->fetchArray($this->db->query("SELECT usr_firstname, usr_lastname, usr_nickname, usr_adult, usr_msg_perso, usr_mail, usr_credit, img_id FROM ts_user_usr WHERE usr_id = '%u';", Array($this->idUser)));		
+		$don = $this->db->fetchArray($this->db->query("SELECT usr_firstname, usr_lastname, usr_nickname, usr_adult, usr_mail, usr_credit, img_id FROM ts_user_usr WHERE usr_id = '%u';", Array($this->idUser)));		
 		$this->lastname = $don['usr_lastname'];
 		$this->firstname = $don['usr_firstname'];
 		$this->nickname = $don['usr_nickname'];
@@ -117,7 +116,7 @@ class User {
 		$this->credit = $don['usr_credit'];
 		$this->idPhoto = $don['img_id'];
 		$this->adult = $don['usr_adult'];
-		$this->msg_perso = $don['usr_msg_perso'];
+		$this->msg_perso = $this->getMsgPerso();
 			
 		$this->loadRights();
 	}
@@ -253,14 +252,45 @@ class User {
 		return $this->groups;
 	}
 
-	/**
-	* Retourne $msg_perso.
-	* 
-	* @return string $msg_perso
-	*/
-	public function getMsgPerso() {
-		return $this->msg_perso;
-	}
+    /**
+    * Fonction pour récupèrer le message perso d'un utilisateur
+    * L'ordre de recherche du message perso est :
+    *   - utilisateur + fundation
+    *   - utilisateur
+    *   - fundation
+    *   - message "perso" par défaut
+    * 
+    * @param  int $funID
+    * @return String $msgPerso
+    */
+	public function getMsgPerso($funID) {
+        $usrID = $this->idUser;
+        $msgPerso = $this->db->query("SELECT msg_perso FROM tj_usr_fun_uft WHERE usr_id = %u AND fun_id = %u;", array($usrID, $funID));
+        if ($this->db->affectedRows() == 1) {
+            return $this->db->result($msgPerso);
+        }
+        else {
+            $msgPerso = $this->db->query("SELECT msg_perso FROM tj_usr_fun_uft WHERE usr_id = %u AND fun_id IS NULL;", array($usrID));
+            if ($this->db->affectedRows() == 1) {
+                return $this->db->result($msgPerso);
+            }
+            else {
+                $msgPerso = $this->db->query("SELECT msg_perso FROM tj_usr_fun_uft WHERE usr_id IS NULL AND fun_id = %u;", array($funID));
+                if ($this->db->affectedRows() == 1) {
+                    return $this->db->result($msgPerso);
+                }
+                else {
+                    $msgPerso = $this->db->query("SELECT msg_perso FROM tj_usr_fun_uft WHERE usr_id IS NULL AND fun_id IS NULL;");
+                    if ($this->db->affectedRows() == 1) {
+                        return $this->db->result($msgPerso);
+                    }
+                    else {
+                        return "Pas de message perso défini nul part pour toi, du coup t'as celui là ;)";
+                    }
+                }
+            }
+        }
+    }
 	
 	/**
 	* Change l'image
