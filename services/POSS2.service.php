@@ -370,6 +370,11 @@ AND o.fun_id = '%u' AND (";
 	public function getImage64($img_id, $outw = 0, $outh = 0) {
 		// Récupération de l'objet image
 		$image = new Image($img_id);
+
+        // Vérifie que l'image existe bien
+        if($image->getState() != 1) {
+            return array("error"=>400, "error_msg"=>"Image non trouvée.");
+        }
 		
 		// Création de l'image GD originale
 		$oldgd = imagecreatefromstring($image->getContent());
