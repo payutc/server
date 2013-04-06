@@ -1,4 +1,4 @@
-<?php 
+<?php namespace Payutc\Service;
 /**
     BuckUTT - Buckutt est un système de paiement avec porte-monnaie électronique.
     Copyright (C) 2011 BuckUTT <buckutt@utt.fr>

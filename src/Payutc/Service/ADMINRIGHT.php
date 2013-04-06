@@ -1,4 +1,4 @@
-<?php 
+<?php namespace Payutc\Service;
 /**
  * ADMINRIGHT.services.php
  * 
@@ -7,7 +7,7 @@
  *
  */
  
- class ADMINRIGHT extends ServiceBase {
+ class ADMINRIGHT extends \ServiceBase {
 	 
     public function __construct() {
         parent::__construct();

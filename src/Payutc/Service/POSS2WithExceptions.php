@@ -1,15 +1,15 @@
-<?php 
+<?php namespace Payutc\Service;
 
 
-class PossException extends Exception {}
+use \Payutc\Exception\PossException;
 
-class POSS2WithExceptions extends POSS2
+class POSS2WithExceptions
 {
 	private $poss = null;
 	
 	public function __construct()
 	{
-		$this->poss = new POSS2();
+		$this->poss = new \Payutc\Service\POSS2();
 	}
 	
 	public function wrapcall($name, $arguments)

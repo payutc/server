@@ -1,4 +1,4 @@
-<?php 
+<?php namespace Payutc\Service;
 /**
     BuckUTT - Buckutt est un système de paiement avec porte-monnaie électronique.
     Copyright (C) 2011 BuckUTT <buckutt@utt.fr>
@@ -29,7 +29,7 @@
  */
 
 
-class MADMIN extends WsdlBase {
+class MADMIN extends \WsdlBase {
 
     private  $User;
     private $loginToRegister;
@@ -103,7 +103,7 @@ class MADMIN extends WsdlBase {
                 $user->is_cotisant = true;
             }
         }
-        catch (Exception $ex) {
+        catch (\Exception $ex) {
             return array("error"=>400, "error_msg"=>"Utilisateur introuvable dans Ginger (".$ex->getCode().")");
         }
         if (!($user->is_cotisant)) {

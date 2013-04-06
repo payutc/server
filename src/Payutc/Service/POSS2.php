@@ -1,4 +1,4 @@
-<?php 
+<?php namespace Payutc\Service;
 /**
 	BuckUTT - Buckutt est un système de paiement avec porte-monnaie électronique.
 	Copyright (C) 2011 BuckUTT <buckutt@utt.fr>
@@ -48,7 +48,7 @@ class POSS2 {
 	 * @return array $url
 	 */
 	public function getCasUrl() {
-	 return array("success"=>Cas::getUrl());
+	 return array("success"=>\Cas::getUrl());
 	}
 
 	/**
@@ -265,7 +265,7 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 				try {
 					$user = $ginger->getCard($badge_id);
 				}
-				catch (Exception $ex) {
+				catch (\Exception $ex) {
 					return array("error"=>$ex->getCode(), "error_msg"=>"Badge introuvable");
 				}
 				if($user->login) {
