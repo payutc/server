@@ -14,7 +14,7 @@ class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
 	}
 }
 
-class POSS2WithExceptionsTest extends PHPUnit_Extensions_Database_TestCase
+class POSS2WithExceptionsTest extends \PHPUnit_Extensions_Database_TestCase
 {
 	protected $pdo;
 
