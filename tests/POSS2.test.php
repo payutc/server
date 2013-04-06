@@ -129,16 +129,6 @@ class POSS2WithExceptionsTest extends \PHPUnit_Extensions_Database_TestCase
 	
 	/**
 	 * @expectedException		 \PossException
-	 * @expectedExceptionCode	 -1
-	 * @expectedExceptionMessage Erreur de login CAS.
-	 */
-	public function testLoadPos()
-	{
-		$this->POSS->loadPos(1234, 4321, 3, NULL);
-	}
-	
-	/**
-	 * @expectedException		 \PossException
 	 * @expectedExceptionCode	 400
 	 * @expectedExceptionMessage Il n'y a pas de seller chargé.
 	 */
