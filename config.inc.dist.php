@@ -29,7 +29,7 @@ $_CONFIG['sql_pass'] = "root";
 $_CONFIG['sql_host_test'] = "localhost";
 $_CONFIG['sql_db_test'] = "buckutt_test";
 $_CONFIG['sql_user_test'] = "root";
-$_CONFIG['sql_pass_test'] = "root";
+$_CONFIG['sql_pass_test'] = "";
 
 // Chemin vers le serveur CAS (avec le / final)
 $_CONFIG['cas_url'] = "";
