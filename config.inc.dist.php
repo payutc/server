@@ -25,6 +25,12 @@ $_CONFIG['sql_db'] = "buckutt";
 $_CONFIG['sql_user'] = "root";
 $_CONFIG['sql_pass'] = "root";
 
+// Paramètres de BDD pour les tests
+$_CONFIG['sql_host_test'] = "localhost";
+$_CONFIG['sql_db_test'] = "buckutt_test";
+$_CONFIG['sql_user_test'] = "root";
+$_CONFIG['sql_pass_test'] = "root";
+
 // Chemin vers le serveur CAS (avec le / final)
 $_CONFIG['cas_url'] = "";
 

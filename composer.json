@@ -4,6 +4,11 @@
 		"ginger/client": "2.*",
 		"zendframework/zendframework": "2.*"
 	},
+	"require-dev": {
+		"phpunit/phpunit": "*",
+		"phpunit/dbunit": "*",
+		"phpunit/phpunit-story": "*"
+	},
     "include-path": ["./"],
     "autoload": {
         "classmap": ["class/", "db/", "services/"],
