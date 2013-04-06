@@ -22,9 +22,13 @@ class POSS2WithExceptionsTest extends PHPUnit_Extensions_Database_TestCase
     {
 		global $_CONFIG;
 		global $_SERVER;
-		if (substr($_CONFIG['sql_db'], -5) !== '_test')
-			$_CONFIG['sql_db'] = $_CONFIG['sql_db'].'_test';
 		$_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+				
+		$_CONFIG['sql_host'] = $_CONFIG['sql_host_test'];
+		$_CONFIG['sql_db'] = $_CONFIG['sql_db_test'];
+		$_CONFIG['sql_user'] = $_CONFIG['sql_user_test'];
+		$_CONFIG['sql_pass'] = $_CONFIG['sql_pass_test'];
+		
 		$this->pdo = new PDO('mysql:dbname='.$_CONFIG['sql_db'].';host='.$_CONFIG['sql_host'],
 			$_CONFIG['sql_user'],
 			$_CONFIG['sql_pass']
