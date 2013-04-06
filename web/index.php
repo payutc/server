@@ -5,20 +5,24 @@ require_once '../vendor/autoload.php';
 require_once 'config.inc.php';
 
 $app = new \Slim\Slim($_CONFIG['slim_config']);
-$dispatcher = new \Payutc\Dispatcher\Json();
-    
-// error handler
-$app->error(function (\Exception $e) use ($dispatcher) {
-    $dispatcher->handleError($e);
-});
 
-// create app
-$app->get('/:service/:method', function($service, $method) use ($dispatcher) {
-	$dispatcher->handleService($service, $method);
-});
-$app->post('/:service/:method', function($service, $method) use ($dispatcher) {
-	$dispatcher->handleService($service, $method);
-});
+// JSON route
+$app->map('/:service/:method', function($service, $method) use ($app) {
+    $dispatcher = new \Payutc\Dispatcher\Json();
+
+    // JSON Error handler
+    $app->error(function (\Exception $e) use ($dispatcher) {
+        $dispatcher->handleError($e);
+    });
+    
+    $dispatcher->handleService($service, $method);
+})->via('GET', 'POST');
+
+// SOAP route
+$app->map('/:service.class.php', function($service) {
+    $dispatcher = new \Payutc\Dispatcher\Soap();
+    $dispatcher->handle($service);
+})->via('GET', 'POST');
 
 // run app
 $app->run();

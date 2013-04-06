@@ -1,15 +1,7 @@
 <?php 
 
 
-class PossException extends Exception {
-	public $err_code;
-	
-	public function __construct($err_code, $err_msg)
-	{
-		parent::__construct($err_msg);
-		$this->err_code = $err_code;
-	}
-}
+class PossException extends Exception {}
 
 class POSS2WithExceptions extends POSS2
 {
@@ -26,10 +18,13 @@ class POSS2WithExceptions extends POSS2
 		if (is_array($r) and array_key_exists("error", $r)) {
 			$error = $r["error"];
 			$error_msg = $r["error_msg"];
-			throw new PossException($error, $error_msg);
+			throw new PossException($error_msg, $error);
+		}
+		else if (is_array($r) and array_key_exists("success", $r)) {
+				return $r["success"];
 		}
 		else {
-			return $r["success"];
+				return $r;
 		}
 	}
 	

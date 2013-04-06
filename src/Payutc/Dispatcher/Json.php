@@ -62,7 +62,10 @@ class Json
     		$http_code = 400;
     		$aaa = $error_mapping[$cls];
     		if (is_callable($aaa)) {
-    			$err_array = $aaa($e);
+    			$err_array = call_user_func($aaa, $e);
+    		}
+    		else if (function_exists($aaa)) {
+    			$err_array = call_user_func($aaa, $e);
     		}
     		else if (is_int($aaa)) {
     			$err_array = array('type' => $cls, 'code' => $aaa, 'message' => $e->getMessage());
@@ -76,9 +79,11 @@ class Json
     	}
     	if ($http_code === null) {
     		$http_code = 500;
+    		$err_code = $e->getCode();
+    		if (empty($err_code)) $err_code = 500;
     		$err_array = array(
     			'type' => 'InternalServerError', 
-    			'code' => 500,
+    			'code' => $err_code,
     			'message' => $e->getMessage()
     		);
     	}

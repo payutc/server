@@ -28,15 +28,14 @@
  * @package buckutt
  */
 
-
-// CONSTANTE POUR LES DROITS, A STOCKER DANS UN FICHIER A INCLURE
-	$right_admin = array(1, 2);
-	$right_fundation = array(2, 4, 5, 6);
-	$right_fundation_name = array("ADMIN", "GESARTICLE", "VENDRE", "TRESO");
-	$right_name_to_id = array("ADMIN"=>2, "GESARTICLE"=>6, "VENDRE"=>5, "TRESO"=>4, "POI-FUNDATION"=>7);
-	$right_id_to_name = array(2=>"ADMIN", 6=>"GESARTICLE", 5=>"VENDRE", 4=>"TRESO", 7=>"POI-FUNDATION");
-
 class AADMIN {
+
+    // C'est moche mais AADMIN sera dans très peu de temps DEPRECATED...
+	static $right_admin = array(1, 2);
+	static $right_fundation = array(2, 4, 5, 6);
+	static $right_fundation_name = array("ADMIN", "GESARTICLE", "VENDRE", "TRESO");
+	static $right_name_to_id = array("ADMIN"=>2, "GESARTICLE"=>6, "VENDRE"=>5, "TRESO"=>4, "POI-FUNDATION"=>7);
+	static $right_id_to_name = array(2=>"ADMIN", 6=>"GESARTICLE", 5=>"VENDRE", 4=>"TRESO", 7=>"POI-FUNDATION");
 
 	protected $db;
 	protected $user;
@@ -199,7 +198,9 @@ class AADMIN {
 	* @return array $fundation
 	*/
 	public function get_fundations_with_right($right) {
-		global $right_admin, $right_fundation, $right_fundation_name, $right_name_to_id;
+        $right_fundation_name = AADMIN::$right_fundation_name;
+        $right_name_to_id = AADMIN::$right_name_to_id;
+
 		$fundations = array();
 
 		if(in_array($right, $right_fundation_name)) {
@@ -233,7 +234,7 @@ class AADMIN {
 	* @return array $categorie
 	*/
 	public function add_categorie($nom, $parent, $fundation) {
-		global $right_name_to_id;
+		$right_name_to_id = AADMIN::$right_name_to_id;
 
 		// 1. CHECK THE PARENT (AND IF TRUE SELECT THE TRUTH FUNDATION)
 		if($parent != null) {
@@ -280,7 +281,7 @@ class AADMIN {
 	* @return array $categorie
 	*/
 	public function edit_categorie($id, $nom, $parent) {
-		global $right_name_to_id;
+		$right_name_to_id = AADMIN::$right_name_to_id;
 		// 1. GET THE CATEGORIE
 		$res = $this->db->query("SELECT obj_id_parent, fun_id, oli_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u';", array($id));
         	if ($this->db->affectedRows() >= 1) {
@@ -338,7 +339,7 @@ class AADMIN {
 	* @return array $result
 	*/
 	public function delete_categorie($id) {
-		global $right_name_to_id;
+		$right_name_to_id = AADMIN::$right_name_to_id;
 		// 1. GET THE ARTICLE
 		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
 FROM t_object_obj o
@@ -381,7 +382,7 @@ AND o.obj_removed = '0' AND obj_id_parent = '%u';", array($id));
 	* @return array $categories
 	*/
 	public function get_categories() {
-		global $right_name_to_id;
+		$right_name_to_id = AADMIN::$right_name_to_id;
 		// OBTENIR QUE LES CATEGORIES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
 		$categories = array();
 		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id
@@ -412,7 +413,7 @@ ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId()
 	* @return array $categories
 	*/
 	public function get_categories_by_fundation_id($fun_id, $onlyFirstLevel) {
-		global $right_name_to_id;
+		$right_name_to_id = AADMIN::$right_name_to_id;
 		$categories = array();
 		$level="";
 		if($onlyFirstLevel == 1) { $level = "AND oli.obj_id_parent IS NULL "; }
@@ -446,7 +447,7 @@ ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId()
 	* @return array $categories
 	*/
 	public function get_categorie($nb) {
-		global $right_name_to_id;
+		$right_name_to_id = AADMIN::$right_name_to_id;
 		// OBTENIR QUE LES CATEGORIES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
 $res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id
 FROM tj_usr_rig_jur tj, t_object_obj o
@@ -487,7 +488,7 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 	* @return array $categorie
 	*/
 	public function add_article($nom, $parent, $prix, $stock, $alcool, $image = 0) {
-		global $right_name_to_id;
+		$right_name_to_id = AADMIN::$right_name_to_id;
 		// 1. GET THE PARENT
 		$res = $this->db->query("SELECT fun_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u' ORDER BY obj_name;", array($parent));
         if ($this->db->affectedRows() >= 1) {
@@ -512,7 +513,7 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 	        $article_id = $this->db->insertId(
               $this->db->query(
                   "INSERT INTO t_object_obj (`obj_id`, `obj_name`, `obj_type`, `obj_stock`, `obj_single`, `img_id`, `fun_id`, `obj_removed`, `obj_alcool`)
-                  VALUES (NULL, '%s', 'product', '%u', '0',  %s, '%u', '0', '%u');",
+                  VALUES (NULL, '%s', 'product', '%d', '0',  %s, '%u', '0', '%u');",
                   array($nom, $stock, $image, $fun_id, $alcool)));
 
 	        // 3. CREATION DU LIEN SUR LE PARENT
@@ -547,7 +548,7 @@ AND o.obj_id = '%u';", array($right_name_to_id["GESARTICLE"] ,$this->user->getId
 	* @return array $categorie
 	*/
 	public function edit_article($id, $nom, $parent, $prix, $stock, $alcool, $image = 0) {
-		global $right_name_to_id;
+		$right_name_to_id = AADMIN::$right_name_to_id;
 		// 1. GET THE ARTICLE
 		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
 FROM t_object_obj o
@@ -605,7 +606,7 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
         } else if ($image == -1) {
           $image = "NULL";
         }
-        $this->db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_stock` = '%u', `obj_alcool` = '%u', `img_id` = %s WHERE `obj_id` = '%u';",array($nom, $stock, $alcool, $image, $id));
+        $this->db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_stock` = '%d', `obj_alcool` = '%u', `img_id` = %s WHERE `obj_id` = '%u';",array($nom, $stock, $alcool, $image, $id));
 
 		return array("success"=>$id);
 	}
@@ -617,7 +618,7 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 	* @return array $result
 	*/
 	public function delete_article($id) {
-		global $right_name_to_id;
+		$right_name_to_id = AADMIN::$right_name_to_id;
 		// 1. GET THE ARTICLE
 		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
 FROM t_object_obj o
@@ -650,7 +651,7 @@ LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.
 	* @return array $articles
 	*/
 	public function get_articles() {
-		global $right_name_to_id;
+		$right_name_to_id = AADMIN::$right_name_to_id;
 		// OBTENIR QUE LES ARTICLES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
 		$articles = array();
 		$res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.obj_stock, o.obj_alcool, p.pri_credit
@@ -684,7 +685,7 @@ ORDER BY obj_name;", array($right_name_to_id["GESARTICLE"] ,$this->user->getId()
 	* @return array $article
 	*/
 	public function get_article($id) {
-		global $right_name_to_id;
+		$right_name_to_id = AADMIN::$right_name_to_id;
 		// OBTENIR QUE LES ARTICLES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
         $res = $this->db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.obj_stock, o.obj_alcool, p.pri_credit, o.img_id
 FROM tj_usr_rig_jur tj, t_object_obj o
@@ -727,7 +728,8 @@ ORDER BY obj_name;", Array($id, $right_name_to_id["GESARTICLE"], $this->user->ge
 	* @return array $result
 	*/
 	public function set_right_fundation($user_id, $right, $fun_id){
-		global $right_admin, $right_fundation, $right_fundation_name, $right_name_to_id;
+        $right_fundation_name = AADMIN::$right_fundation_name;
+        $right_name_to_id = AADMIN::$right_name_to_id;
 		// 1. CHECK THE RIGHT CAN BE GIVEN BY THIS FUNCTION
 		if(!in_array($right, $right_fundation_name)) {
 		    return array("error"=>400, "error_msg"=>"Vous ne pouvez pas donner ce type de droit avec cette fonction.");
@@ -761,7 +763,8 @@ ORDER BY obj_name;", Array($id, $right_name_to_id["GESARTICLE"], $this->user->ge
 	* @return array $result
 	*/
 	public function remove_right_fundation($user_id, $right, $fun_id){
-		global $right_admin, $right_fundation, $right_fundation_name, $right_name_to_id;
+		$right_fundation_name = AADMIN::$right_fundation_name;
+        $right_name_to_id = AADMIN::$right_name_to_id;
 		// 1. CHECK THE RIGHT CAN BE REMOVED BY THIS FUNCTION
 		if(!in_array($right, $right_fundation_name)) {
 		    return array("error"=>400, "error_msg"=>"Vous ne pouvez pas retirer ce type de droit avec cette fonction.");
@@ -790,7 +793,9 @@ ORDER BY obj_name;", Array($id, $right_name_to_id["GESARTICLE"], $this->user->ge
 	* @return array $result
 	*/
 	public function get_rights_fundation($fun_id){
-		global $right_admin, $right_fundation, $right_id_to_name;
+        $right_fundation_name = AADMIN::$right_fundation_name;
+        $right_name_to_id = AADMIN::$right_name_to_id;
+        $right_id_to_name = AADMIN::$right_id_to_name;
 		// 1. CHECK USER IS ADMIN-FUNDATION OR ADMIN-PAYUTC
 		$res = $this->db->query("SELECT jur_id FROM tj_usr_rig_jur WHERE usr_id = '%u' AND (rig_id = '1' OR (rig_id = '2' AND fun_id = '%u'));", array($this->user->getId(), $fun_id));
     	if ($this->db->affectedRows() == 0) {
@@ -824,7 +829,10 @@ WHERE j.usr_id=u.usr_id AND fun_id = '%u' AND j.usr_id IS NOT NULL ORDER BY j.ri
 	*/
 	public function get_pois_fundation($fun_id)
 	{
-		global $right_name_to_id;
+        $right_fundation_name = AADMIN::$right_fundation_name;
+        $right_name_to_id = AADMIN::$right_name_to_id;
+        $right_id_to_name = AADMIN::$right_id_to_name;
+
         $pois = array();
         $res = $this->db->query("SELECT poi.poi_id, poi.poi_name
 FROM t_point_poi poi, tj_usr_rig_jur jur
@@ -902,7 +910,9 @@ WHERE poi.poi_id = jur.poi_id AND fun_id = '%u' AND poi_removed = '0' AND jur.ri
 	* @return array $data
 	*/
 	public function get_CA_period($day, $month, $year, $day2, $month2, $year2, $fundation_id) {
-		global $right_name_to_id;
+        $right_fundation_name = AADMIN::$right_fundation_name;
+        $right_name_to_id = AADMIN::$right_name_to_id;
+        $right_id_to_name = AADMIN::$right_id_to_name;
 
 		// 2. CHECK RIGHT TO TRESO for this particular fundation
 		$res = $this->db->query("SELECT f.fun_id, f.fun_name

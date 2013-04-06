@@ -34,19 +34,30 @@ namespace Payutc\Dispatcher;
 class Soap {
     public function handle($name_class){
         global $_CONFIG;
+        $app = \Slim\Slim::getInstance();
+        
+        $services = \Payutc\Mapping\Services::get();
+        if (!array_key_exists($name_class, $services)) {
+            throw new \Payutc\Exception\ServiceNotFound("Service $name_class does not exist");
+        }
         
         if (isset($_GET['wsdl'])) {
             $server = new \Zend\Soap\AutoDiscover();
-            // This was the default value in Zend 1.*
-            $server->setUri('http://' .$_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME']);
+            $server->setUri($_CONFIG['server_url'].$name_class.'.class.php');
             $server->setClass($name_class);
-            $server->handle();
+            echo $server->toXml();
         } else {
-            $server = new \SoapServer($_CONFIG['server_url'].$name_class.'.class.php?wsdl', array('cache_wsdl' => $_CONFIG['wsdl_cache']));
+            $server = new \Zend\Soap\Server($_CONFIG['server_url'].$name_class.'.class.php?wsdl', array('cache_wsdl' => $_CONFIG['wsdl_cache']));
             $server->setClass($name_class);
             $server->setPersistence(SOAP_PERSISTENCE_SESSION);
             $server->handle();
+            
+            // Retirer les Content-Type de Zend
+            header_remove("Content-Type");
         }
+        
+        // Ajout du Content-Type avec Slim (sinon il rajoute text/html)
+        $res = $app->response();
+        $res['Content-Type'] = 'text/xml';
     }
 }
-?>
