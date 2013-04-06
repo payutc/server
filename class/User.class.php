@@ -265,30 +265,16 @@ class User {
     */
 	public function getMsgPerso($funID) {
         $usrID = $this->idUser;
-        $msgPerso = $this->db->query("SELECT msg_perso FROM tj_usr_fun_uft WHERE usr_id = %u AND fun_id = %u;", array($usrID, $funID));
+        $msgPerso = $this->db->query("SELECT `msg_perso` FROM `tj_usr_fun_uft` WHERE
+        (`usr_id` = '%u' OR `usr_id` IS NULL)
+        AND 
+        (`fun_id` = '%u' OR `fun_id` IS NULL)
+        ORDER BY `usr_id` DESC , `fun_id` DESC LIMIT 0 , 1", array($usrID, $funID));
         if ($this->db->affectedRows() == 1) {
             return $this->db->result($msgPerso);
         }
         else {
-            $msgPerso = $this->db->query("SELECT msg_perso FROM tj_usr_fun_uft WHERE usr_id = %u AND fun_id IS NULL;", array($usrID));
-            if ($this->db->affectedRows() == 1) {
-                return $this->db->result($msgPerso);
-            }
-            else {
-                $msgPerso = $this->db->query("SELECT msg_perso FROM tj_usr_fun_uft WHERE usr_id IS NULL AND fun_id = %u;", array($funID));
-                if ($this->db->affectedRows() == 1) {
-                    return $this->db->result($msgPerso);
-                }
-                else {
-                    $msgPerso = $this->db->query("SELECT msg_perso FROM tj_usr_fun_uft WHERE usr_id IS NULL AND fun_id IS NULL;");
-                    if ($this->db->affectedRows() == 1) {
-                        return $this->db->result($msgPerso);
-                    }
-                    else {
-                        return "Pas de message perso défini nul part pour toi, du coup t'as celui là ;)";
-                    }
-                }
-            }
+            return "Pas de message perso défini nul part pour toi, du coup t'as celui là ;)";
         }
     }
 	
