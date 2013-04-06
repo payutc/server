@@ -197,4 +197,25 @@ class ServiceBase {
             return "";
         }
     }
+    
+    /**
+    * Renvoie une liste d'utilisateurs correspondant à la recherche
+    * 
+    * @return Array $userList
+    */
+    public function userAutocomplete($queryString) {
+        $res = $this->db->query("SELECT usr_id, usr_firstname, usr_lastname
+            FROM ts_user_usr WHERE (UPPER(usr_firstname) LIKE '%s%%' OR UPPER(usr_lastname) LIKE '%s%%')
+            ORDER BY usr_lastname ASC LIMIT 10;", array(strtoupper($queryString), strtoupper($queryString)));
+        $return = array();
+        if ($this->db->affectedRows() >= 1) {
+            while ($don = $this->db->fetchArray($res)) {
+                $return[] = array(
+                    "id" => $don['usr_id'],
+                    "name" => $don['usr_firstname']." ".$don['usr_lastname']
+                );
+            }
+        }
+        return $return;
+    }
 }
