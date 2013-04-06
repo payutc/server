@@ -1,0 +1,21 @@
+ts_mean_of_login_mol:
+  -
+    mol_id: 1
+    mol_name: login_etu
+    mol_removed: 0
+  -
+    mol_id: 2
+    mol_name: id etudiant
+    mol_removed: 0
+  -
+    mol_id: 3
+    mol_name: id buckutt
+    mol_removed: 0
+  -
+    mol_id: 4
+    mol_name: carte_etu
+    mol_removed: 0
+  -
+    mol_id: 5
+    mol_name: uid_carte_etu
+    mol_removed: 0
