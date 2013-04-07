@@ -21,6 +21,13 @@
 
 namespace Payutc\Service;
 
+use \Db_buckutt;
+use \Cas;
+use \User;
+use \ComplexData;
+use \Paybox;
+use \Log;
+
 /**
  * MADMIN.class
  * 
@@ -96,7 +103,7 @@ class MADMIN extends \WsdlBase {
             }
             else 
             {
-                $user = new StdClass;
+                $user = new \StdClass;
                 $user->login = $this->loginToRegister;
                 $user->prenom = "Test";
                 $user->nom = "User";

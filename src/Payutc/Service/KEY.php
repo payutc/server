@@ -2,6 +2,9 @@
 
 namespace Payutc\Service;
 
+use \Application;
+use \ApplicationList;
+
 /**
  * KEY.services.php
  * 

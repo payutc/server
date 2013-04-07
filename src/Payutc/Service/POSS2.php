@@ -26,6 +26,7 @@ use \Cas;
 use \User;
 use \Image;
 use \Db_buckutt;
+use \CheckRight;
 
 
 /**
@@ -56,7 +57,7 @@ class POSS2 {
 	 * @return array $url
 	 */
 	public function getCasUrl() {
-	 return array("success"=>\Cas::getUrl());
+	 return array("success"=>Cas::getUrl());
 	}
 
 	/**

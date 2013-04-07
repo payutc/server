@@ -21,6 +21,8 @@
 
 namespace Payutc\Service;
 
+use \Db_buckutt;
+
 /**
  * STATS.class
  * 
