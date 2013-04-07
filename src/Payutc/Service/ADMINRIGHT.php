@@ -2,6 +2,10 @@
 
 namespace Payutc\Service;
 
+use \User;
+use \UseRight;
+use \ApplicationRight;
+
 /**
  * ADMINRIGHT.services.php
  * 

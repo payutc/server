@@ -21,6 +21,10 @@
 
 namespace Payutc\Service;
 
+use \Cas;
+use \User;
+use \Image;
+
 /**
  * AAdmin.class
  *

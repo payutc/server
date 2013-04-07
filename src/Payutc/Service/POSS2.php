@@ -22,6 +22,7 @@
 
 namespace Payutc\Service;
 
+use \Cas;
 use \User;
 use \Image;
 use \Db_buckutt;
