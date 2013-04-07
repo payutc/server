@@ -26,7 +26,7 @@ use \Cas;
 use \User;
 use \ComplexData;
 use \Paybox;
-use \Log;
+use \Payutc\Log;
 
 /**
  * MADMIN.class
@@ -389,7 +389,7 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      */
     public function transfert($amount, $userID) {
         if($amount < 0) {
-            Log::write("TRANSFERT D'ARGENT : TENTATIVE DE FRAUDE... Montant négatif par l'userID ".$this->User->getId()." vers l'user ".$userID,10);
+            Log::warning("TRANSFERT D'ARGENT : TENTATIVE DE FRAUDE... Montant négatif par l'userID ".$this->User->getId()." vers l'user ".$userID);
             return 466; //C'est pas fair play de voler de l'argent à ces petits camarades...
         } else if($this->getCredit() < $amount) {
             return 462; // PAS ASSEZ D'ARGENT
