@@ -1,4 +1,7 @@
-<?php namespace Payutc\Service;
+<?php
+
+namespace Payutc\Service;
+
 /**
  * ADMINRIGHT.services.php
  * 

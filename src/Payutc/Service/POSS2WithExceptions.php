@@ -1,4 +1,6 @@
-<?php namespace Payutc\Service;
+<?php
+
+namespace Payutc\Service;
 
 
 use \Payutc\Exception\PossException;
