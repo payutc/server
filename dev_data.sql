@@ -116,6 +116,12 @@ INSERT INTO `t_fundation_fun` (`fun_id`, `fun_name`, `fun_removed`) VALUES
 (2, 'PICASSO', 0),
 (3, 'POLAR', 0);
 
+--
+-- Contenu de la table `tj_usr_fun_uft`
+--
+
+INSERT INTO `tj_usr_fun_uft` (`usr_id`, `fun_id`, `msg_perso`) VALUES
+(NULL, NULL, "Il y a une vie après les cours")
 
 --
 -- Contenu de la table `t_point_poi`
