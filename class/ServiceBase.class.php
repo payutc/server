@@ -203,10 +203,13 @@ class ServiceBase {
     
     /**
     * Renvoie une liste d'utilisateurs correspondant à la recherche
+    * Un utilisateur et une application doivent être authentifié et autorisé sur le service
     * 
     * @return Array $userList
     */
     public function userAutocomplete($queryString) {
+        // Verification sur le droits avant toute choses
+        $this->checkRight();
         $res = $this->db->query("SELECT usr_id, usr_firstname, usr_lastname
             FROM ts_user_usr WHERE (UPPER(usr_firstname) LIKE '%s%%' OR UPPER(usr_lastname) LIKE '%s%%')
             ORDER BY usr_lastname ASC LIMIT 10;", array(strtoupper($queryString), strtoupper($queryString)));
