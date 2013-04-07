@@ -39,7 +39,7 @@ class ServiceBase {
     */   
     public function __construct() {
         $this->db = Db_buckutt::getInstance();
-        $this->service_name = get_class($this);
+        $this->service_name = end(explode("\\", get_class($this)));
     }
 
     /**
@@ -174,7 +174,6 @@ class ServiceBase {
      * Authentifie une clef d'application
      */
     public function loginApp($key) {
-        $service = get_class($this);
         $application = new Application();
         $application->fromKey($key); // Throw an exception if Application doesn't exists...
         $this->application = $application;

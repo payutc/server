@@ -27,7 +27,7 @@ use \User;
 use \Image;
 use \Db_buckutt;
 use \CheckRight;
-
+use \Payutc\Exception\UserIsBlockedException;
 
 /**
  * POSS2.class
@@ -209,6 +209,13 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 				return array("error"=>403, "error_msg"=>"Ce badge à été bloqué. Il faut que l'utilisateur aille le débloquer sur internet.");
 			if($state != 1)
 				return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu...");
+			// vérifier que l'utilisateur n'est pas bloqué sur cette fondation
+			try {
+				$buyer->checkNotBlockedFun($this->Fun_id);
+			}
+			catch (UserIsBlockedException $e) {
+				return array("error"=>402, "error_msg"=> $e->getMessage());
+			}
 			return array("success"=>array(
 										"firstname"=>$buyer->getFirstname(), 
 										"lastname"=>$buyer->getLastname(), 
@@ -293,7 +300,14 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 		
 			if($state == 403)
 				return array("error"=>403, "error_msg"=>"Ce badge à été bloqué. Il faut que l'utilisateur aille le débloquer sur internet.");
-
+			
+			// vérifier que l'utilisateur n'est pas bloqué sur cette fondation
+			try {
+				$buyer->checkNotBlockedFun($this->Fun_id);
+			}
+			catch (UserIsBlockedException $e) {
+				return array("error"=>402, "error_msg"=> $e->getMessage());
+			}
 
 			// Verifier que les objets sont en vente (+ leurs prix)
 			// ON a déjà vérifier la liaison POI <=> Fundation <=> USER

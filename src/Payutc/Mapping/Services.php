@@ -10,7 +10,8 @@ class Services {
         'MADMIN',
         'STATS',
         'KEY',
-        'ADMINRIGHT'
+        'ADMINRIGHT',
+        'BLOCKED'
     );
     
     public static function get($name) {

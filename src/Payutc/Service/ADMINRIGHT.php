@@ -51,7 +51,12 @@ use \Application;
             "ALL"           => array("name" => "Tout les droits",
                                      "desc" => "Donne les droits à l'utilisateur ou à l'application sur tous les services",
                                      "user" => true,
+                                     "app"  => true),
+            "BLOCKED"       => array("name" => "Blocage",
+                                     "desc" => "Donne les droits à l'utilisateur ou à l'application de bloquer/débloquer un utilisateur",
+                                     "user" => true,
                                      "app"  => true)
+                                        
         );
     }
      
