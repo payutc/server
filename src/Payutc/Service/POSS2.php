@@ -24,6 +24,7 @@ namespace Payutc\Service;
 
 use \User;
 use \Image;
+use \Db_buckutt;
 
 
 /**
