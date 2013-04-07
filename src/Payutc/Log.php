@@ -2,14 +2,12 @@
 
 namespace Payutc;
 
-
-
 class Log
 {
     public static function initLog()
     {
         global $_SERVER;
-        require_once 'config.inc.php';
+        global $_CONFIG;
         
         if (!isset($_SERVER['REQUEST_METHOD'])) $_SERVER['REQUEST_METHOD'] = null;
         if (!isset($_SERVER['REMOTE_ADDR'])) $_SERVER['REMOTE_ADDR'] = null;
@@ -41,7 +39,7 @@ class Log
     
     public static function __callstatic($name, $args)
     {
-        if (array_key_exists($name, get_class_methods('Log'))) {
+        if (array_key_exists($name, get_class_methods('Payutc\Log'))) {
             return call_user_func_array("static::$name", $args);
         }
         else {
