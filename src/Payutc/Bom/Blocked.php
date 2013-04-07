@@ -132,7 +132,7 @@ WHERE blo.usr_id = usr.usr_id ";
                 $result[$don["blo_id"]]["fun_id"] = $don["fun_id"];
                 $result[$don["blo_id"]]["usr_firstname"] = $don["usr_firstname"];
                 $result[$don["blo_id"]]["usr_lastname"] = $don["usr_lastname"];
-                $result[$don["blo_id"]]["usr_nickname"] = $don["usr_nickname"];
+                $result[$don["blo_id"]]["login"] = $don["login"];
 			}
         }
         return $result;
