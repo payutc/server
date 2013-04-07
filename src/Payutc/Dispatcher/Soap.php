@@ -36,19 +36,16 @@ class Soap {
         global $_CONFIG;
         $app = \Slim\Slim::getInstance();
         
-        $services = \Payutc\Mapping\Services::get();
-        if (!array_key_exists($name_class, $services)) {
-            throw new \Payutc\Exception\ServiceNotFound("Service $name_class does not exist");
-        }
+        \Payutc\Mapping\Services::checkExist($name_class);
         
         if (isset($_GET['wsdl'])) {
             $server = new \Zend\Soap\AutoDiscover();
             $server->setUri($_CONFIG['server_url'].$name_class.'.class.php');
-            $server->setClass($name_class);
+            $server->setClass("Payutc\\Service\\$name_class");
             echo $server->toXml();
         } else {
             $server = new \Zend\Soap\Server($_CONFIG['server_url'].$name_class.'.class.php?wsdl', array('cache_wsdl' => $_CONFIG['wsdl_cache']));
-            $server->setClass($name_class);
+            $server->setClass("Payutc\\Service\\$name_class");
             $server->setPersistence(SOAP_PERSISTENCE_SESSION);
             $server->handle();
             
