@@ -33,23 +33,16 @@ class Json
 {
     public function handleService($service, $method) {
     	$app = \Slim\Slim::getInstance();
-        $services = \Payutc\Mapping\Services::get();
         
     	$app->contentType('application/json; charset=utf-8');
-    	if (array_key_exists($service, $services)) {
-    		require_once $services[$service];
-            session_start();
-            if (!isset($_SESSION['services']))
-                $_SESSION['services'] = array();
-    		if (!array_key_exists($service, $_SESSION['services']))
-    			$_SESSION['services'][$service] = new $service;
-    		$obj = $_SESSION['services'][$service];
-    		$a = \Payutc\Utils::call_user_func_named(array($obj, $method), $_REQUEST);
-    		echo json_encode($a);
-    	}
-    	else {
-    		throw new \Payutc\Exception\ServiceNotFound("Service $service does not exist");
-    	}
+        session_start();
+        if (!isset($_SESSION['services']))
+            $_SESSION['services'] = array();
+        if (!array_key_exists($service, $_SESSION['services']))
+                $_SESSION['services'][$service] = \Payutc\Mapping\Services::get($service);
+        $obj = $_SESSION['services'][$service];
+        $a = \Payutc\Utils::call_user_func_named(array($obj, $method), $_REQUEST);
+        echo json_encode($a);
     }
     
     public function handleError($e) {
