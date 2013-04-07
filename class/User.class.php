@@ -31,7 +31,7 @@
 //TODO tester dans chaque méthode si state = 1, sinon on poutre
 
 use \Payutc\Exception\UserIsBlockedException;
-
+use \Payutc\Bom\Blocked;
 
 /**
  * classe user
@@ -327,7 +327,6 @@ class User {
 	 */
 	public function isBlockedMe() {
 		$don = $this->db->fetchArray($this->db->query("SELECT usr_fail_auth, usr_blocked FROM ts_user_usr WHERE usr_id = '%u';", Array($this->idUser)));
-		
 		return (bool)$don['usr_blocked'];
 	}
 	
@@ -356,7 +355,7 @@ class User {
 	 */
 	public function checkNotBlockedMe() {
 		if ($this->isBlockedMe()) {
-			throw new UserIsBlockedException("L'utilisateur s'est auto blocké");
+			throw new UserIsBlockedException("L'utilisateur s'est auto bloqué.");
 		}
 	}
 	

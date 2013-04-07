@@ -50,6 +50,7 @@ class Blocked {
             $result["blo_insert"] = $arr["blo_insert"];
             $result["blo_removed"] = $arr["blo_removed"];
             $result["fun_id"] = $arr["fun_id"];
+            return $result;
 	    } else {
             return false;
         }
@@ -61,7 +62,7 @@ class Blocked {
     public static function checkUsrNotBlocked($usr_id, $fun_id=NULL) {
         $temp = Blocked::userIsBlocked($usr_id, $fun_id);   
         if($temp != false) {
-            throw new UserIsBlockedException("L'utilisateur à été bloqué pour le motif suivant: " + $temp["blo_raison"]);
+            throw new UserIsBlockedException("L'utilisateur à été bloqué pour le motif suivant: " . $temp["blo_raison"]);
         }
     }
     

@@ -44,7 +44,7 @@ class BLOCKED extends \ServiceBase {
      */
     public function remove($blo_id, $fun_id) {
         $this->checkRight(true, true, true, $fun_id);
-        return \Payutc\Bom\Blocked::edit($blo_id, $fun_id, NULL, new DateTime());
+        return \Payutc\Bom\Blocked::edit($blo_id, $fun_id, NULL, new \DateTime());
     }
     
 }
