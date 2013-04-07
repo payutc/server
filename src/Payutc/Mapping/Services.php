@@ -4,7 +4,6 @@ namespace Payutc\Mapping;
 
 class Services {
     protected static $services = array(
-        'POSS',
         'POSS2',
         'POSS2WithExceptions',
         'AADMIN',
