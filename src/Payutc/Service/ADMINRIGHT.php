@@ -21,7 +21,7 @@
      * clef "name" => Nom du droit
      * clef "desc" => Descriptions du droit
      * clef "user" => doit on pouvoir donner ce droit à un user
-     * clef "app" => doit on pouvoir donner ce droit à une app
+     * clef "app" => doit on pouvoir donner ce droit à une app (en soit c'est toujours le cas, mais veut on le faire apparaitre par défaut dans les menus)
      *
      * Pour les clefs user et app, ce n'est que pour l'ergonomie de l'interface utilisateur. 
      * @return array $services
@@ -56,7 +56,7 @@
 	* @return array $result
 	*/
 	public function setUserRight($usr_login, $service, $fun_id){
-        $this->checkRight($user=true, $app=true, $fun_id=$fun_id);
+        $this->checkRight(true, true, true, $fun_id);
         // L'utilisateur à les droits de donner ce droit :)
         return UserRight::setRight($usr_login, $service, $fun_id);
 	}
@@ -70,7 +70,7 @@
 	* @return array $result
 	*/
 	public function setApplicationRight($app_id, $service, $fun_id){
-        $this->checkRight($user=true, $app=true, $fun_id=$fun_id);
+        $this->checkRight(true, true, true, $fun_id);
         // L'utilisateur à les droits de donner ce droit :)
         ApplicationRight::setRight($app_id, $service, $fun_id);
 	}
@@ -84,7 +84,7 @@
 	* @return array $result
 	*/
 	public function removeUserRight($usr_id, $service, $fun_id){
-        $this->checkRight($user=true, $app=true, $fun_id=$fun_id);
+        $this->checkRight(true, true, true, $fun_id);
         // L'utilisateur à les droits de retirer ce droit :)
         UserRight::removeRight($usr_id, $service, $fun_id);
 	}
@@ -98,7 +98,7 @@
 	* @return array $result
 	*/
 	public function removeApplicationRight($app_id, $service, $fun_id){
-        $this->checkRight($user=true, $app=true, $fun_id=$fun_id);
+        $this->checkRight(true, true, true, $fun_id);
         // L'utilisateur à les droits de retirer ce droit :)
         ApplicationRight::removeRight($app_id, $service, $fun_id);
 	}
@@ -110,7 +110,7 @@
 	* @return array $result
 	*/
 	public function getUserRights($fun_id){
-        $this->checkRight($user=true, $app=true, $fun_id=$fun_id);
+        $this->checkRight(true, true, true, $fun_id);
         // L'utilisateur à les droits de regarder ces droits :)
         return UserRight::getRights($fun_id);
 	}
@@ -122,7 +122,7 @@
 	* @return array $result
 	*/
 	public function getApplicationRights($fun_id){
-        $this->checkRight($user=true, $app=true, $fun_id=$fun_id);
+        $this->checkRight(true, true, true, $fun_id);
         // L'utilisateur à les droits de regarder ces droits :)
         return ApplicationRight::getRights($fun_id);
 	}
@@ -133,7 +133,7 @@
 	* @return array $result
 	*/
 	public function getApplications(){
-        $this->checkRight($user=true, $app=true);
+        $this->checkRight();
         // L'utilisateur à les droits de regarder la liste des applications
         return Application::getAll();
 	}

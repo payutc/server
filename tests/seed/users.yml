@@ -1,0 +1,62 @@
+ts_user_usr:
+  -
+    usr_id: 1
+    usr_firstname: Thomas
+    usr_lastname: Recouvreux
+    usr_nickname: trecouvr
+    usr_adult: 1
+    usr_mail: thomas.recouvreux@etu.utc.fr
+    usr_credit: 9000
+  -
+    usr_id: 2
+    usr_firstname: No
+    usr_lastname: Credit
+    usr_nickname: nocredit
+    usr_adult: 1
+    usr_mail: nocredit@bidon.com
+    usr_credit: 0
+  -
+    usr_id: 3
+    usr_firstname: Full
+    usr_lastname: Credit
+    usr_nickname: fucredit
+    usr_adult: 1
+    usr_mail: fucredit@bidon.com
+    usr_credit: 10000
+  -
+    usr_id: 4
+    usr_firstname: Child
+    usr_lastname: Child
+    usr_nickname: child
+    usr_adult: 0
+    usr_mail: child@bidon.com
+    usr_credit: 5000
+
+
+tj_usr_mol_jum:
+  -
+    usr_id: 1
+    mol_id: 1
+    jum_data: trecouvr
+
+
+
+tj_usr_rig_jur:
+  -
+    jur_id: 1
+    rig_id: 5
+    fun_id: 1
+    usr_id: 1
+  -
+    jur_id: 2
+    rig_id: 7
+    fun_id: 1
+    poi_id: 48
+    
+
+
+
+
+
+
+
