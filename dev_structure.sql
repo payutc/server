@@ -528,6 +528,22 @@ CREATE TABLE IF NOT EXISTS `t_application_app` (
 
 
 --
+-- Structure de la table `tj_usr_fun_blocked_blo`
+--
+
+CREATE TABLE IF NOT EXISTS `tj_usr_fun_blocked_blo` (
+  `blo_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id interne du blocage',
+  `usr_id` int(11) NOT NULL COMMENT 'id de l''utilisateur',
+  `fun_id` int(11) DEFAULT NULL COMMENT 'id de la fundation (si NULL alors l''user est bloqué partout',
+  `blo_raison` varchar(255) NOT NULL COMMENT 'Court message justifiant la raison du blocage',
+  `blo_insert` datetime NOT NULL COMMENT 'Date de début du blocage',
+  `blo_removed` datetime DEFAULT NULL COMMENT 'Date de fin du blocage',
+  PRIMARY KEY (`blo_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ciCOMMENT='Utilisateur bloqués par des fundations.' AUTO_INCREMENT=1 ;
+
+
+
+--
 -- Contraintes pour les tables exportées
 --
 
