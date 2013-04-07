@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
 	BuckUTT - Buckutt est un système de paiement avec porte-monnaie électronique.
 	Copyright (C) 2011 BuckUTT <buckutt@utt.fr>
@@ -19,7 +19,9 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
+namespace Payutc\Service;
+
 /**
  * POSS.class
  * 
@@ -40,7 +42,7 @@ require_once 'class/Cas.class.php';
 
 define('MEAN_OF_LOGIN_BADGE', 5);
 
-class POSS extends Buy {
+class POSS extends \Buy {
 
 	protected $Seller;
 	protected $Point;

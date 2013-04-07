@@ -1,4 +1,10 @@
-<?php 
+<?php
+
+namespace Payutc\Service;
+
+use \Application;
+use \ApplicationList;
+
 /**
  * KEY.services.php
  * 
@@ -6,7 +12,7 @@
  *
  */
  
- class KEY extends ServiceBase {
+ class KEY extends \ServiceBase {
 	 
     public function __construct() {
         parent::__construct();

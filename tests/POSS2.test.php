@@ -2,8 +2,8 @@
 
 require_once '../vendor/autoload.php';
 require_once '../config.inc.php';
-require_once '../services/POSS2-with-exceptions.service.php';
 
+use \Payutc\Service\POSS2WithExceptions;
 
 class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
 {
@@ -102,7 +102,7 @@ class POSS2WithExceptionsTest extends \PHPUnit_Extensions_Database_TestCase
 	}
 	
 	/**
-	 * @expectedException		 \PossException
+	 * @expectedException		 \Payutc\Exception\PossException
 	 * @expectedExceptionCode	 400
 	 * @expectedExceptionMessage Il n'y a pas de seller chargé.
 	 */
@@ -118,7 +118,7 @@ class POSS2WithExceptionsTest extends \PHPUnit_Extensions_Database_TestCase
 	}
 	
 	/**
-	 * @expectedException		 \PossException
+	 * @expectedException		 \Payutc\Exception\PossException
 	 * @expectedExceptionCode	 1401
 	 * @expectedExceptionMessage Aucun seller n'est logué.
 	 */
@@ -128,7 +128,7 @@ class POSS2WithExceptionsTest extends \PHPUnit_Extensions_Database_TestCase
 	}
 	
 	/**
-	 * @expectedException		 \PossException
+	 * @expectedException		 \Payutc\Exception\PossException
 	 * @expectedExceptionCode	 400
 	 * @expectedExceptionMessage Il n'y a pas de seller chargé.
 	 */
@@ -138,7 +138,7 @@ class POSS2WithExceptionsTest extends \PHPUnit_Extensions_Database_TestCase
 	}
 	
 	/**
-	 * @expectedException		 \PossException
+	 * @expectedException		 \Payutc\Exception\PossException
 	 * @expectedExceptionCode	 400
 	 * @expectedExceptionMessage Il n'y a pas de seller chargé.
 	 */
@@ -148,7 +148,7 @@ class POSS2WithExceptionsTest extends \PHPUnit_Extensions_Database_TestCase
 	}
 	
 	/**
-	 * @expectedException		 \PossException
+	 * @expectedException		 \Payutc\Exception\PossException
 	 * @expectedExceptionCode	 400
 	 * @expectedExceptionMessage Il n'y a pas de seller chargé.
 	 */
@@ -158,7 +158,7 @@ class POSS2WithExceptionsTest extends \PHPUnit_Extensions_Database_TestCase
 	}
 	
 	/**
-	 * @expectedException		 \PossException
+	 * @expectedException		 \Payutc\Exception\PossException
 	 * @expectedExceptionCode	 400
 	 * @expectedExceptionMessage Il n'y a pas de seller chargé.
 	 */
@@ -168,7 +168,7 @@ class POSS2WithExceptionsTest extends \PHPUnit_Extensions_Database_TestCase
 	}
 	
 	/**
-	 * @expectedException		 \PossException
+	 * @expectedException		 \Payutc\Exception\PossException
 	 * @expectedExceptionCode	 400
 	 * @expectedExceptionMessage Image non trouvée.
 	 */
