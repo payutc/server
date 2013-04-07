@@ -296,7 +296,7 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			
 			// vérifier que l'utilisateur n'est pas bloqué sur cette fondation
 			try {
-				$buyer->checkBlockedFun($this->Fun_id))
+				$buyer->checkBlockedFun($this->Fun_id);
 			}
 			catch (UserIsBlockedException $e) {
 				return array("error"=>402, "error_msg"=> $e->getMessage());
