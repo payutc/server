@@ -293,7 +293,14 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 		
 			if($state == 403)
 				return array("error"=>403, "error_msg"=>"Ce badge à été bloqué. Il faut que l'utilisateur aille le débloquer sur internet.");
-
+			
+			// vérifier que l'utilisateur n'est pas bloqué sur cette fondation
+			try {
+				$buyer->checkBlockedFun($this->Fun_id))
+			}
+			catch (UserIsBlockedException $e) {
+				return array("error"=>402, "error_msg"=> $e->getMessage());
+			}
 
 			// Verifier que les objets sont en vente (+ leurs prix)
 			// ON a déjà vérifier la liaison POI <=> Fundation <=> USER

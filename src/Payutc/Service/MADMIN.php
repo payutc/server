@@ -365,7 +365,7 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      * @return int $state
      */
     public function deblock() {
-        if ($this->User->deblock()) {
+        if ($this->User->deblockMe()) {
             $state = 1;
         } else { $state = 440; }            
         return $state;
@@ -377,7 +377,7 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
     * @return int $valid
     */
     public function isBlocked() {
-        return $this->User->isblocked();
+        return $this->User->isBlockedMe();
     }
     
     /**
