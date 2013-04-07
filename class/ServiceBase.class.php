@@ -121,10 +121,13 @@ class ServiceBase {
      * $this->checkRight(true, false);
      * Si votre fonction est ouverte à tout le monde, ne rien mette ou mettre: $this->checkRight(false, false) sera équivalent.
      * 
-     * Lorsque votre fonction travaille sur une fundation, vous devez passer le $fun_id pour que l'on vérifie si l'user et/ou l'app ont les droits sur la fundations
-     * Lorsque les droits ne sont pas satisfait cette fonction throw une exception et donc interromps l'execution de votre fonction proprement. 
+     * Lorsque votre fonction travaille sur une fundation, vous devez passer $fun_check à true pour indiquer que vous tenez à la verification des droits sur le fun_id
+     * et bien sur fun_id == NULL sera refusé
      */
-    public function checkRight($user=true, $app=true, $fun_id=false) {
+    public function checkRight($user=true, $app=true, $fun_check=false, $fun_id=NULL) {
+        if($fun_id == NULL && $fun_check == true) {
+            throw new Exception("fun_id cannot be 'NULL' !");
+        }
         if($user)
         {
             if(!$this->user)
