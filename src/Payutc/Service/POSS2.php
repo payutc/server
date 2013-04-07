@@ -22,6 +22,10 @@
 
 namespace Payutc\Service;
 
+use \User;
+use \Image;
+
+
 /**
  * POSS2.class
  * 
