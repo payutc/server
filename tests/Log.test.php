@@ -37,7 +37,6 @@ class LogTest extends PHPUnit_Framework_TestCase
 		$_CONFIG['slim_config']['log.writer'] = new MyWriter();
 		$_CONFIG['slim_config']['log.level'] = \Slim\Log::DEBUG;
 		$_CONFIG['slim_config']['log.enabled'] = true;
-		$_CONFIG['slim_config']['debug'] = true;
 	}
 	
 	protected function setUp()

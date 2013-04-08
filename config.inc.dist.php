@@ -68,8 +68,16 @@ $_CONFIG['PBX_PUBPEM'] = "somewhere/pubkey.pem";
 // Laisser la clé vide pour désactiver les appels à ginger
 $_CONFIG['ginger_key'] = "abc";
 
-
+// Configuration de Slim
 $_CONFIG['slim_config'] = array(
-	'mode' => 'developement',
-	'debug' => true
+    'mode' => 'developement',
+    'debug' => true,
+    'log.level' => \Slim\Log::DEBUG,
+    'log.enabled' => true,
+    'log.writer' => new \Slim\Extras\Log\DateTimeFileWriter(array(
+	'path' => __DIR__.'/logs',
+	'name_format' => 'Y-m-d',
+	'message_format' => '%label% - %date% - %message%'
+    ))
 );
+
