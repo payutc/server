@@ -383,7 +383,7 @@ AND o.fun_id = '%u' AND (";
 
 			// Verifier que le buyer a assez d'argent
 	        if($buyer->getCredit() < $total) {
-				Log::warn("transaction($badge_id, $obj_ids) : Buyer don't have enought money");
+				Log::warn("transaction($badge_id, $obj_ids) : Buyer have not enough money");
 	        	return array("error"=>400, "error_msg"=>"L'utilisateur n'a pas assez d'argent pour effectuer la transaction.", "usr_info"=>array("firstname"=>$buyer->getFirstname(), "lastname"=>$buyer->getLastname(), "solde"=>$buyer->getCredit()));
 			}
 
