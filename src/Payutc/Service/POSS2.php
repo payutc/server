@@ -311,11 +311,11 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 						// UPDATE BADGE_ID
 						Db_buckutt::getInstance()->query("UPDATE tj_usr_mol_jum SET jum_data = '%s' WHERE usr_id='%u' AND mol_id='%u'", array($badge_id, $buyer->getId(), MEAN_OF_LOGIN_BADGE));
 					} else {
-						Log::warn("transaction($badge_id, $obj_ids) : Unknown card (1)");
+						Log::warn("transaction($badge_id, $obj_ids) : Ginger knows this card but Payutc does not");
 						return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu...");
 					}
 				} else {
-					Log::warn("transaction($badge_id, $obj_ids) : Unknown card (2)");
+					Log::warn("transaction($badge_id, $obj_ids) : Unknown card");
 					return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu..."); 
 				}
 			}
