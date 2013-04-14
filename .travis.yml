@@ -9,5 +9,5 @@ before_script:
   - php composer.phar install --dev
   - cp config.inc.dist.php config.inc.php
   - cd tests/
-script: ./phpunit --coverage-text *.test.php
+script: ./phpunit --coverage-text .
 
