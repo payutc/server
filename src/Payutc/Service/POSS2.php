@@ -81,25 +81,25 @@ class POSS2 {
 		$user = new User($login, 1, "", 0, 1, 0);
 		$r = $user->getState();
 		if ($r != 1) {
-			Log::warn("loadPos(ticket=$ticket, service=$service, poi_id=$poi_id, fun_id=$fun_id) : Error load seller ($r)");
+			Log::warn("loadPos(login=$login, poi_id=$poi_id, fun_id=$fun_id) : Error load seller ($r)");
 			return array("error"=>$r, "error_msg"=>"Le seller n'a pas pu être chargé.");
 		}
 		$this->Point_id = $poi_id;
 		$this->Fun_id = $fun_id;
 		$right = new CheckRight($user->getId(), $this->Point_id, $this->Fun_id);
 		if(!$right->check("VENDRE")) {
-			Log::warn("loadPos(ticket=$ticket, service=$service, poi_id=$poi_id, fun_id=$fun_id) : No right VENDRE");
+			Log::warn("loadPos(login=$login, poi_id=$poi_id, fun_id=$fun_id) : No right VENDRE");
             return array("error"=>400, "error_msg"=>"Vous n'avez pas le droit VENDRE sur cette fundation.");
 		}
         if(!$right->check("POI-FUNDATION")) {
-			Log::warn("loadPos(ticket=$ticket, service=$service, poi_id=$poi_id, fun_id=$fun_id) : No right POI-FUN");
+			Log::warn("loadPos(login=$login, poi_id=$poi_id, fun_id=$fun_id) : No right POI-FUN");
             return array("error"=>400, "error_msg"=>"La fundation n'a pas le droit d'utiliser ce POI.");
 		}
 
         // TOUT VA BIEN ON CHARGE LE SELLER
         $this->Seller = $user;
 		
-		Log::info("loadPos(ticket=$ticket, service=$service, poi_id=$poi_id, fun_id=$fun_id) : OK");
+		Log::info("loadPos(login=$login, poi_id=$poi_id, fun_id=$fun_id) : OK");
 		return array("success"=>"ok");
 	}
 	
