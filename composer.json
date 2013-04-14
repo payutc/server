@@ -1,6 +1,7 @@
 {
 	"require": {
 		"slim/slim": "2.*",
+		"slim/extras": "*",
 		"ginger/client": "2.*",
 		"zendframework/zendframework": "2.*"
 	},
