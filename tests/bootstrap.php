@@ -13,6 +13,15 @@ class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
 	}
 }
 
+class InsertOperation extends \PHPUnit_Extensions_Database_Operation_Insert
+{
+	public function execute(\PHPUnit_Extensions_Database_DB_IDatabaseConnection $connection, \PHPUnit_Extensions_Database_DataSet_IDataSet $dataSet) {
+		$connection->getConnection()->query("SET foreign_key_checks = 0");
+		parent::execute($connection, $dataSet);
+		$connection->getConnection()->query("SET foreign_key_checks = 1");
+	}
+}
+
 abstract class DatabaseTest extends \PHPUnit_Extensions_Database_TestCase
 {
 	protected $pdo;
@@ -51,7 +60,7 @@ abstract class DatabaseTest extends \PHPUnit_Extensions_Database_TestCase
 		$cascadeTruncates = false; // True if you want cascading truncates, false otherwise. If unsure choose false.
 		return new \PHPUnit_Extensions_Database_Operation_Composite(array(
 			new TruncateOperation($cascadeTruncates),
-			\PHPUnit_Extensions_Database_Operation_Factory::INSERT()
+			new InsertOperation()
 		));
 	}
 
@@ -77,7 +86,7 @@ abstract class ReadOnlyDatabaseTest extends DatabaseTest
 		if (!$this->alreadyInserted) {
 			return parent::getSetUpOperation();
 		}
-		return NULL;
+		return new PHPUnit_Extensions_Database_Operation_Null();
 	}
 
 	/**
@@ -86,7 +95,7 @@ abstract class ReadOnlyDatabaseTest extends DatabaseTest
 	 */
 	protected function getTearDownOperation()
 	{
-		// dont clean the db after each tests
+		return new PHPUnit_Extensions_Database_Operation_Null();
     }
 }
 

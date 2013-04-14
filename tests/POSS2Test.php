@@ -5,60 +5,8 @@ require_once 'bootstrap.php';
 
 use \Payutc\Service\POSS2WithExceptions;
 
-class POSS2WithExceptionsTest extends DatabaseTest
+class POSS2WithExceptionsTest extends ReadOnlyDatabaseTest
 {
-	protected $pdo;
-
-    public function __construct()
-    {
-		global $_CONFIG;
-		global $_SERVER;
-		$_SERVER['REMOTE_ADDR'] = '127.0.0.1';
-				
-		$_CONFIG['sql_host'] = $_CONFIG['sql_host_test'];
-		$_CONFIG['sql_db'] = $_CONFIG['sql_db_test'];
-		$_CONFIG['sql_user'] = $_CONFIG['sql_user_test'];
-		$_CONFIG['sql_pass'] = $_CONFIG['sql_pass_test'];
-		
-		$this->pdo = new PDO('mysql:dbname='.$_CONFIG['sql_db'].';host='.$_CONFIG['sql_host'],
-			$_CONFIG['sql_user'],
-			$_CONFIG['sql_pass']
-		);
-    }
-    
-	/**
-	 * setupd db
-	 * called in setUp()
-	 */
-	public function getSetUpOperation()
-	{
-		$cascadeTruncates = false; // True if you want cascading truncates, false otherwise. If unsure choose false.
-		return new \PHPUnit_Extensions_Database_Operation_Composite(array(
-			new TruncateOperation($cascadeTruncates),
-			\PHPUnit_Extensions_Database_Operation_Factory::INSERT()
-		));
-	}
-
-	/**
-	 * clear db
-	 * called in tearDown()
-	 */
-	protected function getTearDownOperation()
-	{
-        return $this->getOperations()->DELETE_ALL();
-    }
-
-	/**
-	 * get db connection
-	 */
-	public function getConnection()
-	{
-		return $this->createDefaultDBConnection($this->pdo);
-	}
-
-	/**
-	 * get db dataset
-	 */
 	public function getDataSet()
 	{
 		//return return new MyApp_DbUnit_ArrayDataSet($this->dataset);
