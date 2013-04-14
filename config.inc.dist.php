@@ -75,9 +75,9 @@ $_CONFIG['slim_config'] = array(
     'log.level' => \Slim\Log::DEBUG,
     'log.enabled' => true,
     'log.writer' => new \Slim\Extras\Log\DateTimeFileWriter(array(
-	'path' => __DIR__.'/logs',
-	'name_format' => 'Y-m-d',
-	'message_format' => '%label% - %date% - %message%'
+        'path' => __DIR__.'/logs',
+        'name_format' => 'Y-m-d',
+        'message_format' => '%label% - %date% - %message%'
     ))
 );
 
