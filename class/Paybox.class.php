@@ -19,6 +19,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+use \Payutc\Log;
+
 class Paybox {
 
     private $User;
@@ -120,19 +122,19 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
       $db = Db_buckutt::getInstance();
 
       if($CheckSig!=1) {
-        Log::write("PAYBOX : La signature est fausse ! \n".print_r($_GET, true),10);
+        Log::warning("PAYBOX : La signature est fausse ! \n".print_r($_GET, true),10);
       } else {
         $paybox_row = $db->fetchArray($db->query("SELECT usr_id, pay_amount, pay_step FROM t_paybox_pay WHERE pay_id = '%u'", array($ref)));
         if ($db->affectedRows() != 1) {
-          Log::write("PAYBOX : L'identifiant n'est pas présent dans la table t_paybox_pay \n".print_r($_GET, true),5);
+          Log::warning("PAYBOX : L'identifiant n'est pas présent dans la table t_paybox_pay \n".print_r($_GET, true));
       } else if ($paybox_row['pay_step'] == 'V') {
-          Log::write("PAYBOX : Ce rechargement n'est pas en attente ! (Tentative de double rechargement ?) \n".print_r($_GET, true),5);
+          Log::warning("PAYBOX : Ce rechargement n'est pas en attente ! (Tentative de double rechargement ?) \n".print_r($_GET, true));
       } else if($erreur != '00000') {
-          Log::write("PAYBOX : Paybox a retourné une erreur ! \n".print_r($_GET, true),5);
+          Log::error("PAYBOX : Paybox a retourné une erreur ! \n".print_r($_GET, true));
           $db->query("UPDATE t_paybox_pay SET pay_step = 'A', pay_date_retour = NOW(), pay_auto = '%s', pay_trans = '%s', pay_error = '%s' WHERE pay_id = '%u';", Array($auto,$trans,$erreur,$ref));
         } else {
           if($amount != $paybox_row['pay_amount']) {
-            Log::write("PAYBOX : Paybox renvoit un montant de : $amount, mais le rechargement initial était de : ".$paybox_row['pay_amount']." \n".print_r($_GET, true),10);
+            Log::warning("PAYBOX : Paybox renvoit un montant de : $amount, mais le rechargement initial était de : ".$paybox_row['pay_amount']." \n".print_r($_GET, true));
             // Du coup on incrémente le compte de la valeur renvoyé par paybox, et on log un rechargement de cette valeur...
             // Pour le bien prions que ce log n'apparaitra jamais... DE toute façon si se log apparait, ce n'est pas une perte d'argent pour nous,
             // Vu qu'on recharge bien le montant indiqué par paybox. Par contre si ce log apparait il est possible que l'user ait rechargé moins que la valeur minimum d'un rechargement ou plus que la valeur max...
