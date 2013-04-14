@@ -38,6 +38,10 @@ tj_usr_mol_jum:
     usr_id: 1
     mol_id: 1
     jum_data: trecouvr
+  -
+    usr_id: 2
+    mol_id: 1
+    jum_data: mguffroy
 
 
 
@@ -54,6 +58,19 @@ tj_usr_rig_jur:
     poi_id: 48
     
 
+t_fundation_fun:
+  -
+    fun_id: 1
+    fun_name: Picasso
+    fun_removed: 0
+
+tj_usr_fun_blocked_blo:
+  -
+    blo_id: 1
+    usr_id: 2
+    fun_id: 1
+    blo_raison: A fait pipi sur le mur, vilain pas beau !
+    blo_insert: '2000-01-01'
 
 
 
