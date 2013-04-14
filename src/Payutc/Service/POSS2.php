@@ -429,7 +429,7 @@ AND o.fun_id = '%u' AND (";
 
         // Vérifie que l'image existe bien
         if($image->getState() != 1) {
-			Log::warn("getImage64($img_id, $outw = 0, $outh = 0) : No image found");
+			Log::warn("getImage64($img_id, $outw, $outh) : No image found");
             return array("error"=>400, "error_msg"=>"Image non trouvée.");
         }
 		
@@ -458,7 +458,7 @@ AND o.fun_id = '%u' AND (";
 		if($output != false)
 			return array("success"=> $output);
 		else {
-			Log::warn("getImage64($img_id, $outw = 0, $outh = 0) : No image found");
+			Log::warn("getImage64($img_id, $outw, $outh) : No image found");
 			return array("error"=>400, "error_msg"=>"Image non trouvée.");
 		}
 	}
