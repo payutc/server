@@ -19,6 +19,9 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+use \Payutc\Exception\LoginException;
+
 /**
 * ServiceBase.class
 * 
@@ -51,22 +54,21 @@ class ServiceBase {
 	 */
     public function loginCas($ticket, $service) {
 		$login = Cas::authenticate($ticket, $service);
-        if ($login < 0) {
-   			return array("error"=> array( "message"=>"Erreur de login cas", "code" => -1));
+        if ($login === -1) {
+            throw new LoginException("Erreur de login cas", -1);
         }
 		$this->user = new User($login, 1, "", 0, 1, 0);
 
 		$r = $this->user->getState();
 		if($r == 405){
 			$this->loginToRegister = $login;
-			return array("error"=> array( "message"=>"Le user n'existe pas ici.", "code" => $r));
+            throw new LoginException("Le user n'existe pas ici", $r);
 		}
-		elseif($r != 1) {
-			return array("error"=> array( "message"=>"Le user n'a pas pu être chargé.", "code" => $r));
+		else if($r != 1) {
+            throw new LoginException("Le user n'a pas pu être chargé.", $r);
 		}
-		else {
-			return array("success"=>"ok");
-		}
+
+        return true;
     }
 
 	/**
