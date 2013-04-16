@@ -19,8 +19,9 @@ $app->map('/:service/:method', function($service, $method) use ($app) {
 })->via('GET', 'POST');
 
 // SOAP route
-$app->map('/:service.class.php', function($service) {
-    $dispatcher = new \Payutc\Dispatcher\Soap();
+$server_url = $_CONFIG['server_url'];
+$app->map('/:service.class.php', function($service) use $server_url{
+    $dispatcher = new \Payutc\Dispatcher\Soap($server_url);
     $dispatcher->handle($service);
 })->via('GET', 'POST');
 

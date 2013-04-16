@@ -1,7 +1,6 @@
 <?php
 
 require_once '../vendor/autoload.php';
-require_once '../config.inc.php';
 
 
 class MyWriter
@@ -32,11 +31,13 @@ class LogTest extends PHPUnit_Framework_TestCase
 	
 	public function __construct()
 	{
-		global $_CONFIG;
+		$config = array(
+			'log.writer' => new MyWriter(),
+			'log.level' => \Slim\Log::DEBUG,
+			'log.enabled' => true
+		);
 		
-		$_CONFIG['slim_config']['log.writer'] = new MyWriter();
-		$_CONFIG['slim_config']['log.level'] = \Slim\Log::DEBUG;
-		$_CONFIG['slim_config']['log.enabled'] = true;
+		Log::initLog($config);
 	}
 	
 	protected function setUp()
@@ -49,14 +50,6 @@ class LogTest extends PHPUnit_Framework_TestCase
 		Log::getWriter()->clean();
 	}
 	
-	public function testInitDontCrash()
-	{
-		Log::initLog();
-	}
-	
-	/**
-	 * @depends testInitDontCrash
-	 */
 	public function testGetInstance()
 	{
 		$this->assertTrue(Log::getInstance() !== null);

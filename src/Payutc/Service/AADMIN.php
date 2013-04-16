@@ -65,7 +65,8 @@ class AADMIN {
 	 * @return String $url
 	 */
 	public function getCasUrl() {
-	 return Cas::getUrl();
+	 global $_CONFIG;
+	 return $_CONFIG['cas_url'];
 	}
 
 
@@ -93,7 +94,8 @@ class AADMIN {
 	 * @return int $state
 	 */
     public function loginCas($ticket, $service) {
-		$login = Cas::authenticate($ticket, $service);
+		global $_CONFIG;
+		$login = Cas::authenticate($ticket, $service, $_CONFIG['cas_url']);
 		if ($login < 0) {
 			return -1;
 		}

@@ -49,6 +49,7 @@ class POSS2 {
 	protected $Fun_id;
 
 	protected function getRemoteIp() {
+		global $_SERVER;
 		return $_SERVER['REMOTE_ADDR'];
 	}
 
@@ -57,7 +58,8 @@ class POSS2 {
 	 * @return array $url
 	 */
 	public function getCasUrl() {
-	 return array("success"=>Cas::getUrl());
+	 global $_CONFIG;
+	 return array("success"=>$_CONFIG['cas_url']);
 	}
 
 	/**
@@ -70,9 +72,10 @@ class POSS2 {
 	 * @return array $state
 	*/
 	public function loadPos($ticket, $service, $poi_id, $fun_id) {
+		global $_CONFIG;
 		unset($this->Seller);
 		$ip = $this->getRemoteIp();
-		$login = Cas::authenticate($ticket, $service);
+		$login = Cas::authenticate($ticket, $service, $_CONFIG['cas_url']);
 		if ($login < 0) {
 			return array("error"=>-1, "error_msg"=>"Erreur de login CAS.");
 		}
@@ -101,11 +104,12 @@ class POSS2 {
 	* @return array $state
 	*/
 	public function logout() {
+		global $_CONFIG;
 		if($this->isLoadedSeller())
 		{
 			unset($this->Seller);
 			session_destroy();
-			return array("success"=>"ok", "url"=>Cas::getUrl()."/logout");
+			return array("success"=>"ok", "url"=>$_CONFIG['cas_url']."/logout");
 		} else {
 			return array("error"=>"1401", "error_msg"=>"Aucun seller n'est logué.");
 		}

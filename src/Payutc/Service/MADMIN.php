@@ -59,7 +59,8 @@ class MADMIN extends \WsdlBase {
      * @return array $state
      */
     public function loginCas($ticket, $service) {
-        $login = Cas::authenticate($ticket, $service);
+        global $_CONFIG;
+        $login = Cas::authenticate($ticket, $service, $_CONFIG['cas_url']);
         if ($login < 0) {
                return array("error"=>-1, "error_msg"=>"Erreur de login CAS.");
         }
@@ -357,12 +358,21 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      */
      
     public function reload($amount, $callbackUrl) {
+        global $_CONFIG;
               // Peut-il se recharger d'un tel montant
               $auth = $this->canReload($amount);
               if($auth != 1)
                     return "<error>".$this->getErrorDetail($auth)."</error>";
 
-        $pb = new Paybox($this->User);
+        $pb = new Paybox(
+            $this->User,
+            $_CONFIG['PBX_EXE'],
+            $_CONFIG['PBX_SITE'],
+            $_CONFIG['PBX_RANG'],
+            $_CONFIG['PBX_IDENTIFIANT'],
+            $_CONFIG['http_server_url']."/payboxretour.php",
+            $_CONFIG['proxy']
+        );
         return $pb->execute($amount, $callbackUrl);
     }
     

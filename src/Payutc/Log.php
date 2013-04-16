@@ -4,10 +4,9 @@ namespace Payutc;
 
 class Log
 {
-    public static function initLog()
+    public static function initLog($slimSettings = array())
     {
         global $_SERVER;
-        global $_CONFIG;
         
         if (!isset($_SERVER['REQUEST_METHOD'])) $_SERVER['REQUEST_METHOD'] = null;
         if (!isset($_SERVER['REMOTE_ADDR'])) $_SERVER['REMOTE_ADDR'] = null;
@@ -19,8 +18,7 @@ class Log
         
         $app = \Slim\Slim::getInstance();
         if ($app === null) {
-            $userSettings = $_CONFIG['slim_config'];
-            $app = new \Slim\Slim($userSettings);
+            $app = new \Slim\Slim($slimSettings);
         }
     }
     

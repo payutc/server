@@ -50,7 +50,8 @@ class ServiceBase {
 	 * @return array $state
 	 */
     public function loginCas($ticket, $service) {
-		$login = Cas::authenticate($ticket, $service);
+        global $_CONFIG;
+		$login = Cas::authenticate($ticket, $service, $_CONFIG['cas_url']);
         if ($login < 0) {
    			return array("error"=> array( "message"=>"Erreur de login cas", "code" => -1));
         }
@@ -89,7 +90,8 @@ class ServiceBase {
     * @return String $url
     */
     public function getCasUrl() {
-        return Cas::getUrl();
+        global $_CONFIG;
+        return $_CONFIG['cas_url'];
     }
 
     /**
