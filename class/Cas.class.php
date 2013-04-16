@@ -2,10 +2,9 @@
 
 
 class Cas {
-
-	public static function authenticate($ticket,$service) {
+	public static function authenticate($ticket, $service, $cas_url) {
 		global $_CONFIG;
-		$url_validate = $_CONFIG['cas_url']."serviceValidate?service=".$service."&ticket=".$ticket;
+		$url_validate = $cas_url."serviceValidate?service=".$service."&ticket=".$ticket;
 		$data = file_get_contents($url_validate);
 		if(empty($data)) return -1;
 		
@@ -15,10 +14,4 @@ class Cas {
 		else
 			return -1;
 	}
-	
-	public static function getURl() {
-		global $_CONFIG;
-		return $_CONFIG['cas_url'];
-	}
-	
 }

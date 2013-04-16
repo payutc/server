@@ -50,7 +50,8 @@ class WsdlBase {
 	 * @return String $url
 	 */
 	public function getCasUrl() {
-	 return Cas::getUrl();
+	 global $_CONFIG;
+	 return $_CONFIG['cas_url'];
 	}
 	
 	/**

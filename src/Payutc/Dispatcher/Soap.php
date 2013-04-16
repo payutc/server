@@ -32,19 +32,24 @@
 namespace Payutc\Dispatcher;
 
 class Soap {
+    protected $server_url;
+    protected $wsdl_cache;
+    
+    public __construct($server_url, $wsdl_cache) {
+        $this->server_url = $server_url;
+    }
     public function handle($name_class){
-        global $_CONFIG;
         $app = \Slim\Slim::getInstance();
         
         \Payutc\Mapping\Services::checkExist($name_class);
         
         if (isset($_GET['wsdl'])) {
             $server = new \Zend\Soap\AutoDiscover();
-            $server->setUri($_CONFIG['server_url'].$name_class.'.class.php');
+            $server->setUri($this->server_url.$name_class.'.class.php');
             $server->setClass("Payutc\\Service\\$name_class");
             echo $server->toXml();
         } else {
-            $server = new \Zend\Soap\Server($_CONFIG['server_url'].$name_class.'.class.php?wsdl', array('cache_wsdl' => $_CONFIG['wsdl_cache']));
+            $server = new \Zend\Soap\Server($this->server_url.$name_class.'.class.php?wsdl', array('cache_wsdl' => $this->wsdl_cache));
             $server->setClass("Payutc\\Service\\$name_class");
             $server->setPersistence(SOAP_PERSISTENCE_SESSION);
             $server->handle();
