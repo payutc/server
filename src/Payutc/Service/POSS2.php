@@ -28,6 +28,7 @@ use \Image;
 use \Db_buckutt;
 use \CheckRight;
 use \Payutc\Exception\UserIsBlockedException;
+use \Payutc\Config;
 
 /**
  * POSS2.class
@@ -267,17 +268,17 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 	 * @return array $state
 	 */
 	public function transaction($badge_id, $obj_ids) {
-		global $_CONFIG;
 		if ($this->isLoadedSeller()) {
 			$right_POI_FUNDATION = 7; // TODO IMPORTER D'AILLEURS
 
 			// Verifier que le buyer existe
 			$buyer = new User($badge_id, MEAN_OF_LOGIN_BADGE, "", 0, 1, 1);
 			$state = $buyer->getState();
-			if($state != 1 && !empty($_CONFIG['ginger_key']))
+			$ginger_key = Config::get('ginger_key');
+			if($state != 1 && !empty($ginger_key))
 			{
 				// CHECK BADGE ID IN API
-				$ginger = new \Ginger\Client\GingerClient($_CONFIG['ginger_key']);
+				$ginger = new \Ginger\Client\GingerClient(Config::get('ginger_key'));
 				try {
 					$user = $ginger->getCard($badge_id);
 				}

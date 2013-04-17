@@ -32,6 +32,7 @@
 
 use \Payutc\Exception\UserIsBlockedException;
 use \Payutc\Bom\Blocked;
+use \Payutc\Config;
 
 /**
  * classe user
@@ -664,15 +665,16 @@ class User {
 	* @return void
 	*/
     private function initGinger(){
-        global $_CONFIG;
         if(empty($this->gingerUser)){
-            if(!empty($_CONFIG['ginger_key'])){
+			$ginger_key = Config::get('ginger_key');
+			$ginger_url = Config::get('ginger_url');
+            if(!empty($ginger_key)){
                 // Initialiser ginger, éventuellement avec une URL perso
-                if(!empty($_CONFIG['ginger_url'])){
-                    $ginger = new \Ginger\Client\GingerClient($_CONFIG['ginger_key'], $_CONFIG['ginger_url']);
+                if(!empty($ginger_url)){
+                    $ginger = new \Ginger\Client\GingerClient(Config::get('ginger_key'), Config::get('ginger_url'));
                 }
                 else {
-                    $ginger = new \Ginger\Client\GingerClient($_CONFIG['ginger_key']);
+                    $ginger = new \Ginger\Client\GingerClient(Config::get('ginger_key'));
                 }
                 
                 // Récupérer le user dans ginger

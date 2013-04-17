@@ -1,11 +1,12 @@
 <?php
 
+use \Payutc\Config;
 
 class Cas {
 
 	public static function authenticate($ticket,$service) {
-		global $_CONFIG;
-		$url_validate = $_CONFIG['cas_url']."serviceValidate?service=".$service."&ticket=".$ticket;
+		$cas_url = static::getURl();
+		$url_validate = $cas_url."serviceValidate?service=".$service."&ticket=".$ticket;
 		$data = file_get_contents($url_validate);
 		if(empty($data)) return -1;
 		
@@ -17,8 +18,7 @@ class Cas {
 	}
 	
 	public static function getURl() {
-		global $_CONFIG;
-		return $_CONFIG['cas_url'];
+		return Config::get('cas_url');;
 	}
 	
 }
