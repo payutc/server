@@ -32,6 +32,7 @@
 
 use \Payutc\Exception\UserIsBlockedException;
 use \Payutc\Bom\Blocked;
+use \Payutc\Bom\MsgPerso;
 
 /**
  * classe user
@@ -118,7 +119,7 @@ class User {
 		$this->credit = $don['usr_credit'];
 		$this->idPhoto = $don['img_id'];
 		$this->adult = $don['usr_adult'];
-		$this->msg_perso = $this->getMsgPerso();
+		$this->msg_perso = MsgPerso::getMsgPerso($this->idUser, $funId);
 			
 		$this->loadRights();
 	}
@@ -255,29 +256,14 @@ class User {
 	}
 
     /**
-    * Fonction pour récupèrer le message perso d'un utilisateur
-    * L'ordre de recherche du message perso est :
-    *   - utilisateur + fundation
-    *   - utilisateur
-    *   - fundation
-    *   - message "perso" par défaut
+    * Retourne $msgPerso
     * 
-    * @param  int $funID
+    * @param  int $usrId 
+    * @param  int $funId
     * @return String $msgPerso
     */
-	public function getMsgPerso($funID) {
-        $usrID = $this->idUser;
-        $msgPerso = $this->db->query("SELECT `msg_perso` FROM `tj_usr_fun_uft` WHERE
-        (`usr_id` = '%u' OR `usr_id` IS NULL)
-        AND 
-        (`fun_id` = '%u' OR `fun_id` IS NULL)
-        ORDER BY `usr_id` DESC , `fun_id` DESC LIMIT 0 , 1", array($usrID, $funID));
-        if ($this->db->affectedRows() == 1) {
-            return $this->db->result($msgPerso);
-        }
-        else {
-            return "Pas de message perso défini nul part pour toi, du coup t'as celui là ;)";
-        }
+	public function getMsgPerso($funId) {
+        return MsgPerso::getMsgPerso($this->idUser, $funId);
     }
 	
 	/**
