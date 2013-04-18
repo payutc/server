@@ -22,7 +22,7 @@ class MsgPerso
     /**
      * Returns user's personnal message in a fundation
      * The priority order is : (usrId, funId), (usrId, NULL), (NULL, funId), (NULL, NULL)
-     * If every of this tuple fails to return a message, "http://payutc.github.io" is returned
+     * If every of these tuple fails to return a message, "http://payutc.github.io" is returned
      */
 	public static function getMsgPerso($usrId=NULL, $funId=NULL)
     {
