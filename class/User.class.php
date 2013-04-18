@@ -119,7 +119,7 @@ class User {
 		$this->credit = $don['usr_credit'];
 		$this->idPhoto = $don['img_id'];
 		$this->adult = $don['usr_adult'];
-		$this->msg_perso = MsgPerso::getMsgPerso($this->idUser, $funId);
+		$this->msg_perso = MsgPerso::getMsgPerso($this->idUser);
 			
 		$this->loadRights();
 	}
