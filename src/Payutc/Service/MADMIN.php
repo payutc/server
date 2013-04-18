@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
     BuckUTT - Buckutt est un système de paiement avec porte-monnaie électronique.
     Copyright (C) 2011 BuckUTT <buckutt@utt.fr>
@@ -19,6 +19,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+namespace Payutc\Service;
+
+use \Db_buckutt;
+use \Cas;
+use \User;
+use \ComplexData;
+use \Paybox;
+use \Payutc\Log;
+
 /**
  * MADMIN.class
  * 
@@ -29,7 +38,7 @@
  */
 
 
-class MADMIN extends WsdlBase {
+class MADMIN extends \WsdlBase {
 
     private  $User;
     private $loginToRegister;
@@ -94,7 +103,7 @@ class MADMIN extends WsdlBase {
             }
             else 
             {
-                $user = new StdClass;
+                $user = new \StdClass;
                 $user->login = $this->loginToRegister;
                 $user->prenom = "Test";
                 $user->nom = "User";
@@ -103,7 +112,7 @@ class MADMIN extends WsdlBase {
                 $user->is_cotisant = true;
             }
         }
-        catch (Exception $ex) {
+        catch (\Exception $ex) {
             return array("error"=>400, "error_msg"=>"Utilisateur introuvable dans Ginger (".$ex->getCode().")");
         }
         if (!($user->is_cotisant)) {
@@ -160,6 +169,9 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      * @return string $csv
      */
     public function getHistoriqueAchats($date_start, $date_end) {
+        if(empty($this->User)) {
+            return "";
+        }
         $txt = new ComplexData(array());
         $res = $this->db->query("SELECT UNIX_TIMESTAMP(pur.pur_date) AS pur_date, obj.obj_name, usr.usr_firstname, usr.usr_lastname, poi.poi_name, fun.fun_name, pur.pur_price FROM t_purchase_pur pur, t_object_obj obj, t_point_poi poi, ts_user_usr usr, t_fundation_fun fun WHERE pur.obj_id = obj.obj_id AND pur.poi_id = poi.poi_id AND pur.usr_id_seller = usr.usr_id AND pur.fun_id = fun.fun_id AND UNIX_TIMESTAMP(pur.pur_date) >= '%u' AND UNIX_TIMESTAMP(pur.pur_date) < '%u' AND usr_id_buyer = '%u' AND pur.pur_removed = '0' ORDER BY pur.pur_date DESC", Array($date_start, $date_end, $this->User->getId()));
         if ($this->db->affectedRows() >= 1) {
@@ -180,6 +192,9 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      * @return string $csv
      */
     public function getHistoriqueRecharge($date_start, $date_end) {
+        if(empty($this->User)) {
+            return "";
+        }
         $txt = new ComplexData(array());
         $res = $this->db->query("SELECT UNIX_TIMESTAMP(rec.rec_date) AS rec_date, rty.rty_name, usr.usr_firstname, usr.usr_lastname, poi.poi_name, rec.rec_credit FROM t_recharge_rec rec, t_recharge_type_rty rty, t_point_poi poi, ts_user_usr usr WHERE rec.rty_id = rty.rty_id AND rec.poi_id = poi.poi_id AND rec.usr_id_operator = usr.usr_id AND UNIX_TIMESTAMP(rec.rec_date) >= '%u' AND UNIX_TIMESTAMP(rec.rec_date) < '%u' AND rec.usr_id_buyer = '%u' AND rec.rec_removed = '0' ORDER BY rec.rec_date DESC", Array($date_start, $date_end, $this->User->getId()));
         if ($this->db->affectedRows() >= 1) {
@@ -200,6 +215,9 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      * @return string $csv
      */
     public function getHistoriqueVirementOut($date_start, $date_end) {
+        if(empty($this->User)) {
+            return "";
+        }
         $txt = new ComplexData(array());
         $res = $this->db->query("SELECT UNIX_TIMESTAMP(vir.vir_date) AS vir_date, vir.vir_amount, usr_to.usr_firstname, usr_to.usr_lastname 
             FROM t_virement_vir vir, ts_user_usr usr_to  
@@ -223,6 +241,9 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      * @return string $csv
      */
     public function getHistoriqueVirementIn($date_start, $date_end) {
+        if(empty($this->User)) {
+            return "";
+        }
         $txt = new ComplexData(array());
         $res = $this->db->query("SELECT UNIX_TIMESTAMP(vir.vir_date) AS vir_date, vir.vir_amount, usr_from.usr_firstname, usr_from.usr_lastname 
             FROM t_virement_vir vir, ts_user_usr usr_from  
@@ -244,6 +265,9 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      * @return int $credit
      */
     public function getCredit() {
+        if(empty($this->User)) {
+            return "";
+        }
         return $this->User->getCredit();
     }    
 
@@ -253,6 +277,9 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
     * @return string $firstname
     */
     public function getFirstname() {
+        if(empty($this->User)) {
+            return "";
+        }
         return $this->User->getFirstname();
     }
 
@@ -262,6 +289,9 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
     * @return string $lastname
     */
     public function getLastname() {
+        if(empty($this->User)) {
+            return "";
+        }
         return $this->User->getLastname();
     }
 
@@ -356,7 +386,7 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      * @return int $state
      */
     public function deblock() {
-        if ($this->User->deblock()) {
+        if ($this->User->deblockMe()) {
             $state = 1;
         } else { $state = 440; }            
         return $state;
@@ -368,7 +398,7 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
     * @return int $valid
     */
     public function isBlocked() {
-        return $this->User->isblocked();
+        return $this->User->isBlockedMe();
     }
     
     /**
@@ -380,7 +410,7 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      */
     public function transfert($amount, $userID) {
         if($amount < 0) {
-            Log::write("TRANSFERT D'ARGENT : TENTATIVE DE FRAUDE... Montant négatif par l'userID ".$this->User->getId()." vers l'user ".$userID,10);
+            Log::warning("TRANSFERT D'ARGENT : TENTATIVE DE FRAUDE... Montant négatif par l'userID ".$this->User->getId()." vers l'user ".$userID);
             return 466; //C'est pas fair play de voler de l'argent à ces petits camarades...
         } else if($this->getCredit() < $amount) {
             return 462; // PAS ASSEZ D'ARGENT

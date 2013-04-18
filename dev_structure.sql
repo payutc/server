@@ -485,7 +485,7 @@ CREATE TABLE IF NOT EXISTS `t_virement_vir` (
 CREATE TABLE IF NOT EXISTS `tj_app_fun_afu` (
   `afu_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `app_id` int(11) NOT NULL COMMENT 'Id de l''application concerné',
-  `fun_id` int(11) NOT NULL COMMENT 'Identifiant de la fundation',
+  `fun_id` int(11) COMMENT 'Identifiant de la fundation',
   `afu_service` varchar(15) NOT NULL COMMENT 'Nom du service (de la classe exposé)',
   `afu_removed` datetime DEFAULT NULL,
   PRIMARY KEY (`afu_id`)
@@ -500,7 +500,7 @@ CREATE TABLE IF NOT EXISTS `tj_app_fun_afu` (
 CREATE TABLE IF NOT EXISTS `tj_usr_fun_ufu` (
   `ufu_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `usr_id` int(11) NOT NULL,
-  `fun_id` int(11) NOT NULL,
+  `fun_id` int(11),
   `ufu_service` varchar(15) NOT NULL COMMENT 'service exposé (nom de la classe)',
   `ufu_removed` datetime DEFAULT NULL,
   PRIMARY KEY (`ufu_id`)
@@ -540,6 +540,22 @@ CREATE TABLE IF NOT EXISTS `tj_usr_fun_uft` (
   PRIMARY KEY (`uft_id`),
   UNIQUE KEY `usr_id` (`usr_id`,`fun_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Table de liaison des messages persos des utilisateurs et des fondations';
+
+--
+-- Structure de la table `tj_usr_fun_blocked_blo`
+--
+
+CREATE TABLE IF NOT EXISTS `tj_usr_fun_blocked_blo` (
+  `blo_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id interne du blocage',
+  `usr_id` int(11) NOT NULL COMMENT 'id de l''utilisateur',
+  `fun_id` int(11) DEFAULT NULL COMMENT 'id de la fundation (si NULL alors l''user est bloqué partout',
+  `blo_raison` varchar(255) NOT NULL COMMENT 'Court message justifiant la raison du blocage',
+  `blo_insert` datetime NOT NULL COMMENT 'Date de début du blocage',
+  `blo_removed` datetime DEFAULT NULL COMMENT 'Date de fin du blocage',
+  PRIMARY KEY (`blo_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Utilisateur bloqués par des fundations.' AUTO_INCREMENT=1 ;
+
+
 
 --
 -- Contraintes pour les tables exportées

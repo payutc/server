@@ -25,6 +25,12 @@ $_CONFIG['sql_db'] = "buckutt";
 $_CONFIG['sql_user'] = "root";
 $_CONFIG['sql_pass'] = "root";
 
+// Paramètres de BDD pour les tests
+$_CONFIG['sql_host_test'] = "localhost";
+$_CONFIG['sql_db_test'] = "buckutt_test";
+$_CONFIG['sql_user_test'] = "root";
+$_CONFIG['sql_pass_test'] = "";
+
 // Chemin vers le serveur CAS (avec le / final)
 $_CONFIG['cas_url'] = "";
 
@@ -62,8 +68,16 @@ $_CONFIG['PBX_PUBPEM'] = "somewhere/pubkey.pem";
 // Laisser la clé vide pour désactiver les appels à ginger
 $_CONFIG['ginger_key'] = "abc";
 
-
+// Configuration de Slim
 $_CONFIG['slim_config'] = array(
-	'mode' => 'developement',
-	'debug' => true
+    'mode' => 'developement',
+    'debug' => true,
+    'log.level' => \Slim\Log::DEBUG,
+    'log.enabled' => true,
+    'log.writer' => new \Slim\Extras\Log\DateTimeFileWriter(array(
+        'path' => __DIR__.'/logs',
+        'name_format' => 'Y-m-d',
+        'message_format' => '%label% - %date% - %message%'
+    ))
 );
+

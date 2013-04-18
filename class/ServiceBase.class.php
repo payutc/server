@@ -39,7 +39,7 @@ class ServiceBase {
     */   
     public function __construct() {
         $this->db = Db_buckutt::getInstance();
-        $this->service_name = get_class($this);
+        $this->service_name = end(explode("\\", get_class($this)));
     }
 
     /**
@@ -121,10 +121,13 @@ class ServiceBase {
      * $this->checkRight(true, false);
      * Si votre fonction est ouverte à tout le monde, ne rien mette ou mettre: $this->checkRight(false, false) sera équivalent.
      * 
-     * Lorsque votre fonction travaille sur une fundation, vous devez passer le $fun_id pour que l'on vérifie si l'user et/ou l'app ont les droits sur la fundations
-     * Lorsque les droits ne sont pas satisfait cette fonction throw une exception et donc interromps l'execution de votre fonction proprement. 
+     * Lorsque votre fonction travaille sur une fundation, vous devez passer $fun_check à true pour indiquer que vous tenez à la verification des droits sur le fun_id
+     * et bien sur fun_id == NULL sera refusé
      */
-    public function checkRight($user=true, $app=true, $fun_id=false) {
+    public function checkRight($user=true, $app=true, $fun_check=false, $fun_id=NULL) {
+        if($fun_id == NULL && $fun_check == true) {
+            throw new Exception("fun_id cannot be 'NULL' !");
+        }
         if($user)
         {
             if(!$this->user)
@@ -171,7 +174,6 @@ class ServiceBase {
      * Authentifie une clef d'application
      */
     public function loginApp($key) {
-        $service = get_class($this);
         $application = new Application();
         $application->fromKey($key); // Throw an exception if Application doesn't exists...
         $this->application = $application;
@@ -196,5 +198,29 @@ class ServiceBase {
         else {
             return "";
         }
+    }
+    
+    /**
+    * Renvoie une liste d'utilisateurs correspondant à la recherche
+    * Un utilisateur et une application doivent être authentifié et autorisé sur le service
+    * 
+    * @return Array $userList
+    */
+    public function userAutocomplete($queryString) {
+        // Verification sur le droits avant toute choses
+        $this->checkRight();
+        $res = $this->db->query("SELECT usr_id, usr_firstname, usr_lastname
+            FROM ts_user_usr WHERE (UPPER(usr_firstname) LIKE '%s%%' OR UPPER(usr_lastname) LIKE '%s%%')
+            ORDER BY usr_lastname ASC LIMIT 10;", array(strtoupper($queryString), strtoupper($queryString)));
+        $return = array();
+        if ($this->db->affectedRows() >= 1) {
+            while ($don = $this->db->fetchArray($res)) {
+                $return[] = array(
+                    "id" => $don['usr_id'],
+                    "name" => $don['usr_firstname']." ".$don['usr_lastname']
+                );
+            }
+        }
+        return $return;
     }
 }

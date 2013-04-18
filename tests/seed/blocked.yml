@@ -1,0 +1,31 @@
+ts_user_usr:
+  -
+    usr_id: 1
+    usr_firstname: Thomas
+    usr_lastname: Recouvreux
+    usr_nickname: trecouvr
+    usr_adult: 1
+    usr_mail: abc
+    usr_credit: 1000
+  -
+    usr_id: 2
+    usr_firstname: Matthieu
+    usr_lastname: Guffroy
+    usr_nickname: mguffroy
+    usr_adult: 1
+    usr_mail: abc
+    usr_credit: 1000
+
+t_fundation_fun:
+  -
+    fun_id: 1
+    fun_name: Picasso
+    fun_removed: 0
+
+tj_usr_fun_blocked_blo:
+  -
+    blo_id: 1
+    usr_id: 2
+    fun_id: 1
+    blo_raison: A fait pipi sur le mur, vilain pas beau !
+    blo_insert: '2000-01-01'

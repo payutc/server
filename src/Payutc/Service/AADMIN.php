@@ -19,6 +19,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+namespace Payutc\Service;
+
+use \Cas;
+use \User;
+use \Image;
+use \ComplexData;
+use \Db_buckutt;
+use \PlageHoraire;
+
 /**
  * AAdmin.class
  *

@@ -3,17 +3,27 @@
 namespace Payutc\Mapping;
 
 class Services {
-    public static function get(){
-        return array(
-            'POSS' => 'services/POSS.service.php',
-            'POSS2' => 'services/POSS2.service.php',
-            'POSS2WithExceptions' => 'services/POSS2-with-exceptions.service.php',
-            'AADMIN' => 'services/AADMIN.service.php',
-            'MADMIN' => 'services/MADMIN.service.php',
-            'STATS' => 'services/STATS.service.php',
-            'KEY' => 'services/KEY.service.php',
-            'ADMINRIGHT' => 'services/ADMINRIGHT.service.php'
-        );
+    protected static $services = array(
+        'POSS2',
+        'POSS2WithExceptions',
+        'AADMIN',
+        'MADMIN',
+        'STATS',
+        'KEY',
+        'ADMINRIGHT',
+        'BLOCKED'
+    );
+    
+    public static function get($name) {
+        Services::checkExist($name);
+        $name = "Payutc\\Service\\$name";
+        return new $name();
+    }
+    
+    public static function checkExist($name) {
+        if (!in_array($name, Services::$services)) {
+            throw new \Payutc\Exception\ServiceNotFound("Service $name does not exist");
+        }
     }
 }
 

@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/payutc/server.png?branch=master)](https://travis-ci.org/payutc/server)
+
 Introduction
 ============
 

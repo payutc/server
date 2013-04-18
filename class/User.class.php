@@ -30,6 +30,8 @@
 
 //TODO tester dans chaque méthode si state = 1, sinon on poutre
 
+use \Payutc\Exception\UserIsBlockedException;
+use \Payutc\Bom\Blocked;
 
 /**
  * classe user
@@ -326,24 +328,77 @@ class User {
 	* 
 	* @return int $valid
 	*/
-	public function deblock() {
+	public function deblockMe() {
 		$this->db->query("UPDATE ts_user_usr SET usr_fail_auth=0, usr_blocked='0' WHERE usr_id='%u'", array($this->idUser));
 		if ($this->db->affectedRows() == 1)
 			return 1;
 		else
 			return 400;
 	}
-
+	
 	/**
-	* Fonction pour connaitre l'état du compte (bloqué/débloqué)
-	* 
-	* @return int $valid
-	*/
-	public function isBlocked() {
+	 * Self-blocked ?
+	 * 
+	 * @return isBlocked ?
+	 */
+	public function isBlockedMe() {
 		$don = $this->db->fetchArray($this->db->query("SELECT usr_fail_auth, usr_blocked FROM ts_user_usr WHERE usr_id = '%u';", Array($this->idUser)));
-		return $don['usr_blocked'];
+		return (bool)$don['usr_blocked'];
 	}
-		
+	
+	/**
+	* Bloqué sur une fondation ?
+	* 
+	* @paramter $fundation id optionnel d'une fondation
+	* 
+	* @return bool $isBlocked
+	*/
+	public function isBlockedFun($fundation = null) {
+		return Blocked::userIsBlocked($this->idUser, $fundation);
+	}
+	
+	/**
+	 * Bloqué quelquepart ?
+	 */
+	public function isBlocked($fundation = null) {
+		return $this->isBlockedMe() or $this->isBlockedFun($fundation);
+	}
+	
+	/**
+	 * Self-blocked ? Si oui lance une exception.
+	 * 
+	 * @throw Exception
+	 */
+	public function checkNotBlockedMe() {
+		if ($this->isBlockedMe()) {
+			throw new UserIsBlockedException("L'utilisateur s'est auto bloqué.");
+		}
+	}
+	
+	/**
+	 * Bloqué sur une fondation ? Si oui lance une exception.
+	 * 
+	 * @parameter $fundation
+	 * 
+	 * @throw Exception
+	 */
+	public function checkNotBlockedFun($fundation = NULL) {
+		Blocked::checkUsrNotBlocked($this->idUser, $fundation);
+	}
+	
+	/**
+	 * Bloqué qqpart ? Si oui lance une exception.
+	 * 
+	 * @throw Exception
+	 * 
+	 * @parameter $fundation
+	 */
+	public function checkNotBlocked($fundation = null)
+	{
+		$this->checkNotBlockedMe();
+		$this->checkNotBlockedFun($fundation);
+	}
+	
 	
 	/**
 	* Retourne un array avec l'identité du user et son appartenance ou non au BDE (Attention : grp_id = 1 et non BDE)
