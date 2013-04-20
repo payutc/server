@@ -27,7 +27,7 @@ class ApplicationRight {
                             AND afu.afu_removed IS NULL ";
 
         if($check_fundation) {
-            if($fundation_id) {
+            if($fundation_id and $fundation_id != "NULL") {
                 $res = $db->query($req." AND (afu.fun_id = '%u' OR afu.fun_id IS NULL)", array($application_id, $service_name, $fundation_id));
             } else {
                 $res = $db->query($req." AND afu.fun_id IS NULL", array($application_id, $service_name)); 
@@ -70,10 +70,18 @@ class ApplicationRight {
      */
     public static function getRights($fun_id) {
         $db = Db_buckutt::getInstance();
-        $res = $db->query("SELECT afu.afu_id, afu.app_id, afu.fun_id, afu.afu_service
-					FROM tj_app_fun_afu afu
-					WHERE afu.fun_id = '%u'
-                        AND afu.afu_removed is NULL;", array($fun_id));
+        if($fun_id == "NULL") {
+            $res = $db->query("SELECT afu.afu_id, afu.app_id, afu.fun_id, afu.afu_service
+					    FROM tj_app_fun_afu afu
+					    WHERE afu.fun_id IS NULL
+                            AND afu.afu_removed is NULL;", array());
+        } else {
+            $res = $db->query("SELECT afu.afu_id, afu.app_id, afu.fun_id, afu.afu_service
+					    FROM tj_app_fun_afu afu
+					    WHERE afu.fun_id = '%u'
+                            AND afu.afu_removed is NULL;", array($fun_id));
+        }
+
         $rights = array();
         if ($db->affectedRows() >= 1) {
 			while ($don = $db->fetchArray($res)) {
@@ -95,7 +103,11 @@ class ApplicationRight {
      */
     public static function setRight($app_id, $service, $fun_id) {
         $db = Db_buckutt::getInstance();
-        $db->query("INSERT INTO tj_app_fun_afu (app_id, fun_id, afu_service) VALUES('%u', '%u', '%s');", Array($app_id, $fun_id, $service));
+        if($fun_id == "NULL") {
+            $db->query("INSERT INTO tj_app_fun_afu (app_id, fun_id, afu_service) VALUES('%u', NULL, '%s');", Array($app_id, $service));
+        } else {
+            $db->query("INSERT INTO tj_app_fun_afu (app_id, fun_id, afu_service) VALUES('%u', '%u', '%s');", Array($app_id, $fun_id, $service));
+        }
         if ($db->affectedRows() != 1) {
 			throw new Exception("Une erreur s'est produite lors de l'ajout du droit.");
 		}
@@ -108,7 +120,11 @@ class ApplicationRight {
 	*/
 	public static function removeRight($app_id, $service, $fun_id) {
         $db = Db_buckutt::getInstance();
-		$db->query("UPDATE tj_app_fun_afu SET afu_removed=NOW() WHERE fun_id='%u' AND app_id='%u' AND afu_service='%s';", Array($fun_id, $app_id, $service));
+        if($fun_id == "NULL") {
+		    $db->query("UPDATE tj_app_fun_afu SET afu_removed=NOW() WHERE fun_id IS NULL AND app_id='%u' AND afu_service='%s';", Array($app_id, $service));
+        } else {
+		    $db->query("UPDATE tj_app_fun_afu SET afu_removed=NOW() WHERE fun_id='%u' AND app_id='%u' AND afu_service='%s';", Array($fun_id, $app_id, $service));
+        }
 		if ($db->affectedRows() == 0) {
 			throw new Exception("Une erreur s'est produite lors de la supression du droit.");
 		}	

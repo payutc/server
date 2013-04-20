@@ -25,7 +25,7 @@ class UserRight {
                                 AND (ufu.ufu_service = '%s' OR ufu.ufu_service = 'ALL') 
                                 AND ufu.ufu_removed IS NULL ";
 
-        if($check_fundation) {
+        if($check_fundation and $fundation_id != "NULL") {
             if($fundation_id) {
                 $res = $db->query($req." AND (ufu.fun_id = '%u' OR ufu.fun_id IS NULL)", array($user_id, $service_name, $fundation_id));
             } else {
@@ -69,11 +69,19 @@ class UserRight {
      */
     public static function getRights($fun_id) {
         $db = Db_buckutt::getInstance();
-        $res = $db->query("SELECT ufu.ufu_id, ufu.usr_id, ufu.fun_id, ufu.ufu_service, usr.usr_lastname, usr.usr_firstname, usr.usr_nickname
-					FROM tj_usr_fun_ufu ufu, ts_user_usr usr
-					WHERE usr.usr_id = ufu.usr_id
-                        AND ufu.fun_id = '%u'
-                        AND ufu.ufu_removed IS NULL;", array($fun_id));
+        if($fun_id == "NULL") {
+            $res = $db->query("SELECT ufu.ufu_id, ufu.usr_id, ufu.fun_id, ufu.ufu_service, usr.usr_lastname, usr.usr_firstname, usr.usr_nickname
+					    FROM tj_usr_fun_ufu ufu, ts_user_usr usr
+					    WHERE usr.usr_id = ufu.usr_id
+                            AND ufu.fun_id IS NULL
+                            AND ufu.ufu_removed IS NULL;", array());
+        } else {
+            $res = $db->query("SELECT ufu.ufu_id, ufu.usr_id, ufu.fun_id, ufu.ufu_service, usr.usr_lastname, usr.usr_firstname, usr.usr_nickname
+					    FROM tj_usr_fun_ufu ufu, ts_user_usr usr
+					    WHERE usr.usr_id = ufu.usr_id
+                            AND ufu.fun_id = '%u'
+                            AND ufu.ufu_removed IS NULL;", array($fun_id));       
+        }
         $rights = array();
         if ($db->affectedRows() >= 1) {
 			while ($don = $db->fetchArray($res)) {
@@ -96,15 +104,13 @@ class UserRight {
     /**
      * Donne les droits à un user sur un service et une fundation
      */
-    public static function setRight($usr_login, $service, $fun_id) {
+    public static function setRight($usr_id, $service, $fun_id) {
         $db = Db_buckutt::getInstance();
-        // STEP 1, get userid from login
-        $usr_id = $db->result($db->query("SELECT usr_id FROM ts_user_usr WHERE usr_nickname='%s';", Array($usr_login)),0);
-		if ($db->affectedRows() != 1) {
-			throw new Exception("Le login \"$usr_login\" n'a donné aucun resultat.");
-		}
-        // STEP2, insert
-        $db->query("INSERT INTO tj_usr_fun_ufu (usr_id, fun_id, ufu_service) VALUES('%u', '%u', '%s');", Array($usr_id, $fun_id, $service));
+        if($fun_id == "NULL") {
+            $db->query("INSERT INTO tj_usr_fun_ufu (usr_id, fun_id, ufu_service) VALUES('%u', NULL, '%s');", Array($usr_id, $service));
+        } else {
+            $db->query("INSERT INTO tj_usr_fun_ufu (usr_id, fun_id, ufu_service) VALUES('%u', '%u', '%s');", Array($usr_id, $fun_id, $service));
+        }
         if ($db->affectedRows() != 1) {
 			throw new Exception("Une erreur s'est produite lors de l'ajout du droit.");
 		}
@@ -117,7 +123,11 @@ class UserRight {
 	*/
 	public static function removeRight($usr_id, $service, $fun_id) {
         $db = Db_buckutt::getInstance();
-		$db->query("UPDATE tj_usr_fun_ufu SET ufu_removed=NOW() WHERE fun_id='%u' AND usr_id='%u' AND ufu_service='%s';", Array($fun_id, $usr_id, $service));
+        if($fun_id == "NULL") {
+		    $db->query("UPDATE tj_usr_fun_ufu SET ufu_removed=NOW() WHERE fun_id IS NULL AND usr_id='%u' AND ufu_service='%s';", Array($usr_id, $service));
+        } else {
+		    $db->query("UPDATE tj_usr_fun_ufu SET ufu_removed=NOW() WHERE fun_id='%u' AND usr_id='%u' AND ufu_service='%s';", Array($fun_id, $usr_id, $service));
+        }
 		if ($db->affectedRows() == 0) {
 			throw new Exception("Une erreur s'est produite lors de la supression du droit.");
 		}	

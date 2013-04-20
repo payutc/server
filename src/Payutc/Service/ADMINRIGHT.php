@@ -68,10 +68,10 @@ use \Application;
 	* @param int $fun_id
 	* @return array $result
 	*/
-	public function setUserRight($usr_login, $service, $fun_id){
+	public function setUserRight($usr_id, $service, $fun_id){
         $this->checkRight(true, true, true, $fun_id);
         // L'utilisateur à les droits de donner ce droit :)
-        return UserRight::setRight($usr_login, $service, $fun_id);
+        return UserRight::setRight($usr_id, $service, $fun_id);
 	}
 
 	/**
