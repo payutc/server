@@ -19,22 +19,28 @@ class ApplicationRight {
      * Verifie un tuple de droits.
      * Lorsque les droits n'existe pas throw an exception
      */
-	public static function check($application_id = false, $service_name = false, $fundation_id = false) {
+	public static function check($application_id = false, $service_name = false, $check_fundation = false, $fundation_id = NULL) {
         $db = Db_buckutt::getInstance();
         $req = "SELECT afu.afu_id FROM tj_app_fun_afu afu 
                             WHERE afu.app_id = '%u' 
                             AND (afu.afu_service = '%s' OR afu.afu_service = 'ALL')
                             AND afu.afu_removed IS NULL ";
-        if($fundation_id)
-            $res = $db->query($req." AND (afu.fun_id = '%u' OR afu.fun_id IS NULL)", array($application_id, $service_name, $fundation_id));
-        else
+
+        if($check_fundation) {
+            if($fundation_id) {
+                $res = $db->query($req." AND (afu.fun_id = '%u' OR afu.fun_id IS NULL)", array($application_id, $service_name, $fundation_id));
+            } else {
+                $res = $db->query($req." AND afu.fun_id IS NULL", array($application_id, $service_name)); 
+            }
+        } else {
             $res = $db->query($req, array($application_id, $service_name));
+        }
 
 		if ($db->affectedRows() == 0) {
             if($fundation_id)
-	            throw new \Exception("L'application_id $application_id n'a pas les droits $service_name sur la fundation n°$fundation_id");
+	            throw new \Payutc\Exception\CheckRightException("L'application_id $application_id n'a pas les droits $service_name sur la fundation n°$fundation_id");
             else
-                throw new \Exception("L'application_id $application_id n'a les droits $service_name sur aucune fundation");
+                throw new \Payutc\Exception\CheckRightException("L'application_id $application_id n'a les droits $service_name sur aucune fundation");
 	    }
         return true;
     }
