@@ -205,7 +205,7 @@ class ServiceBase {
                 $fundations[$fun_id] = $fundation;
                 
         if($this->isAdmin()) {
-            return array(NULL => "Toutes les fundations") + $fundations;
+            return array("NULL" => "Toutes les fundations") + $fundations;
         } else {
             return $fundations;
         }
