@@ -172,6 +172,18 @@ class ServiceBase {
         }
         return true;
     }
+    
+    /*
+     * Return true if current user is admin (=> Have right on this service with fun_id = NULL)
+     */
+    public function isAdmin() {
+        try {
+            $this->checkRight(true, true, true, NULL);
+            return true;
+        } catch (\Payutc\Exception\CheckRightException) {
+            return false;
+        }
+    }
 
     /**
      * Retourne les fundations sur les quels on a les droits pour travailer
