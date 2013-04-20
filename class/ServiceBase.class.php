@@ -19,6 +19,8 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+use \Payutc\Mapping\Services;
+
 /**
 * ServiceBase.class
 * 
@@ -222,5 +224,9 @@ class ServiceBase {
             }
         }
         return $return;
+    }
+    
+    public function getServices() {
+        return Services::getServices();
     }
 }
