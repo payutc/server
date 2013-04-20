@@ -268,7 +268,6 @@ class ServiceBase {
                 $result[] = $service;            
             } 
             catch(\Payutc\Exception\CheckRightException $e) { /* no right for this service */ }
-            catch(\Exception $e) { throw $e; }
         }
         // put back the correct $this->service_name
         $this->service_name = end(explode("\\", get_class($this)));
