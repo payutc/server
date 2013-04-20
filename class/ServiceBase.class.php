@@ -101,15 +101,9 @@ class ServiceBase {
 	/**
 	* Deconnexion
 	*
-	* @return array $state
+	* @return true
 	*/
 	public function logout() {
-        if($this->user) {
-			unset($this->user);
-        }
-        if($this->app) {
-            unset($this->application);
-        }
         unset($_SESSION['ServiceBase']);
         return true;
 	}
