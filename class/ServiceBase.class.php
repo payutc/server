@@ -180,7 +180,7 @@ class ServiceBase {
         try {
             $this->checkRight(true, true, true, NULL);
             return true;
-        } catch (\Payutc\Exception\CheckRightException) {
+        } catch (\Payutc\Exception\CheckRightException $e) {
             return false;
         }
     }
