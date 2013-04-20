@@ -203,7 +203,12 @@ class ServiceBase {
         foreach($fundations_for_user as $fun_id => $fundation)
             if(array_key_exists($fun_id, $fundations_for_app))
                 $fundations[$fun_id] = $fundation;
-        return $fundations;
+                
+        if($this->isAdmin()) {
+            return array(NULL => "Toutes les fundations") + $fundations;
+        } else {
+            return $fundations;
+        }
     }
 
     /**
