@@ -31,6 +31,7 @@
 //TODO tester dans chaque méthode si state = 1, sinon on poutre
 
 use \Payutc\Exception\UserIsBlockedException;
+use \Payutc\Exception\MessageUpdateFailedException;
 use \Payutc\Bom\Blocked;
 use \Payutc\Bom\MsgPerso;
 
@@ -119,7 +120,7 @@ class User {
 		$this->credit = $don['usr_credit'];
 		$this->idPhoto = $don['img_id'];
 		$this->adult = $don['usr_adult'];
-		$this->msg_perso = MsgPerso::getMsgPerso($this->idUser);
+		$this->msg_perso = $this->getMsgPerso($this->idUser);
 			
 		$this->loadRights();
 	}
@@ -264,6 +265,21 @@ class User {
     */
 	public function getMsgPerso($funId) {
         return MsgPerso::getMsgPerso($this->idUser, $funId);
+    }
+    
+    /**
+    * Setter for user's personnal message
+    * returns "ok" if succeeded, else, returns the error message from MsgPerso::setMsgPerso
+    * @param String $newMsgPerso
+    * @return String $status
+    */
+    public function setMsgPerso($msgPerso, $funID) {
+        try {
+            MsgPerso::setMsgPerso($msgPerso, $this->idUser, $funID);
+            return "ok";
+        } catch (MessageUpdateFailedException $e) {
+            return $e->getMessage();
+        }
     }
 	
 	/**

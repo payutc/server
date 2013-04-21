@@ -462,34 +462,12 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
     * @param String $newMsgPerso
     * @return array $state
     */
-    public function setMsgPerso($msgPerso, $funID=-1) {
-        if (mb_check_encoding($msgPerso, 'UTF-8')) {
-            if (strlen($msgPerso) < 255){
-                if ($funID!=-1) {
-                    $this->db->query("INSERT INTO tj_usr_fun_uft (usr_id, fun_id, msg_perso) VALUES ('%u', '%u', '%s') ON DUPLICATE KEY UPDATE msg_perso='%s'", Array($this->User->getId(), $funID, $msgPerso, $msgPerso));
-                    if($this->db->affectedRows() != 1 AND $this->db->affectRows() != 2) {
-                        return array("error"=>400, "error_msg"=>"Le message envoyé est trop long (255 caractères max)");
-                    }
-                    else {
-                        return array("sucess"=>"ok");
-                    }
-                }
-                else {
-                    $this->db->query("INSERT INTO tj_usr_fun_uft (usr_id, fun_id, msg_perso) VALUES ('%u', NULL, '%s') ON DUPLICATE KEY UPDATE msg_perso='%s'", Array($this->User->getId(), $msgPerso, $msgPerso));
-                    if($this->db->affectedRows() != 1 AND $this->db->affectRows() != 2) {
-                        return array("error"=>400, "error_msg"=>"Le message envoyé est trop long (255 caractères max)");
-                    }
-                    else {
-                        return array("sucess"=>"ok");
-                    }
-                }
-            }
-            else {
-                return array("error"=>400, "error_msg"=>"Le message envoyé est trop long (255 caractères max)");
-            }
-        }
-        else {
-            return array("error"=>400, "error_msg"=>"Le message envoyé n'est pas en UTF-8");
+    public function setMsgPerso($msgPerso, $funID = NULL) {
+        $result = $this->User->setMsgPerso($msgPerso, $funID);
+        if ($result == "ok") {
+            return array("success"=>"ok");
+        } else {
+            return array("error"=>400, "error_msg"=>$result);
         }
     }
     
