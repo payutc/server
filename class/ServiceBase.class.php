@@ -40,8 +40,29 @@ class ServiceBase {
     * Constructeur
     */   
     public function __construct() {
+        // DEPRECATED
+        // Comme on vise à virer les requetes SQL dans les services le $this->db
+        // devrait bientôt disparaitre.
         $this->db = Db_buckutt::getInstance();
+
         $this->service_name = end(explode("\\", get_class($this)));
+        if(!array_key_exists('ServiceBase', $_SESSION)) {
+            $_SESSION['ServiceBase'] = array(
+                "user" => NULL,
+                "application" => NULL            
+            );
+        }
+        $this->user = $_SESSION['ServiceBase']['user'];
+        $this->application = $_SESSION['ServiceBase']['application'];
+    }
+
+    /**
+    * Un jour les services ne seront plus en session, et le constructeur sera appelé à chaque
+    * requete. Mais en ce moment la classe est sérializé, donc c'est wakeup et pas contruct qui
+    * est appelé.
+    */
+    public function __wakeup() {
+        self::__construct();
     }
 
     /**
@@ -52,6 +73,10 @@ class ServiceBase {
 	 * @return array $state
 	 */
     public function loginCas($ticket, $service) {
+        // Unlog previous user if any
+        $this->user = NULL;
+        $_SESSION['ServiceBase']['user'] = NULL;
+
 		$login = Cas::authenticate($ticket, $service);
         if ($login < 0) {
    			return array("error"=> array( "message"=>"Erreur de login cas", "code" => -1));
@@ -67,6 +92,8 @@ class ServiceBase {
 			return array("error"=> array( "message"=>"Le user n'a pas pu être chargé.", "code" => $r));
 		}
 		else {
+            // Save user in session for all service
+            $_SESSION['ServiceBase']['user'] = $this->user;
 			return array("success"=>"ok");
 		}
     }
@@ -74,14 +101,10 @@ class ServiceBase {
 	/**
 	* Deconnexion
 	*
-	* @return array $state
+	* @return true
 	*/
 	public function logout() {
-        if($this->user)
-			unset($this->user);
-        if($this->app)
-            unset($this->application);
-        session_destroy();
+        unset($_SESSION['ServiceBase']);
         return true;
 	}
 
@@ -176,9 +199,15 @@ class ServiceBase {
      * Authentifie une clef d'application
      */
     public function loginApp($key) {
+        // Unload previous application registered
+        $this->application = NULL;
+        $_SESSION['ServiceBase']['application'] = NULL;
+
         $application = new Application();
         $application->fromKey($key); // Throw an exception if Application doesn't exists...
+
         $this->application = $application;
+        $_SESSION['ServiceBase']['application'] = $application;
         return true;
     }
 
@@ -226,7 +255,27 @@ class ServiceBase {
         return $return;
     }
     
-    public function getServices() {
-        return Services::getServices();
+    /**
+    * Renvoie la liste des services pour lesquels l'utilisateur et l'application courante
+    * ont des droits pour y accéder
+    */
+    public function getEnabledServices() {
+        $services = Services::getServices();
+        $result = array();
+        foreach($services as $service) {
+            $this->service_name = $service;
+            try {
+                $this->checkRight();
+                $result[] = $service;            
+            } catch(\Exception $e) { /* no right for this service */ }
+        }
+        // put back the correct $this->service_name
+        $this->service_name = end(explode("\\", get_class($this)));
+        return $result;
     }
 }
+
+
+
+
+
