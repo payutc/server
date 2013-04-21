@@ -526,6 +526,22 @@ CREATE TABLE IF NOT EXISTS `t_application_app` (
   UNIQUE KEY `app_key` (`app_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liste des applications et leurs clefs.' AUTO_INCREMENT=1 ;
 
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `t_message_msg`
+--
+
+CREATE TABLE IF NOT EXISTS `t_message_msg` (
+  `msg_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Identifiant de la relation',
+  `usr_id` int(11) DEFAULT NULL COMMENT 'Identifiant de l''utilisateur',
+  `fun_id` int(11) DEFAULT NULL COMMENT 'Identifiant de la fondation',
+  `msg_perso` char(255) NOT NULL COMMENT 'Message perso',
+  PRIMARY KEY (`msg_id`),
+  UNIQUE KEY `usr_id` (`usr_id`,`fun_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Table de liaison des messages persos des utilisateurs et des fondations';
+
+-- --------------------------------------------------------
 
 --
 -- Structure de la table `tj_usr_fun_blocked_blo`
