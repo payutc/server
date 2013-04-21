@@ -147,31 +147,42 @@ class ServiceBase {
      * Si votre fonction est ouverte à tout le monde, ne rien mette ou mettre: $this->checkRight(false, false) sera équivalent.
      * 
      * Lorsque votre fonction travaille sur une fundation, vous devez passer $fun_check à true pour indiquer que vous tenez à la verification des droits sur le fun_id
-     * et bien sur fun_id == NULL sera refusé
+     * et bien sur fun_id == NULL ne sera authorisé que si l'utilisateur est "super admin" sur le droit en question.
      */
     public function checkRight($user=true, $app=true, $fun_check=false, $fun_id=NULL) {
-        if($fun_id == NULL && $fun_check == true) {
-            throw new Exception("fun_id cannot be 'NULL' !");
-        }
         if($user)
         {
             if(!$this->user)
-                throw new Exception("Vous devez connecter un utilisateur ! (method loginCas)");
+                throw new \Payutc\Exception\CheckRightException("Vous devez connecter un utilisateur ! (method loginCas)");
             // Check if App_id <=> Fun_id <=> Service_name exists in ApplicationRight
             UserRight::check($this->user->getId(),
                              $this->service_name,
+                             $fun_check,
                              $fun_id);
         }
         if($app)
         {
             if(!$this->application)
-                throw new Exception("Vous devez connecter une application ! (method loginApp)");
+                throw new \Payutc\Exception\CheckRightException("Vous devez connecter une application ! (method loginApp)");
             // Check if App_id <=> Fun_id <=> Service_name exists in ApplicationRight
             ApplicationRight::check($this->application->getId(),
                                     $this->service_name,
+                                    $fun_check,
                                     $fun_id);
         }
         return true;
+    }
+    
+    /*
+     * Return true if current user is admin (=> Have right on this service with fun_id = NULL)
+     */
+    public function isAdmin() {
+        try {
+            $this->checkRight(true, true, true, NULL);
+            return true;
+        } catch (\Payutc\Exception\CheckRightException $e) {
+            return false;
+        }
     }
 
     /**
@@ -267,7 +278,8 @@ class ServiceBase {
             try {
                 $this->checkRight();
                 $result[] = $service;            
-            } catch(\Exception $e) { /* no right for this service */ }
+            } 
+            catch(\Payutc\Exception\CheckRightException $e) { /* no right for this service */ }
         }
         // put back the correct $this->service_name
         $this->service_name = end(explode("\\", get_class($this)));
