@@ -18,21 +18,28 @@ class UserRight {
      * Verifie un tuple de droits.
      * Lorsque les droits n'existe pas throw an exception
      */
-	public static function check($user_id = false, $service_name = false, $fundation_id = false) {
+	public static function check($user_id = false, $service_name = false, $check_fundation = false, $fundation_id = NULL) {
         $db = Db_buckutt::getInstance();
         $req = "SELECT ufu.ufu_id FROM tj_usr_fun_ufu ufu 
                                 WHERE ufu.usr_id = '%u' 
                                 AND (ufu.ufu_service = '%s' OR ufu.ufu_service = 'ALL') 
                                 AND ufu.ufu_removed IS NULL ";
-        if($fundation_id)
-            $res = $db->query($req." AND (ufu.fun_id = '%u' OR ufu.fun_id IS NULL)", array($user_id, $service_name, $fundation_id));
-        else
+
+        if($check_fundation) {
+            if($fundation_id) {
+                $res = $db->query($req." AND (ufu.fun_id = '%u' OR ufu.fun_id IS NULL)", array($user_id, $service_name, $fundation_id));
+            } else {
+                $res = $db->query($req." AND ufu.fun_id IS NULL", array($user_id, $service_name)); 
+            }
+        } else {
             $res = $db->query($req, array($user_id, $service_name));
+        }
+        
 		if ($db->affectedRows() == 0) {
             if($fundation_id)
-	            throw new \Exception("Le user_id $user_id n'a pas les droits $service_name sur la fundation n°$fundation_id");
+	            throw new \Payutc\Exception\CheckRightException("Le user_id $user_id n'a pas les droits $service_name sur la fundation n°$fundation_id");
             else
-                throw new \Exception("Le user_id $user_id n'a les droits $service_name sur aucune fundation");
+                throw new \Payutc\Exception\CheckRightException("Le user_id $user_id n'a les droits $service_name sur aucune fundation");
 	    }
         return true;
     }
