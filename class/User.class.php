@@ -31,7 +31,9 @@
 //TODO tester dans chaque méthode si state = 1, sinon on poutre
 
 use \Payutc\Exception\UserIsBlockedException;
+use \Payutc\Exception\MessageUpdateFailedException;
 use \Payutc\Bom\Blocked;
+use \Payutc\Bom\MsgPerso;
 
 /**
  * classe user
@@ -107,11 +109,10 @@ class User {
 			if ($this->checkPass($pass) != 1)
 				return $this->state;
 		}
-		
-	
-		//si on arrive jusque là, on peut charger le mec
+        
+        //si on arrive jusque là, on peut charger le mec
 		$this->Ip = $ip;
-		$don = $this->db->fetchArray($this->db->query("SELECT usr_firstname, usr_lastname, usr_nickname, usr_adult, usr_msg_perso, usr_mail, usr_credit, img_id FROM ts_user_usr WHERE usr_id = '%u';", Array($this->idUser)));		
+		$don = $this->db->fetchArray($this->db->query("SELECT usr_firstname, usr_lastname, usr_nickname, usr_adult, usr_mail, usr_credit, img_id FROM ts_user_usr WHERE usr_id = '%u';", Array($this->idUser)));		
 		$this->lastname = $don['usr_lastname'];
 		$this->firstname = $don['usr_firstname'];
 		$this->nickname = $don['usr_nickname'];
@@ -119,7 +120,7 @@ class User {
 		$this->credit = $don['usr_credit'];
 		$this->idPhoto = $don['img_id'];
 		$this->adult = $don['usr_adult'];
-		$this->msg_perso = $don['usr_msg_perso'];
+		$this->msg_perso = $this->getMsgPerso($this->idUser);
 			
 		$this->loadRights();
 	}
@@ -255,14 +256,31 @@ class User {
 		return $this->groups;
 	}
 
-	/**
-	* Retourne $msg_perso.
-	* 
-	* @return string $msg_perso
-	*/
-	public function getMsgPerso() {
-		return $this->msg_perso;
-	}
+    /**
+    * Retourne $msgPerso
+    * 
+    * @param  int $usrId 
+    * @param  int $funId
+    * @return String $msgPerso
+    */
+	public function getMsgPerso($funId) {
+        return MsgPerso::getMsgPerso($this->idUser, $funId);
+    }
+    
+    /**
+    * Setter for user's personnal message
+    * returns "ok" if succeeded, else, returns the error message from MsgPerso::setMsgPerso
+    * @param String $newMsgPerso
+    * @return String $status
+    */
+    public function setMsgPerso($msgPerso, $funID) {
+        try {
+            MsgPerso::setMsgPerso($msgPerso, $this->idUser, $funID);
+            return "ok";
+        } catch (MessageUpdateFailedException $e) {
+            return $e->getMessage();
+        }
+    }
 	
 	/**
 	* Change l'image

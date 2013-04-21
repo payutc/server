@@ -462,36 +462,29 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
     * @param String $newMsgPerso
     * @return array $state
     */
-    public function setMsgPerso($newMsgPerso) {
-        if (mb_check_encoding($newMsgPerso, 'UTF-8')) {
-            if (strlen($newMsgPerso) < 255){
-                $this->db->query("UPDATE ts_user_usr SET usr_msg_perso = '%s' WHERE usr_id = '%u';", Array($newMsgPerso, $this->User->getId()));
-                if ($this->db->affectedRows() == 1) {
-                    return array("success"=>"ok");
-                }
-                else {
-                    return array("error"=>400, "error_msg"=>"Erreur dans l'insertion dans la base de donnée");
-                }
-            }
-            else {
-                return array("error"=>400, "error_msg"=>"Le message envoyé est trop long (255 caractères max)");
-            }
-        }
-        else {
-            return array("error"=>400, "error_msg"=>"Le message envoyé n'est pas en UTF-8");
+    public function setMsgPerso($msgPerso, $funID = NULL) {
+        $result = $this->User->setMsgPerso($msgPerso, $funID);
+        if ($result == "ok") {
+            return array("success"=>"ok");
+        } else {
+            return array("error"=>400, "error_msg"=>$result);
         }
     }
     
-
-    
-
-
-
-
-
-
-
-
+    /**
+    * Fonction pour récupèrer le message perso d'un utilisateur
+    * L'ordre de recherche du message perso est :
+    *   - utilisateur + fundation
+    *   - utilisateur
+    *   - fundation
+    *   - message "perso" par défaut
+    * 
+    * @param  int $funID
+    * @return String $msgPerso
+    */
+    public function getMsgPerso($funID) {
+        return $this->User->getMsgPerso($funID);
+    }
 }
 
 
