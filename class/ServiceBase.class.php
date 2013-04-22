@@ -20,7 +20,9 @@
 */
 
 
-use \Payutc\Exception\LoginException;
+use \Payutc\Exception\LoginError;
+use \Payutc\Exception\UserNotFound;
+use \Payutc\Exception\UserError;
 
 /**
 * ServiceBase.class
@@ -54,21 +56,21 @@ class ServiceBase {
 	 */
     public function loginCas($ticket, $service) {
 		$login = Cas::authenticate($ticket, $service);
-        if ($login === -1) {
-            throw new LoginException("Erreur de login cas", -1);
-        }
+		if ($login === -1) {
+			throw new LoginError("Erreur de login cas", -1);
+		}
 		$this->user = new User($login, 1, "", 0, 1, 0);
 
 		$r = $this->user->getState();
 		if($r == 405){
 			$this->loginToRegister = $login;
-            throw new LoginException("Le user n'existe pas ici", $r);
+			throw new UserNotFound("Le user n'existe pas ici", $r);
 		}
 		else if($r != 1) {
-            throw new LoginException("Le user n'a pas pu être chargé.", $r);
+			throw new UserError("Le user n'a pas pu être chargé.", $r);
 		}
 
-        return true;
+		return true;
     }
 
 	/**
