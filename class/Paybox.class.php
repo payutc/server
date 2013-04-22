@@ -90,8 +90,9 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
 			$PBX .= " PBX_BACKUP1=$pbx_url";
 			$PBX .= " PBX_BACKUP2=$pbx_url";
 			// PROXY
-      if(isset(Config::get('proxy')))
-			 $PBX .= " PBX_PROXY=".Config::get('proxy');;
+      $proxy = Config::get('proxy');
+      if(!empty($proxy))
+			 $PBX .= " PBX_PROXY=".$proxy;
 			return shell_exec(Config::get('PBX_EXE')." $PBX");
 	  }
 
