@@ -18,7 +18,7 @@ class Cas {
 	}
 	
 	public static function getURl() {
-		return Config::get('cas_url');;
+		return Config::get('cas_url');
 	}
 	
 }
