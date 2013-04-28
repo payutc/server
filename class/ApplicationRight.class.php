@@ -27,7 +27,7 @@ class ApplicationRight {
                             AND afu.afu_removed IS NULL ";
 
         if($check_fundation) {
-            if($fundation_id and $fundation_id != "NULL") {
+            if($fundation_id) {
                 $res = $db->query($req." AND (afu.fun_id = '%u' OR afu.fun_id IS NULL)", array($application_id, $service_name, $fundation_id));
             } else {
                 $res = $db->query($req." AND afu.fun_id IS NULL", array($application_id, $service_name)); 
