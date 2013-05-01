@@ -32,8 +32,6 @@ use \Payutc\Mapping\Services;
 
 class ServiceBase {
     protected $db;
-    protected $user;
-    protected $application;
     protected $service_name;  // Nom du service
 	
     /**
@@ -48,12 +46,10 @@ class ServiceBase {
         $this->service_name = end(explode("\\", get_class($this)));
         if(!array_key_exists('ServiceBase', $_SESSION)) {
             $_SESSION['ServiceBase'] = array(
-                "user" => NULL,
-                "application" => NULL            
+                "user" => null,
+                "application" => null            
             );
         }
-        $this->user = $_SESSION['ServiceBase']['user'];
-        $this->application = $_SESSION['ServiceBase']['application'];
     }
 
     /**
@@ -66,6 +62,20 @@ class ServiceBase {
     }
 
     /**
+    * Retourne l'utilisateur actuellement connecté (ou null sinon)
+    */
+    public function user() {
+        return $_SESSION['ServiceBase']['user'];
+    }
+
+    /**
+    * Retourne l'application actuellement connecté (ou null sinon)
+    */
+    public function application() {
+        return $_SESSION['ServiceBase']['application'];
+    }
+
+    /**
 	 * Connecter le user avec un ticket CAS.
 	 * 
 	 * @param String $ticket
@@ -74,16 +84,15 @@ class ServiceBase {
 	 */
     public function loginCas($ticket, $service) {
         // Unlog previous user if any
-        $this->user = NULL;
         $_SESSION['ServiceBase']['user'] = NULL;
 
 		$login = Cas::authenticate($ticket, $service);
         if ($login < 0) {
    			return array("error"=> array( "message"=>"Erreur de login cas", "code" => -1));
         }
-		$this->user = new User($login, 1, "", 0, 1, 0);
+		$user = new User($login, 1, "", 0, 1, 0);
 
-		$r = $this->user->getState();
+		$r = $user->getState();
 		if($r == 405){
 			$this->loginToRegister = $login;
 			return array("error"=> array( "message"=>"Le user n'existe pas ici.", "code" => $r));
@@ -93,7 +102,7 @@ class ServiceBase {
 		}
 		else {
             // Save user in session for all service
-            $_SESSION['ServiceBase']['user'] = $this->user;
+            $_SESSION['ServiceBase']['user'] = $user;
 			return array("success"=>"ok");
 		}
     }
@@ -122,12 +131,12 @@ class ServiceBase {
     * @return array $status
     */
     public function getStatus() {
-        if($this->application)
-            $app = $this->application->toArray(0);
+        if($this->application())
+            $app = $this->application()->toArray(0);
         else
             $app = null;
-        if($this->user)
-            $user = $this->user->getNickname();
+        if($this->user())
+            $user = $this->user()->getNickname();
         else
             $user = null;
         return array("application" => $app, "user" => $user);
@@ -152,20 +161,22 @@ class ServiceBase {
     public function checkRight($user=true, $app=true, $fun_check=false, $fun_id=NULL) {
         if($user)
         {
-            if(!$this->user)
+            if(!$this->user()) {
                 throw new \Payutc\Exception\CheckRightException("Vous devez connecter un utilisateur ! (method loginCas)");
+            }
             // Check if App_id <=> Fun_id <=> Service_name exists in ApplicationRight
-            UserRight::check($this->user->getId(),
+            UserRight::check($this->user()->getId(),
                              $this->service_name,
                              $fun_check,
                              $fun_id);
         }
         if($app)
         {
-            if(!$this->application)
+            if(!$this->application()) {
                 throw new \Payutc\Exception\CheckRightException("Vous devez connecter une application ! (method loginApp)");
+            }
             // Check if App_id <=> Fun_id <=> Service_name exists in ApplicationRight
-            ApplicationRight::check($this->application->getId(),
+            ApplicationRight::check($this->application()->getId(),
                                     $this->service_name,
                                     $fun_check,
                                     $fun_id);
@@ -194,9 +205,9 @@ class ServiceBase {
         // Verification sur le droits avant toute choses
         $this->checkRight();
         // On recupere les fundations pour l'user et l'application
-        $fundations_for_user = UserRight::getFundations($this->user->getId(), 
+        $fundations_for_user = UserRight::getFundations($this->user()->getId(), 
                                                         $this->service_name);
-        $fundations_for_app = ApplicationRight::getFundations($this->application->getId(),
+        $fundations_for_app = ApplicationRight::getFundations($this->application()->getId(),
                                                               $this->service_name);
         // On fait un ET logique entre les deux arrays
         $fundations = array();
@@ -211,13 +222,11 @@ class ServiceBase {
      */
     public function loginApp($key) {
         // Unload previous application registered
-        $this->application = NULL;
         $_SESSION['ServiceBase']['application'] = NULL;
 
         $application = new Application();
         $application->fromKey($key); // Throw an exception if Application doesn't exists...
 
-        $this->application = $application;
         $_SESSION['ServiceBase']['application'] = $application;
         return true;
     }
