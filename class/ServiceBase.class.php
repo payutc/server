@@ -86,14 +86,14 @@ class ServiceBase {
         }
         $this->user = new User($login, 1, "", 0, 1, 0);
 
-		$r = $this->user->getState();
-		if($r == 405){
-			$this->loginToRegister = $login;
+        $r = $this->user->getState();
+        if($r == 405){
+            $this->loginToRegister = $login;
             throw new UserNotFound("Le user n'existe pas ici", $r);
-		}
-		elseif($r != 1) {
+        }
+        elseif($r != 1) {
             throw new UserError("Le user n'a pas pu être chargé.", $r);
-		}
+        }
 
         // Save user in session for all service
         $_SESSION['ServiceBase']['user'] = $this->user;
