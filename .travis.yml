@@ -7,9 +7,9 @@ before_script:
   - mysql -u root buckutt_test < dev_structure.sql
   - curl -s https://getcomposer.org/installer | php
   - php composer.phar install --dev
-  - cp config.inc.dist.php config.inc.php
+  - cd tests/
   - mkdir logs
   - chmod 777 logs
-  - cd tests/
+  - cp config.inc.dist.php config.inc.php
 script: ./phpunit --coverage-text .
 

@@ -4,7 +4,9 @@ require_once '../vendor/autoload.php';
 
 require_once 'config.inc.php';
 
-$app = new \Slim\Slim($_CONFIG['slim_config']);
+\Payutc\Config::initFromArray($_CONFIG);
+
+$app = new \Slim\Slim(\Payutc\Config::get('slim_config'));
 
 // JSON route
 $app->map('/:service/:method', function($service, $method) use ($app) {
