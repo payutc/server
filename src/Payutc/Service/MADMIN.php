@@ -27,6 +27,7 @@ use \User;
 use \ComplexData;
 use \Paybox;
 use \Payutc\Log;
+use \Payutc\Config;
 
 /**
  * MADMIN.class
@@ -84,7 +85,6 @@ class MADMIN extends \WsdlBase {
      * @return array $state
      */
     public function register() {
-        global $_CONFIG;
     
         $this->User = new User($this->loginToRegister, 1, "", 0, 1, 0);
 
@@ -96,9 +96,10 @@ class MADMIN extends \WsdlBase {
         
         // On vérifie que le user est bien cotisant
         try {
-            if(!empty($_CONFIG['ginger_key']))
+            $ginger_key = Config::get('ginger_key');
+            if(!empty($ginger_key))
             {
-                $ginger = new \Ginger\Client\GingerClient($_CONFIG['ginger_key']);
+                $ginger = new \Ginger\Client\GingerClient(Config::get('ginger_key'));
                 $user = $ginger->getUser($this->loginToRegister);
             }
             else 
@@ -301,13 +302,12 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
     * @return int $minimum
     */
     public function getMinReload() {
-        global $_CONFIG;
         $Buyer_credit = $this->User->getCredit();
-        $max = $_CONFIG['credit_max'] - $Buyer_credit;
-        if($max < $_CONFIG['rechargement_min'])
+        $max = Config::get('credit_max') - $Buyer_credit;
+        if($max < Config::get('rechargement_min'))
             return 0;
         else
-            return $_CONFIG['rechargement_min'];
+            return Config::get('rechargement_min');
     }
 
     /**
@@ -316,10 +316,9 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
     * @return int $maximum
     */
     public function getMaxReload() {
-        global $_CONFIG;
         $Buyer_credit = $this->User->getCredit();
-        $max = $_CONFIG['credit_max'] - $Buyer_credit;
-        if($max < $_CONFIG['rechargement_min'])
+        $max = Config::get('credit_max') - $Buyer_credit;
+        if($max < Config::get('rechargement_min'))
             return 0;
         else
             return $max;
@@ -334,13 +333,12 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
     * @return int $code
     */
     public function canReload($amount) {
-        global $_CONFIG;
-        if($amount < $_CONFIG['rechargement_min'])
+        if($amount < Config::get('rechargement_min'))
             return 452; // TODO : Créer un code d'erreur plus adapté !
         $Buyer_credit = $this->User->getCredit();
-        if ($Buyer_credit >= $_CONFIG['credit_max'])
+        if ($Buyer_credit >= Config::get('credit_max'))
             return 450;
-        if (($Buyer_credit + $amount) > $_CONFIG['credit_max'])
+        if (($Buyer_credit + $amount) > Config::get('credit_max'))
             return 451;
         if(!$this->User->isCotisant()){
             return 467;

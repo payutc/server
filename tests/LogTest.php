@@ -1,7 +1,6 @@
 <?php
 
-require_once '../vendor/autoload.php';
-require_once '../config.inc.php';
+require_once 'bootstrap.php';
 
 
 class MyWriter
@@ -24,7 +23,7 @@ class MyWriter
 	}
 }
 
-
+use \Payutc\Config;
 use \Payutc\Log;
 
 class LogTest extends PHPUnit_Framework_TestCase
@@ -32,11 +31,9 @@ class LogTest extends PHPUnit_Framework_TestCase
 	
 	public function __construct()
 	{
-		global $_CONFIG;
-		
-		$_CONFIG['slim_config']['log.writer'] = new MyWriter();
-		$_CONFIG['slim_config']['log.level'] = \Slim\Log::DEBUG;
-		$_CONFIG['slim_config']['log.enabled'] = true;
+		$log = Log::getInstance();
+		$log->setWriter(new MyWriter());
+		$log->setLevel(\Slim\Log::DEBUG);
 	}
 	
 	protected function setUp()
