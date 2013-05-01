@@ -15,15 +15,19 @@ class Services {
     );
     
     public static function get($name) {
-        Services::checkExist($name);
+        static::checkExist($name);
         $name = "Payutc\\Service\\$name";
         return new $name();
     }
     
     public static function checkExist($name) {
-        if (!in_array($name, Services::$services)) {
+        if (!in_array($name, static::$services)) {
             throw new \Payutc\Exception\ServiceNotFound("Service $name does not exist");
         }
+    }
+    
+    public static function getServices() {
+        return static::$services;
     }
 }
 

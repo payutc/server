@@ -29,6 +29,7 @@ use \Db_buckutt;
 use \CheckRight;
 use \Payutc\Exception\UserIsBlockedException;
 use \Payutc\Config;
+use \Payutc\Log;
 
 /**
  * POSS2.class
@@ -75,23 +76,31 @@ class POSS2 {
 		$ip = $this->getRemoteIp();
 		$login = Cas::authenticate($ticket, $service);
 		if ($login < 0) {
+			Log::warn("loadPos(ticket=$ticket, service=$service, poi_id=$poi_id, fun_id=$fun_id) : Error Cas");
 			return array("error"=>-1, "error_msg"=>"Erreur de login CAS.");
 		}
 		$user = new User($login, 1, "", 0, 1, 0);
 		$r = $user->getState();
 		if ($r != 1) {
+			Log::warn("loadPos(login=$login, poi_id=$poi_id, fun_id=$fun_id) : Error load seller ($r)");
 			return array("error"=>$r, "error_msg"=>"Le seller n'a pas pu être chargé.");
 		}
 		$this->Point_id = $poi_id;
 		$this->Fun_id = $fun_id;
 		$right = new CheckRight($user->getId(), $this->Point_id, $this->Fun_id);
-		if(!$right->check("VENDRE"))
+		if(!$right->check("VENDRE")) {
+			Log::warn("loadPos(login=$login, poi_id=$poi_id, fun_id=$fun_id) : No right VENDRE");
             return array("error"=>400, "error_msg"=>"Vous n'avez pas le droit VENDRE sur cette fundation.");
-        if(!$right->check("POI-FUNDATION"))
+		}
+        if(!$right->check("POI-FUNDATION")) {
+			Log::warn("loadPos(login=$login, poi_id=$poi_id, fun_id=$fun_id) : No right POI-FUN");
             return array("error"=>400, "error_msg"=>"La fundation n'a pas le droit d'utiliser ce POI.");
+		}
 
         // TOUT VA BIEN ON CHARGE LE SELLER
         $this->Seller = $user;
+		
+		Log::info("loadPos(login=$login, poi_id=$poi_id, fun_id=$fun_id) : OK");
 		return array("success"=>"ok");
 	}
 	
@@ -106,8 +115,10 @@ class POSS2 {
 		{
 			unset($this->Seller);
 			session_destroy();
+			Log::info("logout() : OK");
 			return array("success"=>"ok", "url"=>Cas::getUrl()."/logout");
 		} else {
+			Log::warn("logout() : No seller loaded");
 			return array("error"=>"1401", "error_msg"=>"Aucun seller n'est logué.");
 		}
 	}
@@ -142,6 +153,7 @@ class POSS2 {
 				//"solde" => $identity[5]
 				));
 		} else {
+			Log::warn("getSellerIdentity() : No Seller loaded");
 			return array("error"=>400, "error_msg"=>"Il n'y a pas de seller chargé.");
 		}
 	}
@@ -191,6 +203,7 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 
 
 		} else {
+			Log::warn("getArticles() : No Seller loaded");
 			return array("error"=>400, "error_msg"=>"Il n'y a pas de seller chargé.");
 		}
 	}
@@ -224,6 +237,7 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 										"last_purchase"=>$buyer->getLastPurchase()
 								));
 		} else {
+			Log::warn("getBuyerInfo() : No Seller loaded");
 			return array("error"=>400, "error_msg"=>"Il n'y a pas de seller chargé.");
 		}
 	}
@@ -243,16 +257,21 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			$req = Db_buckutt::getInstance()->query("SELECT pur_price, usr_id_buyer, usr_id_seller, pur_date, pur_removed, obj_id FROM t_purchase_pur WHERE pur_id = %u",array($purchase_id));
 			$res = Db_buckutt::getInstance()->fetchArray($req);
 			$seller = $this->Seller->getIdentity();
-			if($res["usr_id_seller"] != $seller[0])
+			if($res["usr_id_seller"] != $seller[0]) {
+				Log::warn("cancel($purchase_id) : No right to cancel this");
 				return array("error"=>400, "error_msg"=>"Tu ne peux pas annuler la vente d'un autre vendeur.");
-			if($res["pur_removed"] == 1)
+			}
+			if($res["pur_removed"] == 1) {
+				Log::warn("cancel($purchase_id) : Already cancelled");
 				return array("error"=>400, "error_msg"=>"Cette vente à déjà été annulé...");
+			}
 			// TODO CHECK TIME
 			Db_buckutt::getInstance()->query("UPDATE t_purchase_pur SET pur_removed='1' WHERE pur_id='%u';", Array($purchase_id));
 			Db_buckutt::getInstance()->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id='%u';", Array($res["pur_price"], $res["usr_id_buyer"]));
 			Db_buckutt::getInstance()->query("UPDATE t_object_obj SET obj_stock = (obj_stock + 1) WHERE obj_id='%u';", Array($res["obj_id"]));
 
 		} else {
+			Log::warn("cancel($purchase_id) : No Seller loaded");
 			return array("error"=>400, "error_msg"=>"Il n'y a pas de seller chargé.");
 		}
 	}
@@ -283,6 +302,7 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 					$user = $ginger->getCard($badge_id);
 				}
 				catch (\Exception $ex) {
+					Log::warn("transaction($badge_id, $obj_ids) : Can't find card");
 					return array("error"=>$ex->getCode(), "error_msg"=>"Badge introuvable");
 				}
 				if($user->login) {
@@ -292,21 +312,26 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 						// UPDATE BADGE_ID
 						Db_buckutt::getInstance()->query("UPDATE tj_usr_mol_jum SET jum_data = '%s' WHERE usr_id='%u' AND mol_id='%u'", array($badge_id, $buyer->getId(), MEAN_OF_LOGIN_BADGE));
 					} else {
+						Log::warn("transaction($badge_id, $obj_ids) : Ginger knows this card but Payutc does not");
 						return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu...");
 					}
 				} else {
+					Log::warn("transaction($badge_id, $obj_ids) : Unknown card");
 					return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu..."); 
 				}
 			}
 		
-			if($state == 403)
+			if($state == 403) {
+				Log::warn("transaction($badge_id, $obj_ids) : Blocked card");
 				return array("error"=>403, "error_msg"=>"Ce badge à été bloqué. Il faut que l'utilisateur aille le débloquer sur internet.");
+			}
 			
 			// vérifier que l'utilisateur n'est pas bloqué sur cette fondation
 			try {
 				$buyer->checkNotBlockedFun($this->Fun_id);
 			}
 			catch (UserIsBlockedException $e) {
+				Log::warn("transaction($badge_id, $obj_ids) : Blocked user ({$e->getMessage()})");
 				return array("error"=>402, "error_msg"=> $e->getMessage());
 			}
 
@@ -343,6 +368,7 @@ AND o.fun_id = '%u' AND (";
 	        	{
 	        		$total += $articles[$obj_id]['pri_credit'];
 	        	} else {
+					Log::warn("transaction($badge_id, $obj_ids) : $obj_id is unavailable");
 	        		return array("error"=>400, "error_msg"=>"L'article $obj_id n'est pas disponible à la vente.");
 	        	}
 	        }
@@ -350,12 +376,17 @@ AND o.fun_id = '%u' AND (";
 	        // Si alcool, vérifier que le buyer est majeur
 	        if($alcool) 
 	        {
-	        	if($buyer->isAdult() == 0) { return array("error"=>400, "error_msg"=>":".$buyer->isAdult().":L'utilisateur est mineur il ne peut pas acheter d'alcool !", "usr_info"=>array("firstname"=>$buyer->getFirstname(), "lastname"=>$buyer->getLastname(), "solde"=>$buyer->getCredit())); }
+	        	if($buyer->isAdult() == 0) {
+					Log::warn("transaction($badge_id, $obj_ids) : Under-18 users can't buy alcohol");
+					return array("error"=>400, "error_msg"=>":".$buyer->isAdult().":L'utilisateur est mineur il ne peut pas acheter d'alcool !", "usr_info"=>array("firstname"=>$buyer->getFirstname(), "lastname"=>$buyer->getLastname(), "solde"=>$buyer->getCredit()));
+				}
 	        }
 
 			// Verifier que le buyer a assez d'argent
-	        if($buyer->getCredit() < $total)
+	        if($buyer->getCredit() < $total) {
+				Log::warn("transaction($badge_id, $obj_ids) : Buyer have not enough money");
 	        	return array("error"=>400, "error_msg"=>"L'utilisateur n'a pas assez d'argent pour effectuer la transaction.", "usr_info"=>array("firstname"=>$buyer->getFirstname(), "lastname"=>$buyer->getLastname(), "solde"=>$buyer->getCredit()));
+			}
 
 			// Effectuer les achats
 	        Db_buckutt::getInstance()->query("UPDATE ts_user_usr SET usr_credit = (usr_credit - '%u') WHERE usr_id='%u';", Array($total, $buyer->getId())); // TODO AJOUTER LA METHODE DANS LA CLASSE USER.
@@ -379,8 +410,10 @@ AND o.fun_id = '%u' AND (";
 
 
 		}
-		else 
+		else {
+			Log::warn("transaction($badge_id, $obj_ids) : No Seller loaded");
 			return array("error"=>400, "error_msg"=>"Il n'y a pas de seller chargé.");
+		}
 	}
 	
 	/**
@@ -397,6 +430,7 @@ AND o.fun_id = '%u' AND (";
 
         // Vérifie que l'image existe bien
         if($image->getState() != 1) {
+			Log::warn("getImage64($img_id, $outw, $outh) : No image found");
             return array("error"=>400, "error_msg"=>"Image non trouvée.");
         }
 		
@@ -424,8 +458,10 @@ AND o.fun_id = '%u' AND (";
 		// Retour s'il y a une image correcte
 		if($output != false)
 			return array("success"=> $output);
-		else
+		else {
+			Log::warn("getImage64($img_id, $outw, $outh) : No image found");
 			return array("error"=>400, "error_msg"=>"Image non trouvée.");
+		}
 	}
 }
 

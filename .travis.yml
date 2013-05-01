@@ -8,6 +8,8 @@ before_script:
   - curl -s https://getcomposer.org/installer | php
   - php composer.phar install --dev
   - cp config.inc.dist.php config.inc.php
+  - mkdir logs
+  - chmod 777 logs
   - cd tests/
 script: ./phpunit --coverage-text .
 
