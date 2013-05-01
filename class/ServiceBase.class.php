@@ -64,14 +64,14 @@ class ServiceBase {
     /**
     * Retourne l'utilisateur actuellement connecté (ou null sinon)
     */
-    public function user() {
+    protected function user() {
         return $_SESSION['ServiceBase']['user'];
     }
 
     /**
     * Retourne l'application actuellement connecté (ou null sinon)
     */
-    public function application() {
+    protected function application() {
         return $_SESSION['ServiceBase']['application'];
     }
 
