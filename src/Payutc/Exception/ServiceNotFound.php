@@ -2,4 +2,4 @@
 
 namespace Payutc\Exception;
 
-class ServiceNotFound extends \Exception {}
+class ServiceNotFound extends PayutcException {}
