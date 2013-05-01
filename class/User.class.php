@@ -684,8 +684,8 @@ class User {
 	*/
     private function initGinger(){
         if(empty($this->gingerUser)){
-			$ginger_key = Config::get('ginger_key');
-			$ginger_url = Config::get('ginger_url');
+            $ginger_key = Config::get('ginger_key');
+            $ginger_url = Config::get('ginger_url');
             if(!empty($ginger_key)){
                 // Initialiser ginger, éventuellement avec une URL perso
                 if(!empty($ginger_url)){
