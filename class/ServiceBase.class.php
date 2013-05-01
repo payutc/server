@@ -20,6 +20,9 @@
 */
 
 use \Payutc\Mapping\Services;
+use \Payutc\Exception\LoginError;
+use \Payutc\Exception\UserNotFound;
+use \Payutc\Exception\UserError;
 
 /**
 * ServiceBase.class
@@ -52,23 +55,22 @@ class ServiceBase {
 	 * @return array $state
 	 */
     public function loginCas($ticket, $service) {
-		$login = Cas::authenticate($ticket, $service);
-        if ($login < 0) {
-   			return array("error"=> array( "message"=>"Erreur de login cas", "code" => -1));
+        $login = Cas::authenticate($ticket, $service);
+        if ($login === -1) {
+            throw new LoginError("Erreur de login cas", -1);
         }
-		$this->user = new User($login, 1, "", 0, 1, 0);
+        $this->user = new User($login, 1, "", 0, 1, 0);
 
-		$r = $this->user->getState();
-		if($r == 405){
-			$this->loginToRegister = $login;
-			return array("error"=> array( "message"=>"Le user n'existe pas ici.", "code" => $r));
-		}
-		elseif($r != 1) {
-			return array("error"=> array( "message"=>"Le user n'a pas pu être chargé.", "code" => $r));
-		}
-		else {
-			return array("success"=>"ok");
-		}
+        $r = $this->user->getState();
+        if($r == 405){
+            $this->loginToRegister = $login;
+            throw new UserNotFound("Le user n'existe pas ici", $r);
+        }
+        else if($r != 1) {
+            throw new UserError("Le user n'a pas pu être chargé.", $r);
+        }
+
+        return true;
     }
 
 	/**
