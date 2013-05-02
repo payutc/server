@@ -3,7 +3,8 @@
 		"slim/slim": "2.*",
 		"slim/extras": "*",
 		"ginger/client": "2.*",
-		"zendframework/zendframework": "2.*"
+		"zendframework/zendframework": "2.*",
+        "doctrine/dbal": "2.*"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "*",
