@@ -26,10 +26,6 @@ class Blocked {
      * sinon return false
      */
 	public static function userIsBlocked($usr_id, $fun_id=NULL) {
-        $db = Db_buckutt::getInstance();
-        $param = array();
-        $param[] = $usr_id;
-        
         $qb = DB::createQueryBuilder();
         
         $qb->select('blo.blo_id', 'blo.blo_raison', 'blo.blo_insert', 'blo.blo_removed', 'blo.fun_id')
