@@ -35,6 +35,7 @@ use \Payutc\Exception\MessageUpdateFailedException;
 use \Payutc\Bom\Blocked;
 use \Payutc\Config;
 use \Payutc\Bom\MsgPerso;
+use \Payutc\Db;
 
 /**
  * classe user
@@ -290,8 +291,17 @@ class User {
 	* @return int $state
 	*/
 	public function setIdPhoto($img_id) {
-		$this->db->query("UPDATE ts_user_usr SET img_id = '%u' WHERE usr_id ='%u'", array($img_id, $this->idUser));
-		if ($this->db->affectedRows() == 1) {
+		$qb = DB::createQueryBuilder();
+		$qb->update('ts_user_usr', 'usr')
+			->set('img_id', ':img_id')
+			->where('usr_id = :usr_id')
+			->setParameters(array(
+				'img_id' => $img_id,
+				'usr_id' => $this->idUser
+			));
+		
+		$affectedRows = $qb->execute();
+		if ($affectedRows == 1) {
 			$this->idPhoto = $img_id;
 			return 1;
 		} else
@@ -319,8 +329,16 @@ class User {
 	* @return int $valid
 	*/
 	public function blockMe() {
-		$this->db->query("UPDATE ts_user_usr SET usr_fail_auth=0, usr_blocked='1' WHERE usr_id='%u'", array($this->idUser));
-		if ($this->db->affectedRows() == 1)
+		$qb = DB::createQueryBuilder();
+		$qb->update('ts_user_usr', 'usr')
+			->set('usr_fail_auth', $qb->expr()->literal(0))
+			->set('usr_blocked', $qb->expr()->literal(1))
+			->where('usr_id = :usr_id')
+			->setParameters(array(
+				'usr_id' => $this->idUser
+			));
+		$affectedRows = $qb->execute();
+		if ($affectedRows == 1)
 			return 1;
 		else
 			return 400;
