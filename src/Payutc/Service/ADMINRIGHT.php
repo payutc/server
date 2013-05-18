@@ -67,6 +67,12 @@ use \Application;
                         "desc"    => "Donne les droits à l'utilisateur ou à l'application de bloquer/débloquer un utilisateur",
                         "user"    => true,
                         "app"     => true
+                    ), array(
+                        "service" => "GESARTICLE",
+                        "name"    => "Gestion des articles",
+                        "desc"    => "Donne les droits de gérer les articles (stock, prix, images...)",
+                        "user"    => true,
+                        "app"     => true
                     )
                 );
     }
