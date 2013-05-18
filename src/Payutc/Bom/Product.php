@@ -147,7 +147,7 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
 	public static function edit($id, $nom, $parent, $prix, $stock, $alcool, $image, $fun_id) {
         $db = Db_buckutt::getInstance();
         // 1. GET THE ARTICLE
-        $res = $db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit, o.img_id
+        $res = $db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit, o.img_id, oli_id
         FROM t_object_obj o
         LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child
         LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.obj_type = 'product' AND o.obj_id = '%u' AND o.fun_id = '%u';", array($id, $fun_id));
@@ -157,6 +157,7 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
             $old_parent=$don['obj_id_parent'];
             $old_price=$don['pri_credit'];
             $old_img_id=$don['img_id'];
+            $oli_id=$don['oli_id'];
         } else {
             return array("error"=>400, "error_msg"=>"L'article à modifier n'existe pas ! (Ou vous n'en avez pas les droits)");
         }
@@ -183,10 +184,18 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
         }
 
         // 4. EDIT THE PARENT IF NECESSARY
-        if($old_parent != $parent)
-        {
-	        return array("error"=>400, "error_msg"=>"Le changement de parent n'est pas encore codé !");
-        }
+	    if($old_parent != $parent)
+	    {
+            if($old_parent != null and $parent != null) {
+	    	    $db->query("UPDATE tj_object_link_oli SET  `obj_id_parent` =  '%u' WHERE  `oli_id` = '%u';",array($parent, $oli_id));
+            } else if($old_parent == null and $parent != null) {
+                $db->query(
+                  "INSERT INTO tj_object_link_oli (`oli_id`, `obj_id_parent`, `obj_id_child`, `oli_step`, `oli_removed`) VALUES (NULL, '%u', '%u', '0', '0');",
+                  array($parent, $id));
+            } else {
+                $db->query("UPDATE tj_object_link_oli SET  `oli_removed` =  '1' WHERE  `oli_id` = '%u';",array($oli_id));
+            }
+		}
 
         // 5. EDIT THE PRICE IF NECESSARY
         if($old_price != $prix)
