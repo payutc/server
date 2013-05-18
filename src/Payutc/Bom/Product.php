@@ -200,7 +200,9 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
         // 5. EDIT THE PRICE IF NECESSARY
         if($old_price != $prix)
         {
-	        return array("error"=>400, "error_msg"=>"Le changement de prix n'est pas encore codé ! $old_price => $prix");
+            $db->query(
+                  "UPDATE t_price_pri SET `pri_credit` = '%u' WHERE `obj_id` = '%u' and `pri_removed` = '0';",
+                  array($prix, $id));
         }
 
         // 6. EDIT THE ARTICLE NAME AND STOCK
