@@ -150,5 +150,16 @@ class Image
 	{
 		return array($this->id, $this->mime, $this->width, $this->length, base64_encode($this->content));
 	}
+
+    /**
+    * Supprime l'image
+    */
+    public static function remove($img_id)
+    {
+        // TODO Supprimer le contenu de l'image aussi ? (Enfin à discuter)
+        Db_buckutt::getInstance()->query("UPDATE ts_image_img SET img_removed = '1' WHERE img_id = '%u'", array($img_id));
+    }
+
+
 }
 ?>

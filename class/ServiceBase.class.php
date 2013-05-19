@@ -211,11 +211,21 @@ class ServiceBase {
                                                         $this->service_name);
         $fundations_for_app = ApplicationRight::getFundations($this->application()->getId(),
                                                               $this->service_name);
+
+        // Si on est admin, le premier item permet d'indiquer une fundation "fantome" qui representent toutes les autres.
+        if($this->isAdmin()) {
+            $fundations = array(array("fun_id" => null, "name" => "Toutes les fundations"));
+        } else {
+            $fundations = array();
+        }
+
         // On fait un ET logique entre les deux arrays
-        $fundations = array();
-        foreach($fundations_for_user as $fun_id => $fundation)
-            if(array_key_exists($fun_id, $fundations_for_app))
-                $fundations[$fun_id] = $fundation;
+        foreach($fundations_for_user as $fun_id => $fundation) {
+            if(array_key_exists($fun_id, $fundations_for_app)) {
+                $fundations[] = array("fun_id" => $fun_id, "name" => $fundation);
+            }
+        }
+
         return $fundations;
     }
 
@@ -296,6 +306,69 @@ class ServiceBase {
         $this->service_name = end(explode("\\", get_class($this)));
         return $result;
     }
+
+	/**
+	 * Récupérer les infos sur une image.
+	 * 
+	 * @param int $img_id
+	 * @param int $outw Largeur de l'image
+	 * @param int $outh Hauteur de l'image
+	 * @return array $csv
+	 */
+	public function getImage64($img_id, $outw = 0, $outh = 0) {
+        // A partir du moment ou l'on a les droits sur le service courant on peut récupérer les images        
+        $this->checkRight();
+
+		// Récupération de l'objet image
+		$image = new \Image($img_id);
+
+        // Vérifie que l'image existe bien
+        if($image->getState() != 1) {
+			Log::warn("getImage64($img_id, $outw, $outh) : No image found");
+            return array("error"=>400, "error_msg"=>"Image non trouvée.");
+        }
+		
+		// Création de l'image GD originale
+		$oldgd = imagecreatefromstring($image->getContent());
+		
+        $width_orig = imagesx($oldgd);
+        $height_orig = imagesy($oldgd);
+
+		// Handle no resize
+		if($outw == 0)
+			$outw = $width_orig;
+		if($outh == 0)
+			$outh = $height_orig;
+
+        $ratio_orig = $width_orig/$height_orig;
+
+        if ($outw/$outh > $ratio_orig) {
+           $outw = $outh*$ratio_orig;
+        } else {
+           $outh = $outw/$ratio_orig;
+        }
+		
+		// Création de l'image GD à sortir
+		$newgd = imagecreatetruecolor($outw, $outh);
+		
+		// Redimensionnement
+		imagecopyresampled($newgd, $oldgd, 0, 0, 0, 0, $outw, $outh, $width_orig, $height_orig);
+		
+		// Récupération et encodage en base64
+		ob_start();
+		imagepng($newgd);
+		$output = base64_encode(ob_get_contents());
+		ob_end_clean();
+		
+		// Retour s'il y a une image correcte
+		if($output != false)
+			return array("success"=> $output);
+		else {
+			Log::warn("getImage64($img_id, $outw, $outh) : No image found");
+			return array("error"=>400, "error_msg"=>"Image non trouvée.");
+		}
+	}
+
 }
 
 
