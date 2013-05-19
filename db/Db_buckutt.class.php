@@ -3,6 +3,11 @@
 		Définition d'une interface générique vers les bases de données
 	**********************************************************************/
 
+
+
+use \Payutc\Config;
+
+
 /**
 	* Db_gnung 
 	* Couche d'abstraction vers les bases de données
@@ -13,7 +18,6 @@
 	* @author Sid ( CHATEAU Mathieu ) 
 	* @license PHP Version 5.0 {@link http://www.php.net/license/5_0.txt}
 	*/
-
 
 class Db_buckutt {
 	public $dbType;
@@ -47,11 +51,10 @@ class Db_buckutt {
      */
     public static function getInstance()
     {
-		global $_CONFIG;
         if (! isset (self::$instance))
         {
             self::$instance = new Db_buckutt('Mysql');
-            self::$instance->connect($_CONFIG['sql_host'], $_CONFIG['sql_db'], $_CONFIG['sql_user'], $_CONFIG['sql_pass']);
+            self::$instance->connect(Config::get('sql_host'), Config::get('sql_db'), Config::get('sql_user'), Config::get('sql_pass'));
         }
         return self::$instance;
     }

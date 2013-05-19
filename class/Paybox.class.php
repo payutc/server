@@ -20,6 +20,7 @@
 */
 
 use \Payutc\Log;
+use \Payutc\Config;
 
 class Paybox {
 
@@ -40,8 +41,6 @@ class Paybox {
      * @return string 
      */
     public function execute($amount, $callback_url, $mobile=0) {
-      global $_CONFIG;
-
       $pay_id = $this->db->insertId(
               $this->db->query(
                   "INSERT INTO  `t_paybox_pay` (
@@ -65,9 +64,9 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
 			// MODE D'UTILISATION DE PAYBOX
 			$PBX .= "PBX_MODE=4";
 			// IDENTIFICATION (ICI MODE DEVELLOPEUR)
-			$PBX .= " PBX_SITE=".$_CONFIG['PBX_SITE'];
-      $PBX .= " PBX_RANG=".$_CONFIG['PBX_RANG'];
-      $PBX .= " PBX_IDENTIFIANT=".$_CONFIG['PBX_IDENTIFIANT'];
+			$PBX .= " PBX_SITE=".Config::get('PBX_SITE');
+      $PBX .= " PBX_RANG=".Config::get('PBX_RANG');
+      $PBX .= " PBX_IDENTIFIANT=".Config::get('PBX_IDENTIFIANT');
       //gestion de la page de connection : paramétrage "invisible"
       $PBX .= " PBX_WAIT=0";
       $PBX .= " PBX_TXT=";
@@ -80,7 +79,7 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
       $PBX .= " PBX_PORTEUR=".$this->User->getMail(); // mail du client
       //informations nécessaires aux traitements (réponse)
       $PBX .= " PBX_RETOUR=auto:A\;amount:M\;ident:R\;trans:T\;erreur:E\;sign:K";
-      $PBX .= " PBX_REPONDRE_A=".$_CONFIG['http_server_url']."/payboxretour.php";
+      $PBX .= " PBX_REPONDRE_A=".Config::get('http_server_url')."/payboxretour.php";
       $PBX .= " PBX_EFFECTUE=$callback_url?paybox=effectue";
       $PBX .= " PBX_REFUSE=$callback_url?paybox=refuse";
       $PBX .= " PBX_ANNULE=$callback_url?paybox=annule";
@@ -91,9 +90,10 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
 			$PBX .= " PBX_BACKUP1=$pbx_url";
 			$PBX .= " PBX_BACKUP2=$pbx_url";
 			// PROXY
-      if(isset($_CONFIG['proxy']))
-			 $PBX .= " PBX_PROXY=".$_CONFIG['proxy'];;
-			return shell_exec($_CONFIG['PBX_EXE']." $PBX");
+      $proxy = Config::get('proxy');
+      if(!empty($proxy))
+			 $PBX .= " PBX_PROXY=".$proxy;
+			return shell_exec(Config::get('PBX_EXE')." $PBX");
 	  }
 
     /**
@@ -101,7 +101,6 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
      * @return
      */
     static public function PBXretour() {
-      global $_CONFIG;
       global $_SERVER;
       global $_GET;
 
@@ -109,7 +108,7 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
       $data = substr( $_SERVER["REQUEST_URI"], $pos+1 ); 
 
       // Verification de la signature (1 = BON)
-      $CheckSig = Paybox::PbxVerSign( $data, $_CONFIG['PBX_PUBPEM'] );
+      $CheckSig = Paybox::PbxVerSign( $data, Config::get('PBX_PUBPEM') );
 
       $amount = !empty($_GET['amount']) ? intval($_GET['amount']) : 0;
       $ref = base64_decode($_GET['ident']);
