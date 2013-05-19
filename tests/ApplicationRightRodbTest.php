@@ -2,7 +2,6 @@
 
 require_once 'bootstrap.php';
 
-use \Payutc\Bom\Blocked;
 
 class ApplicationRightRodbTest extends ReadOnlyDatabaseTest
 {
