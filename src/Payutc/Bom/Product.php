@@ -53,10 +53,10 @@ AND obj_type = 'product'
 $fun_req
 ORDER BY obj_name;";
 
-		$res = Db_buckutt::getInstance()->query($query, $param);
+        $res = Db_buckutt::getInstance()->query($query, $param);
 
         // Construction du resultat.
-		$products = array();
+        $products = array();
         while ($don = Db_buckutt::getInstance()->fetchArray($res)) {
             $products[] = static::fromDbArray($don);
         }
@@ -66,7 +66,7 @@ ORDER BY obj_name;";
 
     public static function getOne($obj_id, $fun_id=null) {
 
-		// OBTENIR QUE LES ARTICLES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
+        // OBTENIR QUE LES ARTICLES DES FONDATIONS SUR LES QUELS J'AI LES DROITS
         $res = Db_buckutt::getInstance()->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.obj_stock, o.obj_alcool, p.pri_credit, o.img_id
 FROM t_object_obj o
 LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child
@@ -78,27 +78,27 @@ AND o.obj_id = '%u'
 AND o.fun_id = '%u'
 ORDER BY obj_name;", array($obj_id, $fun_id));
         if (Db_buckutt::getInstance()->affectedRows() >= 1) {
-        	$don = Db_buckutt::getInstance()->fetchArray($res);
-	        return array("success" => static::fromDbArray($don));
-		} else {
-			return array("error"=>400, "error_msg"=>"Cet article ($obj_id, $fun_id) n'existe pas, ou vous n'avez pas les droits dessus.");
-		}
+            $don = Db_buckutt::getInstance()->fetchArray($res);
+            return array("success" => static::fromDbArray($don));
+        } else {
+            return array("error"=>400, "error_msg"=>"Cet article ($obj_id, $fun_id) n'existe pas, ou vous n'avez pas les droits dessus.");
+        }
     }
 
-	/**
-	* Ajoute un article
-	*
-	* @param string $nom
-	* @param int $stock
-	* @param int $parent
-	* @param int $prix
-	* @param int $image
-	* @return array $categorie
-	*/
-	public static function add($nom, $parent, $prix, $stock, $alcool, $image, $fun_id) {
+    /**
+    * Ajoute un article
+    *
+    * @param string $nom
+    * @param int $stock
+    * @param int $parent
+    * @param int $prix
+    * @param int $image
+    * @return array $categorie
+    */
+    public static function add($nom, $parent, $prix, $stock, $alcool, $image, $fun_id) {
         $db = Db_buckutt::getInstance();
-		// 1. Verification que le parent existe (et qu'il est bien dans la fundation indiqué (vu qu'on a vérifié les droits grâce à ça)
-		$res = $db->query("SELECT fun_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u' AND fun_id = '%u' LIMIT 0,1;", array($parent, $fun_id));
+        // 1. Verification que le parent existe (et qu'il est bien dans la fundation indiqué (vu qu'on a vérifié les droits grâce à ça)
+        $res = $db->query("SELECT fun_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u' AND fun_id = '%u' LIMIT 0,1;", array($parent, $fun_id));
         if ($db->affectedRows() >= 1) {
             $don = $db->fetchArray($res);
 
@@ -127,24 +127,24 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
             // ON RETOURNE L'ID D'ARTICLE
             return array("success"=>$article_id);
 
-		} else {
-			// LE PARENT N'EXISTE PAS
-			return array("error"=>"Le parent demandé ($parent, $fun_id) n'existe pas. (Ou tu n'as pas les droits nécessaires)");
-		}
-	}
+        } else {
+            // LE PARENT N'EXISTE PAS
+            return array("error"=>"Le parent demandé ($parent, $fun_id) n'existe pas. (Ou tu n'as pas les droits nécessaires)");
+        }
+    }
 
-	/**
-	* Edite un article
-	*
-	* @param int $id
-	* @param string $nom
-	* @param int $parent
-	* @param int $prix
-	* @param int $stock
-	* @param int $image 0 pour conserver la valeur actuelle, -1 pour la supprimer, id dans la table image sinon
-	* @return array $categorie
-	*/
-	public static function edit($id, $nom, $parent, $prix, $stock, $alcool, $image, $fun_id) {
+    /**
+    * Edite un article
+    *
+    * @param int $id
+    * @param string $nom
+    * @param int $parent
+    * @param int $prix
+    * @param int $stock
+    * @param int $image 0 pour conserver la valeur actuelle, -1 pour la supprimer, id dans la table image sinon
+    * @return array $categorie
+    */
+    public static function edit($id, $nom, $parent, $prix, $stock, $alcool, $image, $fun_id) {
         $db = Db_buckutt::getInstance();
         // 1. GET THE ARTICLE
         $res = $db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit, o.img_id, oli_id
@@ -171,23 +171,23 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
         // 3. CHECK SI LE CHANGEMENT DE PARENT EST REALISABLE
         if($old_parent != $parent)
         {
-	        $res = $db->query("SELECT fun_id FROM t_object_obj WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u';", array($parent));
-	        if ($db->affectedRows() >= 1) {
-		        $don = $db->fetchArray($res);
-            	$new_fundation=$don['fun_id'];
+            $res = $db->query("SELECT fun_id FROM t_object_obj WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u';", array($parent));
+            if ($db->affectedRows() >= 1) {
+                $don = $db->fetchArray($res);
+                $new_fundation=$don['fun_id'];
             } else {
-            	return array("error"=>400, "error_msg"=>"Le nouveau parent n'a pas été trouvé !");
+                return array("error"=>400, "error_msg"=>"Le nouveau parent n'a pas été trouvé !");
             }
             if($new_fundation != $fundation) {
-            	return array("error"=>400, "error_msg"=>"Impossible de mettre un article dans une autre fundation...");
+                return array("error"=>400, "error_msg"=>"Impossible de mettre un article dans une autre fundation...");
             }
         }
 
         // 4. EDIT THE PARENT IF NECESSARY
-	    if($old_parent != $parent)
-	    {
+        if($old_parent != $parent)
+        {
             if($old_parent != null and $parent != null) {
-	    	    $db->query("UPDATE tj_object_link_oli SET  `obj_id_parent` =  '%u' WHERE  `oli_id` = '%u';",array($parent, $oli_id));
+                $db->query("UPDATE tj_object_link_oli SET  `obj_id_parent` =  '%u' WHERE  `oli_id` = '%u';",array($parent, $oli_id));
             } else if($old_parent == null and $parent != null) {
                 $db->query(
                   "INSERT INTO tj_object_link_oli (`oli_id`, `obj_id_parent`, `obj_id_child`, `oli_step`, `oli_removed`) VALUES (NULL, '%u', '%u', '0', '0');",
@@ -195,7 +195,7 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
             } else {
                 $db->query("UPDATE tj_object_link_oli SET  `oli_removed` =  '1' WHERE  `oli_id` = '%u';",array($oli_id));
             }
-		}
+        }
 
         // 5. EDIT THE PRICE IF NECESSARY
         if($old_price != $prix)
@@ -214,15 +214,15 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
         $db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_stock` = '%d', `obj_alcool` = '%u', `img_id` = %s WHERE `obj_id` = '%u';",array($nom, $stock, $alcool, $image, $id));
 
         return array("success"=>$id);
-	}
+    }
 
-	/**
-	* Supprime un article
-	*
-	* @param int $id
-	* @return array $result
-	*/
-	public static function delete($id, $fun_id) {
+    /**
+    * Supprime un article
+    *
+    * @param int $id
+    * @return array $result
+    */
+    public static function delete($id, $fun_id) {
         $db = Db_buckutt::getInstance();
         // 1. GET THE ARTICLE
         $res = $db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
@@ -235,10 +235,10 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
             o.obj_id = '%u' AND
             o.fun_id = '%u';", array($id, $fun_id));
         if ($db->affectedRows() >= 1) {
-	        $don = $db->fetchArray($res);
-        	$fundation=$don['fun_id'];
+            $don = $db->fetchArray($res);
+            $fundation=$don['fun_id'];
         } else {
-        	return array("error"=>400, "error_msg"=>"L'article à supprimer n'existe pas ! (Ou vous n' avez pas les droits pour le supprimer).");
+            return array("error"=>400, "error_msg"=>"L'article à supprimer n'existe pas ! (Ou vous n' avez pas les droits pour le supprimer).");
         }
 
         // 2. REMOVE THE ARTICLE
@@ -248,7 +248,7 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
         // TODO !!
 
         return array("success"=>"ok");
-	}
+    }
 
 
 }
