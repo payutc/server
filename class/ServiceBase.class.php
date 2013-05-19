@@ -20,6 +20,9 @@
 */
 
 use \Payutc\Mapping\Services;
+use \Payutc\Exception\LoginError;
+use \Payutc\Exception\UserNotFound;
+use \Payutc\Exception\UserError;
 
 /**
 * ServiceBase.class
@@ -80,31 +83,30 @@ class ServiceBase {
 	 * 
 	 * @param String $ticket
 	 * @param String $service
-	 * @return array $state
+	 * @return bool $success
 	 */
     public function loginCas($ticket, $service) {
         // Unlog previous user if any
         $_SESSION['ServiceBase']['user'] = NULL;
 
-		$login = Cas::authenticate($ticket, $service);
-        if ($login < 0) {
-   			return array("error"=> array( "message"=>"Erreur de login cas", "code" => -1));
+        $login = Cas::authenticate($ticket, $service);
+        if ($login === -1) {
+            throw new LoginError("Erreur de login cas", -1);
         }
-		$user = new User($login, 1, "", 0, 1, 0);
+        $user = new User($login, 1, "", 0, 1, 0);
 
-		$r = $user->getState();
-		if($r == 405){
-			$this->loginToRegister = $login;
-			return array("error"=> array( "message"=>"Le user n'existe pas ici.", "code" => $r));
-		}
-		elseif($r != 1) {
-			return array("error"=> array( "message"=>"Le user n'a pas pu être chargé.", "code" => $r));
-		}
-		else {
-            // Save user in session for all service
-            $_SESSION['ServiceBase']['user'] = $user;
-			return array("success"=>"ok");
-		}
+        $r = $this->user->getState();
+        if($r == 405){
+            $this->loginToRegister = $login;
+            throw new UserNotFound("Le user n'existe pas ici", $r);
+        }
+        elseif($r != 1) {
+            throw new UserError("Le user n'a pas pu être chargé.", $r);
+        }
+
+        // Save user in session for all service
+        $_SESSION['ServiceBase']['user'] = $user;
+        return true;
     }
 
 	/**
