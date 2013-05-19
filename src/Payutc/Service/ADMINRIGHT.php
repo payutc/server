@@ -26,6 +26,7 @@ use \Application;
      * Comme on ne veut pas forcément lister tout les services possibles et que l'ont veut leur donner un petit nom sympa et une description
      * ils sont hardcodé
      *
+     * clef "service" => Nom des services (correspond au nom de classe du service et àa ce qu'on met dans la db)
      * clef "name" => Nom du droit
      * clef "desc" => Descriptions du droit
      * clef "user" => doit on pouvoir donner ce droit à un user
@@ -36,28 +37,44 @@ use \Application;
      */
     public function getServices() {
         return array(
-            "ADMINRIGHT"    => array("name" => "Administrateur de fondation", 
-                                     "desc" => "Permet la gestion des droits pour les utilisateurs de la fondations",
-                                     "user" => true,
-                                     "app"  => false),
-            "VENTEBADGE"    => array("name" => "Vente physique",
-                                     "desc" => "Permet la vente par badge",
-                                     "user" => true,
-                                     "app"  => true),
-            "VENTEWEB"      => array("name" => "Vente en ligne",
-                                     "desc" => "Permet la vente depuis une application",
-                                     "user" => false,
-                                     "app"  => true),
-            "ALL"           => array("name" => "Tout les droits",
-                                     "desc" => "Donne les droits à l'utilisateur ou à l'application sur tous les services",
-                                     "user" => true,
-                                     "app"  => true),
-            "BLOCKED"       => array("name" => "Blocage",
-                                     "desc" => "Donne les droits à l'utilisateur ou à l'application de bloquer/débloquer un utilisateur",
-                                     "user" => true,
-                                     "app"  => true)
-                                        
-        );
+                    array(
+                        "service" => "ADMINRIGHT",
+                        "name"    => "Administrateur de fondation", 
+                        "desc"    => "Permet la gestion des droits pour les utilisateurs de la fondations",
+                        "user"    => true,
+                        "app"     => false
+                    ), array(
+                        "service" => "VENTEBADGE",
+                        "name"    => "Vente physique",
+                        "desc"    => "Permet la vente par badge",
+                        "user"    => true,
+                        "app"     => true
+                    ), array(
+                        "service" => "VENTEWEB", 
+                        "name"    => "Vente en ligne",
+                        "desc"    => "Permet la vente depuis une application",
+                        "user"    => false,
+                        "app"     => true
+                    ), array(
+                        "service" => null,
+                        "name"    => "Tout les droits",
+                        "desc"    => "Donne les droits à l'utilisateur ou à l'application sur tous les services",
+                        "user"    => true,
+                        "app"     => true
+                    ), array(
+                        "service" => "BLOCKED",
+                        "name"    => "Blocage",
+                        "desc"    => "Donne les droits à l'utilisateur ou à l'application de bloquer/débloquer un utilisateur",
+                        "user"    => true,
+                        "app"     => true
+                    ), array(
+                        "service" => "GESARTICLE",
+                        "name"    => "Gestion des articles",
+                        "desc"    => "Donne les droits de gérer les articles (stock, prix, images...)",
+                        "user"    => true,
+                        "app"     => true
+                    )
+                );
     }
      
 	/**
@@ -68,10 +85,10 @@ use \Application;
 	* @param int $fun_id
 	* @return array $result
 	*/
-	public function setUserRight($usr_login, $service, $fun_id){
+	public function setUserRight($usr_id, $service, $fun_id){
         $this->checkRight(true, true, true, $fun_id);
         // L'utilisateur à les droits de donner ce droit :)
-        return UserRight::setRight($usr_login, $service, $fun_id);
+        return UserRight::setRight($usr_id, $service, $fun_id);
 	}
 
 	/**

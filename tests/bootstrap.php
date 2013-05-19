@@ -3,7 +3,7 @@
 
 require_once '../vendor/autoload.php';
 
-require_once 'config.inc.php';
+require_once './config.inc.php';
 
 use \Payutc\Config;
 
@@ -36,6 +36,7 @@ abstract class DatabaseTest extends \PHPUnit_Extensions_Database_TestCase
 		$_SERVER['REMOTE_ADDR'] = '127.0.0.1';
 		
 		Config::initFromArray($_CONFIG);
+		
 		
 		$this->pdo = new PDO('mysql:dbname='.Config::get('sql_db').';host='.Config::get('sql_host'),
 			Config::get('sql_user'),
