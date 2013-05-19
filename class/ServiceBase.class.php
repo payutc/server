@@ -95,7 +95,7 @@ class ServiceBase {
         }
         $user = new User($login, 1, "", 0, 1, 0);
 
-        $r = $this->user->getState();
+        $r = $user->getState();
         if($r == 405){
             $this->loginToRegister = $login;
             throw new UserNotFound("Le user n'existe pas ici", $r);
