@@ -2,4 +2,4 @@
 
 namespace Payutc\Exception;
 
-class ServiceMethodForbidden extends \Exception {}
+class ServiceMethodForbidden extends PayutcException {}

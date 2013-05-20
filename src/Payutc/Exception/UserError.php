@@ -1,3 +1,3 @@
 <?php namespace Payutc\Exception;
 
-class UserError extends \Exception {};
+class UserError extends PayutcException {};
