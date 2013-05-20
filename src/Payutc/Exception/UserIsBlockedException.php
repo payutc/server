@@ -2,4 +2,4 @@
 
 namespace Payutc\Exception;
 
-class UserIsBlockedException extends \Exception {}
+class UserIsBlockedException extends PayutcException {}

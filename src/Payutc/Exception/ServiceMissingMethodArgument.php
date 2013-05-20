@@ -2,4 +2,4 @@
 
 namespace Payutc\Exception;
 
-class ServiceMissingMethodArgument extends \Exception {}
+class ServiceMissingMethodArgument extends PayutcException {}

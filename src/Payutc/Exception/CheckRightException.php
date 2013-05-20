@@ -2,4 +2,4 @@
 
 namespace Payutc\Exception;
 
-class CheckRightException extends \Exception {}
+class CheckRightException extends PayutcException {}
