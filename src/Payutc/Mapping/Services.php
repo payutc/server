@@ -11,7 +11,8 @@ class Services {
         'STATS',
         'KEY',
         'ADMINRIGHT',
-        'BLOCKED'
+        'BLOCKED',
+        'GESARTICLE'
     );
     
     public static function get($name) {

@@ -4,6 +4,7 @@ require_once 'bootstrap.php';
 
 
 use \Payutc\Service\POSS2WithExceptions;
+use \Payutc\Config;
 
 class POSS2WithExceptionsTest extends ReadOnlyDatabaseTest
 {
@@ -35,9 +36,8 @@ class POSS2WithExceptionsTest extends ReadOnlyDatabaseTest
 	
 	public function testGetCasUrl()
 	{
-		global $_CONFIG;
 		$url = $this->POSS->getCasUrl();
-		$this->assertEquals($_CONFIG['cas_url'], $url);
+		$this->assertEquals(Config::get('cas_url'), $url);
 	}
 	
 	/**

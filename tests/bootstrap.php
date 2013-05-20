@@ -2,7 +2,10 @@
 
 
 require_once '../vendor/autoload.php';
-require_once '../config.inc.php';
+
+require_once './config.inc.php';
+
+use \Payutc\Config;
 
 class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
 {
@@ -31,15 +34,13 @@ abstract class DatabaseTest extends \PHPUnit_Extensions_Database_TestCase
 		global $_CONFIG;
 		global $_SERVER;
 		$_SERVER['REMOTE_ADDR'] = '127.0.0.1';
-				
-		$_CONFIG['sql_host'] = $_CONFIG['sql_host_test'];
-		$_CONFIG['sql_db'] = $_CONFIG['sql_db_test'];
-		$_CONFIG['sql_user'] = $_CONFIG['sql_user_test'];
-		$_CONFIG['sql_pass'] = $_CONFIG['sql_pass_test'];
 		
-		$this->pdo = new PDO('mysql:dbname='.$_CONFIG['sql_db'].';host='.$_CONFIG['sql_host'],
-			$_CONFIG['sql_user'],
-			$_CONFIG['sql_pass']
+		Config::initFromArray($_CONFIG);
+		
+		
+		$this->pdo = new PDO('mysql:dbname='.Config::get('sql_db').';host='.Config::get('sql_host'),
+			Config::get('sql_user'),
+			Config::get('sql_pass')
 		);
     }
     

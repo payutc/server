@@ -112,6 +112,8 @@ WHERE blo.usr_id = usr.usr_id ";
         if($fun_id != NULL) {
             $req .= " AND blo.fun_id = '%u' ";
             $param[] = $fun_id;
+        } else {
+            $req .= " AND blo.fun_id IS NULL ";
         }
         if($usr_id != NULL) {
             $req .= " AND blo.usr_id = '%u' ";
