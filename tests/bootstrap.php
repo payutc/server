@@ -80,11 +80,12 @@ abstract class DatabaseTest extends \PHPUnit_Extensions_Database_TestCase
 
 abstract class ReadOnlyDatabaseTest extends DatabaseTest
 {
-	protected $alreadyInserted = false;
+	protected static $alreadyInserted = null;
 	
 	protected function getSetUpOperation()
 	{
-		if (!$this->alreadyInserted) {
+		if (static::$alreadyInserted !== get_class($this)) {
+            static::$alreadyInserted = get_class($this);
 			return parent::getSetUpOperation();
 		}
 		return new PHPUnit_Extensions_Database_Operation_Null();
