@@ -36,7 +36,8 @@ class Blocked {
                 $qb->expr()->isNull('blo.blo_removed')
             ))
             ->andWhere('blo.blo_insert < NOW()')
-            ->setParameter('usr_id', $usr_id);
+            ->setParameter('usr_id', $usr_id)
+            ->setMaxResults(1);
         
         if($fun_id != NULL) {
             $qb->andWhere($qb->expr()->orX(
