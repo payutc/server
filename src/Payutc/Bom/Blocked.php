@@ -26,7 +26,7 @@ class Blocked {
      * sinon return false
      */
 	public static function userIsBlocked($usr_id, $fun_id=NULL) {
-        $qb = DB::createQueryBuilder();
+        $qb = Db::createQueryBuilder();
         
         $qb->select('blo.blo_id', 'blo.blo_raison', 'blo.blo_insert', 'blo.blo_removed', 'blo.fun_id')
             ->from('tj_usr_fun_blocked_blo', 'blo')
