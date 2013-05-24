@@ -10,6 +10,7 @@
 namespace Payutc\Bom;
 use \Payutc\Exception\UserIsBlockedException;
 use \Db_buckutt;
+use \Payutc\Db;
 
 class Blocked {
     protected $db;
@@ -25,35 +26,29 @@ class Blocked {
      * sinon return false
      */
 	public static function userIsBlocked($usr_id, $fun_id=NULL) {
-        $db = Db_buckutt::getInstance();
-        $param = array();
-        $param[] = $usr_id;
-        $req = "SELECT blo.blo_id, blo.blo_raison, blo.blo_insert, blo.blo_removed, blo.fun_id 
-                FROM tj_usr_fun_blocked_blo blo
-                WHERE blo.usr_id = '%u' ";
+        $qb = Db::createQueryBuilder();
+        
+        $qb->select('blo.blo_id', 'blo.blo_raison', 'blo.blo_insert', 'blo.blo_removed', 'blo.fun_id')
+            ->from('tj_usr_fun_blocked_blo', 'blo')
+            ->where('blo.usr_id = :usr_id')
+            ->andWhere($qb->expr()->orX(
+                $qb->expr()->gt('blo.blo_removed', 'NOW()'),
+                $qb->expr()->isNull('blo.blo_removed')
+            ))
+            ->andWhere('blo.blo_insert < NOW()')
+            ->setParameter('usr_id', $usr_id)
+            ->setMaxResults(1);
+        
         if($fun_id != NULL) {
-            $req .= " 
-                AND (blo.fun_id = '%u' OR blo.fun_id IS NULL) ";
-            $param[] .= $fun_id;
+            $qb->andWhere($qb->expr()->orX(
+                    $qb->expr()->eq('blo.fun_id', ':fun_id'),
+                    $qb->expr()->isNull('blo.fun_id')
+                ))
+                ->setParameter('fun_id', $fun_id);
         }
-        $req .= "
-                AND (blo.blo_removed IS NULL OR blo.blo_removed > NOW() )
-                AND (blo.blo_insert < NOW())
-                LIMIT 0,1";
-        $res = $db->query($req, $param);
-		if ($db->affectedRows() == 1) {
-            $arr = $db->fetchArray($res);
-            // On ne retourne pas directement $arr pour éviter de transférer les données en double (il y'a l'index numérique et l'index textuel)
-            $result = array();
-            $result["blo_id"] = $arr["blo_id"];
-            $result["blo_raison"] = $arr["blo_raison"];
-            $result["blo_insert"] = $arr["blo_insert"];
-            $result["blo_removed"] = $arr["blo_removed"];
-            $result["fun_id"] = $arr["fun_id"];
-            return $result;
-	    } else {
-            return false;
-        }
+        
+        $result = $qb->execute()->fetch();
+		return $result;
     }
 
     /**
