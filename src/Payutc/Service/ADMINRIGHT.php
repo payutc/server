@@ -73,6 +73,12 @@ use \Application;
                         "desc"    => "Donne les droits de gérer les articles (stock, prix, images...)",
                         "user"    => true,
                         "app"     => true
+                    ), array(
+                        "service" => "STATS",
+                        "name"    => "Statistiques",
+                        "desc"    => "Permet de récupérer différentes informations statistiques sur la fundation.",
+                        "user"    => true,
+                        "app"     => true
                     )
                 );
     }
