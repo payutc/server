@@ -33,12 +33,12 @@ use \ApplicationList;
             "app_key" => null,
             "app_name" => $app_name,
             "app_desc" => $app_desc,
-            "app_creator" => $this->user->getNickname(),
+            "app_creator" => $this->user()->getNickname(),
             "app_lastuse" => null,
             "app_created" => null
         ));
         $application->insert();
-		return $application->toArray();
+		return $application->toArray(1);
 	}
 	
 	/**
@@ -50,7 +50,7 @@ use \ApplicationList;
         // On a besoin d'avoir un user logged
         $this->checkRight(true, false);
         $application_list = new ApplicationList();
-        $application_list->from_login($this->user->getNickname());
+        $application_list->from_login($this->user()->getNickname());
         // On retourne la liste d'applications (mais sans la clef, car on ne ne veut pas qu'un service "malintentioné" puisse récupérer les clefs d'un user).
 		return $application_list->to_array(0);
 	 }

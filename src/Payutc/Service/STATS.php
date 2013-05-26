@@ -17,7 +17,7 @@ class STATS extends \ServiceBase {
      * Retourne le nombre de vente d'un objet (ou dans une catégorie donné)
      * 
      */
-    public static function getNbSell($obj_id, $fun_id, $start=null, $end=null, $tick=null) 
+    public function getNbSell($obj_id, $fun_id, $start=null, $end=null, $tick=null) {
         // Il suffit de vérifier que l'application à les droits sur la fundation donné
         $this->checkRight(false, true, true, $fun_id);
         return \Payutc\Bom\Purchase::getNbSell($obj_id, $fun_id, $start, $end, $tick);
