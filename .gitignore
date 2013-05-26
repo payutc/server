@@ -4,3 +4,4 @@
 /composer.phar
 *~
 /logs/
+/tests/config.inc.php
