@@ -24,11 +24,8 @@ class Purchase
      */
 	public static function getNbSell($obj_id, $fun_id, $start=null, $end=null, $tick=null) 
     {
-        if($tick!=null) {
-            throw new NotImplemented("tick are not implemented in getNbSell()");
-        }
         $qb = Db::createQueryBuilder();
-        $qb->select('count(*)')
+        $qb->select('count(*) as nb', 'pur.pur_date')
            ->from('t_purchase_pur', 'pur')
            ->where('pur.obj_id = :obj_id')->setParameter('obj_id', $obj_id)
            ->andWhere('pur.fun_id = :fun_id')->setParameter('fun_id', $fun_id)
@@ -42,9 +39,18 @@ class Purchase
         if($end != null) {
             $qb->andWhere('pur.pur_date <= :end')
                ->setParameter('end', $end);
-        }       
+        }
 
-        $result = $qb->execute()->fetch();
-		return $result['count(*)'];
+        if($tick != null) {
+            $qb->groupBy('UNIX_TIMESTAMP( pur.pur_date ) DIV :tick')
+               ->setParameter('tick', $tick);
+            $result = array();
+            $a = $qb->execute();
+            while($r = $a->fetch(3)) { $result[] = $r; }
+		    return $result;
+        } else {
+            $result = $qb->execute()->fetch();
+		    return $result['nb'];
+        }
     }
 }
