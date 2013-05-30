@@ -45,6 +45,10 @@ class PurchaseRodbTest extends ReadOnlyDatabaseTest
         // Un test avec seulement une date de fin (risque de n'être jamais utilisé, mais bon on test)
         $r = Purchase::getNbSell(4, 1, null, "2013-04-07 22:30:00");
         $this->assertEquals(3,$r); 
+
+        // Un test avec les ticks (tick de 2h)
+        $r = Purchase::getNbSell(4, 1, null, null, 7200);
+        $this->assertEquals(5,count($r));
     }
 }
 
