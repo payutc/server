@@ -85,7 +85,11 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
       $PBX .= " PBX_ANNULE=$callback_url?paybox=annule";
       $PBX .= " PBX_ERREUR=$callback_url?paybox=erreur";
       // Url du serveur paybox si différente de celle par défaut (pour mode dev ou pour mobile)
-      if($mobile==1) { $pbx_url="https://tpeweb.paybox.com/cgi/ChoixPaiementMobile.cgi"; } else { $pbx_url="https://preprod-tpeweb.paybox.com/cgi/MYchoix_pagepaiement.cgi"; }
+      if($mobile==1) { 
+        $pbx_url = "https://tpeweb.paybox.com/cgi/ChoixPaiementMobile.cgi"; 
+      } else { 
+        $pbx_url = Config::get('PBX_URL');
+      }
       $PBX .= " PBX_PAYBOX=$pbx_url";
 			$PBX .= " PBX_BACKUP1=$pbx_url";
 			$PBX .= " PBX_BACKUP2=$pbx_url";
