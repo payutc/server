@@ -46,7 +46,9 @@ class ServiceBase {
         // devrait bientôt disparaitre.
         $this->db = Db_buckutt::getInstance();
 
-        $this->service_name = end(explode("\\", get_class($this)));
+        $classdesc = explode("\\", get_class($this));
+        $this->service_name = end($classdesc);
+        
         if(!array_key_exists('ServiceBase', $_SESSION)) {
             $_SESSION['ServiceBase'] = array(
                 "user" => null,
@@ -303,7 +305,8 @@ class ServiceBase {
             catch(\Payutc\Exception\CheckRightException $e) { /* no right for this service */ }
         }
         // put back the correct $this->service_name
-        $this->service_name = end(explode("\\", get_class($this)));
+        $classdesc = explode("\\", get_class($this));
+        $this->service_name = end($classdesc);
         return $result;
     }
 
