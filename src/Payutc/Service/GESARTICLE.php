@@ -44,7 +44,8 @@ class GESARTICLE extends \ServiceBase {
     * @param fun_id pour checker les droits, on doit donner la fun_id en plus de la categorie id
     */
     public function getCategory($obj_id, $fun_id = null) {
-        return getProduct($obj_id, $fun_id);
+        $this->checkRight(true, true, true, $fun_id);
+        return \Payutc\Bom\Category::getOne($obj_id, $fun_id);
     }
 
     /**
@@ -102,7 +103,7 @@ class GESARTICLE extends \ServiceBase {
     */
     public function getProduct($obj_id, $fun_id = null) {
         $this->checkRight(true, true, true, $fun_id);
-        $p = \Payutc\Bom\Category::getOne($obj_id, $fun_id);
+        $p = \Payutc\Bom\Product::getOne($obj_id, $fun_id);
         if ($p === null) {
             return array("error"=>400, "error_msg"=>"Cet article ($obj_id, $fun_id) n'existe pas, ou vous n'avez pas les droits dessus.");
         }
