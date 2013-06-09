@@ -57,7 +57,7 @@ $_CONFIG['PBX_EXE'] = "/usr/share/buckutt/modulev3.cgi";
 // CLEF PUBLIQUE PAYBOX
 $_CONFIG['PBX_PUBPEM'] = "somewhere/pubkey.pem";
 $_CONFIG['PBX_URL'] = "https://tpeweb.paybox.com/cgi/MYchoix_pagepaiement.cgi";
-
+$_CONFIG['PBX_MOBILE_URL'] = "https://tpeweb.paybox.com/cgi/ChoixPaiementMobile.cgi";
 
 // Configuration de ginger (outil cotisant)
 // Laisser la clé vide pour désactiver les appels à ginger
