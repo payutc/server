@@ -265,7 +265,7 @@ class User {
     * @param  int $funId
     * @return String $msgPerso
     */
-	public function getMsgPerso($funId) {
+	public function getMsgPerso($funId=NULL) {
         return MsgPerso::getMsgPerso($this->idUser, $funId);
     }
     
