@@ -8,6 +8,7 @@
 
 namespace Payutc\Bom;
 use \Db_buckutt;
+use \Payutc\Db;
 
 class Product {
 
@@ -29,37 +30,48 @@ class Product {
 
     /*
      * Retourne tous les produits
+     * $params['fun_ids']
+     * $params['obj_ids']
      */
-    public static function getAll($fun_ids=null) {
-        if(is_array($fun_ids)) {
-            $fun_req = "AND o.fun_id IN (";
-            foreach($fun_ids as $fun_id) {
-                $fun_req .= "'%u', ";
-            }
-            $fun_req = substr($fun_req, 0, -2) . ")";
-            $param = $fun_ids;
-        } else {
-            $fun_req = "";
-            $param = array();
+    public static function getAll($params = array()) {
+        $default = array(
+            'fun_ids' => null,
+            'itm_ids' => null,
+        );
+        $params = array_merge($default, $params);
+        $fun_ids = $params['fun_ids'];
+        $obj_ids = $params['itm_ids'];
+        
+        $qb = Db::createQueryBuilder();
+        $qb->select('itm.obj_id', 'itm.obj_name', 'oli.obj_id_parent', 
+                    'itm.fun_id', 'itm.obj_stock', 'itm.obj_alcool', 
+                    'pri.pri_credit', 'itm.img_id')
+            ->from('t_object_obj', 'itm')
+            ->leftjoin('itm', 't_price_pri', 'pri', 'pri.obj_id = itm.obj_id')
+            ->leftjoin('itm', 'tj_object_link_oli', 'oli', 'oli.obj_id_child = itm.obj_id')
+            ->where('itm.obj_type = :obj_type')
+            ->andWhere('itm.obj_removed = :removed')
+            ->setParameters(array(
+                'removed' => 0,
+                'obj_type' => 'product'
+            ));
+        
+        if ($fun_ids !== null) {
+           $qb->andWhere('itm.fun_id IN (:fun_ids)')
+                ->setParameter('fun_ids', $fun_ids, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY);
         }
-
-        $query = "SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.obj_stock, o.obj_alcool, p.pri_credit, o.img_id
-FROM t_object_obj o
-LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child
-LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id
-WHERE
-obj_removed = '0'
-AND obj_type = 'product'
-$fun_req
-ORDER BY obj_name;";
-
-        $res = Db_buckutt::getInstance()->query($query, $param);
-
-        // Construction du resultat.
+        if ($obj_ids !== null) {
+           $qb->andWhere('itm.obj_id IN (:ids)')
+                ->setParameter('ids', $ids, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY);
+        }
+        
+        $res = $qb->execute();
+        
         $products = array();
-        while ($don = Db_buckutt::getInstance()->fetchArray($res)) {
+        while ($don = $res->fetch()) {
             $products[] = static::fromDbArray($don);
         }
+        
         return $products;
     }
 
@@ -79,9 +91,9 @@ AND o.fun_id = '%u'
 ORDER BY obj_name;", array($obj_id, $fun_id));
         if (Db_buckutt::getInstance()->affectedRows() >= 1) {
             $don = Db_buckutt::getInstance()->fetchArray($res);
-            return array("success" => static::fromDbArray($don));
+            return static::fromDbArray($don);
         } else {
-            return array("error"=>400, "error_msg"=>"Cet article ($obj_id, $fun_id) n'existe pas, ou vous n'avez pas les droits dessus.");
+            return null;            
         }
     }
 
@@ -250,6 +262,31 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
         return array("success"=>"ok");
     }
 
+
+    protected static function _baseUpdateQueryById($itm_id)
+    {
+        $qb = Db::createQueryBuilder();
+        $qb->update('t_object_obj', 'itm')
+            ->where('obj_id = :itm_id')
+            ->setParameter('itm_id', $itm_id);
+        return $qb;
+    }
+    
+    public static function incStockById($itm_id, $val)
+    {
+        $qb = static::_baseUpdateQueryById($itm_id);
+        $qb->set('obj_stock', 'obj_stock + :val')
+            ->setParameter('val', $val);
+        $qb->execute();
+    }
+    
+    public static function decStockById($itm_id, $val)
+    {
+        $qb = static::_baseUpdateQueryById($itm_id);
+        $qb->set('obj_stock', 'obj_stock - :val')
+            ->setParameter('val', $val);
+        $qb->execute();
+    }
 
 }
 
