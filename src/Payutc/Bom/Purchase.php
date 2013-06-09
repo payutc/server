@@ -104,7 +104,7 @@ class Purchase
 	foreach ($items as $itm) {
 	    $total_price += $itm['price'];
 	    $purchases[] = array(
-		'pur_date' => 'NOW()',
+		'pur_date' => date('Y-m-d H:i:s'),
 		'pur_type' => 'product',
 		'obj_id' => $itm['id'],
 		'pur_price' => $itm['price'],
@@ -121,7 +121,7 @@ class Purchase
 	
 	$conn->beginTransaction();
 	try {
-	    //User::decCredit($usr_id, $total_price);
+	    User::decCreditById($usr_id_buyer, $total_price);
 	    
 	    foreach ($purchases as $pur) {
 		$a = $conn->insert('t_purchase_pur', $pur);
@@ -134,7 +134,6 @@ class Purchase
 	    throw $e;
 	}
     }
-=======
 
     /**
      * getRank() retourne le classement des ventes d'un objet ou d'une fundation

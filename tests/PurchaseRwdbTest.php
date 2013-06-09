@@ -30,12 +30,12 @@ class PurchaseRwdbTest extends DatabaseTest
 				'price' => 150,
 			),
 		);
-		Purchase::transaction(1, $items, 51, 1, 2, "localhost");
+		Purchase::transaction(1, $items, 51, 1, 9447, "localhost");
 		$u = new User("trecouvr", 1, 0, 0, 1);
-		$this->assertEquals(400, $u->getCredit());
+		$this->assertEquals(8700, $u->getCredit());
 		$p = Product::getOne(6,1);
 		$this->assertEquals(8, $p['stock']);
-		$r = Purchase::getNbSell(6, 1);
+		$r = Purchase::getNbSell(6, 1, date('Y-m-d H:i:s'));
 		$this->assertEquals(2, $r);
 	}
 

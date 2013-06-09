@@ -5,10 +5,31 @@ t_fundation_fun:
 
 ts_user_usr:
   -
+    usr_id: 1
+    usr_firstname: Thomas
+    usr_lastname: Recouvreux
+    usr_nickname: trecouvr
+    usr_adult: 1
+    usr_mail: thomas.recouvreux@etu.utc.fr
+    usr_credit: 9000
+  -
     usr_id: 9447
     usr_firstname: Matthieu
     usr_lastname: Guffroy
     usr_nickname: mguffroy
+    usr_adult: 1
+    usr_mail: matthieu.guffroy@etu.utc.fr
+    usr_credit: 9000
+
+tj_usr_mol_jum:
+  -
+    usr_id: 1
+    mol_id: 1
+    jum_data: trecouvr
+  -
+    usr_id: 9447
+    mol_id: 1
+    jum_data: mguffroy
 
 t_object_obj:
   - 
@@ -224,23 +245,6 @@ t_purchase_pur:
     pur_ip: 1.2.3.4
     pur_removed: 0
 
-ts_user_usr:
-  -
-    usr_id: 1
-    usr_firstname: Thomas
-    usr_lastname: Recouvreux
-    usr_nickname: trecouvr
-    usr_adult: 1
-    usr_mail: thomas.recouvreux@etu.utc.fr
-    usr_credit: 9000
-  -
-    usr_id: 2
-    usr_firstname: Matthieu
-    usr_lastname: Guffroy
-    usr_nickname: mguffroy
-    usr_adult: 1
-    usr_mail: matthieu.guffroy@etu.utc.fr
-    usr_credit: 9000
 
 t_point_poi:
   -
