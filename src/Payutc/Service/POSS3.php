@@ -3,55 +3,16 @@
 namespace Payutc\Service;
 
 use \Payutc\Bom\Purchase;
-use \Payutc\Exeption\PossException;
+use \Payutc\Bom\Product;
+use \Payutc\Exception\PossException;
+use \User;
+use \Payutc\Config;
+use \Payutc\Log;
+
+define('MEAN_OF_LOGIN_BADGE', 5);
+define('MEAN_OF_LOGIN_NICKNAME', 1);
 
 class POSS3 extends \ServiceBase {
-    
-    /**
-     * Charge le Seller sans mot de passe.
-     * 
-     * @param   int     poi_id
-     * @param   int     fun_id
-     * @return  bool    state
-    */
-    public function loadPos($poi_id, $fun_id) {
-        $this->checkRight(true, true, true, $fun_id);
-        unload();
-        $this->setPoiId($poi_id);
-        $this->setFunId($fun_id);
-        
-        Log::info("loadPos(login=${this->user()->getNickname()}, poi_id=$poi_id, fun_id=$fun_id) : OK");
-        return true;
-    }
-    
-    public function isLoaded() {
-        return ($this->getPoiId() !== null and $this->getFunId() !== null);
-    }
-    
-    public function checkIsLoaded() {
-        if (!$this->isLoaded()) {
-            throw new PayutcException('POSS n\'est pas chargé');
-        }
-    }
-    
-    public function unloadPos() {
-        $this->setPoiId(null);
-        $this->setFunId(null);
-        Log::info("unloadPos : OK");
-        return true;
-    }
-    
-    public function getSellerIdentity() {
-        $this->checkIsLoaded();
-        $this->checkRight(true, true, true, $this->getFunId());
-        $user = $this->user();
-        return array(
-            "id" => $user->getId(),
-            "firstname" => $user->getFirstname(),
-            "lastname" => $user->getLastname(),
-            "nickname" => $user->getNickname();
-        );
-    }
     
     /**
      * Obtenir les infos d'un buyer 
@@ -60,28 +21,26 @@ class POSS3 extends \ServiceBase {
      * @return array $state
      */
     public function getBuyerInfo($badge_id) {
-        $this->checkIsLoaded();
-        $this->checkRight(true, true, true, $this->getFunId());
+        $this->checkRight(true, true);
         
         $buyer = new User($badge_id, MEAN_OF_LOGIN_BADGE, "", 0, 1, 1);
         $state = $buyer->getState();
         if($state == 403)
-            return array("error"=>403, "error_msg"=>"Ce badge à été bloqué. Il faut que l'utilisateur aille le débloquer sur internet.");
+            throw new PossException("Ce badge à été bloqué. Il faut que l'utilisateur aille le débloquer sur internet.");
         if($state != 1)
-            return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu...");
-        // vérifier que l'utilisateur n'est pas bloqué sur cette fondation
-        try {
-            $buyer->checkNotBlockedFun($this->Fun_id);
-        }
-        catch (UserIsBlockedException $e) {
-            return array("error"=>402, "error_msg"=> $e->getMessage());
-        }
-        return array("success"=>array(
-                                    "firstname"=>$buyer->getFirstname(), 
-                                    "lastname"=>$buyer->getLastname(), 
-                                    "solde"=>$buyer->getCredit(),
-                                    "last_purchase"=>$buyer->getLastPurchase()
-                            ));
+            throw new PossException("Le Badge n'a pas été reconnu...");
+        return array(
+            "firstname"=>$buyer->getFirstname(), 
+            "lastname"=>$buyer->getLastname(), 
+            "solde"=>$buyer->getCredit(),
+            "last_purchase"=>$buyer->getLastPurchase()
+        );
+    }
+    
+    public function getArticles($fun_id)
+    {
+        $this->checkRight(true, true, true, $fun_id);
+        return Product::getAll(array('fun_ids'=>array($fun_id,)));
     }
     
     
@@ -92,10 +51,9 @@ class POSS3 extends \ServiceBase {
      * @param int $pur_id
      * @return bool
      */
-    public function cancel($pur_id)
+    public function cancel($fun_id, $pur_id)
     {
-        $this->checkIsLoaded();
-        $this->checkRight(true, true, true, $this->getFunId());
+        $this->checkRight(true, true, true, $fun_id);
         
         // ANNULATION
         $pur = Purchase::getPurchaseById($pur_id);
@@ -113,20 +71,17 @@ class POSS3 extends \ServiceBase {
     }
     
     
-	/**
-	 * Transaction complète,
-	 * 		1. load le buyer
-	 * 		2. multiselect
-	 * 		3. endTransaction
-	 * @param String $badge_id
-	 * @param String $obj_ids
-	 * @return array $state
-	 */
-	public function transaction($badge_id, $obj_ids) {
-        $this->checkIsLoaded();
-        $this->checkRight(true, true, true, $this->getFunId());
-    
-        $right_POI_FUNDATION = 7; // TODO IMPORTER D'AILLEURS
+    /**
+     * Transaction complète,
+     *         1. load le buyer
+     *         2. multiselect
+     *         3. endTransaction
+     * @param String $badge_id
+     * @param String $obj_ids
+     * @return array $state
+     */
+    public function transaction($fun_id, $badge_id, $obj_ids) {
+        $this->checkRight(true, true, true, $fun_id);
 
         // Verifier que le buyer existe
         $buyer = new User($badge_id, MEAN_OF_LOGIN_BADGE, "", 0, 1, 1);
@@ -150,39 +105,56 @@ class POSS3 extends \ServiceBase {
                     Db_buckutt::getInstance()->query("UPDATE tj_usr_mol_jum SET jum_data = '%s' WHERE usr_id='%u' AND mol_id='%u'", array($badge_id, $buyer->getId(), MEAN_OF_LOGIN_BADGE));
                 } else {
                     Log::warn("transaction($badge_id, $obj_ids) : Ginger knows this card but Payutc does not");
-                    return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu...");
+                    throw new PossException("Le Badge n'a pas été reconnu...");
                 }
             } else {
                 Log::warn("transaction($badge_id, $obj_ids) : Unknown card");
-                return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu..."); 
+                throw new PossException("Le Badge n'a pas été reconnu..."); 
             }
         }
     
         if($state == 403) {
             Log::warn("transaction($badge_id, $obj_ids) : Blocked card");
-            return array("error"=>403, "error_msg"=>"Ce badge à été bloqué. Il faut que l'utilisateur aille le débloquer sur internet.");
+            throw new PossException("Ce badge à été bloqué. Il faut que l'utilisateur aille le débloquer sur internet.");
         }
         
         // vérifier que l'utilisateur n'est pas bloqué sur cette fondation
         try {
-            $buyer->checkNotBlockedFun($this->Fun_id);
+            $buyer->checkNotBlockedFun($fun_id);
         }
         catch (UserIsBlockedException $e) {
             Log::warn("transaction($badge_id, $obj_ids) : Blocked user ({$e->getMessage()})");
-            return array("error"=>402, "error_msg"=> $e->getMessage());
+            throw new PossException($e->getMessage());
         }
 
         // récupérer les objets dans la db (note: pas de doublon)
-        $objects_ids = explode(" ", trim($obj_ids));
+        $objects_ids = explode(",", trim($obj_ids));
         $obj_ids = array_unique($objects_ids);
-        $items = Product::getAll(array('obj_ids'=>$obj_ids, 'fun_ids'=>$fun_ids));
+        $r = Product::getAll(array('obj_ids'=>$obj_ids, 'fun_ids'=>array($fun_id)));
+        $items = [];
+        foreach($r as $itm) {
+            $items[$itm['id']] = $itm;
+        }
         
         // y'a t il de l'alcool ?
         $alcool = false;
         foreach($items as $itm) {
-            if ($itm['obj_alcool'] > 0) {
+            if ($itm['alcool'] > 0) {
                 $alcool = true;
                 break;
+            }
+        }
+        
+        // calcul le prix total
+        $total = 0;
+        foreach($objects_ids as $obj_id)
+        {
+            if(isset($items[$obj_id]))
+            {
+                $total += $items[$obj_id]['price'];
+            } else {
+                Log::warn("transaction($badge_id, ...) : $obj_id is unavailable");
+                throw new PossException("L'article $obj_id n'est pas disponible à la vente.");
             }
         }
         
@@ -190,19 +162,6 @@ class POSS3 extends \ServiceBase {
         $items_to_buy = array();
         foreach($objects_ids as $id) {
             $items_to_buy[] = $items[$id];
-        }
-        
-        // calcul le prix total
-        $total = 0;
-        foreach($objects_ids as $obj_id)
-        {
-            if(isset($articles[$obj_id]))
-            {
-                $total += $articles[$obj_id]['pri_credit'];
-            } else {
-                Log::warn("transaction($badge_id, $obj_ids) : $obj_id is unavailable");
-                throw new PossException("L'article $obj_id n'est pas disponible à la vente.");
-            }
         }
         
         // si alcool, vérifier que le buyer est majeur
@@ -221,35 +180,17 @@ class POSS3 extends \ServiceBase {
         }
         
         // effectuer les achats
-        Purchase::transaction($buyer->getId(), $items_to_buy, $this->getFunId(),
-                            $this->user()->getId(), $this->getRemoteIp());
+        Purchase::transaction($buyer->getId(), $items_to_buy,
+                              $this->application()->getId(), $fun_id,
+                              $this->user()->getId(), $this->getRemoteIp());
 
         // Retourner les infos sur l'utilisateur
-        $msg = $buyer->getMsgPerso($this->getFunId());
-        if($msg == "") {
-            $msg = "PICASSO-P13 ::: Dis Coucou aux Poissons !";
-        }
+        $msg = $buyer->getMsgPerso($fun_id);
 
         return array("firstname"=>$buyer->getFirstname(), 
                       "lastname"=>$buyer->getLastname(), 
                       "solde"=>$buyer->getCredit(),
                       "msg_perso"=>$msg);
-	}
-    
-    public function getPoiId() {
-        return $this->sessionGet('poi_id');
-    }
-    
-    public function setPoiId($val) {
-        $this->sessionSet('poi_id', $val);
-    }
-    
-    public function getFunId() {
-        return $this->sessionGet('fun_id');
-    }
-    
-    public function setFunId($val) {
-        $this->sessonSet('fun_id', $val);
     }
 }
 
