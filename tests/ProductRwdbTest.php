@@ -13,24 +13,22 @@ class ProductRwdbTest extends DatabaseTest
 	{
 		//return return new MyApp_DbUnit_ArrayDataSet($this->dataset);
 		$seeddir = dirname(__FILE__).'/seed/';
-		$ds = new PHPUnit_Extensions_Database_DataSet_YamlDataSet($seeddir.'items.yml');
+		$ds = new PHPUnit_Extensions_Database_DataSet_YamlDataSet($seeddir.'products.yml');
 		return $ds;
 	}
     
     public function testDecStockById()
     {
         Product::decStockById(3, 4);
-        $r = Product::getByIdsAndFunId(array(3,), 1);
-        $this->assertEquals(1, count($r));
-        $this->assertEquals(6, $r[0]['obj_stock']);
+        $r = Product::getOne(3, 1);
+        $this->assertEquals(6, $r['stock']);
     }
     
     public function testIncStockById()
     {
         Product::incStockById(3, 4);
-        $r = Product::getByIdsAndFunId(array(3,), 1);
-        $this->assertEquals(1, count($r));
-        $this->assertEquals(14, $r[0]['obj_stock']);
+        $r = Product::getOne(3, 1);
+        $this->assertEquals(14, $r['stock']);
     }
 }
 

@@ -38,15 +38,14 @@ class GESARTICLE extends \ServiceBase {
 		return \Payutc\Bom\Category::getAll($fun_ids);
 	}
 
-	/**
-	* Retourne une categorie
+    /**
+    * Retourne une categorie
     *
     * @param fun_id pour checker les droits, on doit donner la fun_id en plus de la categorie id
-	*/
+    */
     public function getCategory($obj_id, $fun_id = null) {
-        $this->checkRight(true, true, true, $fun_id);
-		return \Payutc\Bom\Category::getOne($obj_id, $fun_id);
-	}
+        return getProduct($obj_id, $fun_id);
+    }
 
     /**
     * Ajoute (ou edite) une category
@@ -96,15 +95,21 @@ class GESARTICLE extends \ServiceBase {
 		return \Payutc\Bom\Product::getAll($fun_ids);
 	}
 
-	/**
-	* Retourne un article
+    /**
+    * Retourne un article
     *
     * @param fun_id pour checker les droits, on doit donner la fun_id en plus de l'objet id
-	*/
+    */
     public function getProduct($obj_id, $fun_id = null) {
         $this->checkRight(true, true, true, $fun_id);
-		return \Payutc\Bom\Product::getOne($obj_id, $fun_id);
-	}
+        $p = \Payutc\Bom\Category::getOne($obj_id, $fun_id);
+        if ($p === null) {
+            return array("error"=>400, "error_msg"=>"Cet article ($obj_id, $fun_id) n'existe pas, ou vous n'avez pas les droits dessus.");
+        }
+        else {
+            return array("success" => $p);
+        }
+    }
 
     /**
     * Ajoute (ou edite) un article
