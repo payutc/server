@@ -55,7 +55,6 @@ class Purchase
             return $result['nb'];
         }
     }
-<<<<<<< HEAD
     
     public function getPurchaseById($pur_id)
     {
@@ -187,5 +186,4 @@ class Purchase
 	    return $result;
     }
 
->>>>>>> ddf01f44e77112ac42bd4d5a180e2036982615e5
 }
