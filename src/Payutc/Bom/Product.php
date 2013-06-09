@@ -280,7 +280,7 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
     /**
      * Mettre null à removed pour avoir tous les articles
      */
-    public function getByIdsAndFunId($ids, $fun_id, $removed=0)
+    public static function getByIdsAndFunId($ids, $fun_id, $removed=0)
     {
         $qb = Db::createQueryBuilder();
         $qb->select('*')
