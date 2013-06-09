@@ -6,6 +6,7 @@ t_object_obj:
     obj_single: 0
     obj_tva: 0
     obj_alcool: 0
+    obj_removed: 0
     fun_id: 1
   - 
     obj_id: 2
@@ -14,6 +15,7 @@ t_object_obj:
     obj_single: 0
     obj_tva: 0
     obj_alcool: 0
+    obj_removed: 0
     fun_id: 1
   - 
     obj_id: 3
@@ -22,6 +24,8 @@ t_object_obj:
     obj_single: 0
     obj_tva: 20.0
     obj_alcool: 0
+    obj_stock: 10
+    obj_removed: 0
     fun_id: 1
   - 
     obj_id: 4
@@ -30,6 +34,18 @@ t_object_obj:
     obj_single: 0
     obj_tva: 20.0
     obj_alcool: 0
+    obj_stock: 6
+    obj_removed: 0
+    fun_id: 1
+  - 
+    obj_id: 5
+    obj_name: Barbar
+    obj_type: product
+    obj_single: 0
+    obj_tva: 20.0
+    obj_alcool: 0
+    obj_stock: 0
+    obj_removed: 1
     fun_id: 1
 
 tj_object_link_oli:
@@ -58,3 +74,6 @@ t_price_pri:
   -
     obj_id: 4
     pri_credit: 80
+  -
+    obj_id: 5
+    pri_credit: 170
