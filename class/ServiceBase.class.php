@@ -394,7 +394,7 @@ class ServiceBase {
             return $default;
         }
         else {
-            return $ $session[$key];
+            return $session[$key];
         }
     }
 }
