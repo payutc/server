@@ -401,8 +401,7 @@ AND o.fun_id = '%u' AND (";
 
 	        // REtourner les infos sur l'utilisateur
 	        $msg = $buyer->getMsgPerso($this->Fun_id);
-	        if($msg == "") { $msg = "PICASSO-P13 ::: Dis Coucou aux Poissons !"; }
-
+            
 	        return array("success"=>array("firstname"=>$buyer->getFirstname(), 
 	        							  "lastname"=>$buyer->getLastname(), 
 	        							  "solde"=>$buyer->getCredit(),
