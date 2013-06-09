@@ -9,16 +9,14 @@ class PurchaseRodbTest extends ReadOnlyDatabaseTest
 	/**
 	 * get db dataset
 	 */
-	public function getDataSet()
-	{
+	public function getDataSet() {
 		//return return new MyApp_DbUnit_ArrayDataSet($this->dataset);
 		$seeddir = dirname(__FILE__)."/seed/";
 		$ds = new PHPUnit_Extensions_Database_DataSet_YamlDataSet($seeddir."purchase.yml");
 		return $ds;
 	}
     
-    public function testGetNbSell()
-    {
+    public function testGetNbSell() {
         // Pour les category ça renvoit 0 pour le moment car la reucrsion n'est pas encore implémenté
         $r = Purchase::getNbSell(1, 1);
         $this->assertEquals(0,$r);
@@ -49,6 +47,29 @@ class PurchaseRodbTest extends ReadOnlyDatabaseTest
         // Un test avec les ticks (tick de 2h)
         $r = Purchase::getNbSell(4, 1, null, null, 7200);
         $this->assertEquals(5,count($r));
+    }
+
+    public function testGetRank() {
+        $r = Purchase::GetRank(1, null, "2012-04-08 18:30:00", "2014-04-08 18:40:00", 1, "totalPrice");
+        $waited = array(array(
+            "totalPrice" => "630",
+            "nbBuy" => "9",
+            "usr_firstname" => "Matthieu",
+            "usr_lastname" => "Guffroy",
+            "usr_nickname" => "mguffroy"
+            ));
+        $this->assertEquals($waited,$r);
+
+        $r = Purchase::GetRank(1, 3, "2012-04-08 18:30:00", "2014-04-08 18:40:00", 1, "totalPrice");
+        $waited = array(array(
+            "totalPrice" => "70",
+            "nbBuy" => "1",
+            "usr_firstname" => "Matthieu",
+            "usr_lastname" => "Guffroy",
+            "usr_nickname" => "mguffroy"
+            ));
+        $this->assertEquals($waited,$r);
+
     }
 }
 
