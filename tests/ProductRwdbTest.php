@@ -2,9 +2,9 @@
 
 require_once 'bootstrap.php';
 
-use \Payutc\Bom\Item;
+use \Payutc\Bom\Product;
 
-class ItemRwdbTest extends DatabaseTest
+class ProductRwdbTest extends DatabaseTest
 {
 	/**
 	 * get db dataset
@@ -19,16 +19,16 @@ class ItemRwdbTest extends DatabaseTest
     
     public function testDecStockById()
     {
-        Item::decStockById(3, 4);
-        $r = Item::getByIdsAndFunId(array(3,), 1);
+        Product::decStockById(3, 4);
+        $r = Product::getByIdsAndFunId(array(3,), 1);
         $this->assertEquals(1, count($r));
         $this->assertEquals(6, $r[0]['obj_stock']);
     }
     
     public function testIncStockById()
     {
-        Item::incStockById(3, 4);
-        $r = Item::getByIdsAndFunId(array(3,), 1);
+        Product::incStockById(3, 4);
+        $r = Product::getByIdsAndFunId(array(3,), 1);
         $this->assertEquals(1, count($r));
         $this->assertEquals(14, $r[0]['obj_stock']);
     }
