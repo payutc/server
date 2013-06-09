@@ -265,28 +265,28 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
 
     protected static function _baseUpdateQueryById($itm_id)
     {
-		$qb = Db::createQueryBuilder();
-		$qb->update('t_object_obj', 'itm')
-			->where('obj_id = :itm_id')
-			->setParameter('itm_id', $itm_id);
-		return $qb;
-	}
+        $qb = Db::createQueryBuilder();
+        $qb->update('t_object_obj', 'itm')
+            ->where('obj_id = :itm_id')
+            ->setParameter('itm_id', $itm_id);
+        return $qb;
+    }
     
     public static function incStockById($itm_id, $val)
     {
-		$qb = static::_baseUpdateQueryById($itm_id);
-		$qb->set('obj_stock', 'obj_stock + :val')
-			->setParameter('val', $val);
-		$qb->execute();
-	}
-	
-	public static function decStockById($itm_id, $val)
+        $qb = static::_baseUpdateQueryById($itm_id);
+        $qb->set('obj_stock', 'obj_stock + :val')
+            ->setParameter('val', $val);
+        $qb->execute();
+    }
+    
+    public static function decStockById($itm_id, $val)
     {
-		$qb = static::_baseUpdateQueryById($itm_id);
-		$qb->set('obj_stock', 'obj_stock - :val')
-			->setParameter('val', $val);
-		$qb->execute();
-	}
+        $qb = static::_baseUpdateQueryById($itm_id);
+        $qb->set('obj_stock', 'obj_stock - :val')
+            ->setParameter('val', $val);
+        $qb->execute();
+    }
 
 }
 
