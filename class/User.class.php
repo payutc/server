@@ -740,5 +740,36 @@ class User {
         $this->gingerUser = $gingerData;
     }
     
+    protected static function _baseUpdateQueryById($usr_id) {
+		$qb = Db::createQueryBuilder();
+		$qb->update('ts_user_usr', 'usr')
+			->where('usr_id = :usr_id')
+			->setParameter('usr_id', $usr_id);
+		return $qb;
+	}
+    
+    public static function incCreditById($usr_id, $val) {
+		$qb = static::_baseUpdateQueryById($usr_id);
+		$qb->set('usr_credit', 'usr_credit + :val')
+			->setParameter('val', $val);
+		$qb->execute();
+	}
+	
+	public static function decCreditById($usr_id, $val) {
+		$qb = static::_baseUpdateQueryById($usr_id);
+		$qb->set('usr_credit', 'usr_credit - :val')
+			->setParameter('val', $val);
+		$qb->execute();
+	}
+	
+	public function incCredit($val) {
+		$this::incCreditById($this->getId(), $val);
+		$this->credit += $val;
+	}
+	
+	public function decCredit($val) {
+		$this::decCreditById($this->getId(), $val);
+		$this->credit -= $val;
+	}
 }
-?>
+

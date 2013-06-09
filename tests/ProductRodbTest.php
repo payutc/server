@@ -25,7 +25,7 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
                  "name" => "coca",
                  "categorie_id" => "2",
                  "fundation_id" => "1",
-                 "stock" => null,
+                 "stock" => "10",
                  "price" => "100",
                  "alcool" => "0",
                  "image" => null
@@ -35,45 +35,49 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
                  "name" => "pampryl",
                  "categorie_id" => "2",
                  "fundation_id" => "1",
-                 "stock" => null,
+                 "stock" => "6",
                  "price" => "80",
                  "alcool" => "0",
                  "image" => null
-            )
+            ),
         );
         $r = Product::getAll();
+        usort($r, function ($a,$b) { return ($a['id'] < $b['id']) ? -1 : 1; });
         $this->assertEquals($a,$r);
-        $r = Product::getAll(1);
+        $r = Product::getAll(array('fun_ids'=>array(1,)));
+        usort($r, function ($a,$b) { return ($a['id'] < $b['id']) ? -1 : 1; });
         $this->assertEquals($a,$r);
     }
     
     public function testGetOne()
     {
-        $a = array("success"=>array(
+        $a = array(
              "id" => "3",
              "name" => "coca",
              "categorie_id" => "2",
              "fundation_id" => "1",
-             "stock" => null,
+             "stock" => "10",
              "price" => "100",
              "alcool" => "0",
              "image" => null
-        ));
+        );
         $r = Product::getOne(3,1);
         $this->assertEquals($a,$r);
-        $a = array("success"=>array(
+        $a = array(
              "id" => "4",
              "name" => "pampryl",
              "categorie_id" => "2",
              "fundation_id" => "1",
-             "stock" => null,
+             "stock" => "6",
              "price" => "80",
              "alcool" => "0",
              "image" => null
-        ));
+        );
         $r = Product::getOne(4,1);
         $this->assertEquals($a,$r);
     }
+    
+    
 }
 
 
