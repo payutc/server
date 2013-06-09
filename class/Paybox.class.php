@@ -124,7 +124,9 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
       $erreur=$_GET['erreur'];
       $db = Db_buckutt::getInstance();
 
-      if($CheckSig!=1) {
+      if($auto = 'XXXXXX' && Config::get('PBX_SITE') != '1999888') {
+        Log::warning("PAYBOX : Reception d'une autorisation de test, alors que PBX_SITE n'est pas celui de test ! \n".print_r($_GET, true),10);
+      } else if($CheckSig!=1) {
         Log::warning("PAYBOX : La signature est fausse ! \n".print_r($_GET, true),10);
       } else {
         $paybox_row = $db->fetchArray($db->query("SELECT usr_id, pay_amount, pay_step FROM t_paybox_pay WHERE pay_id = '%u'", array($ref)));
