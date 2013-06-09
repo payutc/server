@@ -60,11 +60,11 @@ VALUES (
 NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
 );", array($this->User->getId(), $amount, $callback_url, $mobile)));
 
-			$PBX = "";
-			// MODE D'UTILISATION DE PAYBOX
-			$PBX .= "PBX_MODE=4";
-			// IDENTIFICATION (ICI MODE DEVELLOPEUR)
-			$PBX .= " PBX_SITE=".Config::get('PBX_SITE');
+      $PBX = "";
+      // MODE D'UTILISATION DE PAYBOX
+      $PBX .= "PBX_MODE=4";
+      // IDENTIFICATION
+      $PBX .= " PBX_SITE=".Config::get('PBX_SITE');
       $PBX .= " PBX_RANG=".Config::get('PBX_RANG');
       $PBX .= " PBX_IDENTIFIANT=".Config::get('PBX_IDENTIFIANT');
       //gestion de la page de connection : paramétrage "invisible"
@@ -73,7 +73,7 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
       $PBX .= " PBX_BOUTPI=nul";
       $PBX .= " PBX_BKGD=white";
       //informations paiement (appel)
-      $PBX .= " PBX_TOTAL=$amount"; // MONTANT (test avec 10€)
+      $PBX .= " PBX_TOTAL=$amount"; // MONTANT
       $PBX .= " PBX_DEVISE=978"; //EURO
       $PBX .= " PBX_CMD=".base64_encode($pay_id.";".time()); // REFERENCE DE LA COMMANDE
       $PBX .= " PBX_PORTEUR=".$this->User->getMail(); // mail du client
@@ -86,14 +86,14 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
       $PBX .= " PBX_ERREUR=$callback_url?paybox=erreur";
       // Url du serveur paybox si différente de celle par défaut (pour mode dev ou pour mobile)
       if($mobile==1) { 
-        $pbx_url = "https://tpeweb.paybox.com/cgi/ChoixPaiementMobile.cgi"; 
+        $pbx_url = Config::get('PBX_MOBILE_URL'); 
       } else { 
         $pbx_url = Config::get('PBX_URL');
       }
       $PBX .= " PBX_PAYBOX=$pbx_url";
-			$PBX .= " PBX_BACKUP1=$pbx_url";
-			$PBX .= " PBX_BACKUP2=$pbx_url";
-			// PROXY
+	  $PBX .= " PBX_BACKUP1=$pbx_url";
+	  $PBX .= " PBX_BACKUP2=$pbx_url";
+	  // PROXY
       $proxy = Config::get('proxy');
       if(!empty($proxy))
 			 $PBX .= " PBX_PROXY=".$proxy;
