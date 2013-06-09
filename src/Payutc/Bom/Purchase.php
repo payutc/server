@@ -58,38 +58,38 @@ class Purchase
     
     public function getPurchaseById($pur_id)
     {
-	$qb = Db::createQueryBuilder();
-        $qb->select('*', 'pur.pur_date')
-           ->from('t_purchase_pur', 'pur')
-           ->where('pur.pur_id = :pur_id')
-	   ->setParameter('pur_id', $pur_id);
-	return $qb->execute()->fetch();
+        $qb = Db::createQueryBuilder();
+            $qb->select('*', 'pur.pur_date')
+               ->from('t_purchase_pur', 'pur')
+               ->where('pur.pur_id = :pur_id')
+           ->setParameter('pur_id', $pur_id);
+        return $qb->execute()->fetch();
     }
     
     public static function cancelById($pur_id)
     {
-	// get the purchase
-	$pur = static::getPurchaseById($pur_id);
-	// create the update statement for the purchase
-	$qb = Db::createQueryBuilder();
-	$qb = $qb->update('t_purchase_pur', 'pur')
-	    ->set('pur_removed', $qb->expr()->literal(1))
-	    ->where('pur.pur_id = :pur_id')
-	    ->setParameter('pur_id', $pur_id);
-	// wrap everything in a transaction
-	Db::beginTransaction();
-	try {
-	    // update purchase + buyer + stock, then commit
-	    $qb->execute();
-	    User::incCreditById($pur['usr_id_buyer'], $pur['pur_price']);
-	    Product::incStockById($pur['obj_id'], 1);
-	    Db::commit();
-	}
-	catch (Exception $e) {
-	    // rollback if failure
-	    Db::rollback();
-	    throw $e;
-	}
+        // get the purchase
+        $pur = static::getPurchaseById($pur_id);
+        // create the update statement for the purchase
+        $qb = Db::createQueryBuilder();
+        $qb = $qb->update('t_purchase_pur', 'pur')
+            ->set('pur_removed', $qb->expr()->literal(1))
+            ->where('pur.pur_id = :pur_id')
+            ->setParameter('pur_id', $pur_id);
+        // wrap everything in a transaction
+        Db::beginTransaction();
+        try {
+            // update purchase + buyer + stock, then commit
+            $qb->execute();
+            User::incCreditById($pur['usr_id_buyer'], $pur['pur_price']);
+            Product::incStockById($pur['obj_id'], 1);
+            Db::commit();
+        }
+        catch (Exception $e) {
+            // rollback if failure
+            Db::rollback();
+            throw $e;
+        }
     }
     
     /**
@@ -99,40 +99,40 @@ class Purchase
      */
     public static function transaction($usr_id_buyer, $items, $poi_id, $fun_id, $usr_id_seller, $pur_ip)
     {
-	$total_price = 0;
-	$purchases = array();
-	foreach ($items as $itm) {
-	    $total_price += $itm['price'];
-	    $purchases[] = array(
-		'pur_date' => date('Y-m-d H:i:s'),
-		'pur_type' => 'product',
-		'obj_id' => $itm['id'],
-		'pur_price' => $itm['price'],
-		'usr_id_buyer' => $usr_id_buyer,
-		'usr_id_seller' => $usr_id_seller,
-		'poi_id' => $poi_id,
-		'fun_id' => $fun_id,
-		'pur_ip' => $pur_ip
-	    );
-	}
-	
-	
-	$conn = Db::conn();
-	
-	$conn->beginTransaction();
-	try {
-	    User::decCreditById($usr_id_buyer, $total_price);
-	    
-	    foreach ($purchases as $pur) {
-		$a = $conn->insert('t_purchase_pur', $pur);
-		Product::decStockById($pur['obj_id'], 1);
-	    }
-	    $conn->commit();
-	}
-	catch (Exception $e) {
-	    $conn->rollback();
-	    throw $e;
-	}
+        $total_price = 0;
+        $purchases = array();
+        foreach ($items as $itm) {
+            $total_price += $itm['price'];
+            $purchases[] = array(
+            'pur_date' => date('Y-m-d H:i:s'),
+            'pur_type' => 'product',
+            'obj_id' => $itm['id'],
+            'pur_price' => $itm['price'],
+            'usr_id_buyer' => $usr_id_buyer,
+            'usr_id_seller' => $usr_id_seller,
+            'poi_id' => $poi_id,
+            'fun_id' => $fun_id,
+            'pur_ip' => $pur_ip
+            );
+        }
+        
+        
+        $conn = Db::conn();
+        
+        $conn->beginTransaction();
+        try {
+            User::decCreditById($usr_id_buyer, $total_price);
+            
+            foreach ($purchases as $pur) {
+            $a = $conn->insert('t_purchase_pur', $pur);
+            Product::decStockById($pur['obj_id'], 1);
+            }
+            $conn->commit();
+        }
+        catch (Exception $e) {
+            $conn->rollback();
+            throw $e;
+        }
     }
 
     /**
@@ -182,7 +182,7 @@ class Purchase
         $result = array();
         $a = $qb->execute();
         while($r = $a->fetch()) { $result[] = $r; }
-	    return $result;
+        return $result;
     }
 
 }
