@@ -3,6 +3,13 @@ t_fundation_fun:
     fun_id: 1
     fun_name: picasso
 
+ts_user_usr:
+  -
+    usr_id: 9447
+    usr_firstname: Matthieu
+    usr_lastname: Guffroy
+    usr_nickname: mguffroy
+
 t_object_obj:
   - 
     obj_id: 1
