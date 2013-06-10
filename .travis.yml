@@ -12,5 +12,5 @@ before_script:
   - mkdir logs
   - chmod 777 logs
   - cp config.inc.dist.php config.inc.php
-script: python --version
+script: python --version && pip install lettuce
 
