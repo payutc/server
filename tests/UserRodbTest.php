@@ -11,10 +11,9 @@ class UserRodbTest extends ReadOnlyDatabaseTest
 	 */
 	public function getDataSet()
 	{
-		//return return new MyApp_DbUnit_ArrayDataSet($this->dataset);
-		$seeddir = dirname(__FILE__).'/seed/';
-		$ds = new PHPUnit_Extensions_Database_DataSet_YamlDataSet($seeddir.'users.yml');
-		return $ds;
+        return $this->computeDataset(array(
+            'users.yml'
+        ));
 	}
 	
 	public function testConstruct()

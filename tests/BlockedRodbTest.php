@@ -13,7 +13,9 @@ class BlockedRodbTest extends ReadOnlyDatabaseTest
 	{
 		//return return new MyApp_DbUnit_ArrayDataSet($this->dataset);
 		$seeddir = dirname(__FILE__).'/seed/';
-		$ds = new PHPUnit_Extensions_Database_DataSet_YamlDataSet($seeddir.'blocked.yml');
+		$ds = new PHPUnit_Extensions_Database_DataSet_YamlDataSet($seeddir.'users.yml');
+		$ds->addYamlFile($seeddir.'blocked.yml');
+		$ds->addYamlFile($seeddir.'fundations.yml');
 		return $ds;
 	}
 	

@@ -6,6 +6,35 @@ require_once '../vendor/autoload.php';
 require_once './config.inc.php';
 
 use \Payutc\Config;
+use \Httpful\Request;
+
+$SEED_DIR = dirname(__FILE__)."/seed/";
+function filepathSeed($fixture)
+{
+	global $SEED_DIR;
+	return $SEED_DIR.$fixture;
+}
+
+function httpSend($service, $meth, $params=array(), $cookie='')
+{
+	$url = "http://localhost:33436/$service/$meth?";
+    foreach ($params as $k=>$v) {
+        $url .= $k."=".$v."&";
+    }
+    $r = Request::get($url)
+      ->addHeader('Cookie', $cookie)
+      ->sendsJson()
+      ->expectsJson()
+      ->send();
+
+	return $r;
+}
+
+function sort_by_key(&$arr, $key)
+{
+	usort($arr, function ($a,$b) use ($key) { return ($a[$key] < $b[$key]) ? -1 : 1; });
+}
+
 
 class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
 {
@@ -24,6 +53,8 @@ class InsertOperation extends \PHPUnit_Extensions_Database_Operation_Insert
 		$connection->getConnection()->query("SET foreign_key_checks = 1");
 	}
 }
+
+
 
 abstract class DatabaseTest extends \PHPUnit_Extensions_Database_TestCase
 {
@@ -73,6 +104,24 @@ abstract class DatabaseTest extends \PHPUnit_Extensions_Database_TestCase
 	{
         return $this->getOperations()->DELETE_ALL();
     }
+    
+	function computeDataset($fixture)
+	{
+		if (!is_array($fixture)) {
+			$fixture = array($fixture);
+		}
+		$ds = null;
+		for ($i=0; $i<count($fixture); $i++) {
+			$filepath = filepathSeed($fixture[$i]);
+			if ($i == 0) {
+				$ds = new PHPUnit_Extensions_Database_DataSet_YamlDataSet($filepath);
+			}
+			else {
+				$ds->addYamlFile($filepath);
+			}
+		}
+		return $ds;
+	}
 }
 
 
