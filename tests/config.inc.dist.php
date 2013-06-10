@@ -27,7 +27,7 @@ $_CONFIG['sql_pass'] = "";
 
 
 // Chemin vers le serveur CAS (avec le / final)
-$_CONFIG['cas_url'] = "";
+$_CONFIG['cas_url'] = "http://localhost:33435/";
 
 // URL publique http(s) du serveur (avec le / final)
 $_CONFIG['server_url'] = "http://localhost/buckutt/";

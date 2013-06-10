@@ -11,25 +11,25 @@ class CategoryRodbTest extends ReadOnlyDatabaseTest
 	 */
 	public function getDataSet()
 	{
-		//return return new MyApp_DbUnit_ArrayDataSet($this->dataset);
-		$seeddir = dirname(__FILE__)."/seed/";
-		$ds = new PHPUnit_Extensions_Database_DataSet_YamlDataSet($seeddir."products.yml");
-		return $ds;
+        return $this->computeDataset(array(
+            'categories.yml',
+            'fundations.yml'
+        ));
 	}
     
     public function testGetAll()
     {
         $a = array(
             array(
-                "id" => 1,
-                "name" => "picasso",
+                "id" => 1000,
+                "name" => "biere",
                 "parent_id" => null,
                 "fundation_id" => 1
             ),
             array(
-                "id" => 2,
+                "id" => 1001,
                 "name" => "soft",
-                "parent_id" => 1,
+                "parent_id" => null,
                 "fundation_id" => 1
             )
         );
@@ -42,20 +42,20 @@ class CategoryRodbTest extends ReadOnlyDatabaseTest
     public function testGetOne()
     {
         $a = array("success"=>array(
-             "id" => "1",
-             "name" => "picasso",
+             "id" => "1000",
+             "name" => "biere",
              "parent_id" => null,
              "fundation_id" => "1",
         ));
-        $r = Category::getOne(1,1);
+        $r = Category::getOne(1000,1);
         $this->assertEquals($a,$r);
         $a = array("success"=>array(
-             "id" => "2",
+             "id" => "1001",
              "name" => "soft",
-             "parent_id" => "1",
+             "parent_id" => null,
              "fundation_id" => "1",
         ));
-        $r = Category::getOne(2,1);
+        $r = Category::getOne(1001,1);
         $this->assertEquals($a,$r);
     }
 }

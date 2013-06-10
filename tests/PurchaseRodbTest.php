@@ -6,15 +6,17 @@ use \Payutc\Bom\Purchase;
 
 class PurchaseRodbTest extends ReadOnlyDatabaseTest
 {
-	/**
-	 * get db dataset
-	 */
-	public function getDataSet() {
-		//return return new MyApp_DbUnit_ArrayDataSet($this->dataset);
-		$seeddir = dirname(__FILE__)."/seed/";
-		$ds = new PHPUnit_Extensions_Database_DataSet_YamlDataSet($seeddir."purchase.yml");
-		return $ds;
-	}
+    /**
+     * get db dataset
+     */
+    public function getDataSet() {
+        return $this->computeDataset(array(
+            'products.yml',
+            'users.yml',
+            'fundations.yml',
+            'purchase.yml'
+        ));
+    }
     
     public function testGetNbSell() {
         // Pour les category ça renvoit 0 pour le moment car la reucrsion n'est pas encore implémenté
