@@ -7,9 +7,10 @@ before_script:
   - mysql -u root buckutt_test < dev_structure.sql
   - curl -s https://getcomposer.org/installer | php
   - php composer.phar install --dev --prefer-source --no-interaction
+  - sh -c "if [ '$TRAVIS_PHP_VERSION' = '5.4' ]; then echo 'starting PHP server on port 8080'; php -S localhost:8080 -t web/ & fi"
   - cd tests/
   - mkdir logs
   - chmod 777 logs
   - cp config.inc.dist.php config.inc.php
-script: ./phpunit --coverage-text .
+script: python --version
 
