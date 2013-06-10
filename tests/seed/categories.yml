@@ -1,0 +1,17 @@
+t_object_obj:
+  - 
+    obj_id: 1000
+    obj_name: biere
+    obj_type: category
+    obj_single: 0
+    obj_tva: 0
+    obj_alcool: 0
+    fun_id: 1
+  - 
+    obj_id: 1001
+    obj_name: soft
+    obj_type: category
+    obj_single: 0
+    obj_tva: 0
+    obj_alcool: 0
+    fun_id: 1
