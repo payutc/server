@@ -1,15 +1,13 @@
 language: php
 php:
-  - 5.3
   - 5.4
 before_script:
-  - mysql -e 'create database buckutt_test;'
-  - mysql -u root buckutt_test < dev_structure.sql
-  - curl -s https://getcomposer.org/installer | php
-  - php composer.phar install --dev --prefer-source --no-interaction
-  - cd tests/
-  - mkdir logs
-  - chmod 777 logs
-  - cp config.inc.dist.php config.inc.php
-script: ./phpunit --coverage-text .
+  - wget https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.9.1.tar.gz
+  - tar xvf virtualenv-1.9.1.tar.gz
+  - cd virtualenv-1.9.1
+  - python setup.py build
+  - python build/lib*/virtualenv.py venv
+  - source venv/bin/activate
+  - cd ..
+script: ./script.sh
 
