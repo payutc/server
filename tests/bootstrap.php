@@ -15,14 +15,14 @@ function filepathSeed($fixture)
 	return $SEED_DIR.$fixture;
 }
 
-function httpSend($service, $meth, $params=array(), $cookie='')
+function httpSend($service, $meth, &$cookies='', $params=array())
 {
 	$url = "http://localhost:33436/$service/$meth?";
     foreach ($params as $k=>$v) {
         $url .= $k."=".$v."&";
     }
     $r = Request::get($url)
-      ->addHeader('Cookie', $cookie)
+      ->addHeader('Cookie', $cookies)
       ->sendsJson()
       ->expectsJson()
       ->send();
