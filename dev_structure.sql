@@ -202,7 +202,7 @@ CREATE TABLE IF NOT EXISTS `ts_user_usr` (
   `usr_nickname` varchar(200) COLLATE utf8_general_ci DEFAULT NULL COMMENT 'Surnom',
   `usr_adult` int(1) DEFAULT NULL,
   `usr_mail` varchar(200) COLLATE utf8_general_ci DEFAULT NULL COMMENT 'Adresse mail de l''utilisateur',
-  `usr_credit` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'Crédit',
+  `usr_credit` smallint(6) NOT NULL DEFAULT '0' COMMENT 'Crédit',
   `img_id` int(11) unsigned DEFAULT NULL COMMENT 'Identifiant de l''image',
   `usr_temporary` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 s''il s''agit d''un utilisateur temporaire',
   `usr_fail_auth` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'Nombre d''échec d''authentification depuis la dernière réussite',
