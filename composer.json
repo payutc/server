@@ -9,7 +9,8 @@
     "require-dev": {
         "phpunit/phpunit": "*",
         "phpunit/dbunit": "*",
-        "phpunit/phpunit-story": "*"
+        "phpunit/phpunit-story": "*",
+        "nategood/httpful": "*"
     },
     "include-path": ["./"],
     "autoload": {

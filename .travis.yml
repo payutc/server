@@ -3,6 +3,8 @@ php:
   - 5.3
   - 5.4
 before_script:
+  - mkdir logs
+  - chmod 777 logs
   - mysql -e 'create database buckutt_test;'
   - mysql -u root buckutt_test < dev_structure.sql
   - curl -s https://getcomposer.org/installer | php
@@ -11,5 +13,7 @@ before_script:
   - mkdir logs
   - chmod 777 logs
   - cp config.inc.dist.php config.inc.php
-script: ./phpunit --coverage-text .
+  - cd ..
+script: ./tests/run_all.sh
+
 
