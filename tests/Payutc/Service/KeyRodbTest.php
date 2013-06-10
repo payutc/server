@@ -17,6 +17,9 @@ class KeyRodbTest extends ReadOnlyDatabaseTest
         ));
     }
     
+    /**
+     * @requires PHP 5.4
+     */
     public function testGetCasUrl()
     {
         $r = httpSend('KEY', 'getCasUrl');
