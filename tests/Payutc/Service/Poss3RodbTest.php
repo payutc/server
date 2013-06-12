@@ -11,6 +11,9 @@ class Poss3RodbTest extends ServiceBaseRodbTest
         ));
     }
 
+    /**
+     * @requires PHP 5.4
+     */
     public function testGetBuyerInfo()
     {
         $cookie = '';

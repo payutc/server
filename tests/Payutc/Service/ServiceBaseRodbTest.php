@@ -53,7 +53,7 @@ abstract class ServiceBaseRodbTest extends ReadOnlyDatabaseTest
     }
 
     /**
-     * @require PHP 5.4
+     * @requires PHP 5.4
      */
     public function testLoginCas()
     {
