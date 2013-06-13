@@ -70,7 +70,7 @@ $_CONFIG['PBX_MOBILE_URL'] = "https://tpeweb.paybox.com/cgi/ChoixPaiementMobile.
     n'est apporté quand au fait qu'il restera accessible dans la durée.
     Vous pouvez ouvrir un compte de test sur le site www.payline.com
 */
-$_CONFIG['PAYLINE_CONTRACT_NUMBER'] = "123456";
+$_CONFIG['PAYLINE_CONTRACT_NUMBER'] = "1234567";
 $_CONFIG['PAYLINE_MERCHANT_ID'] = '70038023549152' ; // Merchant ID
 $_CONFIG['PAYLINE_ACCESS_KEY'] = 'fAPFZ5vkg0K734953kKG' ; // Certificate key
 $_CONFIG['PAYLINE_PRODUCTION'] = false ; // production mode
