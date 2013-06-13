@@ -38,7 +38,7 @@ class Payline {
 	    DEFINE( 'RETURN_URL', ''); // Default return URL
 	    DEFINE( 'CUSTOM_PAYMENT_TEMPLATE_URL', ''); // Default payment template URL
 	    DEFINE( 'CUSTOM_PAYMENT_PAGE_CODE', '' );
-	    DEFINE( 'CONTRACT_NUMBER', '0'.Config::get('PAYLINE_CONTRACT_NUMBER') ); // Contract type default (ex: 001 = CB, 003 = American Express...)
+	    DEFINE( 'CONTRACT_NUMBER', Config::get('PAYLINE_CONTRACT_NUMBER') ); // Contract type default (ex: 001 = CB, 003 = American Express...)
 	    DEFINE( 'CONTRACT_NUMBER_LIST', '' ); // Contract type multiple values (separator: ;)
 	    DEFINE( 'SECOND_CONTRACT_NUMBER_LIST', '' ); // Contract type multiple values (separator: ;)
 	
@@ -128,12 +128,16 @@ class Payline {
 
         // Check Result
         if(isset($result) && $result['result']['code'] == '00000') {
-            // That's OK, You can go pay on this url
-		    return $result['redirectURL'];
-	    } else if(isset($result)) {
+            // That's OK
+            // Save the token
+            $conn->update('t_paybox_pay', array("pay_token" => $result['token']), array('pay_id' => $ref));    
+
+            // You can go pay on this url
+            return $result['redirectURL'];
+        } else if(isset($result)) {
             $conn->update('t_paybox_pay', array("pay_step" => 'A', "pay_date_retour" => new \DateTime()), array('pay_id' => $ref), array("string", "datetime"));
-	        throw new \Payutc\Exception\PaylineException($result['result']['longMessage'], $result['result']['code']);
-	    } else {
+            throw new \Payutc\Exception\PaylineException($result['result']['longMessage'], $result['result']['code']);
+        } else {
             $conn->update('t_paybox_pay', array("pay_step" => 'A', "pay_date_retour" => new \DateTime()), array('pay_id' => $ref), array("string", "datetime"));
             throw new \Payutc\Exception\PaylineException("Payline erreur critique");
         }
