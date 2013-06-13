@@ -87,7 +87,7 @@ class Payline {
         } else {
             $this->payline->cancelURL = $returnURL;
         }
-        $this->payline->notificationURL = null;
+        $this->payline->notificationURL = Config::get('server_url') . "PAYLINE/Notification"; 
 
         // Insert a payline row in db and get the payment ref
         $conn = Db::getConnection();
@@ -141,8 +141,87 @@ class Payline {
             $conn->update('t_paybox_pay', array("pay_step" => 'A', "pay_date_retour" => new \DateTime()), array('pay_id' => $ref), array("string", "datetime"));
             throw new \Payutc\Exception\PaylineException("Payline erreur critique");
         }
- 
-        
+    }
+
+    /*
+        Recoit une notification de payline
+    */
+    public function Notification($token) {
+        $array = array();
+        $array['token'] = $token;
+        $array['version'] = '';
+
+        $response = $this->payline->getWebPaymentDetails($array);
+        if(isset($response)){
+            // Paiement valide
+            if($response["result"]["code"] == "00000") {
+                $conn = Db::getConnection();
+                // Recuperation du rechargement
+                $qb = Db::createQueryBuilder();
+                $qb->select('pay_step', 'pay_id', 'usr_id')
+                   ->from('t_paybox_pay', 'pay')
+                   ->where('pay.pay_token = :token')->setParameter('token', $token);
+
+                $result = $qb->execute()->fetch();
+		        if($result['pay_step'] != "W") {
+                    // ERROR ! Ce rechargement n'est pas en attente.
+                    // Tentative de double rechargement ?
+                    Log::warning("PAYLINE : Tentative de double rechargement ! $token \n".print_r($response, true),10);
+                    return;
+                }
+                
+                // insertion du rechargement
+                $conn->insert('t_recharge_rec',
+                array(
+                    "rty_id" => 3, // Type de rechargement => Rechargement en ligne
+                    "usr_id_buyer" => $result['usr_id'], 
+                    "usr_id_operator" => $result['usr_id'],
+                    "poi_id" => 1, // Historique... useless maintenant TODO mettre l'id d'app
+                    "rec_date" =>  new \DateTime(),
+                    "rec_credit" => $response["payment"]["amount"],
+                    "rec_trace" => $result['pay_id'],
+                    "rec_removed" => 0
+                ),
+                array(
+                    "integer", "integer", "integer", "integer", "datetime", "integer", "string", "integer"
+                ));
+
+                // Recharge user maintenant
+                $conn->executeQuery('UPDATE ts_user_usr SET usr_credit = (usr_credit + ?) WHERE usr_id = ?', array($response["payment"]["amount"], $result['usr_id']));
+
+                $conn->update('t_paybox_pay', 
+                                array("pay_step" => 'V', 
+                                      "pay_date_retour" => new \DateTime(),
+                                      "pay_amount" => $response["payment"]["amount"],
+                                      "pay_auto" => $response["authorization"]["number"],
+                                      "pay_trans" => $response["transaction"]["id"],
+                                      "pay_error" => $response["result"]["code"]),
+                                array("pay_token" => $token),
+                                array("string", "datetime", "integer", "string", "string", "string"));
+                Log::info("PAYLINE : succes ! $token \n".print_r($response, true),1);
+
+            // Paiement en cours, l'utilisateur n'a pas annulé ni validé...
+            } else if ($response["result"]["code"] == "02306") {
+                // Log this, peut etre que le petit malin essaie de nous rouler ^^
+                Log::warning("PAYLINE : Tentative de validation avant erreur ou succes ! $token \n".print_r($response, true),10);
+                return;
+
+            } else {
+                // Indique le rechargement comme aborted
+                $conn = Db::getConnection();
+                $conn->update('t_paybox_pay', 
+                                array("pay_step" => 'A', 
+                                      "pay_date_retour" => new \DateTime(),
+                                      "pay_amount" => $response["payment"]["amount"],
+                                      "pay_auto" => $response["authorization"]["number"],
+                                      "pay_trans" => $response["transaction"]["id"],
+                                      "pay_error" => $response["result"]["code"]),
+                                array("pay_token" => $token),
+                                array("string", "datetime", "integer", "string", "string", "string"));
+                Log::info("PAYLINE : error ! $token \n".print_r($response, true),5);
+                return;
+            }
+        }
     }
 
 }
