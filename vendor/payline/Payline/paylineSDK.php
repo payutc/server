@@ -319,8 +319,8 @@ final class Log {
 		$tmp = explode(DIRECTORY_SEPARATOR ,dirname(__FILE__));
 		
 		// up one level from the current directory
-		for($i=0,$s = sizeof($tmp)-1; $i<$s; $i++){
-			$this->path .= $tmp[$i].DIRECTORY_SEPARATOR;
+		for($i=0,$s = sizeof($tmp)-3; $i<$s; $i++) {
+    		$this->path .= $tmp[$i].DIRECTORY_SEPARATOR;
 		}
 		$this->path .= 'logs'.DIRECTORY_SEPARATOR;
 	}
