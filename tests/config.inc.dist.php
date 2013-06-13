@@ -43,7 +43,11 @@ $_CONFIG['credit_max'] = 10000;
 $_CONFIG['rechargement_min'] = 1000;
 
 // Adresse du proxy
-$_CONFIG['proxy'] = "proxyweb.utc.fr:3128";
+$_CONFIG['proxy_host'] = null;
+$_CONFIG['proxy_port'] = null;
+$_CONFIG['proxy_login'] = "";
+$_CONFIG['proxy_password'] = "";
+$_CONFIG['proxy'] = $_CONFIG['proxy_host'] . ":" . $_CONFIG['proxy_port'];
 
 /** 
     PAYBOX
@@ -58,6 +62,17 @@ $_CONFIG['PBX_EXE'] = "/usr/share/buckutt/modulev3.cgi";
 // CLEF PUBLIQUE PAYBOX
 $_CONFIG['PBX_PUBPEM'] = "somewhere/pubkey.pem";
 
+/**
+    PAYLINE
+    Parametres de payline
+    Ces parametres sont preconfigures sur un compte de test, aucune garantie
+    n'est apporté quand au fait qu'il restera accessible dans la durée.
+    Vous pouvez ouvrir un compte de test sur le site www.payline.com
+*/
+$_CONFIG['PAYLINE_CONTRACT_NUMBER'] = "123456";
+$_CONFIG['PAYLINE_MERCHANT_ID'] = '70038023549152' ; // Merchant ID
+$_CONFIG['PAYLINE_ACCESS_KEY'] = 'fAPFZ5vkg0K734953kKG' ; // Certificate key
+$_CONFIG['PAYLINE_PRODUCTION'] = false ; // production mode
 
 // Configuration de ginger (outil cotisant)
 // Laisser la clé vide pour désactiver les appels à ginger
