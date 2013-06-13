@@ -19,14 +19,19 @@ function httpSend($service, $meth, &$cookies='', $params=array())
 {
 	$url = "http://localhost:33436/$service/$meth?";
     foreach ($params as $k=>$v) {
-        $url .= $k."=".$v."&";
+        $url .= $k."=".urlencode($v)."&";
     }
     $r = Request::get($url)
       ->addHeader('Cookie', $cookies)
       ->sendsJson()
-      ->expectsJson()
+      ->parseWith(function($body) { return json_decode($body, true); })
       ->send();
 
+    $headers = $r->headers->toArray();
+    if (array_key_exists('set-cookie', $headers)) {
+        $rcookie = $headers['set-cookie'];
+        if (strpos($cookies, $rcookie) === false) $cookies .= $rcookie;
+    }
 	return $r;
 }
 
@@ -88,7 +93,7 @@ abstract class DatabaseTest extends \PHPUnit_Extensions_Database_TestCase
 	 * called in setUp()
 	 */
 	protected function getSetUpOperation()
-	{
+    {
 		$cascadeTruncates = false; // True if you want cascading truncates, false otherwise. If unsure choose false.
 		return new \PHPUnit_Extensions_Database_Operation_Composite(array(
 			new TruncateOperation($cascadeTruncates),

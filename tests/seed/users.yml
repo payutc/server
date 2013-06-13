@@ -48,7 +48,10 @@ tj_usr_mol_jum:
     usr_id: 2
     mol_id: 1
     jum_data: mguffroy
-
+  -
+    usr_id: 1
+    mol_id: 5
+    jum_data: ABCDABCD
 
 
 tj_usr_rig_jur:

@@ -10,10 +10,10 @@ class ApplicationRightRodbTest extends ReadOnlyDatabaseTest
 	 */
 	public function getDataSet()
 	{
-		//return return new MyApp_DbUnit_ArrayDataSet($this->dataset);
-		$seeddir = dirname(__FILE__).'/seed/';
-		$ds = new PHPUnit_Extensions_Database_DataSet_YamlDataSet($seeddir.'applicationright.yml');
-		return $ds;
+        return $this->computeDataSet(array(
+            'applications.yml',
+            'applicationright.yml'
+        ));
 	}
     
     public function setUp()

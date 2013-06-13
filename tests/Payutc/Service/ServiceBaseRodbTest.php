@@ -20,7 +20,9 @@ abstract class ServiceBaseRodbTest extends ReadOnlyDatabaseTest
         return array(
             'users.yml',
             'fundations.yml',
-            'applications.yml'
+            'applications.yml',
+            'applicationright.yml',
+            'fundationrights.yml',
         );
     }
     
@@ -33,9 +35,8 @@ abstract class ServiceBaseRodbTest extends ReadOnlyDatabaseTest
         return $r;
     }
 
-    public function loginApp(&$cookie='', &$r, $key='app1')
+    public function loginApp(&$cookie='', &$r, $key='my_app')
     {
-        $cookie = '';
         $r = httpSend('POSS3', 'loginApp', $cookie, array(
             'key' => $key,
         ));
@@ -70,7 +71,7 @@ abstract class ServiceBaseRodbTest extends ReadOnlyDatabaseTest
     {
         $cookie = '';
         $r = null;
-        $this->loginApp($cookie, $r, 'app1');
+        $this->loginApp($cookie, $r, 'my_app');
         $this->assertEquals(200, $r->code);
     }
 }
