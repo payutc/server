@@ -80,7 +80,7 @@ class Payline {
         $this->$service = $service; 
     }
     
-    public function doWebPayment($usr_id, $amount, $returnURL, $cancelURL=null) {
+    public function doWebPayment($usr, $amount, $returnURL, $cancelURL=null) {
         $this->payline->returnURL = $returnURL;
         if($cancelURL) {
             $this->payline->cancelURL = $cancelURL;
@@ -93,7 +93,7 @@ class Payline {
         $conn = Db::getConnection();
         $conn->insert('t_paybox_pay',
             array(
-                "usr_id" => $usr_id,
+                "usr_id" => $usr->getId(),
                 "pay_step" => "W",  // Etat de la transaction (W: Wait, V: Valide, A: Annule/Aborted)
                 "pay_amount" => $amount,
                 "pay_date_create" => new \DateTime(), 
@@ -115,6 +115,9 @@ class Payline {
         $array['order']['ref'] = $ref;
         $array['order']['amount'] = $amount;
         $array['order']['currency'] = PAYMENT_CURRENCY;
+
+        // BUYER INFO
+        $array['buyer']['email'] = $usr->getMail();
 
         // CONTRACT NUMBERS
         $array['payment']['contractNumber'] = CONTRACT_NUMBER;

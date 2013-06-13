@@ -361,7 +361,7 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
                     return "<error>".$this->getErrorDetail($auth)."</error>";
 
         $pl = new \Payutc\Bom\Payline(-1 , "MADMIN");
-        return $pl->doWebPayment($this->User->getId(), $amount, $callbackUrl);
+        return $pl->doWebPayment($this->User, $amount, $callbackUrl);
     }
     
     /**
