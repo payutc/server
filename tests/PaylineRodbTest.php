@@ -18,7 +18,7 @@ class paylineRodbTest extends ReadOnlyDatabaseTest
 	
 	public function testInitDontCrash()
 	{  
-        $payline = new \Payutc\Bom\Payline();
+        $payline = new \Payutc\Bom\Payline(0, "TEST");
 	}
 	
 
