@@ -23,6 +23,7 @@ class Poss3RwdbTest extends DatabaseTest
     {
         $u = new User("trecouvr", 1, 0, 0, 1);
         $solde = $u->getCredit();
+        $nb_purchase = count($u->getLastPurchase());
         $cookie = '';
         $r = httpSend('POSS3', 'loginCas', $cookie, array(
             'ticket' => 'trecouvr@POSS3',
@@ -46,6 +47,18 @@ class Poss3RwdbTest extends DatabaseTest
         );
         $this->assertEquals($o, $r->body);
         $this->assertEquals(200, $r->code);
+        $u = new User("trecouvr", 1, 0, 0, 1);
+        $this->assertEquals($solde-280, $u->getCredit());
+        $purchases = $u->getLastPurchase();
+        sort_by_key($purchases, 'pur_id');
+        $this->assertEquals($nb_purchase+3, count($purchases));
+        $purchases = array_slice($purchases, count($purchases)-3);
+        $this->assertEquals(1, $purchases[0]['obj_id']);
+        $this->assertEquals(1, $purchases[1]['obj_id']);
+        $this->assertEquals(2, $purchases[2]['obj_id']);
+        $this->assertEquals(100, $purchases[0]['pur_price']);
+        $this->assertEquals(100, $purchases[1]['pur_price']);
+        $this->assertEquals(80, $purchases[2]['pur_price']);
     }
 }
 
