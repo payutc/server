@@ -56,7 +56,7 @@ class Purchase
         }
     }
     
-    public function getPurchaseById($pur_id)
+    public static function getPurchaseById($pur_id)
     {
         $qb = Db::createQueryBuilder();
             $qb->select('*', 'pur.pur_date')

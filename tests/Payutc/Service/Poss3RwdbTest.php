@@ -65,6 +65,9 @@ class Poss3RwdbTest extends DatabaseTest
         $this->assertEquals(80, $purchases[2]['pur_price']);
     }
 
+    /**
+     * @requires PHP 5.4
+     */
     public function testCancel()
     {
         $u = new User("trecouvr", 1, 0, 0, 1);
