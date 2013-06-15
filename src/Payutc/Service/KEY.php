@@ -25,7 +25,10 @@ use \ApplicationList;
 	*/
 	public function registerApplication($app_url, $app_name, $app_desc=null) {
         // Pour déclarer une nouvelle application on a besoin d'un user, mais pas d'être une application.
-        $this->checkRight(true, false);
+        if(!$this->user()) {
+            throw new \Payutc\Exception\CheckRightException("Vous devez connecter un utilisateur ! (method loginCas)");
+        }
+
 		$application = new Application();
 		$application->fromArray(Array(
             "app_id" => null,
