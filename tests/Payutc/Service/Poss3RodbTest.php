@@ -29,6 +29,51 @@ class Poss3RodbTest extends ServiceBaseRodbTest
         $this->assertEquals(9000, $r->body['solde']);
 
     }
+
+
+    /**
+     * @requires PHP 5.4
+     */
+    public function testTransactionWithNoSeller()
+    {
+        $cookie = '';
+        $r = httpSend('POSS3', 'transaction', $cookie, array(
+            'obj_ids' => '1,2',
+            'fun_id' => 1,
+            'badge_id' => 'ABCDABCD'
+        ));
+        $a = array('error' => array(
+            'type' => 'Payutc\Exception\CheckRightException',
+            'code' => 0,
+            'message' => 'Vous devez connecter un utilisateur ! (method loginCas)'
+        ));
+        $this->assertEquals($a, $r->body);
+        $this->assertEquals(400, $r->code);
+    }
+
+    /**
+     * @requires PHP 5.4
+     */
+    public function testTransactionWithNotAuthorizedSeller()
+    {
+        $cookie = '';
+        $r = null;
+        $this->loginCas($cookie, $r, 'mguffroy@POSS3', 'POSS3');
+        $this->assertEquals(200, $r->body);
+        $r = httpSend('POSS3', 'transaction', $cookie, array(
+            'obj_ids' => '1,2',
+            'fun_id' => 1,
+            'badge_id' => 'ABCDABCD'
+        ));
+        $a = array('error' => array(
+            'type' => 'Payutc\Exception\CheckRightException',
+            'code' => 0,
+            'message' => 'Le user_id 2 n\'a pas les droits POSS3 sur la fundation n°1'
+        ));
+        $this->assertEquals($a, $r->body);
+        $this->assertEquals(400, $r->code);
+    }
+
 }
 
 
