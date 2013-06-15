@@ -16,6 +16,7 @@ class Poss3RwdbTest extends DatabaseTest
             'products.yml',
             'applicationright.yml',
             'fundationrights.yml',
+            'purchase.yml'
         ));
     }
 
@@ -62,6 +63,29 @@ class Poss3RwdbTest extends DatabaseTest
         $this->assertEquals(100, $purchases[0]['pur_price']);
         $this->assertEquals(100, $purchases[1]['pur_price']);
         $this->assertEquals(80, $purchases[2]['pur_price']);
+    }
+
+    public function testCancel()
+    {
+        $u = new User("trecouvr", 1, 0, 0, 1);
+        $solde = $u->getCredit();
+        $nb_purchase = count($u->getLastPurchase());
+        $cookie = '';
+        $r = httpSend('POSS3', 'loginCas', $cookie, array(
+            'ticket' => 'trecouvr@POSS3',
+            'service' => 'POSS3'
+        ));
+        $this->assertEquals(200, $r->code);
+        $r = httpSend('POSS3', 'loginApp', $cookie, array(
+            'key' => 'my_app'
+        ));
+        $this->assertEquals(200, $r->code);
+        $r = httpSend('POSS3', 'cancel', $cookie, array(
+            'fun_id' => 1,
+            'pur_id' => 1,
+        ));
+        $this->assertEquals(true, $r->body);
+        $this->assertEquals(200, $r->code);
     }
 }
 

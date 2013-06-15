@@ -22,6 +22,7 @@ class PurchaseRwdbTest extends DatabaseTest
     
     public function testTransaction()
     {
+        $date = date('Y-m-d H:i:s');
 		$items = array(
 			array(
 				'id' => 4,
@@ -37,7 +38,7 @@ class PurchaseRwdbTest extends DatabaseTest
 		$this->assertEquals(8700, $u->getCredit());
 		$p = Product::getOne(4,1);
 		$this->assertEquals(21, $p['stock']);
-		$r = Purchase::getNbSell(4, 1, date('Y-m-d H:i:s'));
+		$r = Purchase::getNbSell(4, 1, $date);
 		$this->assertEquals(2, $r);
 	}
 

@@ -68,7 +68,7 @@ class Poss3RodbTest extends ServiceBaseRodbTest
         $a = array('error' => array(
             'type' => 'Payutc\Exception\CheckRightException',
             'code' => 0,
-            'message' => 'Le user_id 2 n\'a pas les droits POSS3 sur la fundation n°1'
+            'message' => 'Le user_id 9447 n\'a pas les droits POSS3 sur la fundation n°1'
         ));
         $this->assertEquals($a, $r->body);
         $this->assertEquals(400, $r->code);
