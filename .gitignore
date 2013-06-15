@@ -5,3 +5,5 @@
 *~
 /logs/
 /tests/config.inc.php
+*.swp
+
