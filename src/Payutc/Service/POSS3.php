@@ -60,11 +60,11 @@ class POSS3 extends \ServiceBase {
         $seller_id = $this->user()->getId();
         if($pur["usr_id_seller"] != $seller_id) {
             Log::warn("cancel($pur_id) : No right to cancel this");
-            return array("error"=>400, "error_msg"=>"Tu ne peux pas annuler la vente d'un autre vendeur.");
+            throw new PossException("Tu ne peux pas annuler la vente d'un autre vendeur.");
         }
         if($pur["pur_removed"] == 1) {
             Log::warn("cancel($pur_id) : Already cancelled");
-            return array("error"=>400, "error_msg"=>"Cette vente à déjà été annulé...");
+            throw new PossException("Cette vente à déjà été annulé...");
         }
         Purchase::cancelById($pur_id);
         return true;
@@ -95,7 +95,7 @@ class POSS3 extends \ServiceBase {
             }
             catch (\Exception $ex) {
                 Log::warn("transaction($badge_id, $obj_ids) : Can't find card");
-                return array("error"=>$ex->getCode(), "error_msg"=>"Badge introuvable");
+                throw new PossException("Badge introuvable");
             }
             if($user->login) {
                 $buyer = new User($user->login, MEAN_OF_LOGIN_NICKNAME, "", 0, 1, 1);
