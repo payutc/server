@@ -56,8 +56,8 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
                  "name" => "Barbar",
                  "categorie_id" => "1001",
                  "fundation_id" => "1",
-                 "stock" => "0",
-                 "price" => null,
+                 "stock" => "23",
+                 "price" => "150",
                  "alcool" => "0",
                  "image" => null
             ),

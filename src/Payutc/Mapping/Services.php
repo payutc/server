@@ -6,6 +6,7 @@ class Services {
     protected static $services = array(
         'POSS2',
         'POSS2WithExceptions',
+        'POSS3',
         'AADMIN',
         'MADMIN',
         'STATS',

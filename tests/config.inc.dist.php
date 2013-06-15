@@ -65,8 +65,8 @@ $_CONFIG['ginger_key'] = "abc";
 
 // Configuration de Slim
 $_CONFIG['slim_config'] = array(
-    'mode' => 'developement',
-    'debug' => true,
+    'mode' => 'production',
+    'debug' => false,
     'log.level' => \Slim\Log::DEBUG,
     'log.enabled' => true,
     'log.writer' => new \Slim\Extras\Log\DateTimeFileWriter(array(

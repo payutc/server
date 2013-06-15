@@ -40,7 +40,7 @@ class Product {
         );
         $params = array_merge($default, $params);
         $fun_ids = $params['fun_ids'];
-        $obj_ids = $params['itm_ids'];
+        $itm_ids = $params['itm_ids'];
         
         $qb = Db::createQueryBuilder();
         $qb->select('itm.obj_id', 'itm.obj_name', 'oli.obj_id_parent', 
@@ -60,9 +60,9 @@ class Product {
            $qb->andWhere('itm.fun_id IN (:fun_ids)')
                 ->setParameter('fun_ids', $fun_ids, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY);
         }
-        if ($obj_ids !== null) {
+        if ($itm_ids !== null) {
            $qb->andWhere('itm.obj_id IN (:ids)')
-                ->setParameter('ids', $ids, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY);
+                ->setParameter('ids', $itm_ids, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY);
         }
         
         $res = $qb->execute();

@@ -44,7 +44,7 @@ use \Application;
                         "user"    => true,
                         "app"     => false
                     ), array(
-                        "service" => "VENTEBADGE",
+                        "service" => "POSS3",
                         "name"    => "Vente physique",
                         "desc"    => "Permet la vente par badge",
                         "user"    => true,

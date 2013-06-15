@@ -371,7 +371,32 @@ class ServiceBase {
 			return array("error"=>400, "error_msg"=>"Image non trouvée.");
 		}
 	}
-
+    
+    protected function &getSession() {
+        if (!isset($_SESSION[get_class($this)])) {
+            $_SESSION[get_class($this)] = array();
+        }
+        return $_SESSION[get_class($this)];
+    }
+    
+    protected function destroySession() {
+        unset($_SESSION[get_class($this)]);
+    }
+    
+    protected function sessionSet($key, $val) {
+        $session =& $this->getSession();
+        $session[$key] = $val;
+    }
+    
+    protected function sessionGet($key, $default = null) {
+        $session =& $this->getSession();
+        if (!isset($session[$key])) {
+            return $default;
+        }
+        else {
+            return $session[$key];
+        }
+    }
 }
 
 

@@ -33,7 +33,7 @@ t_object_obj:
     obj_single: 0
     obj_tva: 0
     obj_alcool: 0
-    obj_stock: 0
+    obj_stock: 23
     fun_id: 1
 
 
@@ -67,3 +67,6 @@ t_price_pri:
   -
     obj_id: 3
     pri_credit: 170
+  -
+    obj_id: 4
+    pri_credit: 150

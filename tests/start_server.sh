@@ -5,7 +5,6 @@ cd `dirname $0`
 FAUX_CAS_PORT=33435
 PAYUTC_PORT=33436
 
-echo "Prepare integration"
 if [ -f ../config.inc.php ]
 then
     echo "Move config.inc.php to config.inc.php.bak"
