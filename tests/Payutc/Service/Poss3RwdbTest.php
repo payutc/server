@@ -19,6 +19,9 @@ class Poss3RwdbTest extends DatabaseTest
         ));
     }
 
+    /**
+     * @requires PHP 5.4
+     */
     public function testTransaction()
     {
         $u = new User("trecouvr", 1, 0, 0, 1);
