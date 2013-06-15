@@ -9,6 +9,11 @@ class Db
     
     public static function createQueryBuilder()
     {
+        return static::conn()->createQueryBuilder();
+    }
+    
+    public static function conn()
+    {
         if (static::$conn === null) {
             static::$config = new \Doctrine\DBAL\Configuration();
             $connectionParams = array(
@@ -20,7 +25,22 @@ class Db
             );
             static::$conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, static::$config);
         }
-        return static::$conn->createQueryBuilder();
+        return static::$conn;
+    }
+    
+    public static function beginTransaction()
+    {
+        static::$conn->beginTransaction();
+    }
+    
+    public static function commit()
+    {
+        static::conn()->commit();
+    }
+    
+    public static function rollback()
+    {
+        static::conn()->rollback();
     }
 }
 

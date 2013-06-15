@@ -6,25 +6,8 @@ tj_app_fun_afu:
   - 
     app_id: 2
     fun_id: 1
-
-t_application_app:
   -
     app_id: 1
-    app_key: my_app
-    app_name: my_app
-    app_creator: trecouvr
-    app_lastuse: 2012-01-01
-    app_created: 2012-01-01
-  -
-    app_id: 2
-    app_key: super_app
-    app_name: super_app
-    app_creator: trecouvr
-    app_lastuse: 2012-01-01
-    app_created: 2012-01-01
-
-t_fundation_fun:
-  -
     fun_id: 1
-    fun_name: a_fun
+    afu_service: POSS3
 

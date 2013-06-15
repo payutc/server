@@ -31,10 +31,10 @@ class BlockedRodbTest extends ReadOnlyDatabaseTest
 		$this->assertFalse(Blocked::userIsBlocked(1, 1));
 		$this->assertFalse(Blocked::userIsBlocked(1, 2));
 		$this->assertFalse(Blocked::userIsBlocked(1));
-		$this->assertFalse(Blocked::userIsBlocked(2, 2));
+		$this->assertFalse(Blocked::userIsBlocked(9447, 2));
 		
-		$this->assertEquals($arr_block, Blocked::userIsBlocked(2, 1));
-		$this->assertEquals($arr_block, Blocked::userIsBlocked(2));
+		$this->assertEquals($arr_block, Blocked::userIsBlocked(9447, 1));
+		$this->assertEquals($arr_block, Blocked::userIsBlocked(9447));
 	}
 	
 	/**
@@ -57,7 +57,7 @@ class BlockedRodbTest extends ReadOnlyDatabaseTest
 	 */
 	public function testCheckUsrNotBlockedWithBlockedUsr_1()
 	{
-		Blocked::checkUsrNotBlocked(2);
+		Blocked::checkUsrNotBlocked(9447);
 	}
 	
 	/**
@@ -70,7 +70,7 @@ class BlockedRodbTest extends ReadOnlyDatabaseTest
 	 */
 	public function testCheckUsrNotBlockedWithBlockedUsr_2()
 	{
-		Blocked::checkUsrNotBlocked(2, 1);
+		Blocked::checkUsrNotBlocked(9447, 1);
 	}
 	
 }
