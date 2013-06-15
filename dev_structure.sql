@@ -290,11 +290,12 @@ CREATE TABLE IF NOT EXISTS `t_paybox_pay` (
   `pay_amount` int(5) NOT NULL COMMENT 'Montant de la transaction (en centimes)',
   `pay_date_create` datetime NOT NULL COMMENT 'Date de lancement de la transaction',
   `pay_date_retour` datetime DEFAULT NULL COMMENT 'Date de réception du retour paybox',
-  `pay_auto` varchar(20) CHARACTER SET latin1 DEFAULT NULL COMMENT 'Numéro d''autorisation',
-  `pay_trans` varchar(20) CHARACTER SET latin1 DEFAULT NULL COMMENT 'Identifiant de transaction',
-  `pay_callback_url` varchar(255) CHARACTER SET latin1 NOT NULL COMMENT 'Que a été la callback url ?',
+  `pay_token` varchar(40)  DEFAULT NULL COMMENT 'Token payline pour connaitre l etat de la transaction',
+  `pay_auto` varchar(20)  DEFAULT NULL COMMENT 'Numéro d''autorisation',
+  `pay_trans` varchar(20)  DEFAULT NULL COMMENT 'Identifiant de transaction',
+  `pay_callback_url` varchar(255)  NOT NULL COMMENT 'Que a été la callback url ?',
   `pay_mobile` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1=rechargement sur mobile',
-  `pay_error` varchar(5) CHARACTER SET latin1 DEFAULT NULL COMMENT 'Code erreur retourné par paubox',
+  `pay_error` varchar(5)  DEFAULT NULL COMMENT 'Code erreur retourné par paubox',
   PRIMARY KEY (`pay_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1 ;
 

@@ -7,8 +7,7 @@ class Db
     private static $config = null;
     private static $conn = null;
     
-    public static function createQueryBuilder()
-    {
+    public static function getConnection() {
         if (static::$conn === null) {
             static::$config = new \Doctrine\DBAL\Configuration();
             $connectionParams = array(
@@ -20,7 +19,12 @@ class Db
             );
             static::$conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, static::$config);
         }
-        return static::$conn->createQueryBuilder();
+        return static::$conn;
+    }
+
+    public static function createQueryBuilder()
+    {
+        return static::getConnection()->createQueryBuilder();
     }
 }
 

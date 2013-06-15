@@ -360,8 +360,8 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
               if($auth != 1)
                     return "<error>".$this->getErrorDetail($auth)."</error>";
 
-        $pb = new Paybox($this->User);
-        return $pb->execute($amount, $callbackUrl);
+        $pl = new \Payutc\Bom\Payline(-1 , "MADMIN");
+        return $pl->doWebPayment($this->User, $amount, $callbackUrl);
     }
     
     /**
