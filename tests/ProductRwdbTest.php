@@ -55,6 +55,10 @@ class ProductRwdbTest extends DatabaseTest
         $this->assertEquals(1001, $r['categorie_id']);
         $this->assertEquals(1, $r['fundation_id']);
 
+        $a = Product::edit($r["id"], "MC Chouffe", 1001, 170, 10, 1, null, 1);
+        $r = Product::getOne($a["success"]);
+        $this->assertEquals(1, $r['alcool']);
+
         $a = Product::delete($r["id"], 1);
         $z = Product::getOne($r["id"]);
         $this->assertEquals(null, $z);
