@@ -39,7 +39,7 @@ use \Payutc\Config;
  */
 
 
-class MADMIN extends \WsdlBase {
+class MADMIN {
 
     private  $User;
     private $loginToRegister;
@@ -51,6 +51,50 @@ class MADMIN extends \WsdlBase {
     public function __construct() {
         $this->db = Db_buckutt::getInstance();
     }
+    
+	/**
+	 * Retourne l'url du CAS
+	 * @return String $url
+	 */
+	public function getCasUrl() {
+	 return Cas::getUrl();
+	}
+    
+	/**
+	* Récupérer les informations sur une erreur à partir de son id.
+	*
+	* @param int $id
+	* @return String $csv
+	*/
+	public function getErrorDetail($id) {
+		if (is_array($don = $this->db->fetchArray($this->db->query("SELECT err_code, err_name, err_description FROM ts_error_err WHERE err_code = '%u';", Array($id))))) {
+			$txt = new ComplexData(array($don['err_code'],$don['err_name'],$don['err_description']));
+			return $txt->csvArrays();
+		} else {
+			return "430";
+		}
+	}
+    
+	
+	/**
+	 * Renvoie la liste des user pour un autocomplete.
+	 * 
+	 * @param String $queryString
+	 * @return String $txt
+	 */
+	public function getRpcUser($queryString) {
+		
+		$res = $this->db->query("SELECT usr_id, usr_firstname, usr_lastname FROM ts_user_usr WHERE (UPPER(usr_firstname) LIKE '%s%%' OR UPPER(usr_lastname) LIKE '%s%%') ORDER BY usr_lastname ASC;", Array(strtoupper($queryString), strtoupper($queryString)));
+		$txt = '';
+		if ($this->db->affectedRows() >= 1) {
+			while ($don = $this->db->fetchArray($res)) {
+				$user_info = "'".$don['usr_id']."!!!".$don['usr_firstname']."!!!".$don['usr_lastname']."'";
+				$txt .= '<li onclick="fill('.$user_info.')">'.$don['usr_firstname'].' '.$don['usr_lastname'].'</li>'; 
+			}
+			
+		}
+		return $txt;
+	}    
     
     /**
      * Connecter le user avec un ticket CAS.
