@@ -59,7 +59,7 @@ class Poss3RodbTest extends ServiceBaseRodbTest
         $cookie = '';
         $r = null;
         $this->loginCas($cookie, $r, 'mguffroy@POSS3', 'POSS3');
-        $this->assertEquals(200, $r->body);
+        $this->assertEquals(200, $r->code);
         $r = httpSend('POSS3', 'transaction', $cookie, array(
             'obj_ids' => '1,2',
             'fun_id' => 1,
