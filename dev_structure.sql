@@ -487,6 +487,7 @@ CREATE TABLE IF NOT EXISTS `tj_app_fun_afu` (
   `app_id` int(11) NOT NULL COMMENT 'Id de l''application concerné',
   `fun_id` int(11) COMMENT 'Identifiant de la fundation',
   `afu_service` varchar(15) COMMENT 'Nom du service (de la classe exposé)',
+  `afu_inserted` datetime DEFAULT NULL,
   `afu_removed` datetime DEFAULT NULL,
   PRIMARY KEY (`afu_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Droits qu''une fundation donne à une fundation sur un service donné' AUTO_INCREMENT=1 ;
@@ -502,6 +503,7 @@ CREATE TABLE IF NOT EXISTS `tj_usr_fun_ufu` (
   `usr_id` int(11) NOT NULL,
   `fun_id` int(11),
   `ufu_service` varchar(15) COMMENT 'service exposé (nom de la classe)',
+  `ufu_inserted` datetime DEFAULT NULL,
   `ufu_removed` datetime DEFAULT NULL,
   PRIMARY KEY (`ufu_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liaison entre un user/une fundation et un service.' AUTO_INCREMENT=1 ;
