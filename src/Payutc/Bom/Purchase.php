@@ -185,15 +185,18 @@ class Purchase
         return $result;
     }
 
-    public static function getPurchasesForUser($usr_id)
+    public static function getPurchasesForUser($usr_id, $time_limit=null)
     {
         $qb = Db::createQueryBuilder();
         $qb->select('pur_id', 'obj_id', 'pur_price')
            ->from('t_purchase_pur', 'pur')
-           ->where('UNIX_TIMESTAMP(pur_date) > (UNIX_TIMESTAMP(NOW()) - 900)')
-           ->andWhere('usr_id_buyer = :usr_id')
+           ->Where('usr_id_buyer = :usr_id')
            ->andWhere('pur_removed = 0')
            ->setParameter('usr_id', $usr_id);
+        if ($time_limit) {
+            $qb->andWhere('TIME_TO_SEC(TIMEDIFF( NOW( ) , pur_date )) <= :time_limit')
+               ->setParameter('time_limit', $time_limit);
+        }
         return $qb->execute()->fetchAll();
     }
 }
