@@ -472,6 +472,7 @@ CREATE TABLE IF NOT EXISTS `t_virement_vir` (
   `vir_amount` int(5) NOT NULL,
   `usr_id_from` int(11) NOT NULL,
   `usr_id_to` int(11) NOT NULL,
+  `vir_message` varchar(50),
   PRIMARY KEY (`vir_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Virements entre utilisateurs' AUTO_INCREMENT=1 ;
 
