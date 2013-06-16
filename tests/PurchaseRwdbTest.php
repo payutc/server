@@ -4,6 +4,7 @@ require_once "bootstrap.php";
 
 use \Payutc\Bom\Purchase;
 use \Payutc\Bom\Product;
+use \Payutc\Db;
 
 class PurchaseRwdbTest extends DatabaseTest
 {
@@ -23,6 +24,7 @@ class PurchaseRwdbTest extends DatabaseTest
     public function testTransaction()
     {
         $date = date('Y-m-d H:i:s');
+        $nbSells = Purchase::getNbSell(4, 1, $date);
 		$items = array(
 			array(
 				'id' => 4,
@@ -39,8 +41,27 @@ class PurchaseRwdbTest extends DatabaseTest
 		$p = Product::getOne(4,1);
 		$this->assertEquals(21, $p['stock']);
 		$r = Purchase::getNbSell(4, 1, $date);
-		$this->assertEquals(2, $r);
-	}
+		$this->assertEquals($nbSells+2, $r);
+    }
+
+    public function testGetPurchasesForUser()
+    {
+        $conn = Db::conn();
+        $nb_purchases = count(Purchase::getPurchasesForUser(1), 200);
+        $conn->insert('t_purchase_pur', array(
+                     'pur_date' => date('Y-m-d H:i:s'),
+                     'pur_type' => 'product',
+                     'obj_id' => 1,
+                     'pur_price' => 70,
+                     'usr_id_buyer' => 1,
+                     'usr_id_seller' => 1,
+                     'poi_id' => 42,
+                     'fun_id' => 1,
+                     'pur_ip' => ''
+        ));
+        $r = count(Purchase::getPurchasesForUser(1), 200);
+        $this->assertEquals($nb_purchases+1, count($r));
+    }
 
 }
 
