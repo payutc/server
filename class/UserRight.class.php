@@ -7,6 +7,8 @@
  * Table: tj_usr_fun_ufu
  */
 
+use \Payutc\Db;
+
 class UserRight {
     protected $db;
 
@@ -105,36 +107,37 @@ class UserRight {
      * Donne les droits à un user sur un service et une fundation
      */
     public static function setRight($usr_id, $service, $fun_id) {
-        $db = Db_buckutt::getInstance();
-        $query_start = "INSERT INTO tj_usr_fun_ufu (usr_id";
-        $query_end = ") VALUES('%u'";
-        $var = array($usr_id);
+        $conn = Db::conn();
+        $insert = array(
+            "usr_id" => $usr_id,
+            "ufu_inserted" => new \DateTime()
+        );
+        $type = array("integer", "datetime");
         
         // Si fun_id = 0 ou false ou NULL alors c'est un passe partout
         if($fun_id) {
-            $query_start .= ", fun_id";
-            $query_end .= ", '%u'";
-            $var[] = $fun_id;
+            $insert['fun_id'] = $fun_id;
         } else {
-            $query_start .= ", fun_id";
-            $query_end .= ", NULL";
-        }            
+            $insert['fun_id'] = null;
+        }
+        $type[] = "integer";
 
         // Si $service = 0 ou false ou NULL alors c'est un passe partout
         if($service) {
-            $query_start .= ", ufu_service";
-            $query_end .= ", '%s'";
-            $var[] = $service;
+            $insert['ufu_service'] = $service;
         } else {
-            $query_start .= ", ufu_service";
-            $query_end .= ", NULL";
-        }    
+            $insert['ufu_service'] = null;
+        }
+        $type[] = "string";
 
-        $db->query($query_start . $query_end . ");", $var);
-        if ($db->affectedRows() != 1) {
+        $conn->insert('tj_usr_fun_ufu', $insert, $type);
+        $ufu_id = $conn->lastInsertId();
+
+        if (!$ufu_id) {
 			throw new Exception("Une erreur s'est produite lors de l'ajout du droit.");
 		}
-        return $db->insertId();
+
+        return $ufu_id;
     }
 
 	/**

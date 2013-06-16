@@ -7,6 +7,7 @@
  * Table: tj_app_fun_afu
  */
 
+use \Payutc\Db;
 
 class ApplicationRight {
     protected $db;
@@ -102,36 +103,37 @@ class ApplicationRight {
      * Donne les droits à une application sur un service et une fundation
      */
     public static function setRight($app_id, $service, $fun_id) {
-        $db = Db_buckutt::getInstance();
-        $query_start = "INSERT INTO tj_app_fun_afu (app_id";
-        $query_end = ") VALUES('%u'";
-        $var = array($app_id);
+        $conn = Db::conn();
+        $insert = array(
+            "app_id" => $app_id,
+            "afu_inserted" => new \DateTime()
+        );
+        $type = array("integer", "datetime");
         
         // Si fun_id = 0 ou false ou NULL alors c'est un passe partout
         if($fun_id) {
-            $query_start .= ", fun_id";
-            $query_end .= ", '%u'";
-            $var[] = $fun_id;
+            $insert['fun_id'] = $fun_id;
         } else {
-            $query_start .= ", fun_id";
-            $query_end .= ", NULL";
-        }            
+            $insert['fun_id'] = null;
+        }
+        $type[] = "integer";
 
         // Si $service = 0 ou false ou NULL alors c'est un passe partout
         if($service) {
-            $query_start .= ", afu_service";
-            $query_end .= ", '%s'";
-            $var[] = $service;
+            $insert['afu_service'] = $service;
         } else {
-            $query_start .= ", afu_service";
-            $query_end .= ", NULL";
-        }    
-
-        $db->query($query_start . $query_end . ");", $var);
-        if ($db->affectedRows() != 1) {
-            throw new Exception("Une erreur s'est produite lors de l'ajout du droit.");
+            $insert['afu_service'] = null;
         }
-        return $db->insertId();
+        $type[] = "string";
+
+        $conn->insert('tj_app_fun_afu', $insert, $type);
+        $afu_id = $conn->lastInsertId();
+
+        if (!$afu_id) {
+			throw new Exception("Une erreur s'est produite lors de l'ajout du droit.");
+		}
+
+        return $afu_id;
     }
 
     /**
