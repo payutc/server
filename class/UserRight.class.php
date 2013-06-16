@@ -134,8 +134,8 @@ class UserRight {
         $ufu_id = $conn->lastInsertId();
 
         if (!$ufu_id) {
-			throw new Exception("Une erreur s'est produite lors de l'ajout du droit.");
-		}
+            throw new Exception("Une erreur s'est produite lors de l'ajout du droit.");
+        }
 
         return $ufu_id;
     }

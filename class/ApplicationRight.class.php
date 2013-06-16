@@ -130,8 +130,8 @@ class ApplicationRight {
         $afu_id = $conn->lastInsertId();
 
         if (!$afu_id) {
-			throw new Exception("Une erreur s'est produite lors de l'ajout du droit.");
-		}
+            throw new Exception("Une erreur s'est produite lors de l'ajout du droit.");
+        }
 
         return $afu_id;
     }
