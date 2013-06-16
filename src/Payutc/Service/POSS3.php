@@ -192,13 +192,6 @@ class POSS3 extends \ServiceBase {
                       "solde"=>$buyer->getCredit(),
                       "msg_perso"=>$msg);
     }
-
-    public function loginCas($ticket, $service)
-    {
-        parent::loginCas($ticket, $service);
-        return $this->user()->getNickName();
-    }
-
 }
 
 

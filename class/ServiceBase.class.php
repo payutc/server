@@ -108,7 +108,7 @@ class ServiceBase {
 
         // Save user in session for all service
         $_SESSION['ServiceBase']['user'] = $user;
-        return true;
+        return $login;
     }
 
 	/**
