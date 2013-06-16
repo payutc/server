@@ -247,15 +247,6 @@ class User {
 	*/
 	public function getDroits() {
 		return $this->droits;
-	}	
-	
-	/**
-	* Retourne $groups.
-	* 
-	* @return array $groups
-	*/
-	public function getGroups() {
-		return $this->groups;
 	}
 
     /**
@@ -458,41 +449,6 @@ class User {
 		} else {
 			return 400;
 		}
-	}
-	
-	//TODO valider la suppression du retour du $txt... si besoin, le passer dansune nouvelle méthode qui utilise getGroups
-	/**
-	* Charge les groupes et donne dans un array la liste des groupes auquel le user appartient
-	* 
-	* @return int $state
-	*/
-	public function loadGroups() {
-		//on charge ses groupes
-		//$txt = new ComplexData(array());
-		$res = $this->db->query("SELECT grp.grp_id As grp_id FROM tj_usr_grp_jug jug, t_group_grp grp, t_period_per per WHERE jug.usr_id = '%u' AND grp.grp_id = jug.grp_id AND per.per_id = jug.per_id AND jug.jug_removed = '0' AND grp.grp_removed = '0' AND per.per_date_start <= NOW() AND per.per_date_end >= NOW();",array($this->idUser));
-		if ($this->db->affectedRows() >= 1) {
-			while ($don = $this->db->fetchArray($res)) {
-				$this->groups[$don['grp_id']] = new Group($don['grp_id']);
-				//$txt->addLine(array($don['grp_id']));
-			}
-			return 1;
-		} else {
-			return 400;
-		}
-		//return $txt->getData();0
-	}
-	
-	/**
-	 * Retourne si le user fait partie d'un groupe.
-	 * 
-	 * @return int $state 
-	 * @param int $grp_id
-	 */
-	public function isInGroup($grp_id) {
-		if (array_key_exists($grp_id, $this->groups))
-			return 1;
-		else
-			return 0;
 	}
 	
 	/**
