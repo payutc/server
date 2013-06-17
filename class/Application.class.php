@@ -128,12 +128,12 @@ class Application {
      */
     public function registerUse() {
         $qb = DB::createQueryBuilder();
-		$qb->update('t_application_app', 'app')
-			->set('app.app_lastuse', 'NOW()')
-			->where('app.app_id = :app_id')
-			->setParameter('app_id', $this->app_id);
-		
-		$qb->execute();
+        $qb->update('t_application_app', 'app')
+            ->set('app.app_lastuse', 'NOW()')
+            ->where('app.app_id = :app_id')
+            ->setParameter('app_id', $this->app_id);
+
+        $qb->execute();
     }
 
     /*
