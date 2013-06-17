@@ -6,7 +6,7 @@
  * Classe gérant les Applications
  */
 
-
+use \Payutc\Db;
 
 class Application {
     protected $db;
@@ -121,6 +121,19 @@ class Application {
         if($key)
             $application["app_key"] = $this->app_key;
         return $application;
+    }
+
+    /*
+     * Update last app_lastuse field
+     */
+    public function registerUse() {
+        $qb = DB::createQueryBuilder();
+		$qb->update('t_application_app', 'app')
+			->set('app.app_lastuse', 'NOW()')
+			->where('app.app_id = :app_id')
+			->setParameter('app_id', $this->app_id);
+		
+		$qb->execute();
     }
 
     /*

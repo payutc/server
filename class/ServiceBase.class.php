@@ -240,7 +240,7 @@ class ServiceBase {
 
         $application = new Application();
         $application->fromKey($key); // Throw an exception if Application doesn't exists...
-
+        $application->registerUse(); // Update the app_lastuse field to now
         $_SESSION['ServiceBase']['application'] = $application;
         return true;
     }
