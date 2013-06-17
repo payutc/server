@@ -33,7 +33,7 @@ class POSS3 extends \ServiceBase {
             "firstname"=>$buyer->getFirstname(), 
             "lastname"=>$buyer->getLastname(), 
             "solde"=>$buyer->getCredit(),
-            "last_purchase"=>$buyer->getLastPurchase()
+            "last_purchases"=>Purchase::getPurchasesForUser($buyer->getId(), 60*16)
         );
     }
     
@@ -128,7 +128,7 @@ class POSS3 extends \ServiceBase {
         }
 
         // récupérer les objets dans la db (note: pas de doublon)
-        $objects_ids = explode(",", trim($obj_ids));
+        $objects_ids = explode(" ", trim($obj_ids));
         $obj_ids = array_unique($objects_ids);
         $r = Product::getAll(array('obj_ids'=>$obj_ids, 'fun_ids'=>array($fun_id)));
         $items = [];
