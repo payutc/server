@@ -24,7 +24,7 @@ class KeyRwdbTest extends DatabaseTest
     {
         $cookie = '';
         $r = httpSend('KEY', 'loginCas', $cookie, array(
-            'ticket' => 'trecouvr@POSS3',
+            'ticket' => 'trecouvr@KEY',
             'service' => 'KEY'
         ));
         $this->assertEquals(200, $r->code);
