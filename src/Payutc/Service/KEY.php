@@ -51,7 +51,9 @@ use \ApplicationList;
 	 */
 	 public function getCurrentUserApplications() {
         // On a besoin d'avoir un user logged
-        $this->checkRight(true, false);
+        if(!$this->user()) {
+            throw new \Payutc\Exception\CheckRightException("Vous devez connecter un utilisateur ! (method loginCas)");
+        }
         $application_list = new ApplicationList();
         $application_list->from_login($this->user()->getNickname());
         // On retourne la liste d'applications (mais sans la clef, car on ne ne veut pas qu'un service "malintentioné" puisse récupérer les clefs d'un user).
