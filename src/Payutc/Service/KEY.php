@@ -55,7 +55,7 @@ use \ApplicationList;
             throw new \Payutc\Exception\CheckRightException("Vous devez connecter un utilisateur ! (method loginCas)");
         }
         $application_list = new ApplicationList();
-        $application_list->from_login($this->user()->getNickname());
+        $application_list->fromLogin($this->user()->getNickname());
         // On retourne la liste d'applications (mais sans la clef, car on ne ne veut pas qu'un service "malintentioné" puisse récupérer les clefs d'un user).
 		return $application_list->to_array(0);
 	 }
