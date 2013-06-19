@@ -74,6 +74,38 @@ class Poss3RodbTest extends ServiceBaseRodbTest
         $this->assertEquals(400, $r->code);
     }
 
+    /**
+     * @requires PHP 5.4
+     */
+    public function testTransactionWithoutEnoughCredit()
+    {
+        $u = new User("trecouvr", 1, 0, 0, 1);
+        $solde = $u->getCredit();
+        $nb_purchase = count($u->getLastPurchase());
+        $cookie = '';
+        $r = httpSend('POSS3', 'loginCas', $cookie, array(
+            'ticket' => 'trecouvr@POSS3',
+            'service' => 'POSS3'
+        ));
+        $this->assertEquals(200, $r->code);
+        $r = httpSend('POSS3', 'loginApp', $cookie, array(
+            'key' => 'my_app'
+        ));
+        $this->assertEquals(200, $r->code);
+        $r = httpSend('POSS3', 'transaction', $cookie, array(
+            'fun_id' => 1,
+            'badge_id' => 'NOCREDIT',
+            'obj_ids' => '1 1 2'
+        ));
+        $a = array (
+            'error' => array (
+                'type' => 'Payutc\\Exception\\PossException',
+                'code' => 0,
+                'message' => 'nocredit n\'a pas assez d\'argent pour effectuer la transaction.',
+            ));
+        $this->assertEquals($a, $r->body);
+    }
+ 
 }
 
 
