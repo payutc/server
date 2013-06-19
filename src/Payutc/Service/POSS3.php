@@ -129,8 +129,7 @@ class POSS3 extends \ServiceBase {
 
         // récupérer les objets dans la db (note: pas de doublon)
         $objects_ids = explode(" ", trim($obj_ids));
-        $obj_ids = array_unique($objects_ids);
-        $r = Product::getAll(array('obj_ids'=>$obj_ids, 'fun_ids'=>array($fun_id)));
+        $r = Product::getAll(array('obj_ids'=>array_unique($objects_ids), 'fun_ids'=>array($fun_id)));
         $items = [];
         foreach($r as $itm) {
             $items[$itm['id']] = $itm;
@@ -191,6 +190,15 @@ class POSS3 extends \ServiceBase {
                       "lastname"=>$buyer->getLastname(), 
                       "solde"=>$buyer->getCredit(),
                       "msg_perso"=>$msg);
+    }
+
+    public function getImage64($img_id, $outw = 0, $outh = 0)
+    {
+        $r = parent::getImage64($img_id, $outw, $outh);
+        if (array_key_exists('error_msg', $r)) {
+            throw new Exception($r['error_msg']);
+        }
+        return $r['success'];
     }
 }
 
