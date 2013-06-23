@@ -453,7 +453,7 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      */
     public function transfert($amount, $userID, $message="") {
         if($amount < 0) {
-            Log::warning("TRANSFERT D'ARGENT : TENTATIVE DE FRAUDE... Montant négatif par l'userID ".$this->User->getId()." vers l'user ".$userID);
+            Log::warn("TRANSFERT D'ARGENT : TENTATIVE DE FRAUDE... Montant négatif par l'userID ".$this->User->getId()." vers l'user ".$userID);
             return 466; //C'est pas fair play de voler de l'argent à ces petits camarades...
         } else if($this->getCredit() < $amount) {
             return 462; // PAS ASSEZ D'ARGENT
