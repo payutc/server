@@ -130,7 +130,7 @@ class POSS3 extends \ServiceBase {
         // récupérer les objets dans la db (note: pas de doublon)
         $objects_ids = explode(" ", trim($obj_ids));
         $r = Product::getAll(array('obj_ids'=>array_unique($objects_ids), 'fun_ids'=>array($fun_id)));
-        $items = [];
+        $items = array();
         foreach($r as $itm) {
             $items[$itm['id']] = $itm;
         }
