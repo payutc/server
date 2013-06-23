@@ -22,6 +22,7 @@ class Db
                 'user'     => Config::get('sql_user'),
                 'password' => Config::get('sql_pass'),
                 'dbname'   => Config::get('sql_db'),
+                'charset'  => 'utf8',
             );
             static::$conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, static::$config);
         }
