@@ -1,38 +1,29 @@
 <?php 
 /**
-    BuckUTT - Buckutt est un système de paiement avec porte-monnaie électronique.
-    Copyright (C) 2011 BuckUTT <buckutt@utt.fr>
-
-	This file is part of BuckUTT
-	
-    BuckUTT is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    BuckUTT is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*	payutc
+*	Copyright (C) 2013 payutc <payutc@assos.utc.fr>
+*
+*	This file is part of payutc
+*	
+*	payutc is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*
+*	payutc is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*	GNU General Public License for more details.
+*
+*	You should have received a copy of the GNU General Public License
+*	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
- * User.class
- * 
- * Classe gérant les utilisateurs.
- * @author BuckUTT <buckutt@utt.fr>
- * @version 2.0
- * @package buckutt
- */
-
-//TODO tester dans chaque méthode si state = 1, sinon on poutre
+namespace Payutc\Bom;
 
 use \Payutc\Exception\UserIsBlockedException;
 use \Payutc\Exception\MessageUpdateFailedException;
-use \Payutc\Exception\UserUnknown;
+use \Payutc\Exception\UserNotFound;
 use \Payutc\Exception\GingerFailure;
 use \Payutc\Bom\Blocked;
 use \Payutc\Config;
@@ -40,56 +31,55 @@ use \Payutc\Bom\MsgPerso;
 use \Payutc\Db;
 
 /**
- * classe user
+ * User
+ * 
+ * Object holding a generic User
  */
 class User {
 
 	protected $idUser;
-	protected $lastname;
-	protected $firstname;
 	protected $nickname;
-	protected $mail;
-	protected $credit;
 	protected $idPhoto;
-	protected $usr_fail_auth;
-	protected $max_fail_auth = 3; // Nombre max de mauvaises authentifications successives
-	protected $db;
-	protected $adult;
-	protected $msg_perso; // petit message imprimé en bas du ticket
-    
-	protected $gingerUser; // Résultat de ginger
+    protected $selfBlocked;
+	protected $db;    
+	protected $gingerUser = null;
 
 	/**
 	* Constructeur
 	* 
 	* @param string $username Login of the User object to init
-	* @param int $checkBlocked True if a blocked user should throw an exception
 	*/
-	public function __construct($username, $checkBlocked = true) {
+	public function __construct($username, $gingerUser = null) {
 		$this->db = Db_buckutt::getInstance();
-	
-		//Récupération de l'id buckutt
-        $userQuery = $this->db->query("SELECT usr_id, usr_fail_auth, usr_blocked, usr_firstname, usr_lastname, usr_nickname, usr_adult, usr_msg_perso, usr_mail, usr_credit, img_id FROM ts_user_usr WHERE usr_nickname = '%s'", array($username));
-		if ($this->db->affectedRows() != 1) {
-			throw new UserUnknown();
-		}
-		$don = $this->db->fetchArray($userQuery);
         
-        $this->usr_fail_auth = $don['usr_fail_auth'];
-		//si utilisateur bloqué
-		if ($don['usr_blocked'] == 1 && $checkBlocked == 1) {
-            throw new UserBlocked();
+        $query = Db::createQueryBuilder()
+            ->select('usr_id', 'usr_blocked', 'img_id')
+            ->from('ts_user_usr', 'usr')
+            ->where('usr.usr_nickname = :usr_nickname')
+            ->setParameter('usr_nickname', $username)
+            ->execute();
+
+		// Check that the user exists
+		if ($query->rowCount() != 1) {
+			throw new UserNotFound();
 		}
-        		
-		//si on arrive jusque là, on peut charger le mec
-		$this->lastname = $don['usr_lastname'];
-		$this->firstname = $don['usr_firstname'];
-		$this->nickname = $don['usr_nickname'];
-		$this->mail = $don['usr_mail'];
-		$this->credit = $don['usr_credit'];
+                
+        // Load data from Ginger
+        $this->nickname = $username;
+        if($this->gingerUser == null){
+            try {
+                $this->initGinger();
+            }
+            catch (Exception $ex) {
+                throw new GingerFailure($ex);
+            }    
+        }
+                
+        // Get remaining data from the database
+		$don = $query->fetch();
+        $this->idUser = $don['usr_id'];
+        $this->selfBlocked = $don['usr_blocked'];
 		$this->idPhoto = $don['img_id'];
-		$this->adult = $don['usr_adult'];
-		$this->msg_perso = $this->getMsgPerso($this->idUser);
 	}
 
 	/**
@@ -107,7 +97,7 @@ class User {
 	* @return string $lastname
 	*/
 	public function getLastname() {
-		return $this->lastname;
+		return $this->gingerUser->nom;
 	}
 
 	/**
@@ -116,7 +106,7 @@ class User {
 	* @return string $firstname
 	*/
 	public function getFirstname() {
-		return $this->firstname;
+		return $this->gingerUser->prenom;
 	}
 	/**
 	* Retourne $nickname.
@@ -150,7 +140,7 @@ class User {
 		if ($this->db->affectedRows() == 1) {
 		    return $this->credit;
 		} else {
-		    throw new UserUnknown();
+		    throw new UserNotFound();
 		}
 	}
 	
@@ -253,8 +243,7 @@ class User {
 	 * @return isBlocked ?
 	 */
 	public function isBlockedMe() {
-		$don = $this->db->fetchArray($this->db->query("SELECT usr_fail_auth, usr_blocked FROM ts_user_usr WHERE usr_id = '%u';", Array($this->idUser)));
-		return (bool)$don['usr_blocked'];
+		return $this->selfBlocked;
 	}
 	
 	/**
@@ -323,7 +312,7 @@ class User {
             "lastname" => $this->getLastname(),
             "nickname" => $this->getNickname(),
             "photo" => $this->getIdPhoto(),
-            "credit" => $this->credit);
+            "credit" => $this->getCredit());
 	}
 	
 	/** 
@@ -332,14 +321,7 @@ class User {
 	*
 	* @return int $adult
 	*/
-	public function isAdult() {
-        try {
-            $this->initGinger();
-        }
-        catch (Exception $ex) {
-            throw new GingerFailure($ex);
-        }
-        
+	public function isAdult() {        
         return $this->gingerUser->is_adulte;
 	}
     
@@ -350,13 +332,6 @@ class User {
 	* @return int $adult
 	*/
 	public function isCotisant() {
-        try {
-            $this->initGinger();
-        }
-        catch (Exception $ex) {
-            throw new GingerFailure($ex);
-        }
-        
         return $this->gingerUser->is_cotisant;
 	}
 
@@ -452,16 +427,12 @@ class User {
 
     public static function getUserFromCas($ticket, $service) {
         // Récupération du login via le CAS
-		//$login = Cas::authenticate($ticket, $service);
-        $login = "puyouart";
-		if ($login < 0) {
-			throw new CasFailure("Impossible de valider le ticket CAS fourni");
+		$login = Cas::authenticate($ticket, $service);
+        if ($login === -1) {
+			throw new LoginError("Impossible de valider le ticket CAS fourni", -1);
 		}
         
-        // Création de l'objet user
-		$user = new User($login, 0, 0);
-        
-        return $user;
+        return new User($login);
     }
     
     public static function getUserFromBadge($badge) {
@@ -469,19 +440,14 @@ class User {
 		try {
 			$gingerUser = $ginger->getCard($badge_id);
 		}
-		catch (Exception $ex) {
+		catch (\Exception $ex) {
             throw new GingerFailure($ex);
 		}
         
         if(!$gingerUser->login) {
-            throw new UserUnknown();
+            throw new UserNotFound();
         }
 
-        $user = new User($gingerUser->login, 0, 0);
-
-        // On a déjà un résultat de ginger récent, donc autant le garder
-        $user->setGingerUser($gingerUser);
-            
-        return $user;
+        return new User($gingerUser->login, $gingerUser);
     }
 }
