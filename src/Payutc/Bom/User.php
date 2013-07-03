@@ -143,7 +143,7 @@ class User {
 	* @return int $credit
 	*/
 	public function getCredit() {
-        Log::debug("User: getCredit()");
+        Log::debug("User($this->idUser): getCredit()");
         
         $query = Db::createQueryBuilder()
             ->select('usr_credit')
@@ -223,19 +223,19 @@ class User {
 	* @return int $valid
 	*/
 	public function blockMe() {
-		$qb = DB::createQueryBuilder();
+        Log::debug("User($this->idUser): blockMe()");
+        
+		$qb = Db::createQueryBuilder();
 		$qb->update('ts_user_usr', 'usr')
-			->set('usr_fail_auth', $qb->expr()->literal(0))
 			->set('usr_blocked', $qb->expr()->literal(1))
 			->where('usr_id = :usr_id')
-			->setParameters(array(
-				'usr_id' => $this->idUser
-			));
+			->setParameter('usr_id', $this->idUser);
+        
 		$affectedRows = $qb->execute();
-		if ($affectedRows == 1)
-			return 1;
-		else
-			return 400;
+		if ($affectedRows != 1){
+		    Log::debug("User($this->idUser): blockMe() failed");
+            throw new UpdateFailed("Le blocage a échoué");
+		}
 	}
 	
 	/**
