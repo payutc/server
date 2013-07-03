@@ -176,17 +176,12 @@ class User {
     
     /**
     * Setter for user's personnal message
-    * returns "ok" if succeeded, else, returns the error message from MsgPerso::setMsgPerso
+    * @throws MessageUpdateFailedException if an error occurs
     * @param String $newMsgPerso
     * @return String $status
     */
     public function setMsgPerso($msgPerso, $funID) {
-        try {
-            MsgPerso::setMsgPerso($msgPerso, $this->idUser, $funID);
-            return "ok";
-        } catch (MessageUpdateFailedException $e) {
-            return $e->getMessage();
-        }
+        MsgPerso::setMsgPerso($msgPerso, $this->idUser, $funID);
     }
 	
 	/**
@@ -363,7 +358,6 @@ class User {
 	* @return array $ginger Instance de ginger
 	*/
     protected function getNewGinger(){
-        // 
         $ginger_url = Config::get('ginger_url');
         if(!empty($ginger_url)){
             return new GingerClient(Config::get('ginger_key'), Config::get('ginger_url'));
