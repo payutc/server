@@ -67,7 +67,7 @@ class User {
 
 		// Check that the user exists
 		if ($query->rowCount() != 1) {
-            Log::debug("User non trouvé pour le login $username");
+            Log::debug("User: User not found for login $username");
 			throw new UserNotFound();
 		}
                 
@@ -143,15 +143,24 @@ class User {
 	* @return int $credit
 	*/
 	public function getCredit() {
-        $creditQuery = $this->db->query("SELECT usr_credit FROM ts_user_usr WHERE usr_id = %u", array($this->idUser));
+        Log::debug("User: getCredit()");
         
-		$this->credit = $this->db->result($creditQuery, 0);
-        
-		if ($this->db->affectedRows() == 1) {
-		    return $this->credit;
-		} else {
-		    throw new UserNotFound();
+        $query = Db::createQueryBuilder()
+            ->select('usr_credit')
+            ->from('ts_user_usr', 'usr')
+            ->where('usr.usr_id = :usr_id')
+            ->setParameter('usr_id', $this->getId())
+            ->execute();
+
+		// Check that the user exists
+		if ($query->rowCount() != 1) {
+            Log::debug("User: User not found for login $username");
+			throw new UserNotFound();
 		}
+
+        // Get data from the database
+		$don = $query->fetch();
+        return $don['usr_credit'];
 	}
 	
 	/**
