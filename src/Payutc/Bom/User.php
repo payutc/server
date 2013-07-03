@@ -220,35 +220,25 @@ class User {
 	/**
 	* Fonction pour se bloquer soi même (en cas de perte/vol par exemple)
 	* 
+	* @param int $blocage 1 to block the User
 	* @return int $valid
 	*/
-	public function blockMe() {
-        Log::debug("User($this->idUser): blockMe()");
+	public function setSelfBlock($blocage) {
+        Log::debug("User($this->idUser): blockMe($blocage)");
         
 		$qb = Db::createQueryBuilder();
 		$qb->update('ts_user_usr', 'usr')
-			->set('usr_blocked', $qb->expr()->literal(1))
-			->where('usr_id = :usr_id')
+		    ->set('usr_blocked', $qb->expr()->literal($blocage))
+		    ->where('usr_id = :usr_id')
 			->setParameter('usr_id', $this->idUser);
         
 		$affectedRows = $qb->execute();
 		if ($affectedRows != 1){
-		    Log::debug("User($this->idUser): blockMe() failed");
-            throw new UpdateFailed("Le blocage a échoué");
+		    Log::debug("User($this->idUser): no lines updated");
+            throw new UpdateFailed("Impossible de changer l'état du blocage");
 		}
-	}
-	
-	/**
-	* Fonction pour se debloquer
-	* 
-	* @return int $valid
-	*/
-	public function deblockMe() {
-		$this->db->query("UPDATE ts_user_usr SET usr_fail_auth=0, usr_blocked='0' WHERE usr_id='%u'", array($this->idUser));
-		if ($this->db->affectedRows() == 1)
-			return 1;
-		else
-			return 400;
+        
+        $this->selfBlocked = $blocage;
 	}
 	
 	/**
@@ -257,6 +247,7 @@ class User {
 	 * @return isBlocked ?
 	 */
 	public function isBlockedMe() {
+        Log::debug($this->selfBlocked);
 		return $this->selfBlocked;
 	}
 	
