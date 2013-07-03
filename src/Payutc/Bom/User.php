@@ -29,6 +29,10 @@ use \Payutc\Bom\Blocked;
 use \Payutc\Config;
 use \Payutc\Bom\MsgPerso;
 use \Payutc\Db;
+use \Db_buckutt;
+use \Ginger\Client\GingerClient;
+use \Cas;
+use \Payutc\Log;
 
 /**
  * User
@@ -50,6 +54,8 @@ class User {
 	* @param string $username Login of the User object to init
 	*/
 	public function __construct($username, $gingerUser = null) {
+        Log::debug("User: __construct($username, $gingerUser)");
+        
 		$this->db = Db_buckutt::getInstance();
         
         $query = Db::createQueryBuilder()
@@ -61,6 +67,7 @@ class User {
 
 		// Check that the user exists
 		if ($query->rowCount() != 1) {
+            Log::debug("User non trouvé pour le login $username");
 			throw new UserNotFound();
 		}
                 
@@ -74,9 +81,12 @@ class User {
                 throw new GingerFailure($ex);
             }    
         }
+        Log::debug("User: data from Ginger: ".print_r($this->gingerUser, true));
                 
         // Get remaining data from the database
 		$don = $query->fetch();
+        Log::debug("User: data from database: ".print_r($don, true));
+        
         $this->idUser = $don['usr_id'];
         $this->selfBlocked = $don['usr_blocked'];
 		$this->idPhoto = $don['img_id'];
@@ -123,7 +133,7 @@ class User {
 	* @return string $mail
 	*/
 	public function getMail() {
-		return $this->mail;
+		return $this->gingerUser->email;
 	}
 
 	/**
@@ -346,6 +356,22 @@ class User {
 		while ($don = Db_buckutt::getInstance()->fetchArray($res)) { $pur[$don['pur_id']] = $don;}
 		return $pur;
 	}
+
+	/**
+	* Initialiser ginger, éventuellement avec une URL perso
+	*
+	* @return array $ginger Instance de ginger
+	*/
+    protected function getNewGinger(){
+        // 
+        $ginger_url = Config::get('ginger_url');
+        if(!empty($ginger_url)){
+            return new GingerClient(Config::get('ginger_key'), Config::get('ginger_url'));
+        }
+        else {
+            return new GingerClient(Config::get('ginger_key'));
+        }
+    }
     
     /**
 	* Initialiser ginger avec un moyen d'identification (login ou uid).
@@ -356,22 +382,14 @@ class User {
     private function initGinger(){
         if(empty($this->gingerUser)){
             $ginger_key = Config::get('ginger_key');
-            $ginger_url = Config::get('ginger_url');
             if(!empty($ginger_key)){
-                // Initialiser ginger, éventuellement avec une URL perso
-                if(!empty($ginger_url)){
-                    $ginger = new \Ginger\Client\GingerClient(Config::get('ginger_key'), Config::get('ginger_url'));
-                }
-                else {
-                    $ginger = new \Ginger\Client\GingerClient(Config::get('ginger_key'));
-                }
-                
                 // Récupérer le user dans ginger
+                $ginger = $this->getNewGinger();
                 $this->gingerUser = $ginger->getUser($this->nickname);
             }
             else {
                 // Génération d'un faux user
-                $this->gingerUser = new StdClass;
+                $this->gingerUser = new \StdClass;
                 $this->gingerUser->login = $this->nickname;
                 $this->gingerUser->prenom = "Test";
                 $this->gingerUser->nom = "User";
@@ -426,9 +444,11 @@ class User {
 	}
 
     public static function getUserFromCas($ticket, $service) {
-        // Récupération du login via le CAS
+        Log::debug("User: getUserFromCas($ticket, $service)");
+        
 		$login = Cas::authenticate($ticket, $service);
         if ($login === -1) {
+            Log::warning("User: CAS returned -1");
 			throw new LoginError("Impossible de valider le ticket CAS fourni", -1);
 		}
         
@@ -436,11 +456,14 @@ class User {
     }
     
     public static function getUserFromBadge($badge) {
-		$ginger = new Ginger($_CONFIG['ginger_key']);
+        Log::debug("User: getUserFromBadge($badge)");
+        
+		$ginger = $this->getNewGinger();
 		try {
 			$gingerUser = $ginger->getCard($badge_id);
 		}
 		catch (\Exception $ex) {
+            Log::error("User: Ginger exception: ".$ex->getMessage());
             throw new GingerFailure($ex);
 		}
         
