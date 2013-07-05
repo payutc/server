@@ -384,7 +384,7 @@ class User {
         
 		$login = Cas::authenticate($ticket, $service);
         if ($login === -1) {
-            Log::warning("User: CAS returned -1");
+            Log::warning("User: getUserFromCas($ticket, $service): CAS returned -1");
 			throw new LoginError("Impossible de valider le ticket CAS fourni", -1);
 		}
         
@@ -399,7 +399,10 @@ class User {
 			$gingerUser = $ginger->getCard($badge);
 		}
 		catch (\Exception $ex) {
-            Log::error("User: Ginger exception: ".$ex->getMessage());
+            Log::error("User: Ginger exception ".$ex->getCode().": ".$ex->getMessage());
+            if($ex->getCode() == 404){
+                throw new UserNotFound();
+            }
             throw new GingerFailure($ex);
 		}
         
