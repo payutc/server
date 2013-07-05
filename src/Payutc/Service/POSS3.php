@@ -5,12 +5,11 @@ namespace Payutc\Service;
 use \Payutc\Bom\Purchase;
 use \Payutc\Bom\Product;
 use \Payutc\Exception\PossException;
-use \User;
+use \Payutc\Exception\UserNotFound;
+use \Payutc\Exception\UserIsBlockedException;
+use \Payutc\Bom\User;
 use \Payutc\Config;
 use \Payutc\Log;
-
-define('MEAN_OF_LOGIN_BADGE', 5);
-define('MEAN_OF_LOGIN_NICKNAME', 1);
 
 class POSS3 extends \ServiceBase {
     
@@ -22,13 +21,25 @@ class POSS3 extends \ServiceBase {
      */
     public function getBuyerInfo($badge_id) {
         $this->checkRight(true, true);
-        
-        $buyer = new User($badge_id, MEAN_OF_LOGIN_BADGE, "", 0, 1, 1);
-        $state = $buyer->getState();
-        if($state == 403)
-            throw new PossException("Ce badge à été bloqué. Il faut que l'utilisateur aille le débloquer sur internet.");
-        if($state != 1)
-            throw new PossException("Le Badge n'a pas été reconnu...");
+
+        // Verifier que le buyer existe
+        try {
+            $buyer = User::getUserFromBadge($badge_id);
+        }
+        catch(UserNotFound $ex) {
+            Log::warn("getBuyerInfo($badge_id) : User not found");
+            throw new PossException("Ce badge n'a pas été reconnu");
+        }
+
+        // Vérifier que la carte n'est pas bloquée
+        try {
+            $buyer->checkNotBlockedMe();
+        }
+        catch(UserIsBlockedException $ex) {
+            Log::warn("getBuyerInfo($badge_id) : Blocked card");
+            throw new PossException("Ce badge à été bloqué : son propriétaire doit le débloquer sur son interface de gestion");
+        }
+
         return array(
             "firstname"=>$buyer->getFirstname(), 
             "lastname"=>$buyer->getLastname(), 
@@ -84,38 +95,21 @@ class POSS3 extends \ServiceBase {
         $this->checkRight(true, true, true, $fun_id);
 
         // Verifier que le buyer existe
-        $buyer = new User($badge_id, MEAN_OF_LOGIN_BADGE, "", 0, 1, 1);
-        $state = $buyer->getState();
-        $ginger_key = Config::get('ginger_key');
-        if($state != 1 && !empty($ginger_key)) {
-            // CHECK BADGE ID IN API
-            $ginger = new \Ginger\Client\GingerClient(Config::get('ginger_key'));
-            try {
-                $user = $ginger->getCard($badge_id);
-            }
-            catch (\Exception $ex) {
-                Log::warn("transaction($badge_id, $obj_ids) : Can't find card");
-                throw new PossException("Badge introuvable");
-            }
-            if($user->login) {
-                $buyer = new User($user->login, MEAN_OF_LOGIN_NICKNAME, "", 0, 1, 1);
-                $state = $buyer->getState();
-                if($state == 1) {
-                    // UPDATE BADGE_ID
-                    Db_buckutt::getInstance()->query("UPDATE tj_usr_mol_jum SET jum_data = '%s' WHERE usr_id='%u' AND mol_id='%u'", array($badge_id, $buyer->getId(), MEAN_OF_LOGIN_BADGE));
-                } else {
-                    Log::warn("transaction($badge_id, $obj_ids) : Ginger knows this card but Payutc does not");
-                    throw new PossException("Le Badge n'a pas été reconnu...");
-                }
-            } else {
-                Log::warn("transaction($badge_id, $obj_ids) : Unknown card");
-                throw new PossException("Le Badge n'a pas été reconnu..."); 
-            }
+        try {
+            $buyer = User::getUserFromBadge($badge_id);
         }
-    
-        if($state == 403) {
-            Log::warn("transaction($badge_id, $obj_ids) : Blocked card");
-            throw new PossException("Ce badge à été bloqué. Il faut que l'utilisateur aille le débloquer sur internet.");
+        catch(UserNotFound $ex) {
+            Log::warn("transaction($fun_id, $badge_id, $obj_ids) : User not found");
+            throw new PossException("Ce badge n'a pas été reconnu");
+        }
+
+        // Vérifier que la carte n'est pas bloquée
+        try {
+            $buyer->checkNotBlockedMe();
+        }
+        catch(UserIsBlockedException $ex) {
+            Log::warn("transaction($fun_id, $badge_id, $obj_ids) : Blocked card");
+            throw new PossException("Ce badge à été bloqué : son propriétaire doit le débloquer sur son interface de gestion");
         }
         
         // vérifier que l'utilisateur n'est pas bloqué sur cette fondation
@@ -123,7 +117,7 @@ class POSS3 extends \ServiceBase {
             $buyer->checkNotBlockedFun($fun_id);
         }
         catch (UserIsBlockedException $e) {
-            Log::warn("transaction($badge_id, $obj_ids) : Blocked user ({$e->getMessage()})");
+            Log::warn("transaction($fund_id, $badge_id, $obj_ids) : Blocked user ({$e->getMessage()})");
             throw new PossException($e->getMessage());
         }
 

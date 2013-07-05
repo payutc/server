@@ -250,7 +250,7 @@ class User {
 	 */
 	public function checkNotBlockedMe() {
 		if ($this->isBlockedMe()) {
-			throw new GingerFailure("L'utilisateur s'est auto bloqué.");
+			throw new UserIsBlockedException("L'utilisateur s'est auto bloqué.");
 		}
 	}
 	
