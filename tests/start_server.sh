@@ -2,6 +2,7 @@
 
 cd `dirname $0`
 
+FAUX_GINGER_PORT=33434
 FAUX_CAS_PORT=33435
 PAYUTC_PORT=33436
 
@@ -13,6 +14,16 @@ fi
 echo "Copy test config"
 cp config.inc.php ../
 
+echo "Get faux-ginger"
+if [ -d faux-ginger ]
+then
+    cd faux-ginger
+    git pull
+    cd ..
+else
+    git clone git://github.com/simde-utc/faux-ginger.git
+fi
+
 echo "Get faux-cas"
 if [ -d faux-cas ]
 then
@@ -22,7 +33,12 @@ then
 else
     git clone git://github.com/payutc/faux-cas.git
 fi
+
+echo "Starting faux-ginger server on port $FAUX_GINGER_PORT"
+php -S localhost:$FAUX_GINGER_PORT -t faux-ginger/ &
+
 echo "Starting faux-cas server on port $FAUX_CAS_PORT"
 php -S localhost:$FAUX_CAS_PORT -t faux-cas/ &
+
 echo "Starting payutc server on port $PAYUTC_PORT"
 php -S localhost:$PAYUTC_PORT -t ../web/ &

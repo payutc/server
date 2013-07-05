@@ -60,8 +60,8 @@ $_CONFIG['PBX_PUBPEM'] = "somewhere/pubkey.pem";
 
 
 // Configuration de ginger (outil cotisant)
-// Laisser la clé vide pour désactiver les appels à ginger
-$_CONFIG['ginger_key'] = "abc";
+$_CONFIG['ginger_key'] = "fauxginger";
+$_CONFIG['ginger_url'] = "http://localhost:33434/index.php/v1/";
 
 // Configuration de Slim
 $_CONFIG['slim_config'] = array(
