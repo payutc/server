@@ -89,17 +89,12 @@ class ServiceBase {
 	 * @return bool $success
 	 */
     public function loginCas($ticket, $service) {
+        Log::debug("loginCas($ticket, $service)");
         // Unlog previous user if any
         $_SESSION['ServiceBase']['user'] = NULL;
 
-        try {
-            $user = User::getUserFromCas($ticket, $service);
-        }
-        catch(UserNotFound $ex) {
-            $this->loginToRegister = $login;
-            throw new UserNotFound("Le user n'existe pas ici", $ex);
-        }
-
+        $user = User::getUserFromCas($ticket, $service);
+        
         // Save user in session for all service
         $_SESSION['ServiceBase']['user'] = $user;
         return $user->getNickname();
