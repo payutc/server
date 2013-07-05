@@ -22,6 +22,9 @@ class PurchaseRwdbTest extends DatabaseTest
         ));
     }
     
+    /**
+     * @requires PHP 5.4
+     */
     public function testTransaction()
     {
         $date = date('Y-m-d H:i:s');

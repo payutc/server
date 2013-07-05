@@ -15,7 +15,10 @@ class UserDatabaseTest extends DatabaseTest
             'users.yml'
         ));
     }
-        
+    
+    /**
+     * @requires PHP 5.4
+     */
     public function testBlockMe()
     {
         $u = new User("trecouvr");
@@ -26,6 +29,9 @@ class UserDatabaseTest extends DatabaseTest
         $this->assertFalse($u->isBlockedMe());
 	}
     
+    /**
+     * @requires PHP 5.4
+     */
     public function testIncCredit()
     {
         $u = new User("trecouvr");
@@ -35,6 +41,9 @@ class UserDatabaseTest extends DatabaseTest
         $this->assertEquals(9100, $u->getCredit());
     }
     
+    /**
+     * @requires PHP 5.4
+     */
     public function testDecCredit()
     {
         $u = new User("trecouvr");

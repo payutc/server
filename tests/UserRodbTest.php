@@ -16,11 +16,17 @@ class UserRodbTest extends ReadOnlyDatabaseTest
         ));
 	}
 	
+    /**
+     * @requires PHP 5.4
+     */
 	public function testConstruct()
 	{
 		$u = new User("trecouvr");
 	}
 	
+    /**
+     * @requires PHP 5.4
+     */
 	public function testRetrieve()
 	{
 		$u = new User("trecouvr");
@@ -31,6 +37,9 @@ class UserRodbTest extends ReadOnlyDatabaseTest
 		$this->assertEquals(9000 , $u->getCredit());
 	}
 	
+    /**
+     * @requires PHP 5.4
+     */
 	public function testCheckUsrNotBlockedWithFreeUsr()
 	{
 		$u = new User("trecouvr");
@@ -45,6 +54,7 @@ class UserRodbTest extends ReadOnlyDatabaseTest
 	 * 
 	 * @expectedException		 \Payutc\Exception\UserIsBlockedException
 	 * @expectedExceptionMessage L'utilisateur à été bloqué pour le motif suivant: A fait pipi sur le mur, vilain pas beau !
+     * @requires PHP 5.4
 	 */
 	public function testCheckUsrNotBlockedWithBlockedUsr_1()
 	{
@@ -57,6 +67,7 @@ class UserRodbTest extends ReadOnlyDatabaseTest
 	 * 
 	 * @expectedException		 \Payutc\Exception\UserIsBlockedException
 	 * @expectedExceptionMessage L'utilisateur à été bloqué pour le motif suivant: A fait pipi sur le mur, vilain pas beau !
+     * @requires PHP 5.4
 	 */
 	public function testCheckUsrNotBlockedWithBlockedUsr_2()
 	{
