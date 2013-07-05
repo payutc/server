@@ -24,6 +24,7 @@ use \Payutc\Exception\LoginError;
 use \Payutc\Exception\UserNotFound;
 use \Payutc\Exception\UserError;
 use \Payutc\Bom\User;
+use \Payutc\Log;
 
 /**
 * ServiceBase.class
