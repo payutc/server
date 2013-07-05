@@ -2,7 +2,7 @@
 
 require_once 'bootstrap.php';
 
-use \User;
+use \Payutc\Bom\User;
 
 class UserRodbTest extends ReadOnlyDatabaseTest
 {
@@ -18,14 +18,12 @@ class UserRodbTest extends ReadOnlyDatabaseTest
 	
 	public function testConstruct()
 	{
-		$u = new User("trecouvr", 1, 0, 0, 1);
-		$this->assertEquals(1, $u->getState());
+		$u = new User("trecouvr");
 	}
 	
 	public function testRetrieve()
 	{
-		$u = new User("trecouvr", 1, 0, 0, 1);
-		$this->assertEquals(1, $u->getState());
+		$u = new User("trecouvr");
 		$this->assertEquals("trecouvr", $u->getNickname());
 		$this->assertEquals("Thomas", $u->getFirstname());
 		$this->assertEquals("Recouvreux", $u->getLastname());
@@ -35,7 +33,7 @@ class UserRodbTest extends ReadOnlyDatabaseTest
 	
 	public function testCheckUsrNotBlockedWithFreeUsr()
 	{
-		$u = new User("trecouvr", 1, 0, 0, 1);
+		$u = new User("trecouvr");
 		
 		$u->checkNotBlocked();
 		$u->checkNotBlocked(1);
@@ -50,7 +48,7 @@ class UserRodbTest extends ReadOnlyDatabaseTest
 	 */
 	public function testCheckUsrNotBlockedWithBlockedUsr_1()
 	{
-		$u = new User("mguffroy", 1, 0, 0, 1);
+		$u = new User("mguffroy");
 		$u->checkNotBlocked();
 	}
 	
@@ -62,7 +60,7 @@ class UserRodbTest extends ReadOnlyDatabaseTest
 	 */
 	public function testCheckUsrNotBlockedWithBlockedUsr_2()
 	{
-		$u = new User("mguffroy", 1, 0, 0, 1);
+		$u = new User("mguffroy");
 		$u->checkNotBlocked(1);
 	}
 }

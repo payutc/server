@@ -2,7 +2,7 @@
 
 require_once 'bootstrap.php';
 
-use \User;
+use \Payutc\Bom\User;
 
 class UserDatabaseTest extends DatabaseTest
 {
@@ -18,27 +18,29 @@ class UserDatabaseTest extends DatabaseTest
         
     public function testBlockMe()
     {
-        $u = new User("trecouvr", 1, 0, 0, 1);
+        $u = new User("trecouvr");
         $this->assertFalse($u->isBlockedMe());
-        $u->blockMe();
+        $u->setSelfBlock(1);
         $this->assertTrue($u->isBlockedMe());
+        $u->setSelfBlock(0);
+        $this->assertFalse($u->isBlockedMe());
 	}
     
     public function testIncCredit()
     {
-        $u = new User("trecouvr", 1, 0, 0, 1);
+        $u = new User("trecouvr");
         $u->incCredit(100);
         $this->assertEquals(9100, $u->getCredit());
-        $u = new User("trecouvr", 1, 0, 0, 1);
+        $u = new User("trecouvr");
         $this->assertEquals(9100, $u->getCredit());
     }
     
     public function testDecCredit()
     {
-        $u = new User("trecouvr", 1, 0, 0, 1);
+        $u = new User("trecouvr");
         $u->decCredit(100);
         $this->assertEquals(8900, $u->getCredit());
-        $u = new User("trecouvr", 1, 0, 0, 1);
+        $u = new User("trecouvr");
         $this->assertEquals(8900, $u->getCredit());
     }
 }

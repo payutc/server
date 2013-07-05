@@ -23,7 +23,7 @@ use \Payutc\Mapping\Services;
 use \Payutc\Exception\LoginError;
 use \Payutc\Exception\UserNotFound;
 use \Payutc\Exception\UserError;
-
+use \Payutc\Bom\User;
 
 /**
 * ServiceBase.class
