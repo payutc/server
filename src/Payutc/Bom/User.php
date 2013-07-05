@@ -25,6 +25,7 @@ use \Payutc\Exception\UserIsBlockedException;
 use \Payutc\Exception\MessageUpdateFailedException;
 use \Payutc\Exception\UserNotFound;
 use \Payutc\Exception\GingerFailure;
+use \Payutc\Exception\UpdateFailed;
 use \Payutc\Bom\Blocked;
 use \Payutc\Config;
 use \Payutc\Bom\MsgPerso;
@@ -55,13 +56,6 @@ class User {
 	public function __construct($username, $gingerUser = null) {
         Log::debug("User: __construct($username, ?)");
         
-        // Check that we have a Ginger key
-        $ginger_key = Config::get('ginger_key');
-        if(empty($ginger_key)){
-            Log::error("User: Ginger key cannot be empty");
-            throw new GingerFailure("La configuration de Ginger est incorrecte");
-        }
-        
         $query = Db::createQueryBuilder()
             ->select('usr_id', 'usr_blocked')
             ->from('ts_user_usr', 'usr')
@@ -72,7 +66,9 @@ class User {
 		// Check that the user exists
 		if ($query->rowCount() != 1) {
             Log::debug("User: User not found for login $username");
-			throw new UserNotFound();
+            $ex = new UserNotFound();
+            $ex->login = $username;
+			throw $ex;
 		}
                 
         // Load data from Ginger
@@ -326,6 +322,13 @@ class User {
 	* @return array $ginger Instance de ginger
 	*/
     protected static function getNewGinger(){
+        // Check that we have a Ginger key
+        $ginger_key = Config::get('ginger_key');
+        if(empty($ginger_key)){
+            Log::error("User: Ginger key cannot be empty");
+            throw new GingerFailure("La configuration de Ginger est incorrecte");
+        }
+        
         $ginger_url = Config::get('ginger_url');
         if(!empty($ginger_url)){
             return new GingerClient(Config::get('ginger_key'), Config::get('ginger_url'));
@@ -408,6 +411,40 @@ class User {
             throw new UserNotFound();
         }
 
+        return new User($gingerUser->login, $gingerUser);
+    }
+    
+    public static function createAndGetNewUser($login) {
+        Log::debug("User: createAndGetNewUser($login)");
+    
+        // Get the user from ginger
+		$ginger = self::getNewGinger();
+		try {
+			$gingerUser = $ginger->getUser($login);
+		}
+		catch (\Exception $ex) {
+            Log::error("User: Ginger exception ".$ex->getCode().": ".$ex->getMessage());
+            if($ex->getCode() == 404){
+                throw new UserNotFound();
+            }
+            throw new GingerFailure($ex);
+		}
+        
+        // Check that the user has a card
+        if(empty($gingerUser->badge_uid)){
+            throw new GingerFailure("L'utilisateur n'a pas de badge déclaré. Contactez payutc@assos.utc.fr");
+        }
+        
+        // Add the user to payutc
+        Db::conn()->insert('ts_user_usr', array(
+            'usr_firstname' => $gingerUser->prenom,
+            'usr_lastname' => $gingerUser->nom,
+            'usr_nickname' => $gingerUser->login,
+            'usr_mail' => $gingerUser->mail,
+            'usr_adult' => ($gingerUser->is_adulte) ? 1 : 0
+        ));
+        
+        // Return a User object
         return new User($gingerUser->login, $gingerUser);
     }
 }
