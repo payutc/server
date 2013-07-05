@@ -53,9 +53,16 @@ class User {
 	* @param string $username Login of the User object to init
 	*/
 	public function __construct($username, $gingerUser = null) {
-        Log::debug("User: __construct($username, $gingerUser)");
+        Log::debug("User: __construct($username, ?)");            
         
 		$this->db = Db_buckutt::getInstance();
+        
+        // Check that we have a Ginger key
+        $ginger_key = Config::get('ginger_key');
+        if(empty($ginger_key)){
+            Log::error("User: Ginger key cannot be empty");
+            throw new GingerFailure("La configuration de Ginger est incorrecte");
+        }
         
         $query = Db::createQueryBuilder()
             ->select('usr_id', 'usr_blocked')
@@ -74,9 +81,12 @@ class User {
         $this->nickname = $username;
         if($this->gingerUser == null){
             try {
-                $this->initGinger();
+                // Récupérer le user dans ginger
+                $ginger = $this->getNewGinger();
+                $this->gingerUser = $ginger->getUser($this->nickname);
             }
-            catch (Exception $ex) {
+            catch (\Exception $ex) {
+                Log::error("User: Ginger exception: ".$ex->getMessage());
                 throw new GingerFailure($ex);
             }    
         }
@@ -131,7 +141,7 @@ class User {
 	* @return string $mail
 	*/
 	public function getMail() {
-		return $this->gingerUser->email;
+		return $this->gingerUser->mail;
 	}
 
 	/**
@@ -212,8 +222,7 @@ class User {
 	 * @return isBlocked ?
 	 */
 	public function isBlockedMe() {
-        Log::debug($this->selfBlocked);
-		return $this->selfBlocked;
+		return ($this->selfBlocked == 1);
 	}
 	
 	/**
@@ -322,7 +331,7 @@ class User {
 	*
 	* @return array $ginger Instance de ginger
 	*/
-    protected function getNewGinger(){
+    protected static function getNewGinger(){
         $ginger_url = Config::get('ginger_url');
         if(!empty($ginger_url)){
             return new GingerClient(Config::get('ginger_key'), Config::get('ginger_url'));
@@ -331,35 +340,7 @@ class User {
             return new GingerClient(Config::get('ginger_key'));
         }
     }
-    
-    /**
-	* Initialiser ginger avec un moyen d'identification (login ou uid).
-    * Attention à bien catch l'ApiException
-	*
-	* @return void
-	*/
-    private function initGinger(){
-        if(empty($this->gingerUser)){
-            $ginger_key = Config::get('ginger_key');
-            if(!empty($ginger_key)){
-                // Récupérer le user dans ginger
-                $ginger = $this->getNewGinger();
-                $this->gingerUser = $ginger->getUser($this->nickname);
-            }
-            else {
-                // Génération d'un faux user
-                $this->gingerUser = new \StdClass;
-                $this->gingerUser->login = $this->nickname;
-                $this->gingerUser->prenom = "Test";
-                $this->gingerUser->nom = "User";
-                $this->gingerUser->mail = "payutc-test@assos.utc.fr";
-                $this->gingerUser->badge_uid = "123456AB";
-                $this->gingerUser->is_cotisant = true;
-                $this->gingerUser->is_adulte = true;
-            }
-        }
-    }
-    
+        
     /**
 	* Permet de set directement le ginger user de ce user si on l'a déjà,
     * par exemple si on l'a identifié avec un badge (et donc une requête ginger)
@@ -417,9 +398,9 @@ class User {
     public static function getUserFromBadge($badge) {
         Log::debug("User: getUserFromBadge($badge)");
         
-		$ginger = $this->getNewGinger();
+		$ginger = self::getNewGinger();
 		try {
-			$gingerUser = $ginger->getCard($badge_id);
+			$gingerUser = $ginger->getCard($badge);
 		}
 		catch (\Exception $ex) {
             Log::error("User: Ginger exception: ".$ex->getMessage());

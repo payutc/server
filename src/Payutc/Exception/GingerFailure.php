@@ -1,5 +1,5 @@
 <?php
 
-namespace \Payutc\Exception;
+namespace Payutc\Exception;
 
 class GingerFailure extends PayutcException {}
