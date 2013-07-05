@@ -23,13 +23,14 @@
 namespace Payutc\Service;
 
 use \Cas;
-use \User;
 use \Image;
 use \Db_buckutt;
 use \CheckRight;
 use \Payutc\Exception\UserIsBlockedException;
+use \Payutc\Exception\UserNotFound;
 use \Payutc\Config;
 use \Payutc\Log;
+use \Payutc\Bom\User;
 
 /**
  * POSS2.class
@@ -74,17 +75,19 @@ class POSS2 {
 	public function loadPos($ticket, $service, $poi_id, $fun_id) {
 		unset($this->Seller);
 		$ip = $this->getRemoteIp();
-		$login = Cas::authenticate($ticket, $service);
-		if ($login < 0) {
+        
+        try {
+            $user = User::getUserFromCas($ticket, $service);
+        }
+        catch(LoginError $ex) {
 			Log::warn("loadPos(ticket=$ticket, service=$service, poi_id=$poi_id, fun_id=$fun_id) : Error Cas");
-			return array("error"=>-1, "error_msg"=>"Erreur de login CAS.");
-		}
-		$user = new User($login, 1, "", 0, 1, 0);
-		$r = $user->getState();
-		if ($r != 1) {
+			return array("error"=>-1, "error_msg"=>"Impossible de se connecter: ".$ex->getMessage());
+        }
+        catch(UserNotFound $ex) {
 			Log::warn("loadPos(login=$login, poi_id=$poi_id, fun_id=$fun_id) : Error load seller ($r)");
-			return array("error"=>$r, "error_msg"=>"Le seller n'a pas pu être chargé.");
-		}
+			return array("error"=>$r, "error_msg"=>"Le seller n'a pas pu être chargé.");            
+        }
+        $login = $user->getNickname();
 		$this->Point_id = $poi_id;
 		$this->Fun_id = $fun_id;
 		$right = new CheckRight($user->getId(), $this->Point_id, $this->Fun_id);
@@ -143,15 +146,7 @@ class POSS2 {
 	public function getSellerIdentity() {
 		if ($this->isLoadedSeller()) {
 			$identity = $this->Seller->getIdentity();
-			return array("success"=>array(
-				"id" => $identity[0],
-				"firstname" => $identity[1],
-				"lastname" => $identity[2],
-				"nickname" => $identity[3]
-				// Inutiles de renvoyer le solde et la photo du seller...
-				//"id_photo" => $identity[4],
-				//"solde" => $identity[5]
-				));
+			return array("success"=>$identity);
 		} else {
 			Log::warn("getSellerIdentity() : No Seller loaded");
 			return array("error"=>400, "error_msg"=>"Il n'y a pas de seller chargé.");
@@ -217,12 +212,16 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 	 */
 	public function getBuyerInfo($badge_id) {
 		if ($this->isLoadedSeller()) {
-			$buyer = new User($badge_id, MEAN_OF_LOGIN_BADGE, "", 0, 1, 1);
-			$state = $buyer->getState();
-			if($state == 403)
-				return array("error"=>403, "error_msg"=>"Ce badge à été bloqué. Il faut que l'utilisateur aille le débloquer sur internet.");
-			if($state != 1)
+            
+            // Verifier que le buyer existe
+            try {
+                $buyer = User::getUserFromBadge($badge_id);
+            }
+            catch(UserNotFound $ex) {
+                Log::warn("getBuyerInfo($badge_id) : User not found");
 				return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu...");
+            }
+
 			// vérifier que l'utilisateur n'est pas bloqué sur cette fondation
 			try {
 				$buyer->checkNotBlockedFun($this->Fun_id);
@@ -291,41 +290,23 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 			$right_POI_FUNDATION = 7; // TODO IMPORTER D'AILLEURS
 
 			// Verifier que le buyer existe
-			$buyer = new User($badge_id, MEAN_OF_LOGIN_BADGE, "", 0, 1, 1);
-			$state = $buyer->getState();
-			$ginger_key = Config::get('ginger_key');
-			if($state != 1 && !empty($ginger_key))
-			{
-				// CHECK BADGE ID IN API
-				$ginger = new \Ginger\Client\GingerClient(Config::get('ginger_key'));
-				try {
-					$user = $ginger->getCard($badge_id);
-				}
-				catch (\Exception $ex) {
-					Log::warn("transaction($badge_id, $obj_ids) : Can't find card");
-					return array("error"=>$ex->getCode(), "error_msg"=>"Badge introuvable");
-				}
-				if($user->login) {
-					$buyer = new User($user->login, MEAN_OF_LOGIN_NICKNAME, "", 0, 1, 1);
-					$state = $buyer->getState();
-					if($state == 1) {
-						// UPDATE BADGE_ID
-						Db_buckutt::getInstance()->query("UPDATE tj_usr_mol_jum SET jum_data = '%s' WHERE usr_id='%u' AND mol_id='%u'", array($badge_id, $buyer->getId(), MEAN_OF_LOGIN_BADGE));
-					} else {
-						Log::warn("transaction($badge_id, $obj_ids) : Ginger knows this card but Payutc does not");
-						return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu...");
-					}
-				} else {
-					Log::warn("transaction($badge_id, $obj_ids) : Unknown card");
-					return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu..."); 
-				}
-			}
-		
-			if($state == 403) {
-				Log::warn("transaction($badge_id, $obj_ids) : Blocked card");
+            try {
+                $buyer = User::getUserFromBadge($badge_id);
+            }
+            catch(UserNotFound $ex) {
+                Log::warn("transaction($fun_id, $badge_id, $obj_ids) : User not found");
+				return array("error"=>400, "error_msg"=>"Le Badge n'a pas été reconnu..."); 
+            }
+
+            // Vérifier que la carte n'est pas bloquée
+            try {
+                $buyer->checkNotBlockedMe();
+            }
+            catch(UserIsBlockedException $ex) {
+                Log::warn("transaction($fun_id, $badge_id, $obj_ids) : Blocked card");
 				return array("error"=>403, "error_msg"=>"Ce badge à été bloqué. Il faut que l'utilisateur aille le débloquer sur internet.");
-			}
-			
+            }
+            			
 			// vérifier que l'utilisateur n'est pas bloqué sur cette fondation
 			try {
 				$buyer->checkNotBlockedFun($this->Fun_id);
