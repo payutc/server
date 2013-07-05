@@ -290,7 +290,6 @@ class User {
             "firstname" => $this->getFirstname(),
             "lastname" => $this->getLastname(),
             "nickname" => $this->getNickname(),
-            "photo" => $this->getIdPhoto(),
             "credit" => $this->getCredit());
 	}
 	
