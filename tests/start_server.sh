@@ -1,5 +1,12 @@
 #!/bin/bash
 
+PHPVER=`echo "<?php echo PHP_VERSION_ID;" | php`
+if [ "$PHPVER" -lt 50400 ]
+then
+    echo "PHP version < 5.4.0, skipping"
+    exit 0
+fi
+
 cd `dirname $0`
 
 FAUX_GINGER_PORT=33434
