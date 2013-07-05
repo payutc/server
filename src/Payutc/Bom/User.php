@@ -43,7 +43,6 @@ class User {
 
 	protected $idUser;
 	protected $nickname;
-	protected $idPhoto;
     protected $selfBlocked;
 	protected $db;    
 	protected $gingerUser = null;
@@ -59,7 +58,7 @@ class User {
 		$this->db = Db_buckutt::getInstance();
         
         $query = Db::createQueryBuilder()
-            ->select('usr_id', 'usr_blocked', 'img_id')
+            ->select('usr_id', 'usr_blocked')
             ->from('ts_user_usr', 'usr')
             ->where('usr.usr_nickname = :usr_nickname')
             ->setParameter('usr_nickname', $username)
@@ -89,7 +88,6 @@ class User {
         
         $this->idUser = $don['usr_id'];
         $this->selfBlocked = $don['usr_blocked'];
-		$this->idPhoto = $don['img_id'];
 	}
 
 	/**
@@ -162,15 +160,6 @@ class User {
 		$don = $query->fetch();
         return $don['usr_credit'];
 	}
-	
-	/**
-	* Retourne $photo
-	* 	
-	* @return int $idImg
-	*/
-	public function getIdPhoto() {
-		return $this->idPhoto;
-	}
 
     /**
     * Retourne $msgPerso
@@ -192,30 +181,6 @@ class User {
     public function setMsgPerso($msgPerso, $funID) {
         MsgPerso::setMsgPerso($msgPerso, $this->idUser, $funID);
     }
-	
-	/**
-	* Change l'image
-	* 
-	* @param int $img_id
-	* @return int $state
-	*/
-	public function setIdPhoto($img_id) {
-		$qb = DB::createQueryBuilder();
-		$qb->update('ts_user_usr', 'usr')
-			->set('img_id', ':img_id')
-			->where('usr_id = :usr_id')
-			->setParameters(array(
-				'img_id' => $img_id,
-				'usr_id' => $this->idUser
-			));
-		
-		$affectedRows = $qb->execute();
-		if ($affectedRows == 1) {
-			$this->idPhoto = $img_id;
-			return 1;
-		} else
-			return 400;
-	}
 
 	/**
 	* Fonction pour se bloquer soi même (en cas de perte/vol par exemple)
