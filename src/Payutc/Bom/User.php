@@ -53,9 +53,7 @@ class User {
 	* @param string $username Login of the User object to init
 	*/
 	public function __construct($username, $gingerUser = null) {
-        Log::debug("User: __construct($username, ?)");            
-        
-		$this->db = Db_buckutt::getInstance();
+        Log::debug("User: __construct($username, ?)");
         
         // Check that we have a Ginger key
         $ginger_key = Config::get('ginger_key');
