@@ -429,11 +429,6 @@ class User {
             throw new GingerFailure($ex);
         }
     
-        // Check that the user has a card
-        if(empty($gingerUser->badge_uid)){
-            throw new GingerFailure("L'utilisateur n'a pas de badge déclaré. Contactez payutc@assos.utc.fr");
-        }
-    
         // Add the user to payutc
         Db::conn()->insert('ts_user_usr', array(
             'usr_firstname' => $gingerUser->prenom,
