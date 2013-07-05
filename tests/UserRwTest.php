@@ -15,15 +15,7 @@ class UserDatabaseTest extends DatabaseTest
             'users.yml'
         ));
     }
-    
-    public function testSetIdPhoto()
-    {
-        $u = new User("trecouvr", 1, 0, 0, 1);
-        $u->setIdPhoto(42);
-        $u = new User("trecouvr", 1, 0, 0, 1);
-        $this->assertEquals(42, $u->getIdPhoto());
-    }
-    
+        
     public function testBlockMe()
     {
         $u = new User("trecouvr", 1, 0, 0, 1);
