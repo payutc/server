@@ -154,7 +154,7 @@ class User {
 
         // Check that the user exists
         if ($query->rowCount() != 1) {
-            Log::debug("User: User not found for login $username");
+            Log::debug("User: User not found for id $this->idUser");
             throw new UserNotFound();
         }
 
@@ -399,10 +399,11 @@ class User {
             $gingerUser = $ginger->getCard($badge);
         }
         catch (\Exception $ex) {
-            Log::error("User: Ginger exception ".$ex->getCode().": ".$ex->getMessage());
             if($ex->getCode() == 404){
+                Log::warn("User: badge $badge not found in Ginger");
                 throw new UserNotFound();
             }
+            Log::error("User: Ginger exception ".$ex->getCode().": ".$ex->getMessage());
             throw new GingerFailure($ex);
         }
     
