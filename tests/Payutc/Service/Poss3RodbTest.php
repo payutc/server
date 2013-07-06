@@ -2,6 +2,8 @@
 
 require_once "ServiceBaseRodbTest.php";
 
+use \Payutc\Bom\User;
+
 class Poss3RodbTest extends ServiceBaseRodbTest
 {
     public function getFixtures()
@@ -79,7 +81,7 @@ class Poss3RodbTest extends ServiceBaseRodbTest
      */
     public function testTransactionWithoutEnoughCredit()
     {
-        $u = new User("trecouvr", 1, 0, 0, 1);
+        $u = new User("trecouvr");
         $solde = $u->getCredit();
         $nb_purchase = count($u->getLastPurchase());
         $cookie = '';
@@ -94,14 +96,14 @@ class Poss3RodbTest extends ServiceBaseRodbTest
         $this->assertEquals(200, $r->code);
         $r = httpSend('POSS3', 'transaction', $cookie, array(
             'fun_id' => 1,
-            'badge_id' => 'NOCREDIT',
+            'badge_id' => '123456AB',
             'obj_ids' => '1 1 2'
         ));
         $a = array (
             'error' => array (
                 'type' => 'Payutc\\Exception\\PossException',
                 'code' => 0,
-                'message' => 'nocredit n\'a pas assez d\'argent pour effectuer la transaction.',
+                'message' => 'puyouart n\'a pas assez d\'argent pour effectuer la transaction.',
             ));
         $this->assertEquals($a, $r->body);
     }

@@ -1,3 +1,7 @@
-<?php namespace Payutc\Exception;
+<?php
 
-class UserNotFound extends PayutcException {};
+namespace Payutc\Exception;
+
+class UserNotFound extends PayutcException {
+    public $login;
+}

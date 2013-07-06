@@ -23,6 +23,8 @@ use \Payutc\Mapping\Services;
 use \Payutc\Exception\LoginError;
 use \Payutc\Exception\UserNotFound;
 use \Payutc\Exception\UserError;
+use \Payutc\Bom\User;
+use \Payutc\Log;
 
 /**
 * ServiceBase.class
@@ -88,27 +90,15 @@ class ServiceBase {
 	 * @return bool $success
 	 */
     public function loginCas($ticket, $service) {
+        Log::debug("loginCas($ticket, $service)");
         // Unlog previous user if any
         $_SESSION['ServiceBase']['user'] = NULL;
 
-        $login = Cas::authenticate($ticket, $service);
-        if ($login === -1) {
-            throw new LoginError("Erreur de login cas", -1);
-        }
-        $user = new User($login, 1, "", 0, 1, 0);
-
-        $r = $user->getState();
-        if($r == 405){
-            $this->loginToRegister = $login;
-            throw new UserNotFound("Le user n'existe pas ici", $r);
-        }
-        elseif($r != 1) {
-            throw new UserError("Le user n'a pas pu être chargé.", $r);
-        }
-
+        $user = User::getUserFromCas($ticket, $service);
+        
         // Save user in session for all service
         $_SESSION['ServiceBase']['user'] = $user;
-        return $login;
+        return $user->getNickname();
     }
 
 	/**

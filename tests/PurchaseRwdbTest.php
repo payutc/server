@@ -5,6 +5,7 @@ require_once "bootstrap.php";
 use \Payutc\Bom\Purchase;
 use \Payutc\Bom\Product;
 use \Payutc\Db;
+use \Payutc\Bom\User;
 
 class PurchaseRwdbTest extends DatabaseTest
 {
@@ -21,6 +22,9 @@ class PurchaseRwdbTest extends DatabaseTest
         ));
     }
     
+    /**
+     * @requires PHP 5.4
+     */
     public function testTransaction()
     {
         $date = date('Y-m-d H:i:s');
@@ -36,7 +40,7 @@ class PurchaseRwdbTest extends DatabaseTest
 			),
 		);
 		Purchase::transaction(1, $items, 51, 1, 9447, "localhost");
-		$u = new User("trecouvr", 1, 0, 0, 1);
+		$u = new User("trecouvr");
 		$this->assertEquals(8700, $u->getCredit());
 		$p = Product::getOne(4,1);
 		$this->assertEquals(21, $p['stock']);

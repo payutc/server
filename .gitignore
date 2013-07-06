@@ -2,6 +2,7 @@
 /vendor
 /composer.lock
 /composer.phar
-*~
-/logs/
+/logs
 /tests/config.inc.php
+/tests/faux-cas
+/tests/faux-ginger

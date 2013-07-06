@@ -2,6 +2,8 @@
 
 require_once "bootstrap.php";
 
+use \Payutc\Bom\User;
+
 class Poss3RwdbTest extends DatabaseTest
 {
     /**
@@ -25,7 +27,7 @@ class Poss3RwdbTest extends DatabaseTest
      */
     public function testTransaction()
     {
-        $u = new User("trecouvr", 1, 0, 0, 1);
+        $u = new User("trecouvr");
         $solde = $u->getCredit();
         $nb_purchase = count($u->getLastPurchase());
         $cookie = '';
@@ -51,7 +53,7 @@ class Poss3RwdbTest extends DatabaseTest
         );
         $this->assertEquals($o, $r->body);
         $this->assertEquals(200, $r->code);
-        $u = new User("trecouvr", 1, 0, 0, 1);
+        $u = new User("trecouvr");
         $this->assertEquals($solde-280, $u->getCredit());
         $purchases = $u->getLastPurchase();
         sort_by_key($purchases, 'pur_id');
@@ -70,7 +72,7 @@ class Poss3RwdbTest extends DatabaseTest
      */
     public function testCancel()
     {
-        $u = new User("trecouvr", 1, 0, 0, 1);
+        $u = new User("trecouvr");
         $solde = $u->getCredit();
         $nb_purchase = count($u->getLastPurchase());
         $cookie = '';

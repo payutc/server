@@ -12,7 +12,7 @@ namespace Payutc\Bom;
 use \Payutc\Exception\NotImplemented;
 use \Payutc\Db;
 use \Payutc\Bom\Item;
-use \User;
+use \Payutc\Bom\User;
 
 class Purchase
 {

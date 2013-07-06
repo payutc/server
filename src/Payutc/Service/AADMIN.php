@@ -22,7 +22,7 @@
 namespace Payutc\Service;
 
 use \Cas;
-use \User;
+use \Payutc\Bom\User;
 use \Image;
 use \ComplexData;
 use \Db_buckutt;
@@ -93,12 +93,14 @@ class AADMIN {
 	 * @return int $state
 	 */
     public function loginCas($ticket, $service) {
-		$login = Cas::authenticate($ticket, $service);
-		if ($login < 0) {
-			return -1;
-		}
-		$this->user = new User($login, 1, "", 0, 1, 0);
-		return $this->user->getState();
+        try {
+            $this->user = User::getUserFromCas($ticket, $service);
+        }
+        catch(\Exception $ex){
+            return -1;
+        }
+
+		return 1;
     }
 
 	/**
