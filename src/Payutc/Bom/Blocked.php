@@ -9,14 +9,14 @@
 
 namespace Payutc\Bom;
 use \Payutc\Exception\UserIsBlockedException;
-use \Db_buckutt;
-use \Payutc\Db;
+use \Payutc\Db\DbBuckutt;
+use \Payutc\Db\Dbal;
 
 class Blocked {
     protected $db;
 
     public function __construct() {
-        $this->db = Db_buckutt::getInstance();        
+        $this->db = DbBuckutt::getInstance();        
     }
     
     /**
@@ -26,7 +26,7 @@ class Blocked {
      * sinon return false
      */
 	public static function userIsBlocked($usr_id, $fun_id=NULL) {
-        $qb = Db::createQueryBuilder();
+        $qb = Dbal::createQueryBuilder();
         
         $qb->select('blo.blo_id', 'blo.blo_raison', 'blo.blo_insert', 'blo.blo_removed', 'blo.fun_id')
             ->from('tj_usr_fun_blocked_blo', 'blo')
@@ -65,7 +65,7 @@ class Blocked {
      * Bloque un utilisateur
      */
     public static function block($usr_id, $fun_id, $raison, $fin=NULL, $debut=NULL) {
-        $db     = Db_buckutt::getInstance();
+        $db     = DbBuckutt::getInstance();
         $insert_data = array();
         // Construction de la requete
         $req    = "INSERT INTO tj_usr_fun_blocked_blo ";
@@ -99,7 +99,7 @@ class Blocked {
      * Retourne les blocages
      */
     public static function getAll($fun_id=NULL, $usr_id=NULL) {
-        $db = Db_buckutt::getInstance();
+        $db = DbBuckutt::getInstance();
         $req = "SELECT blo.* , usr.usr_firstname, usr.usr_lastname, usr.usr_nickname AS login
 FROM tj_usr_fun_blocked_blo blo, ts_user_usr usr
 WHERE blo.usr_id = usr.usr_id ";
@@ -146,7 +146,7 @@ WHERE blo.usr_id = usr.usr_id ";
      * La modification permet de déclarer une date de fin 
      */
     public static function edit($blo_id, $fun_id=NULL, $raison=NULL, $fin=NULL) {
-        $db = Db_buckutt::getInstance();
+        $db = DbBuckutt::getInstance();
         $param = array();
         $req = "UPDATE tj_usr_fun_blocked_blo SET ";
         if($raison != NULL) {

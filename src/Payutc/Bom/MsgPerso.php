@@ -10,7 +10,7 @@
 namespace Payutc\Bom;
 
 use \Payutc\Exception\MessageUpdateFailedException;
-use \Db_buckutt;
+use \Payutc\Db\DbBuckutt;
 
 class MsgPerso
 {
@@ -18,7 +18,7 @@ class MsgPerso
 
     public function __construct()
     {
-        $this->db = Db_buckutt::getInstance();        
+        $this->db = DbBuckutt::getInstance();        
     }
     
     /**
@@ -28,7 +28,7 @@ class MsgPerso
      */
 	public static function getMsgPerso($usrId=NULL, $funId=NULL)
     {
-        $db = Db_buckutt::getInstance();
+        $db = DbBuckutt::getInstance();
         $param = array($usrId, $funId);
         $req = "SELECT `msg_perso` FROM `t_message_msg` WHERE
                 (`usr_id` = '%u' OR `usr_id` IS NULL)
@@ -56,7 +56,7 @@ class MsgPerso
      */
     public function setMsgPerso($msgPerso, $usrId = NULL, $funId = NULL)
     {
-        $db = Db_buckutt::getInstance();
+        $db = DbBuckutt::getInstance();
         if (mb_check_encoding($msgPerso, 'UTF-8')) {
             if (strlen($msgPerso) < 255){
                 if (($usrId != NULL) && ($funId != NULL)) {

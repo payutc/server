@@ -24,7 +24,7 @@ namespace Payutc\Service;
 
 use \Cas;
 use \Image;
-use \Db_buckutt;
+use \Payutc\Db\DbBuckutt;
 use \CheckRight;
 use \Payutc\Exception\UserIsBlockedException;
 use \Payutc\Exception\UserNotFound;
@@ -167,7 +167,7 @@ class POSS2 {
 			$propositions = array();
 			$articles = array();
 			$cats = array();
-			$res = Db_buckutt::getInstance()->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.obj_stock, o.obj_type, p.pri_credit, o.img_id
+			$res = DbBuckutt::getInstance()->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.obj_stock, o.obj_type, p.pri_credit, o.img_id
 FROM tj_usr_rig_jur jur, t_object_obj o
 LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child 
 LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id 
@@ -178,7 +178,7 @@ AND jur.rig_id = '%u'
 AND jur.poi_id = '%u'
 AND o.fun_id = '%u'
 ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id));
-	        while ($don = Db_buckutt::getInstance()->fetchArray($res)) {
+	        while ($don = DbBuckutt::getInstance()->fetchArray($res)) {
 	        	if($don['obj_type']=='category')
 	        		$cats[$don['obj_id']] = array(
 	            	"id"=>$don['obj_id'], 
@@ -253,8 +253,8 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 		if ($this->isLoadedSeller()) {
 
 			// ANNULATION
-			$req = Db_buckutt::getInstance()->query("SELECT pur_price, usr_id_buyer, usr_id_seller, pur_date, pur_removed, obj_id FROM t_purchase_pur WHERE pur_id = %u",array($purchase_id));
-			$res = Db_buckutt::getInstance()->fetchArray($req);
+			$req = DbBuckutt::getInstance()->query("SELECT pur_price, usr_id_buyer, usr_id_seller, pur_date, pur_removed, obj_id FROM t_purchase_pur WHERE pur_id = %u",array($purchase_id));
+			$res = DbBuckutt::getInstance()->fetchArray($req);
 			$seller = $this->Seller->getIdentity();
 			if($res["usr_id_seller"] != $seller[0]) {
 				Log::warn("cancel($purchase_id) : No right to cancel this");
@@ -265,9 +265,9 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 				return array("error"=>400, "error_msg"=>"Cette vente à déjà été annulé...");
 			}
 			// TODO CHECK TIME
-			Db_buckutt::getInstance()->query("UPDATE t_purchase_pur SET pur_removed='1' WHERE pur_id='%u';", Array($purchase_id));
-			Db_buckutt::getInstance()->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id='%u';", Array($res["pur_price"], $res["usr_id_buyer"]));
-			Db_buckutt::getInstance()->query("UPDATE t_object_obj SET obj_stock = (obj_stock + 1) WHERE obj_id='%u';", Array($res["obj_id"]));
+			DbBuckutt::getInstance()->query("UPDATE t_purchase_pur SET pur_removed='1' WHERE pur_id='%u';", Array($purchase_id));
+			DbBuckutt::getInstance()->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id='%u';", Array($res["pur_price"], $res["usr_id_buyer"]));
+			DbBuckutt::getInstance()->query("UPDATE t_object_obj SET obj_stock = (obj_stock + 1) WHERE obj_id='%u';", Array($res["obj_id"]));
 
 		} else {
 			Log::warn("cancel($purchase_id) : No Seller loaded");
@@ -333,10 +333,10 @@ AND o.fun_id = '%u' AND (";
 			}
 			$req = substr($req, 0, -2);
 			$req .= ")";
-			$res = Db_buckutt::getInstance()->query($req, array_merge(array($this->Fun_id),$obj_ids));
+			$res = DbBuckutt::getInstance()->query($req, array_merge(array($this->Fun_id),$obj_ids));
 			$articles = array();
 			$alcool = false;
-	        while ($don = Db_buckutt::getInstance()->fetchArray($res)) 
+	        while ($don = DbBuckutt::getInstance()->fetchArray($res)) 
 	        	{ 
 	        		if($don['obj_alcool'] > 0) { $alcool = true; }
 	        		$articles[$don['obj_id']] = $don;
@@ -370,14 +370,14 @@ AND o.fun_id = '%u' AND (";
 			}
 
 			// Effectuer les achats
-	        Db_buckutt::getInstance()->query("UPDATE ts_user_usr SET usr_credit = (usr_credit - '%u') WHERE usr_id='%u';", Array($total, $buyer->getId())); // TODO AJOUTER LA METHODE DANS LA CLASSE USER.
+	        DbBuckutt::getInstance()->query("UPDATE ts_user_usr SET usr_credit = (usr_credit - '%u') WHERE usr_id='%u';", Array($total, $buyer->getId())); // TODO AJOUTER LA METHODE DANS LA CLASSE USER.
 			
 			foreach($objects_ids as $obj_id)
 	        {
 	        	// TODO FACTORISER L'INSERT
-	        	Db_buckutt::getInstance()->query(("INSERT INTO t_purchase_pur (pur_date, pur_type, obj_id, pur_price, usr_id_buyer, usr_id_seller, poi_id, fun_id, pur_ip) VALUES (NOW(), '%s', '%u', '%u', '%u', '%u', '%u', '%u', '%s')"), 
+	        	DbBuckutt::getInstance()->query(("INSERT INTO t_purchase_pur (pur_date, pur_type, obj_id, pur_price, usr_id_buyer, usr_id_seller, poi_id, fun_id, pur_ip) VALUES (NOW(), '%s', '%u', '%u', '%u', '%u', '%u', '%u', '%s')"), 
 	        		array("product", $obj_id, $articles[$obj_id]['pri_credit'], $buyer->getId(), $this->Seller->getId(), $this->Point_id, $this->Fun_id, $this->getRemoteIp()));
-	        	Db_buckutt::getInstance()->query("UPDATE t_object_obj SET obj_stock= (obj_stock - 1) WHERE obj_id='%u';", Array($obj_id));
+	        	DbBuckutt::getInstance()->query("UPDATE t_object_obj SET obj_stock= (obj_stock - 1) WHERE obj_id='%u';", Array($obj_id));
 	        }
 
 	        // REtourner les infos sur l'utilisateur

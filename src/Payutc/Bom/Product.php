@@ -7,8 +7,8 @@
  */
 
 namespace Payutc\Bom;
-use \Db_buckutt;
-use \Payutc\Db;
+use \Payutc\Db\Dbal;
+use \Payutc\Db\DbBuckutt;
 
 class Product {
 
@@ -42,7 +42,7 @@ class Product {
         $fun_ids = $params['fun_ids'];
         $itm_ids = $params['itm_ids'];
         
-        $qb = Db::createQueryBuilder();
+        $qb = Dbal::createQueryBuilder();
         $qb->select('itm.obj_id', 'itm.obj_name', 'oli.obj_id_parent', 
                     'itm.fun_id', 'itm.obj_stock', 'itm.obj_alcool', 
                     'pri.pri_credit', 'itm.img_id')
@@ -77,7 +77,7 @@ class Product {
 
 
     public static function getOne($obj_id, $fun_id=null, $removed=0) {
-        $qb = Db::createQueryBuilder();
+        $qb = Dbal::createQueryBuilder();
         $qb->select('obj.obj_id', 'obj.obj_name', 'oli.obj_id_parent', 'obj.fun_id', 
                     'obj.obj_stock', 'obj.obj_alcool', 'pri.pri_credit', 'obj.img_id')
            ->from('t_object_obj', 'obj')
@@ -118,7 +118,7 @@ class Product {
     * @return array $categorie
     */
     public static function add($nom, $parent, $prix, $stock, $alcool, $image, $fun_id) {
-        $db = Db_buckutt::getInstance();
+        $db = DbBuckutt::getInstance();
         // 1. Verification que le parent existe (et qu'il est bien dans la fundation indiqué (vu qu'on a vérifié les droits grâce à ça)
         $res = $db->query("SELECT fun_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u' AND fun_id = '%u' LIMIT 0,1;", array($parent, $fun_id));
         if ($db->affectedRows() >= 1) {
@@ -167,7 +167,7 @@ class Product {
     * @return array $categorie
     */
     public static function edit($id, $nom, $parent, $prix, $stock, $alcool, $image, $fun_id) {
-        $db = Db_buckutt::getInstance();
+        $db = DbBuckutt::getInstance();
         // 1. GET THE ARTICLE
         $res = $db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit, o.img_id, oli_id
         FROM t_object_obj o
@@ -245,7 +245,7 @@ class Product {
     * @return array $result
     */
     public static function delete($id, $fun_id) {
-        $db = Db_buckutt::getInstance();
+        $db = DbBuckutt::getInstance();
         // 1. GET THE ARTICLE
         $res = $db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
         FROM t_object_obj o
@@ -275,7 +275,7 @@ class Product {
 
     protected static function _baseUpdateQueryById($itm_id)
     {
-        $qb = Db::createQueryBuilder();
+        $qb = Dbal::createQueryBuilder();
         $qb->update('t_object_obj', 'itm')
             ->where('obj_id = :itm_id')
             ->setParameter('itm_id', $itm_id);

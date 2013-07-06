@@ -25,7 +25,7 @@ use \Cas;
 use \Payutc\Bom\User;
 use \Image;
 use \ComplexData;
-use \Db_buckutt;
+use \Payutc\Db\DbBuckutt;
 use \PlageHoraire;
 
 /**
@@ -53,7 +53,7 @@ class AADMIN {
 	 * Constructeur.
 	 */
 	public function __construct() {
-		$this->db = Db_buckutt::getInstance();
+		$this->db = DbBuckutt::getInstance();
 	}
 
 	protected function getRemoteIp() {

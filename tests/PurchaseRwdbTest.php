@@ -4,7 +4,7 @@ require_once "bootstrap.php";
 
 use \Payutc\Bom\Purchase;
 use \Payutc\Bom\Product;
-use \Payutc\Db;
+use \Payutc\Db\Dbal;
 use \Payutc\Bom\User;
 
 class PurchaseRwdbTest extends DatabaseTest
@@ -50,7 +50,7 @@ class PurchaseRwdbTest extends DatabaseTest
 
     public function testGetPurchasesForUser()
     {
-        $conn = Db::conn();
+        $conn = Dbal::conn();
         $nb_purchases = count(Purchase::getPurchasesForUser(1), 200);
         $conn->insert('t_purchase_pur', array(
                      'pur_date' => date('Y-m-d H:i:s'),
