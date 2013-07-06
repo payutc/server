@@ -25,6 +25,7 @@ use \Payutc\Exception\UserIsBlockedException;
 use \Payutc\Exception\UserNotFound;
 use \Payutc\Exception\GingerFailure;
 use \Payutc\Exception\UpdateFailed;
+use \Payutc\Exception\LoginError;
 use \Payutc\Bom\Blocked;
 use \Payutc\Bom\MsgPerso;
 use \Payutc\Log;
@@ -52,7 +53,7 @@ class User {
     * @param string $username Login of the User object to init
     */
     public function __construct($username, $gingerUser = null) {
-        Log::debug("User: __construct($username, ?)");
+        Log::debug("User: __construct($username, ".print_r($gingerUser, true).")");
         
         $query = Db::createQueryBuilder()
             ->select('usr_id', 'usr_blocked')
@@ -83,6 +84,10 @@ class User {
             }    
         }
         Log::debug("User: data from Ginger: ".print_r($this->gingerUser, true));
+        if($this->gingerUser == null){
+            Log::error("Empty gingerUser");
+            throw new GingerFailure("Ginger user is empty");
+        }
                 
         // Get remaining data from the database
         $don = $query->fetch();
@@ -384,7 +389,7 @@ class User {
     
         $login = Cas::authenticate($ticket, $service);
         if ($login === -1) {
-            Log::warning("User: getUserFromCas($ticket, $service): CAS returned -1");
+            Log::warn("User: getUserFromCas($ticket, $service): CAS returned -1");
             throw new LoginError("Impossible de valider le ticket CAS fourni", -1);
         }
     
