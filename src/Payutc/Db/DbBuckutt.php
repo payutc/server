@@ -80,10 +80,10 @@ class DbBuckutt {
     * Execution d'une requete
     *
     * @param $query Requete SQL à executer
-    * @param $debug Boulean qui indique si la requete doit etre affichée
+    * @param $args Valeurs des paramètres de la requête
     * @return resultset Résultat de la requete, false si echec
     */
-    public function query($query, $arg = false) {
+    public function query($query, $args = false) {
         if(!empty($args)){
             foreach($args as &$parametre){
                 $parametre = mysql_real_escape_string($parametre, $this->connexion);
