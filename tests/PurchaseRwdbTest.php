@@ -4,7 +4,7 @@ require_once "bootstrap.php";
 
 use \Payutc\Bom\Purchase;
 use \Payutc\Bom\Product;
-use \Payutc\Dbal;
+use \Payutc\Db\Dbal;
 use \Payutc\Bom\User;
 
 class PurchaseRwdbTest extends DatabaseTest
