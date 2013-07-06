@@ -485,14 +485,14 @@ class MADMIN {
 	 * @return Array $userDetails
 	 */
     public function getUserDetails() {
-        if($this->User->getState() != 1) {
-            return array();
-        } else {
+        if($this->User) {
             return array(
                 "firstname" => $this->getFirstname(),
                 "lastname" => $this->getLastname(),
                 "credit" => $this->getCredit()
             );
+        } else {
+            return array();
         }
     }
 }
