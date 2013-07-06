@@ -9,6 +9,7 @@
  * @package buckutt
  */
 
+use \Payutc\Db\DbBuckutt;
 
 class PlageHoraire {
 
@@ -36,7 +37,7 @@ class PlageHoraire {
      */
     public function __construct(&$user, $id, $time_start, $time_end, $poi_id, $fun_id, $name)
     {
-        $this->db = Db_buckutt::getInstance();
+        $this->db = DbBuckutt::getInstance();
         $this->user = $user;
         $this->id = $id;
         $this->time_start = $time_start;

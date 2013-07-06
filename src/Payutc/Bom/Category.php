@@ -7,7 +7,7 @@
  */
 
 namespace Payutc\Bom;
-use \Db_buckutt;
+use \Payutc\Db\DbBuckutt;
 
 class Category {
 
@@ -47,18 +47,18 @@ AND obj_type = 'category'
 $fun_req
 ORDER BY obj_name;";
 
-        $res = Db_buckutt::getInstance()->query($query, $param);
+        $res = DbBuckutt::getInstance()->query($query, $param);
 
         // Construction du resultat.
         $categories = array();
-        while ($don = Db_buckutt::getInstance()->fetchArray($res)) {
+        while ($don = DbBuckutt::getInstance()->fetchArray($res)) {
             $categories[]=static::fromDbArray($don);
         }
         return $categories;
     }
 
     public static function getOne($obj_id, $fun_id=null) {
-        $res = Db_buckutt::getInstance()->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id
+        $res = DbBuckutt::getInstance()->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id
 FROM t_object_obj o
 LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child AND oli_removed = 0
 LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id
@@ -68,8 +68,8 @@ AND o.obj_type = 'category'
 AND o.obj_id = '%u'
 AND o.fun_id = '%u'
 ORDER BY obj_name;", array($obj_id, $fun_id));
-        if (Db_buckutt::getInstance()->affectedRows() >= 1) {
-            $don = Db_buckutt::getInstance()->fetchArray($res);
+        if (DbBuckutt::getInstance()->affectedRows() >= 1) {
+            $don = DbBuckutt::getInstance()->fetchArray($res);
             return array("success" => static::fromDbArray($don));
         } else {
             return array("error"=>400, "error_msg"=>"Cet article ($obj_id, $fun_id) n'existe pas, ou vous n'avez pas les droits dessus.");
@@ -82,7 +82,7 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
     *
     */
     public static function add($nom, $parent, $fundation) {
-        $db = Db_buckutt::getInstance();
+        $db = DbBuckutt::getInstance();
         // 1. CHECK THE PARENT (AND IF TRUE SELECT THE TRUTH FUNDATION)
         if($parent != null) {
             $res = $db->query("SELECT fun_id FROM t_object_obj 
@@ -116,7 +116,7 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
     *
     */
     public static function edit($id, $nom, $parent, $fun_id) {
-        $db = Db_buckutt::getInstance();
+        $db = DbBuckutt::getInstance();
         // 1. GET THE CATEGORIE
         $res = $db->query("SELECT obj_id_parent, fun_id, oli_id 
             FROM t_object_obj 
@@ -174,7 +174,7 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
     *
     */
     public static function delete($id, $fun_id) {
-        $db = Db_buckutt::getInstance();
+        $db = DbBuckutt::getInstance();
         // 1. GET THE ARTICLE
         $res = $db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id
 FROM t_object_obj o

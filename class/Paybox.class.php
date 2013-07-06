@@ -19,6 +19,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+use \Payutc\Db\DbBuckutt;
 use \Payutc\Log;
 use \Payutc\Config;
 
@@ -28,7 +29,7 @@ class Paybox {
     private $db;
     
     public function __construct(&$User) {
-        $this->db = Db_buckutt::getInstance();
+        $this->db = DbBuckutt::getInstance();
         $this->User = &$User;
     }
 
@@ -122,7 +123,7 @@ NULL ,  '%u',  'W',  '%u', NOW( ) , NULL , NULL , NULL ,  '%s',  '%u', NULL
       $auto= !empty($_GET['auto']) ? $_GET['auto'] : '';
       $trans=$_GET['trans'];
       $erreur=$_GET['erreur'];
-      $db = Db_buckutt::getInstance();
+      $db = DbBuckutt::getInstance();
 
       if($auto == 'XXXXXX' && Config::get('PBX_SITE') != '1999888') {
         Log::warn("PAYBOX : Reception d'une autorisation de test, alors que PBX_SITE n'est pas celui de test ! \n".print_r($_GET, true),10);

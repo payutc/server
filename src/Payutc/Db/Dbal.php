@@ -1,8 +1,10 @@
-<?php namespace Payutc;
+<?php
+
+namespace Payutc\Db;
 
 use \Payutc\Config;
 
-class Db
+class Dbal
 {
     private static $config = null;
     private static $conn = null;
