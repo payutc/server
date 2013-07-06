@@ -142,7 +142,6 @@ class GESARTICLE extends \ServiceBase {
         $this->checkRight(true, true, false, null); 
 
         $oldgd = imagecreatefromstring(base64_decode($image));
-        error_log($image);
 
         ob_start();
         imagepng($oldgd);
