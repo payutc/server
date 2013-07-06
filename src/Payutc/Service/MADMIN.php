@@ -21,7 +21,7 @@
 
 namespace Payutc\Service;
 
-use \Db_buckutt;
+use \Payutc\Db\DbBuckutt;
 use \Cas;
 use \Payutc\Bom\User;
 use \ComplexData;
@@ -50,7 +50,7 @@ class MADMIN {
      * @return
      */
     public function __construct() {
-        $this->db = Db_buckutt::getInstance();
+        $this->db = DbBuckutt::getInstance();
     }
     
 	/**

@@ -6,7 +6,8 @@
  * Classe gérant les Applications
  */
 
-use \Payutc\Db;
+use \Payutc\Db\Dbal;
+use \Payutc\Db\DbBuckutt;
 
 class Application {
     protected $db;
@@ -21,7 +22,7 @@ class Application {
 
 
     public function __construct() {
-        $this->db = Db_buckutt::getInstance();        
+        $this->db = DbBuckutt::getInstance();        
     }
     
     /**
@@ -127,7 +128,7 @@ class Application {
      * Update last app_lastuse field
      */
     public function registerUse() {
-        $qb = DB::createQueryBuilder();
+        $qb = Dbal::createQueryBuilder();
         $qb->update('t_application_app', 'app')
             ->set('app.app_lastuse', 'NOW()')
             ->where('app.app_id = :app_id')
@@ -144,7 +145,7 @@ class Application {
     public static function getAll($key=0)
     {
         $apps = array();
-        $db = Db_buckutt::getInstance();
+        $db = DbBuckutt::getInstance();
         $query = $db->query("SELECT app_id, app_url, app_key, app_name, app_desc, app_creator, app_lastuse, 
                                 app_created FROM t_application_app WHERE app_removed is NULL;");	
         if ($db->affectedRows() >= 1) {

@@ -35,6 +35,8 @@ use \Payutc\Log;
 * @package buckutt
 */
 
+use \Payutc\Db\DbBuckutt;
+
 class ServiceBase {
     protected $db;
     protected $service_name;  // Nom du service
@@ -46,7 +48,7 @@ class ServiceBase {
         // DEPRECATED
         // Comme on vise à virer les requetes SQL dans les services le $this->db
         // devrait bientôt disparaitre.
-        $this->db = Db_buckutt::getInstance();
+        $this->db = DbBuckutt::getInstance();
 
         $classdesc = explode("\\", get_class($this));
         $this->service_name = end($classdesc);
