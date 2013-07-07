@@ -5,17 +5,14 @@ php:
 before_script:
   - mkdir logs
   - chmod 777 logs
-  - cp config.inc.dist.php config.inc.php
+  - cp tests/config.inc.dist.php config.inc.php
+  - mkdir tests/logs
+  - chmod 777 tests/logs
+  - cp tests/config.inc.dist.php tests/config.inc.php
   - curl -s https://getcomposer.org/installer | php
   - php composer.phar install --dev --prefer-source --no-interaction
   - mysql -e 'create database buckutt_test;'
-  - php db.php migrations:migrate --write-sql
-  - mysql -u root buckutt_test < doctrine_migration_*.sql
-  - cd tests/
-  - mkdir logs
-  - chmod 777 logs
-  - cp config.inc.dist.php config.inc.php
-  - cd ..
+  - php db.php migrations:migrate
 script: ./tests/run_all.sh
 
 
