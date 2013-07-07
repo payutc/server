@@ -6,7 +6,8 @@ before_script:
   - mkdir logs
   - chmod 777 logs
   - mysql -e 'create database buckutt_test;'
-  - mysql -u root buckutt_test < dev_structure.sql
+  - php db.php migrations:migrate --write-sql
+  - mysql -u root buckutt_test < doctrine_migration_*.sql
   - curl -s https://getcomposer.org/installer | php
   - php composer.phar install --dev --prefer-source --no-interaction
   - cd tests/
