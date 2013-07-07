@@ -5,11 +5,11 @@ php:
 before_script:
   - mkdir logs
   - chmod 777 logs
+  - curl -s https://getcomposer.org/installer | php
+  - php composer.phar install --dev --prefer-source --no-interaction
   - mysql -e 'create database buckutt_test;'
   - php db.php migrations:migrate --write-sql
   - mysql -u root buckutt_test < doctrine_migration_*.sql
-  - curl -s https://getcomposer.org/installer | php
-  - php composer.phar install --dev --prefer-source --no-interaction
   - cd tests/
   - mkdir logs
   - chmod 777 logs
