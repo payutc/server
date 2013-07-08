@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 // Include all dependencies
 require_once 'vendor/autoload.php';
