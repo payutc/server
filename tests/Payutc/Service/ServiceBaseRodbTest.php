@@ -43,6 +43,14 @@ abstract class ServiceBaseRodbTest extends ReadOnlyDatabaseTest
         return $r;
     }
 
+    public function getUserId(&$cookie='', &$r, $login='trecouvr')
+    {
+        $r = httpSend('ADMINRIGHT', 'getUserId', $cookie, array(
+                                                          'login' => $login,
+                                                          ));
+        return $r;
+    }
+
     /**
      * @requires PHP 5.4
      */
@@ -73,6 +81,19 @@ abstract class ServiceBaseRodbTest extends ReadOnlyDatabaseTest
         $r = null;
         $this->loginApp($cookie, $r, 'my_app');
         $this->assertEquals(200, $r->code);
+    }
+
+    /**
+     * @requires PHP 5.4
+     */
+    public function testGetUserId()
+    {
+        $cookie = '';
+        $r = null;
+        $this->loginApp($cookie, null, 'my_app');
+        $this->loginCas($cookie);
+        $this->getUserId($cookie, $r, 'trecouvr');
+        $this->assertEquals(1, $r);
     }
 }
 
