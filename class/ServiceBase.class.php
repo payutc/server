@@ -364,6 +364,15 @@ class ServiceBase {
 		}
 	}
     
+    /**
+     * Renvoie l'id d'un utilisateur à partir de son login UTC
+     */
+    public function getUserId($login) {
+        $this->checkRight();
+        $user = new User($login);
+        return $user->getId();
+    }
+
     protected function &getSession() {
         if (!isset($_SESSION[get_class($this)])) {
             $_SESSION[get_class($this)] = array();
