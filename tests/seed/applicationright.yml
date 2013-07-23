@@ -10,4 +10,7 @@ tj_app_fun_afu:
     app_id: 1
     fun_id: 1
     afu_service: POSS3
-
+  -
+    app_id: 1
+    fun_id: 1
+    afu_service: ADMINRIGHT
