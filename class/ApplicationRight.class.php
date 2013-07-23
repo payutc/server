@@ -104,6 +104,20 @@ class ApplicationRight {
      * Donne les droits à une application sur un service et une fundation
      */
     public static function setRight($app_id, $service, $fun_id) {
+        $allready_set = true;        
+        try {
+            if($app_id) {
+                static::check($app_id, $service, true, $fun_id);
+            } else {
+                static::check($app_id, $service, false);
+            }
+        } catch (Exception $e) {
+            $allready_set = false;
+        }
+        if($allready_set) {
+            throw new Exception("L'application à déjà ce droit.");
+        }
+
         $conn = Dbal::conn();
         $insert = array(
             "app_id" => $app_id,
