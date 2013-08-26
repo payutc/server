@@ -4,7 +4,7 @@ tj_usr_fun_ufu:
     fun_id: 1
     ufu_service: POSS3
   -
-    user_id: 1
+    usr_id: 1
     fun_id: 1
     ufu_service: ADMINRIGHT
 
