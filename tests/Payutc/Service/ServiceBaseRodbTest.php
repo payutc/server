@@ -93,7 +93,7 @@ abstract class ServiceBaseRodbTest extends ReadOnlyDatabaseTest
         $this->loginApp($cookie, $r, 'my_app');
         $this->loginCas($cookie);
         $this->getUserId($cookie, $r, 'trecouvr');
-        $this->assertEquals(1, $r);
+        $this->assertEquals('1', $r->body);
     }
 }
 
