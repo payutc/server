@@ -108,6 +108,20 @@ class UserRight {
      * Donne les droits à un user sur un service et une fundation
      */
     public static function setRight($usr_id, $service, $fun_id) {
+        $allready_set = true;        
+        try {
+            if($fun_id) {
+                static::check($usr_id, $service, true, $fun_id);
+            } else {
+                static::check($usr_id, $service, false);
+            }
+        } catch (Exception $e) {
+            $allready_set = false;
+        }
+        if($allready_set) {
+            throw new Exception("L'utilisateur à déjà ce droit.");
+        }
+
         $conn = Dbal::conn();
         $insert = array(
             "usr_id" => $usr_id,
