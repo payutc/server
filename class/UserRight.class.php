@@ -119,7 +119,7 @@ class UserRight {
             $allready_set = false;
         }
         if($allready_set) {
-            throw new Exception("L'utilisateur à déjà ce droit.");
+            throw new \Payutc\Exception\RightAlreadyExistsException("L'utilisateur à déjà ce droit.");
         }
 
         $conn = Dbal::conn();
@@ -149,7 +149,7 @@ class UserRight {
         $ufu_id = $conn->lastInsertId();
 
         if (!$ufu_id) {
-            throw new Exception("Une erreur s'est produite lors de l'ajout du droit.");
+            throw new \Payutc\Exception\SetRightException("Une erreur s'est produite lors de l'ajout du droit.");
         }
 
         return $ufu_id;
@@ -180,7 +180,7 @@ class UserRight {
 
         $db->query($query, $var);
 		if ($db->affectedRows() == 0) {
-			throw new Exception("Une erreur s'est produite lors de la supression du droit.");
+			throw new \Payutc\Exception\SetRightException("Une erreur s'est produite lors de la supression du droit.");
 		}	
 	}
 
