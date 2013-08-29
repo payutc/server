@@ -154,7 +154,7 @@ class POSS3 extends \ServiceBase {
         // création de la liste des items à acheter (note: il peut y avoir des doublons)
         $items_to_buy = array();
         foreach($objects_ids as $id) {
-            $items_to_buy[] = $items[$id];
+            $items_to_buy[] = array($items[$id], 1);
         }
         
         // si alcool, vérifier que le buyer est majeur
@@ -184,6 +184,112 @@ class POSS3 extends \ServiceBase {
                       "lastname"=>$buyer->getLastname(), 
                       "solde"=>$buyer->getCredit(),
                       "msg_perso"=>$msg);
+    }
+
+    /**
+     * $objects_list est de la forme [[obj1, qte1], [obj2, qt2], ...]
+     */
+    public function transactionWithQte($fun_id, $badge_id, $objects_list) {
+        $this->checkRight(true, true, true, $fun_id);
+
+        // Verifier que le buyer existe
+        try {
+            $buyer = User::getUserFromBadge($badge_id);
+        }
+        catch(UserNotFound $ex) {
+            Log::warn("transaction($fun_id, $badge_id, $objects_list) : User not found");
+            throw new PossException("Ce badge n'a pas été reconnu");
+        }
+
+        // Vérifier que la carte n'est pas bloquée
+        try {
+            $buyer->checkNotBlockedMe();
+        }
+        catch(UserIsBlockedException $ex) {
+            Log::warn("transaction($fun_id, $badge_id, $objects_list) : Blocked card");
+            throw new PossException("Ce badge à été bloqué : son propriétaire doit le débloquer sur son interface de gestion");
+        }
+        
+        // vérifier que l'utilisateur n'est pas bloqué sur cette fondation
+        try {
+            $buyer->checkNotBlockedFun($fun_id);
+        }
+        catch (UserIsBlockedException $e) {
+            Log::warn("transaction($fund_id, $badge_id, $objects_list) : Blocked user ({$e->getMessage()})");
+            throw new PossException($e->getMessage());
+        }
+
+        // récupérer les objets dans la db (note: pas de doublon)
+        $objects = json_decode($objects_list);
+        $objects_ids = array();
+        foreach($objects as $object) {
+            $objects_ids[] = $object[0];
+        }
+
+        $r = Product::getAll(array('obj_ids'=>array_unique($objects_ids), 'fun_ids'=>array($fun_id)));
+        $items = array();
+
+        $alcool = false;
+        foreach($r as $itm) {
+            $items[$itm['id']] = $itm;
+        }
+        
+        // y'a t il de l'alcool ?
+        $alcool = false;
+        foreach($items as $itm) {
+            if ($itm['alcool'] > 0) {
+                $alcool = true;
+                break;
+            }
+        }
+        
+        // calcul le prix total
+        $total = 0;
+        foreach($objects as $object)
+            {
+                if(isset($items[$object[0]]))
+                    {
+                        $total += $items[$object[0]]['price'] * $object[1];
+                    } else {
+                    Log::warn("transaction($badge_id, ...) : $object[0] is unavailable");
+                    throw new PossException("L'article $object[0] n'est pas disponible à la vente.");
+                }
+            }
+        
+        // création de la liste des items à acheter (note: il peut y avoir des doublons)
+        $items_to_buy = array();
+        foreach($objects as $object) {
+            if ($object[1] > 0)
+                $items_to_buy[] = array($items[$object[0]], $object[1]);
+        }
+        
+        // si alcool, vérifier que le buyer est majeur
+        if($alcool) 
+            {
+                if($buyer->isAdult() == 0) {
+                    Log::warn("transaction($badge_id, $objects_list) : Under-18 users can't buy alcohol");
+                    throw new PossException($buyer->getNickname()." est mineur il ne peut pas acheter d'alcool !");
+                }
+            }
+
+        // vérifier que le buyer a assez d'argent
+        if($buyer->getCredit() < $total) {
+            Log::warn("transaction($badge_id, $objects_list) : Buyer have not enough money");
+            throw new PossException($buyer->getNickname()." n'a pas assez d'argent pour effectuer la transaction. $total");
+        }
+        
+        // effectuer les achats
+        Purchase::transaction($buyer->getId(), $items_to_buy,
+                              $this->application()->getId(), $fun_id,
+                              $this->user()->getId(), $this->getRemoteIp());
+
+        // Retourner les infos sur l'utilisateur
+        $msg = $buyer->getMsgPerso($fun_id);
+
+        return array("firstname"=>$buyer->getFirstname(), 
+                     "lastname"=>$buyer->getLastname(), 
+                     "solde"=>$buyer->getCredit(),
+                     "msg_perso"=>$msg);
     }
 
     public function getImage64($img_id, $outw = 0, $outh = 0)
