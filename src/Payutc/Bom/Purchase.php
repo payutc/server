@@ -27,7 +27,7 @@ class Purchase
     public static function getNbSell($obj_id, $fun_id, $start=null, $end=null, $tick=null) 
     {
         $qb = Dbal::createQueryBuilder();
-        $qb->select('count(*) as nb', 'pur.pur_date')
+        $qb->select('sum(pur_qte) as nb', 'pur.pur_date')
            ->from('t_purchase_pur', 'pur')
            ->where('pur.obj_id = :obj_id')->setParameter('obj_id', $obj_id)
            ->andWhere('pur.fun_id = :fun_id')->setParameter('fun_id', $fun_id)
@@ -82,7 +82,7 @@ class Purchase
             // update purchase + buyer + stock, then commit
             $qb->execute();
             User::incCreditById($pur['usr_id_buyer'], $pur['pur_price']);
-            Product::incStockById($pur['obj_id'], 1);
+            Product::incStockById($pur['obj_id'], $pur['pur_qte']);
             Dbal::commit();
         }
         catch (Exception $e) {
@@ -102,12 +102,15 @@ class Purchase
         $total_price = 0;
         $purchases = array();
         foreach ($items as $itm) {
-            $total_price += $itm['price'];
+            $price = $itm['price'] * $itm['qte'];
+            $total_price += $price;
             $purchases[] = array(
             'pur_date' => date('Y-m-d H:i:s'),
             'pur_type' => 'product',
             'obj_id' => $itm['id'],
-            'pur_price' => $itm['price'],
+            'pur_qte' => $itm['qte'],
+            'pur_price' => $price,
+            'pur_unit_price' => $itm['price'],
             'usr_id_buyer' => $usr_id_buyer,
             'usr_id_seller' => $usr_id_seller,
             'poi_id' => $poi_id,
@@ -125,7 +128,7 @@ class Purchase
             
             foreach ($purchases as $pur) {
             $a = $conn->insert('t_purchase_pur', $pur);
-            Product::decStockById($pur['obj_id'], 1);
+            Product::decStockById($pur['obj_id'], $pur['pur_qte']);
             }
             $conn->commit();
         }
@@ -144,7 +147,7 @@ class Purchase
      */
     public static function getRank($fun_id, $obj_id, $start, $end, $top, $sort_by) {
         $qb = Dbal::createQueryBuilder();
-        $qb->select('sum(pur.pur_price) as totalPrice', 'count(*) as nbBuy', 'usr.usr_firstname', 'usr.usr_lastname', 'usr.usr_nickname')
+        $qb->select('sum(pur.pur_price) as totalPrice', 'sum(pur_qte) as nbBuy', 'usr.usr_firstname', 'usr.usr_lastname', 'usr.usr_nickname')
            ->from('t_purchase_pur', 'pur')
            ->from('ts_user_usr', 'usr')
            ->where('usr.usr_id = pur.usr_id_buyer')
