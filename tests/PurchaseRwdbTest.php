@@ -30,14 +30,16 @@ class PurchaseRwdbTest extends DatabaseTest
         $date = date('Y-m-d H:i:s');
         $nbSells = Purchase::getNbSell(4, 1, $date);
 		$items = array(
-            array(array(
+			array(
 				'id' => 4,
+				'qte' => 1,
 				'price' => 150,
-              ), 1),
-            array(array(
+			),
+			array(
 				'id' => 4,
+				'qte' => 3,
 				'price' => 150,
-              ), 3),
+			),
 		);
 		Purchase::transaction(1, $items, 51, 1, 9447, "localhost");
 		$u = new User("trecouvr");

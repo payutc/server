@@ -102,15 +102,15 @@ class Purchase
         $total_price = 0;
         $purchases = array();
         foreach ($items as $itm) {
-            $price = $itm[0]['price'] * $itm[1];
+            $price = $itm['price'] * $itm['qte'];
             $total_price += $price;
             $purchases[] = array(
             'pur_date' => date('Y-m-d H:i:s'),
             'pur_type' => 'product',
-            'obj_id' => $itm[0]['id'],
-            'pur_qte' => $itm[1],
+            'obj_id' => $itm['id'],
+            'pur_qte' => $itm['qte'],
             'pur_price' => $price,
-            'pur_unit_price' => $itm[0]['price'],
+            'pur_unit_price' => $itm['price'],
             'usr_id_buyer' => $usr_id_buyer,
             'usr_id_seller' => $usr_id_seller,
             'poi_id' => $poi_id,
