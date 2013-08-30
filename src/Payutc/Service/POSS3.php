@@ -88,7 +88,7 @@ class POSS3 extends \ServiceBase {
      *         2. multiselect
      *         3. endTransaction
      * @param String $badge_id
-     * @param String $obj_ids
+     * @param String $obj_ids list of ids separated by a space or json : [[id1, qte1], [id2, qt2], ...]
      * @return array $state
      */
     public function transaction($fun_id, $badge_id, $obj_ids) {
@@ -123,7 +123,6 @@ class POSS3 extends \ServiceBase {
 
         // tranformer la chaine passee en un array exploitable
         // il y a deux formats : ids séparés par des espaces (pas de quantités) ou json
-        \error_log($obj_ids);
         $objects = json_decode($obj_ids);
         if (is_null($objects)) { // espaces
             $objects_ids = explode(" ", trim($obj_ids));
@@ -154,7 +153,15 @@ class POSS3 extends \ServiceBase {
                 break;
             }
         }
-        
+        // si alcool, vérifier que le buyer est majeur
+        if($alcool)
+            {
+                if($buyer->isAdult() == 0) {
+                    Log::warn("transaction($badge_id, $obj_ids) : Under-18 users can't buy alcohol");
+                    throw new PossException($buyer->getNickname()." est mineur il ne peut pas acheter d'alcool !");
+                }
+            }
+
         // calcul le prix total et création de la liste des items à acheter (note: il peut y avoir des doublons)
         $total = 0;
         $items_to_buy = array();
@@ -162,7 +169,7 @@ class POSS3 extends \ServiceBase {
             {
                 if(isset($items[$object[0]]))
                     {
-                        if ($object[1] > 0) {
+                        if (count($object) > 1 && !empty($object[1]) && $object[1] > 0) {
                             $item = $items[$object[0]];
                             $item['qte'] = $object[1];
                             $items_to_buy[] = $item;
@@ -172,17 +179,8 @@ class POSS3 extends \ServiceBase {
                         }
                         $total += $item['price'] * $item['qte'];
                     } else {
-                    Log::warn("transaction($badge_id, ...) : $object[0] is unavailable");
-                    throw new PossException("L'article $object[0] n'est pas disponible à la vente.");
-                }
-            }
-        
-        // si alcool, vérifier que le buyer est majeur
-        if($alcool) 
-            {
-                if($buyer->isAdult() == 0) {
-                    Log::warn("transaction($badge_id, $obj_ids) : Under-18 users can't buy alcohol");
-                    throw new PossException($buyer->getNickname()." est mineur il ne peut pas acheter d'alcool !");
+                    Log::warn("transaction($badge_id, ...) : ${object[0]} is unavailable");
+                    throw new PossException("L'article ${object[0]} n'est pas disponible à la vente.");
                 }
             }
 
