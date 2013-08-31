@@ -88,7 +88,7 @@ class POSS3 extends \ServiceBase {
      *         2. multiselect
      *         3. endTransaction
      * @param String $badge_id
-     * @param String $obj_ids
+     * @param String $obj_ids list of ids separated by a space or json : [[id1, qte1], [id2, qt2], ...]
      * @return array $state
      */
     public function transaction($fun_id, $badge_id, $obj_ids) {
@@ -121,8 +121,24 @@ class POSS3 extends \ServiceBase {
             throw new PossException($e->getMessage());
         }
 
+        // tranformer la chaine passee en un array exploitable
+        // il y a deux formats : ids séparés par des espaces (pas de quantités) ou json
+        $objects = json_decode($obj_ids);
+        if (is_null($objects)) { // espaces
+            $objects_ids = explode(" ", trim($obj_ids));
+
+            $objects = array();
+            foreach ($objects_ids as $id) {
+                $objects[] = array($id, 1);
+            }
+        } else {
+            $objects_ids = array();
+            foreach($objects as $object) {
+                $objects_ids[] = $object[0];
+            }
+        }
+
         // récupérer les objets dans la db (note: pas de doublon)
-        $objects_ids = explode(" ", trim($obj_ids));
         $r = Product::getAll(array('obj_ids'=>array_unique($objects_ids), 'fun_ids'=>array($fun_id)));
         $items = array();
         foreach($r as $itm) {
@@ -137,34 +153,36 @@ class POSS3 extends \ServiceBase {
                 break;
             }
         }
-        
-        // calcul le prix total
-        $total = 0;
-        foreach($objects_ids as $obj_id)
-        {
-            if(isset($items[$obj_id]))
-            {
-                $total += $items[$obj_id]['price'];
-            } else {
-                Log::warn("transaction($badge_id, ...) : $obj_id is unavailable");
-                throw new PossException("L'article $obj_id n'est pas disponible à la vente.");
-            }
-        }
-        
-        // création de la liste des items à acheter (note: il peut y avoir des doublons)
-        $items_to_buy = array();
-        foreach($objects_ids as $id) {
-            $items_to_buy[] = $items[$id];
-        }
-        
         // si alcool, vérifier que le buyer est majeur
-        if($alcool) 
-        {
-            if($buyer->isAdult() == 0) {
-                Log::warn("transaction($badge_id, $obj_ids) : Under-18 users can't buy alcohol");
-                throw new PossException($buyer->getNickname()." est mineur il ne peut pas acheter d'alcool !");
+        if($alcool)
+            {
+                if($buyer->isAdult() == 0) {
+                    Log::warn("transaction($badge_id, $obj_ids) : Under-18 users can't buy alcohol");
+                    throw new PossException($buyer->getNickname()." est mineur il ne peut pas acheter d'alcool !");
+                }
             }
-        }
+
+        // calcul le prix total et création de la liste des items à acheter (note: il peut y avoir des doublons)
+        $total = 0;
+        $items_to_buy = array();
+        foreach($objects as $object)
+            {
+                if(isset($items[$object[0]]))
+                    {
+                        if (count($object) > 1 && !empty($object[1]) && $object[1] > 0) {
+                            $item = $items[$object[0]];
+                            $item['qte'] = $object[1];
+                            $items_to_buy[] = $item;
+                        } else {
+                            Log::warn("transaction($fun_id, $badge_id, $obj_ids) : Null quantity for article $object[0]");
+                            throw new PossException("La quantité pour l'article est $object[0] nulle.");
+                        }
+                        $total += $item['price'] * $item['qte'];
+                    } else {
+                    Log::warn("transaction($badge_id, ...) : ${object[0]} is unavailable");
+                    throw new PossException("L'article ${object[0]} n'est pas disponible à la vente.");
+                }
+            }
 
         // vérifier que le buyer a assez d'argent
         if($buyer->getCredit() < $total) {
@@ -181,9 +199,9 @@ class POSS3 extends \ServiceBase {
         $msg = $buyer->getMsgPerso($fun_id);
 
         return array("firstname"=>$buyer->getFirstname(), 
-                      "lastname"=>$buyer->getLastname(), 
-                      "solde"=>$buyer->getCredit(),
-                      "msg_perso"=>$msg);
+                     "lastname"=>$buyer->getLastname(), 
+                     "solde"=>$buyer->getCredit(),
+                     "msg_perso"=>$msg);
     }
 
     public function getImage64($img_id, $outw = 0, $outh = 0)

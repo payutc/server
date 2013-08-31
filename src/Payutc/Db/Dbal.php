@@ -27,6 +27,7 @@ class Dbal
                 'charset'  => 'utf8',
             );
             static::$conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, static::$config);
+            static::$conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
         }
         return static::$conn;
     }
