@@ -21,7 +21,7 @@ class Version20130707182025 extends AbstractMigration
           PRIMARY KEY (`oli_id`),
           KEY `obj_id_parent` (`obj_id_parent`),
           KEY `obj_id_child` (`obj_id_child`)
-        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liens entre objets' AUTO_INCREMENT=2 ;");
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liens entre objets';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `tj_obj_poi_jop` (
           `obj_id` int(11) unsigned NOT NULL COMMENT 'Identifiant de l''objet',
@@ -40,7 +40,7 @@ class Version20130707182025 extends AbstractMigration
           KEY `per_id` (`per_id`),
           KEY `grp_id` (`grp_id`),
           KEY `usr_id` (`usr_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liens d''appartenance des utilisateurs aux groupes' AUTO_INCREMENT=1 ;");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liens d''appartenance des utilisateurs aux groupes';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `tj_usr_mol_jum` (
           `usr_id` int(11) unsigned NOT NULL COMMENT 'Identifiant de l''utilisateur',
@@ -66,7 +66,7 @@ class Version20130707182025 extends AbstractMigration
           KEY `per_id` (`per_id`),
           KEY `fun_id` (`fun_id`),
           KEY `poi_id` (`poi_id`)
-        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liens entre utilisateurs et droits' AUTO_INCREMENT=30 ;");
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liens entre utilisateurs et droits';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `ts_callback_cal` (
           `cal_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant du callback',
@@ -77,7 +77,7 @@ class Version20130707182025 extends AbstractMigration
           PRIMARY KEY (`cal_id`),
           KEY `pro_id` (`pro_id`),
           KEY `mol_id` (`mol_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Callback à exécuter lors de l''achat de certains produits' AUTO_INCREMENT=1 ;");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Callback à exécuter lors de l''achat de certains produits';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `ts_error_err` (
           `err_code` int(5) unsigned NOT NULL COMMENT 'Code de l''erreur',
@@ -95,7 +95,7 @@ class Version20130707182025 extends AbstractMigration
           `img_content` mediumblob NOT NULL COMMENT 'Contenu de l''image',
           `img_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si l''image est supprimée',
           PRIMARY KEY (`img_id`)
-        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Images des utilisateurs et des produits' AUTO_INCREMENT=4 ;");
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Images des utilisateurs et des produits';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `ts_log_log` (
           `log_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant du log',
@@ -103,14 +103,14 @@ class Version20130707182025 extends AbstractMigration
           `log_gravity` tinyint(1) unsigned NOT NULL COMMENT 'Gravité de l''évènement',
           `log_message` text COLLATE utf8_general_ci NOT NULL COMMENT 'Contenu',
           PRIMARY KEY (`log_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Journal des évènements' AUTO_INCREMENT=1 ;");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Journal des évènements';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `ts_mean_of_login_mol` (
           `mol_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant du mode de connexion',
           `mol_name` varchar(40) COLLATE utf8_general_ci NOT NULL COMMENT 'Nom du mode de connexion',
           `mol_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si le mode de connexion est supprimé',
           PRIMARY KEY (`mol_id`)
-        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Moyens de connexion' AUTO_INCREMENT=6 ;");
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Moyens de connexion';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `ts_right_rig` (
           `rig_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant du droit',
@@ -119,7 +119,7 @@ class Version20130707182025 extends AbstractMigration
           `rig_admin` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 s''il s''agit d''un droit d''administrateur',
           `rig_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si le droit est supprimé',
           PRIMARY KEY (`rig_id`)
-        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Droits des utilisateurs' AUTO_INCREMENT=16 ;");
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Droits des utilisateurs';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `ts_user_usr` (
           `usr_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant utilisateur',
@@ -137,14 +137,14 @@ class Version20130707182025 extends AbstractMigration
           `usr_msg_perso` varchar(255) COLLATE utf8_general_ci DEFAULT NULL,
           PRIMARY KEY (`usr_id`),
           KEY `img_id` (`img_id`)
-        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Utilisateurs' AUTO_INCREMENT=10505 ;");
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Utilisateurs';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `t_fundation_fun` (
           `fun_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant de l''organisme',
           `fun_name` varchar(40) COLLATE utf8_general_ci NOT NULL COMMENT 'Nom de l''organisme',
           `fun_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si l''organisme est supprimé',
           PRIMARY KEY (`fun_id`)
-        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Organismes' AUTO_INCREMENT=4 ;");
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Organismes';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `t_group_grp` (
           `grp_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant du groupe',
@@ -155,7 +155,7 @@ class Version20130707182025 extends AbstractMigration
           `grp_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si le groupe est supprimé',
           PRIMARY KEY (`grp_id`),
           KEY `fun_id` (`fun_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Groupes d''utilisateurs' AUTO_INCREMENT=1 ;");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Groupes d''utilisateurs';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `t_object_obj` (
           `obj_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant de l''objet',
@@ -171,7 +171,7 @@ class Version20130707182025 extends AbstractMigration
           PRIMARY KEY (`obj_id`),
           KEY `img_id` (`img_id`),
           KEY `fun_id` (`fun_id`)
-        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Objets' AUTO_INCREMENT=3 ;");
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Objets';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `t_oldusr_osr` (
           `osr_login` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
@@ -193,7 +193,7 @@ class Version20130707182025 extends AbstractMigration
           `pay_mobile` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1=rechargement sur mobile',
           `pay_error` varchar(5) CHARACTER SET latin1 DEFAULT NULL COMMENT 'Code erreur retourné par paubox',
           PRIMARY KEY (`pay_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1 ;");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `t_period_per` (
           `per_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant de la période',
@@ -204,7 +204,7 @@ class Version20130707182025 extends AbstractMigration
           `per_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si la période est supprimée',
           PRIMARY KEY (`per_id`),
           KEY `fun_id` (`fun_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Périodes de vente' AUTO_INCREMENT=1 ;");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Périodes de vente';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `t_plage_pla` (
           `pla_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -214,14 +214,14 @@ class Version20130707182025 extends AbstractMigration
           `pla_end` int(4) NOT NULL,
           `pla_name` varchar(100) COLLATE utf8_general_ci NOT NULL,
           PRIMARY KEY (`pla_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1 ;");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `t_point_poi` (
           `poi_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant du point',
           `poi_name` varchar(40) COLLATE utf8_general_ci NOT NULL COMMENT 'Nom du point',
           `poi_removed` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '1 si le point est supprimé',
           PRIMARY KEY (`poi_id`)
-        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Points de vente' AUTO_INCREMENT=54 ;");
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Points de vente';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `t_price_pri` (
           `pri_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant du prix',
@@ -234,7 +234,7 @@ class Version20130707182025 extends AbstractMigration
           KEY `obj_id` (`obj_id`),
           KEY `grp_id` (`grp_id`),
           KEY `per_id` (`per_id`)
-        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Prix des objets' AUTO_INCREMENT=2 ;");
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Prix des objets';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `t_purchase_pur` (
           `pur_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant de l''achat',
@@ -253,7 +253,7 @@ class Version20130707182025 extends AbstractMigration
           KEY `poi_id` (`poi_id`),
           KEY `usr_id_buyer` (`usr_id_buyer`),
           KEY `usr_id_seller` (`usr_id_seller`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Achats de produits' AUTO_INCREMENT=1 ;");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Achats de produits';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `t_recharge_rec` (
           `rec_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant du rechargement',
@@ -270,7 +270,7 @@ class Version20130707182025 extends AbstractMigration
           KEY `poi_id` (`poi_id`),
           KEY `usr_id_buyer` (`usr_id_buyer`),
           KEY `usr_id_operator` (`usr_id_operator`)
-        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Rechargements' AUTO_INCREMENT=2 ;");
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Rechargements';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `t_recharge_type_rty` (
           `rty_id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant du type de rechargement',
@@ -278,7 +278,7 @@ class Version20130707182025 extends AbstractMigration
           `rty_type` enum('PBUY','SBUY') COLLATE utf8_general_ci DEFAULT NULL COMMENT 'WSDL auquel est rattaché ce type de rechargement',
           `rty_removed` tinyint(4) NOT NULL DEFAULT '0' COMMENT '1 si le type de rechargement a été supprimé',
           PRIMARY KEY (`rty_id`)
-        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Type de rechargement' AUTO_INCREMENT=8 ;");
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Type de rechargement';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `t_sale_sal` (
           `sal_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifiant de la vente',
@@ -289,7 +289,7 @@ class Version20130707182025 extends AbstractMigration
           PRIMARY KEY (`sal_id`),
           KEY `per_id` (`per_id`),
           KEY `obj_id` (`obj_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Ventes de produits ou de promotions' AUTO_INCREMENT=1 ;");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Ventes de produits ou de promotions';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `t_sherlocks_she` (
           `she_id` int(5) NOT NULL AUTO_INCREMENT,
@@ -301,7 +301,7 @@ class Version20130707182025 extends AbstractMigration
           `she_state` int(5) NOT NULL,
           `she_trace` text COLLATE utf8_general_ci NOT NULL,
           PRIMARY KEY (`she_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Logs sherlocks' AUTO_INCREMENT=1 ;");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Logs sherlocks';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `t_virement_vir` (
           `vir_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -311,7 +311,7 @@ class Version20130707182025 extends AbstractMigration
           `usr_id_to` int(11) NOT NULL,
           `vir_message` varchar(50),
           PRIMARY KEY (`vir_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Virements entre utilisateurs' AUTO_INCREMENT=1 ;");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Virements entre utilisateurs';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `tj_app_fun_afu` (
           `afu_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -321,7 +321,7 @@ class Version20130707182025 extends AbstractMigration
           `afu_inserted` datetime DEFAULT NULL,
           `afu_removed` datetime DEFAULT NULL,
           PRIMARY KEY (`afu_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Droits qu''une fundation donne à une fundation sur un service donné' AUTO_INCREMENT=1 ;");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Droits qu''une fundation donne à une fundation sur un service donné';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `tj_usr_fun_ufu` (
           `ufu_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -331,7 +331,7 @@ class Version20130707182025 extends AbstractMigration
           `ufu_inserted` datetime DEFAULT NULL,
           `ufu_removed` datetime DEFAULT NULL,
           PRIMARY KEY (`ufu_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liaison entre un user/une fundation et un service.' AUTO_INCREMENT=1 ;");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liaison entre un user/une fundation et un service.';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `t_application_app` (
           `app_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id interne de l''application',
@@ -345,7 +345,7 @@ class Version20130707182025 extends AbstractMigration
           `app_removed` datetime DEFAULT NULL COMMENT 'Est ce que la clef est supprimé.',
           PRIMARY KEY (`app_id`),
           UNIQUE KEY `app_key` (`app_key`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liste des applications et leurs clefs.' AUTO_INCREMENT=1 ;");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Liste des applications et leurs clefs.';");
 
         $this->addSql("CREATE TABLE IF NOT EXISTS `t_message_msg` (
           `msg_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Identifiant de la relation',
@@ -364,7 +364,7 @@ class Version20130707182025 extends AbstractMigration
           `blo_insert` datetime NOT NULL COMMENT 'Date de début du blocage',
           `blo_removed` datetime DEFAULT NULL COMMENT 'Date de fin du blocage',
           PRIMARY KEY (`blo_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Utilisateur bloqués par des fundations.' AUTO_INCREMENT=1 ;");
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Utilisateur bloqués par des fundations.';");
 
         $this->addSql("ALTER TABLE `tj_usr_mol_jum`
           ADD CONSTRAINT `tj_usr_mol_jum_ibfk_1` FOREIGN KEY (`usr_id`) REFERENCES `ts_user_usr` (`usr_id`) ON DELETE CASCADE ON UPDATE CASCADE,
