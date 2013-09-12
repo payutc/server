@@ -44,7 +44,7 @@ class POSS3 extends \ServiceBase {
             "firstname"=>$buyer->getFirstname(), 
             "lastname"=>$buyer->getLastname(), 
             "solde"=>$buyer->getCredit(),
-            "last_purchases"=>$buyer->getLastPurchase()
+            "last_purchases"=>$buyer->getLastPurchases()
         );
     }
     

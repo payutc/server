@@ -233,7 +233,7 @@ ORDER BY obj_name;", array($right_POI_FUNDATION, $this->Point_id, $this->Fun_id)
 										"firstname"=>$buyer->getFirstname(), 
 										"lastname"=>$buyer->getLastname(), 
 										"solde"=>$buyer->getCredit(),
-										"last_purchase"=>$buyer->getLastPurchase()
+										"last_purchase"=>$buyer->getLastPurchases()
 								));
 		} else {
 			Log::warn("getBuyerInfo() : No Seller loaded");

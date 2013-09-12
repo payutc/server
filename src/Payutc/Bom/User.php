@@ -316,10 +316,10 @@ class User {
     *
     * @return array $return
     */
-    public function getLastPurchase() {
+    public function getLastPurchases() {
         return Purchase::getPurchasesForUser($this->getId(), 60*15);
     }
-
+    
     /**
     * Initialiser ginger, éventuellement avec une URL perso
     *

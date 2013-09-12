@@ -73,6 +73,17 @@ class PurchaseRodbTest extends ReadOnlyDatabaseTest
         $this->assertEquals($waited,$r);
 
     }
+    
+    public function testGetPurchasesForUser() {
+        $purchases = Purchase::getPurchasesForUser(9447);
+        $this->assertTrue(count($purchases) > 0);
+        $pur = $purchases[0];
+        $this->assertArrayHasKey('pur_id', $pur);
+        $this->assertArrayHasKey('obj_id', $pur);
+        $this->assertArrayHasKey('pur_price', $pur);
+        $this->assertArrayHasKey('pur_qte', $pur);
+        $this->assertArrayHasKey('pur_date', $pur);
+    }
 }
 
 
