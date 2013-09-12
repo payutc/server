@@ -91,7 +91,6 @@ class Product {
                 'obj_type' => "product",
                 'obj_id' => $obj_id,
                ));
-
         if($fun_id !== null) {
            $qb->andWhere('obj.fun_id = :fun_id')
                 ->setParameter('fun_id', $fun_id);
@@ -267,7 +266,12 @@ class Product {
         $db->query("UPDATE t_object_obj SET  `obj_removed` = '1' WHERE  `obj_id` = '%u';",array($id));
 
         // 3. DELETE PRICE
-        // TODO !!
+        $qb = Dbal::createQueryBuilder();
+        $qb->update('t_price_pri', 'pri')
+            ->where('obj_id = :id')
+            ->set('pri_removed', 1)
+            ->setParameter('id', $id);
+        $qb->execute();
 
         return array("success"=>"ok");
     }

@@ -3,6 +3,7 @@
 require_once 'bootstrap.php';
 
 use \Payutc\Bom\Product;
+use \Payutc\Db\Dbal;
 
 class ProductRwdbTest extends DatabaseTest
 {
@@ -71,6 +72,33 @@ class ProductRwdbTest extends DatabaseTest
         $this->assertEquals(null, $r['image']);
         $this->assertEquals(1001, $r['categorie_id']);
         $this->assertEquals(1, $r['fundation_id']);
+    }
+    
+    /**
+     * @depends testAdd
+     */
+    public function testDelete() {
+        // create object
+        $a = Product::add("Chouffe", 1000, 180, 10, 1, null, 1);
+        $id = $a["success"];
+        // delete object
+        Product::delete($id, 1);
+        // assert we cant get the object now
+        $r = Product::getOne($id, 1);
+        $this->assertNull($r);
+        // but we can get it if we allow deleted objects
+        $r = Product::getOne($id, 1, 1);
+        $this->assertNotNull($r);
+        // check the price has been removed too
+        $qb = Dbal::createQueryBuilder();
+        $q = $qb->select('pri_removed')
+                ->from('t_price_pri', 'pri')
+                ->where('obj_id = :id')
+                ->setParameter('id', $id);
+        $prices = $q->execute()->fetchAll();
+        foreach($prices as $p) {
+            $this->assertEquals(1, $p['pri_removed']);
+        }
     }
 }
 
