@@ -83,7 +83,7 @@ class Poss3RodbTest extends ServiceBaseRodbTest
     {
         $u = new User("trecouvr");
         $solde = $u->getCredit();
-        $nb_purchase = count($u->getLastPurchase());
+        $nb_purchase = count($u->getLastPurchases());
         $cookie = '';
         $r = httpSend('POSS3', 'loginCas', $cookie, array(
             'ticket' => 'trecouvr@POSS3',
