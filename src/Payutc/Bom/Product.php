@@ -265,7 +265,8 @@ class Product {
         }
         
         // start transaction
-        Dbal::beginTransaction();
+        $conn = Dbal::conn();
+        $conn->beginTransaction();
         
         try {
             // 2. remove article
@@ -279,19 +280,14 @@ class Product {
                 ->setParameter('id', $id);
             $qb->execute();
             
-            // 4. remove image
-            $qb = Dbal::createQueryBuilder();
-            $qb->update('ts_image_img', 'img')
-                ->where('img_id = :id')
-                ->set('img_removed', 1)
-                ->setParameter('id', $don['img_id']);
-            $qb->execute();
+            // 4. delete image
+            $conn->delete('ts_image_img', array('img_id' => $don['img_id']));
             
             // commit
-            Dbal::commit();
+            $conn->commit();
         }
         catch (Exception $e) {
-            Dbal::rollback();
+            $conn->rollback();
             return array("error"=>400, "error_msg"=>"Erreur lors de la suppression de l'objet $id.");
         }
         

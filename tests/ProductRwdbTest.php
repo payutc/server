@@ -108,13 +108,12 @@ class ProductRwdbTest extends DatabaseTest
         }
         // check the image has been removed too
         $qb = Dbal::createQueryBuilder();
-        $q = $qb->select('img_removed')
+        $q = $qb->select('count(*) as count')
                 ->from('ts_image_img', 'img')
                 ->where('img_id = :id')
                 ->setParameter('id', $img_id);
-        $img = $q->execute()->fetch();
-        $this->assertNotNull($img);
-        $this->assertEquals(1, $img['img_removed']);
+        $res = $q->execute()->fetch();
+        $this->assertEquals(0, $res['count']);
     }
 }
 
