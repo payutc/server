@@ -91,7 +91,6 @@ class Product {
                 'obj_type' => "product",
                 'obj_id' => $obj_id,
                ));
-
         if($fun_id !== null) {
            $qb->andWhere('obj.fun_id = :fun_id')
                 ->setParameter('fun_id', $fun_id);
@@ -247,7 +246,10 @@ class Product {
     public static function delete($id, $fun_id) {
         $db = DbBuckutt::getInstance();
         // 1. GET THE ARTICLE
-        $res = $db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
+        $res = $db->query("
+        SELECT 
+            o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.img_id,
+            p.pri_credit
         FROM t_object_obj o
             LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child
             LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  
@@ -258,16 +260,37 @@ class Product {
             o.fun_id = '%u';", array($id, $fun_id));
         if ($db->affectedRows() >= 1) {
             $don = $db->fetchArray($res);
-            $fundation=$don['fun_id'];
         } else {
             return array("error"=>400, "error_msg"=>"L'article à supprimer n'existe pas ! (Ou vous n' avez pas les droits pour le supprimer).");
         }
+        
+        // start transaction
+        $conn = Dbal::conn();
+        $conn->beginTransaction();
+        
+        try {
+            // 2. remove article
+            $db->query("UPDATE t_object_obj SET  `obj_removed` = '1' WHERE  `obj_id` = '%u';",array($id));
 
-        // 2. REMOVE THE ARTICLE
-        $db->query("UPDATE t_object_obj SET  `obj_removed` = '1' WHERE  `obj_id` = '%u';",array($id));
-
-        // 3. DELETE PRICE
-        // TODO !!
+            // 3. remove prices
+            $qb = Dbal::createQueryBuilder();
+            $qb->update('t_price_pri', 'pri')
+                ->where('obj_id = :id')
+                ->set('pri_removed', 1)
+                ->setParameter('id', $id);
+            $qb->execute();
+            
+            // 4. delete image
+            $conn->delete('ts_image_img', array('img_id' => $don['img_id']));
+            
+            // commit
+            $conn->commit();
+        }
+        catch (Exception $e) {
+            $conn->rollback();
+            return array("error"=>400, "error_msg"=>"Erreur lors de la suppression de l'objet $id.");
+        }
+        
 
         return array("success"=>"ok");
     }
