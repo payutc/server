@@ -246,7 +246,10 @@ class Product {
     public static function delete($id, $fun_id) {
         $db = DbBuckutt::getInstance();
         // 1. GET THE ARTICLE
-        $res = $db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit
+        $res = $db->query("
+        SELECT 
+            o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.img_id,
+            p.pri_credit
         FROM t_object_obj o
             LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child
             LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  
@@ -257,21 +260,41 @@ class Product {
             o.fun_id = '%u';", array($id, $fun_id));
         if ($db->affectedRows() >= 1) {
             $don = $db->fetchArray($res);
-            $fundation=$don['fun_id'];
         } else {
             return array("error"=>400, "error_msg"=>"L'article à supprimer n'existe pas ! (Ou vous n' avez pas les droits pour le supprimer).");
         }
+        
+        // start transaction
+        Dbal::beginTransaction();
+        
+        try {
+            // 2. remove article
+            $db->query("UPDATE t_object_obj SET  `obj_removed` = '1' WHERE  `obj_id` = '%u';",array($id));
 
-        // 2. REMOVE THE ARTICLE
-        $db->query("UPDATE t_object_obj SET  `obj_removed` = '1' WHERE  `obj_id` = '%u';",array($id));
-
-        // 3. DELETE PRICE
-        $qb = Dbal::createQueryBuilder();
-        $qb->update('t_price_pri', 'pri')
-            ->where('obj_id = :id')
-            ->set('pri_removed', 1)
-            ->setParameter('id', $id);
-        $qb->execute();
+            // 3. remove prices
+            $qb = Dbal::createQueryBuilder();
+            $qb->update('t_price_pri', 'pri')
+                ->where('obj_id = :id')
+                ->set('pri_removed', 1)
+                ->setParameter('id', $id);
+            $qb->execute();
+            
+            // 4. remove image
+            $qb = Dbal::createQueryBuilder();
+            $qb->update('ts_image_img', 'img')
+                ->where('img_id = :id')
+                ->set('img_removed', 1)
+                ->setParameter('id', $don['img_id']);
+            $qb->execute();
+            
+            // commit
+            Dbal::commit();
+        }
+        catch (Exception $e) {
+            Dbal::rollback();
+            return array("error"=>400, "error_msg"=>"Erreur lors de la suppression de l'objet $id.");
+        }
+        
 
         return array("success"=>"ok");
     }

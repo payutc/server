@@ -78,8 +78,15 @@ class ProductRwdbTest extends DatabaseTest
      * @depends testAdd
      */
     public function testDelete() {
+        // add image
+        $conn = Dbal::conn();
+        $img_id = $conn->insert('ts_image_img', array(
+                'img_mime' => 'jpg',
+                'img_width' => 0,
+                'img_length' => 0,
+                'img_content' => ''));
         // create object
-        $a = Product::add("Chouffe", 1000, 180, 10, 1, null, 1);
+        $a = Product::add("Chouffe", 1000, 180, 10, 1, $img_id, 1);
         $id = $a["success"];
         // delete object
         Product::delete($id, 1);
@@ -99,6 +106,15 @@ class ProductRwdbTest extends DatabaseTest
         foreach($prices as $p) {
             $this->assertEquals(1, $p['pri_removed']);
         }
+        // check the image has been removed too
+        $qb = Dbal::createQueryBuilder();
+        $q = $qb->select('img_removed')
+                ->from('ts_image_img', 'img')
+                ->where('img_id = :id')
+                ->setParameter('id', $img_id);
+        $img = $q->execute()->fetch();
+        $this->assertNotNull($img);
+        $this->assertEquals(1, $img['img_removed']);
     }
 }
 
