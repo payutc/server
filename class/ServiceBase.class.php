@@ -177,7 +177,6 @@ class ServiceBase {
                                     $fun_check,
                                     $fun_id);
         }
-        return true;
     }
     
     /*
