@@ -191,7 +191,7 @@ class Purchase
     public static function getPurchasesForUser($usr_id, $time_limit=null)
     {
         $qb = Dbal::createQueryBuilder();
-        $qb->select('pur_id', 'obj_id', 'pur_price')
+        $qb->select('pur_id', 'obj_id', 'pur_price', 'pur_qte', 'pur_date')
            ->from('t_purchase_pur', 'pur')
            ->Where('usr_id_buyer = :usr_id')
            ->andWhere('pur_removed = 0')
