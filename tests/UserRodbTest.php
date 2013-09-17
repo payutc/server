@@ -75,6 +75,9 @@ class UserRodbTest extends ReadOnlyDatabaseTest
 		$u->checkNotBlocked(1);
 	}
 	
+    /**
+     * @requires PHP 5.4
+     */
 	public function testUserExist()
 	{
 		$this->assertFalse(User::userExistById(99942));
