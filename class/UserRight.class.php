@@ -9,6 +9,7 @@
 
 use \Payutc\Db\Dbal;
 use \Payutc\Db\DbBuckutt;
+use \Payutc\Bom\User;
 
 class UserRight {
     protected $db;
@@ -108,7 +109,10 @@ class UserRight {
      * Donne les droits à un user sur un service et une fundation
      */
     public static function setRight($usr_id, $service, $fun_id) {
-        $allready_set = true;        
+        if (!User::userExistById($usr_id)) {
+            throw new \Payutc\Exception\SetRightException("User #$usr_id does not exist");
+        }
+        $already_set = true;
         try {
             if($fun_id) {
                 static::check($usr_id, $service, true, $fun_id);
@@ -116,9 +120,9 @@ class UserRight {
                 static::check($usr_id, $service, false);
             }
         } catch (Exception $e) {
-            $allready_set = false;
+            $already_set = false;
         }
-        if($allready_set) {
+        if ($already_set) {
             throw new \Payutc\Exception\RightAlreadyExistsException("L'utilisateur à déjà ce droit.");
         }
 
