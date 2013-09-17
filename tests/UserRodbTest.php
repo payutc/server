@@ -23,6 +23,18 @@ class UserRodbTest extends ReadOnlyDatabaseTest
 	{
 		$u = new User("trecouvr");
 	}
+    
+    /**
+     * @requires PHP 5.4
+     */
+    public function testIncNbEcocups()
+    {
+		$u = new User("trecouvr");
+        $nb_ecocups = $u->getNbEcocups();
+        User::incNbEcocupsById($u->getId(), 2);
+		$u = new User("trecouvr");
+        $this->assertEquals($nb_ecocups+2, $u->getNbEcocups());
+    }
 	
     /**
      * @requires PHP 5.4

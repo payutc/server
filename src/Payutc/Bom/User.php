@@ -46,6 +46,7 @@ class User {
     protected $selfBlocked;
     protected $db;    
     protected $gingerUser = null;
+    protected $nbEcocups;
 
     /**
     * Constructeur
@@ -56,7 +57,7 @@ class User {
         Log::debug("User: __construct($username, ".print_r($gingerUser, true).")");
         
         $query = Dbal::createQueryBuilder()
-            ->select('usr_id', 'usr_blocked')
+            ->select('usr_id', 'usr_blocked', 'usr_nb_ecocups')
             ->from('ts_user_usr', 'usr')
             ->where('usr.usr_nickname = :usr_nickname')
             ->setParameter('usr_nickname', $username)
@@ -95,6 +96,7 @@ class User {
         
         $this->idUser = $don['usr_id'];
         $this->selfBlocked = $don['usr_blocked'];
+        $this->nbEcocups = $don['usr_nb_ecocups'];
     }
 
     /**
@@ -139,6 +141,17 @@ class User {
     */
     public function getMail() {
         return $this->gingerUser->mail;
+    }
+    
+    public function getNbEcocups() {
+        return $this->nbEcocups;
+    }
+    
+    public static function incNbEcocupsById($usr_id, $val = 1) {
+        $qb = static::_baseUpdateQueryById($usr_id);
+        $qb->set('usr_nb_ecocups', 'usr_nb_ecocups + :val')
+            ->setParameter('val', $val);
+        $qb->execute();
     }
 
     /**
@@ -287,7 +300,8 @@ class User {
             "firstname" => $this->getFirstname(),
             "lastname" => $this->getLastname(),
             "nickname" => $this->getNickname(),
-            "credit" => $this->getCredit()
+            "credit" => $this->getCredit(),
+            "nb_ecocups" => $this->getNbEcocups()
         );
     }
 
