@@ -448,4 +448,14 @@ class User {
         // Return a User object
         return new User($gingerUser->login, $gingerUser);
     }
+    
+    public static function userExistById($id) {
+        $qb = Dbal::createQueryBuilder();
+        $q = $qb->select('count(*) as count')
+                ->from('ts_user_usr', 'usr')
+                ->where('usr_id = :id')
+                ->setParameter('id', $id);
+        $res = $q->execute()->fetch();
+        return 0 != $res['count'];
+    }
 }
