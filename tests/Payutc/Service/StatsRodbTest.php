@@ -26,11 +26,11 @@ class StatsRodbTest extends ServiceBaseRodbTest
         $this->loginCas($cookie, $r, 'mguffroy@POSS3', 'POSS3');
         $this->loginApp($cookie, $r, 'app_stats');
         $r = httpSend('STATS', 'getNbSell', $cookie, array(
-            'obj_id' => '3', 
+            'obj_id' => '4', 
             'fun_id' => '1'
         ));
         $this->assertEquals(200, $r->code);
-        print_r($r->body);
+        $this->assertEquals(8, $r->body);
     }
 
 
@@ -49,27 +49,14 @@ class StatsRodbTest extends ServiceBaseRodbTest
             'semestre' => 'P13'
         ));
         $this->assertEquals(200, $r->code);
-        print_r($r->body);
+        $this->assertEquals(array(array(
+                'totalPrice' => 630,
+                'nbBuy' => 9,
+                'usr_firstname' => 'Matthieu',
+                'usr_lastname' => 'Guffroy',
+                'usr_nickname' => 'mguffroy'
+                )), $r->body);
     }
-
-    /**
-     * @requires PHP 5.4
-     */
-    public function testGetRankErrorOnSemester()
-    {
-        $cookie = '';
-        $r = null;
-        $this->loginCas($cookie, $r, 'mguffroy@POSS3', 'POSS3');
-        $this->loginApp($cookie, $r, 'app_stats');
-        $r = httpSend('STATS', 'getRank', $cookie, array(
-            'fun_id' => '1',
-            'semester' => 'Automne 2013'
-        ));
-        //$this->assertEquals(200, $r->code);
-        print($r->code);
-    }
-
-
  
 }
 
