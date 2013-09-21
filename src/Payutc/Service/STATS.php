@@ -39,20 +39,19 @@ class STATS extends \ServiceBase {
         // Le client et l'user doivent avoir les droits stats !
         $this->checkRight(true, true, true, $fun_id);
         
-        // Conversion de la période
-        // TODO: A l'avenir une table devrait nous permettre de lier les semestres a des plages de dates
-        switch($semestre) {
-            case "A12":
-                $start = "2012-08-01 00:00";
-                $end = "2013-02-01 00:00";
-                break;
-            case "P13":
-                $start = "2013-02-01 00:00";
-                $end = "2013-08-01 00:00";
-                break;
-            default:
-                throw new \Payutc\Exception\PayutcException("Période non reconnu !");
-                break;
+        preg_match("/[AP]\d{2}/", $semestre, $output);
+        if(count($output) != 1) {
+            throw new \Payutc\Exception\PayutcException("Période non reconnu !");
+        }
+
+        $year = int($output[0][1] . $output[0][2]);
+
+        if($output[0][0] == 'P') {
+            $start = "20" . $year . "-08-01 00:00";
+            $end = "20" . $year . "-02-01 00:00";
+        } else {
+            $start = "20" . $year . "-02-01 00:00";
+            $end = "20" . ($year+1) . "-08-01 00:00";
         }
 
         return \Payutc\Bom\Purchase::getRank($fun_id, $obj_id, $start, $end, $top, $sort_by);
