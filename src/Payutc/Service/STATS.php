@@ -35,7 +35,7 @@ class STATS extends \ServiceBase {
      * $top => (Récupére uniquement les X premiers) (par défaut 20)
      * $by => "nbBuy" | "totalPrice"
      */
-    public function getRank($fun_id, $obj_id=null, $semestre="P13", $top=20, $sort_by="nbBuy") {
+    public function getRank($fun_id, $obj_id=null, $semestre="A13", $top=20, $sort_by="nbBuy") {
         // Le client et l'user doivent avoir les droits stats !
         $this->checkRight(true, true, true, $fun_id);
         
@@ -44,7 +44,7 @@ class STATS extends \ServiceBase {
             throw new \Payutc\Exception\PayutcException("Période non reconnu !");
         }
 
-        $year = int($output[0][1] . $output[0][2]);
+        $year = intval($output[0][1] . $output[0][2]);
 
         if($output[0][0] == 'P') {
             $start = "20" . $year . "-08-01 00:00";
