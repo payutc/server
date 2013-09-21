@@ -46,7 +46,7 @@ class STATS extends \ServiceBase {
 
         $year = intval($output[0][1] . $output[0][2]);
 
-        if($output[0][0] == 'P') {
+        if($output[0][0] == 'A') {
             $start = "20" . $year . "-08-01 00:00";
             $end = "20" . $year . "-02-01 00:00";
         } else {
