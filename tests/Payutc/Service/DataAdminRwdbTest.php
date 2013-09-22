@@ -22,11 +22,13 @@ class DataAdminRwdbTest extends ServiceBaseRodbTest
     public function setUp()
     {
         parent::setUp();
-        $this->cookie = '';
-        $this->loginCas($this->cookie, $r, 'trecouvr@DATAADMIN', 'DATAADMIN');
-        $this->assertEquals(200, $r->code);
-        $this->loginApp($this->cookie, $r, 'my_app');
-        $this->assertEquals(200, $r->code);
+        if (PHP_VERSION_ID >= 50400) {
+            $this->cookie = '';
+            $this->loginCas($this->cookie, $r, 'trecouvr@DATAADMIN', 'DATAADMIN');
+            $this->assertEquals(200, $r->code);
+            $this->loginApp($this->cookie, $r, 'my_app');
+            $this->assertEquals(200, $r->code);
+        }
     }
     
     public function tearDown()
