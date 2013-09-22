@@ -51,6 +51,7 @@ class ExternalData {
     
     public static function set($fun_id, $key, $val, $usr = null) {
         static::checkKey($key);
+        $this_is_an_insert = false;
         try {
             static::get($fun_id, $key, $usr);
         }
@@ -63,13 +64,16 @@ class ExternalData {
                     $usr = $u->getId();
                 }
                 static::insert($fun_id, $key, $val, $usr);
+                $this_is_an_insert = true;
             }
         }
-        $qb = Dbal::createQueryBuilder();
-        $qb->update('t_external_data_exd', 'exd');
-        static::addConditions($qb, $fun_id, $usr);
-        $qb->set('exd_val', "'$val'");
-        $res = $qb->execute();
+        if (!$this_is_an_insert) {
+            $qb = Dbal::createQueryBuilder();
+            $qb->update('t_external_data_exd', 'exd');
+            static::addConditions($qb, $fun_id, $usr);
+            $qb->set('exd_val', "'$val'");
+            $res = $qb->execute();
+        }
     }
     
     protected static function checkKey($key) {
