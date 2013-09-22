@@ -20,8 +20,8 @@ class DataAdminRwdbTest extends ServiceBaseRodbTest
     }
     
     
-    /*
-     * requires PHP 5.4
+    /**
+     * @requires PHP 5.4
      */
     public function testSet()
     {
