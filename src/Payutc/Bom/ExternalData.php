@@ -13,7 +13,7 @@ class ExternalData {
             ->where('fun_id = :fun_id')
             ->setParameter('fun_id', $fun_id);
         // user id
-        if (is_int($usr) or $usr === "0" or intval($usr) != 0) {
+        if (is_int($usr) or $usr === "0" or (is_string($usr) and intval($usr) != 0)) {
             $qb->andWhere('usr_id = :usr_id')
                 ->setParameter('usr_id', $usr);
         }
@@ -39,10 +39,10 @@ class ExternalData {
             'exd_inserted' => (new \DateTime())->format('Y-m-d H:i:s')));
     }
     
-    public static function get($fun_id, $key, $usr = null) {
+    public static function get($fun_id, $key, $usr = null, $full = false) {
         static::checkKey($key);
         $qb = Dbal::createQueryBuilder();
-        $qb->select('exd_val');
+        $qb->select($full ? '*' : 'exd_val');
         static::addConditions($qb, $fun_id, $usr);
         $qb->andWhere('exd_key = :exd_key')
             ->setParameter('exd_key', $key);
@@ -50,14 +50,14 @@ class ExternalData {
         if ($res === false) {
             throw new ExternalDataException("Not found : fun=$fun_id, key=$key, usr=$usr", 404);
         }
-        return $res['exd_val'];
+        return $full ? $res : $res['exd_val'];
     }
     
     public static function set($fun_id, $key, $val, $usr = null) {
         static::checkKey($key);
-        $this_is_an_insert = false;
+        $data = null;
         try {
-            static::get($fun_id, $key, $usr);
+            $data = static::get($fun_id, $key, $usr, true);
         }
         catch (ExternalDataException $e) {
             // data does not exist, let's create it !
@@ -71,11 +71,12 @@ class ExternalData {
                 $this_is_an_insert = true;
             }
         }
-        if (!$this_is_an_insert) {
+        if ($data !== null) {
             $qb = Dbal::createQueryBuilder();
-            $qb->update('t_external_data_exd', 'exd');
-            static::addConditions($qb, $fun_id, $usr);
-            $qb->set('exd_val', "'$val'");
+            $qb->update('t_external_data_exd', 'exd')
+                ->where('exd_id = :id')
+                ->setParameter('id', $data['exd_id'])
+                ->set('exd_val', "'$val'");
             $res = $qb->execute();
         }
     }

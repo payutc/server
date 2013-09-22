@@ -41,7 +41,7 @@ class DataAdminRwdbTest extends ServiceBaseRodbTest
     {
         $orig_fun = ExternalData::get(1, 'key-fun');
         
-        $r = httpSend('DATAADMIN', 'set', $cookie, array(
+        $r = httpSend('DATAADMIN', 'setFunData', $this->cookie, array(
             'fun_id' => '1',
             'key' => 'key-fun',
             'val' => $orig_fun.'n'
@@ -58,9 +58,27 @@ class DataAdminRwdbTest extends ServiceBaseRodbTest
     {
         $orig_usr = ExternalData::get(1, 'key-user', 1);
         
-        $r = httpSend('DATAADMIN', 'set', $cookie, array(
+        $r = httpSend('DATAADMIN', 'setUsrDataByLogin', $this->cookie, array(
             'fun_id' => '1',
             'login' => 'trecouvr',
+            'key' => 'key-user',
+            'val' => $orig_usr.'n'
+        ));
+        $this->assertEquals(200, $r->code);
+        $this->assertEquals($orig_usr.'n', ExternalData::get(1, 'key-user', 1));
+    }
+    
+    
+    /**
+     * @requires PHP 5.4
+     */
+    public function testSetUsrDataByBadge()
+    {
+        $orig_usr = ExternalData::get(1, 'key-user', 1);
+        
+        $r = httpSend('DATAADMIN', 'setUsrDataByBadge', $this->cookie, array(
+            'fun_id' => '1',
+            'badge' => 'ABCDABCD',
             'key' => 'key-user',
             'val' => $orig_usr.'n'
         ));
