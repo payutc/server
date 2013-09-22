@@ -32,7 +32,8 @@ class ExternalData {
             'fun_id' => $fun_id,
             'usr_id' => $usr_id,
             'exd_key' => $key,
-            'exd_val' => $val));
+            'exd_val' => $val,
+            'exd_inserted' => new \DateTime()));
     }
     
     public static function get($fun_id, $key, $usr = null) {
