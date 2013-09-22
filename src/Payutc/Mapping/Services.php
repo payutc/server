@@ -13,7 +13,8 @@ class Services {
         'KEY',
         'ADMINRIGHT',
         'BLOCKED',
-        'GESARTICLE'
+        'GESARTICLE',
+        'DATAADMIN'
     );
     
     public static function get($name) {

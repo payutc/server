@@ -1,0 +1,21 @@
+t_external_data_exd:
+  -
+    exd_id: 1
+    usr_id: 1
+    fun_id: 1
+    exd_key: key-user
+    exd_val: value1
+    exd_inserted: 2013-09-01
+  -
+    exd_id: 2
+    fun_id: 1
+    exd_key: key-fun
+    exd_val: value2
+    exd_inserted: 2013-09-01
+  -
+    exd_id: 3
+    fun_id: 1
+    exd_key: key-user
+    exd_val: value3
+    exd_inserted: 2013-09-01
+
