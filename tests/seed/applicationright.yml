@@ -18,3 +18,7 @@ tj_app_fun_afu:
     app_id: 1
     fun_id: 1
     afu_service: DATAADMIN
+  -
+    app_id: 3
+    fun_id: 1
+    afu_service: STATS

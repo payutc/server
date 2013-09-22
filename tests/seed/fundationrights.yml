@@ -1,4 +1,8 @@
 tj_usr_fun_ufu:
   -
     usr_id: 1
+  -
+    usr_id: 9447
+    fun_id: 1
+    ufu_service: STATS
 
