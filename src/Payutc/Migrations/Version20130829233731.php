@@ -17,7 +17,7 @@ class Version20130829233731 extends AbstractMigration
 
     public function down(Schema $schema)
     {
-        $this->addSql("ALTER TABLE `t_purchase_pur2`
+        $this->addSql("ALTER TABLE `t_purchase_pur`
           DROP `pur_qte`,
           DROP `pur_unit_price`;");
     }
