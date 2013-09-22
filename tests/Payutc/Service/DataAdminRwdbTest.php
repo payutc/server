@@ -19,27 +19,28 @@ class DataAdminRwdbTest extends ServiceBaseRodbTest
         ));
     }
     
+    public function setUp()
+    {
+        parent::setUp();
+        $this->cookie = '';
+        $this->loginCas($this->cookie, $r, 'trecouvr@DATAADMIN', 'DATAADMIN');
+        $this->assertEquals(200, $r->code);
+        $this->loginApp($this->cookie, $r, 'my_app');
+        $this->assertEquals(200, $r->code);
+    }
+    
+    public function tearDown()
+    {
+        $this->cookie = '';
+    }
     
     /**
      * @requires PHP 5.4
      */
-    public function testSet()
+    public function testSetFunData()
     {
         $orig_fun = ExternalData::get(1, 'key-fun');
-        $orig_usr = ExternalData::get(1, 'key-user', 1);
         
-        $cookie = '';
-        $r = null;
-        $this->loginCas($cookie, $r, 'trecouvr@DATAADMIN', 'DATAADMIN');
-        $this->loginApp($cookie, $r, 'my_app');
-        $r = httpSend('DATAADMIN', 'set', $cookie, array(
-            'fun_id' => '1',
-            'usr_id' => '1',
-            'key' => 'key-user',
-            'val' => $orig_usr.'n'
-        ));
-        $this->assertEquals(200, $r->code);
-        $this->assertEquals($orig_usr.'n', ExternalData::get(1, 'key-user', 1));
         $r = httpSend('DATAADMIN', 'set', $cookie, array(
             'fun_id' => '1',
             'key' => 'key-fun',
@@ -47,6 +48,24 @@ class DataAdminRwdbTest extends ServiceBaseRodbTest
         ));
         $this->assertEquals(200, $r->code);
         $this->assertEquals($orig_fun.'n', ExternalData::get(1, 'key-fun'));
+    }
+    
+    
+    /**
+     * @requires PHP 5.4
+     */
+    public function testSetUsrDataByLogin()
+    {
+        $orig_usr = ExternalData::get(1, 'key-user', 1);
+        
+        $r = httpSend('DATAADMIN', 'set', $cookie, array(
+            'fun_id' => '1',
+            'login' => 'trecouvr',
+            'key' => 'key-user',
+            'val' => $orig_usr.'n'
+        ));
+        $this->assertEquals(200, $r->code);
+        $this->assertEquals($orig_usr.'n', ExternalData::get(1, 'key-user', 1));
     }
 }
 

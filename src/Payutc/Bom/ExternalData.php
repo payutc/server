@@ -12,13 +12,16 @@ class ExternalData {
         $qb->from('t_external_data_exd', 'exd')
             ->where('fun_id = :fun_id')
             ->setParameter('fun_id', $fun_id);
+        // user id
         if (is_int($usr) or $usr === "0" or intval($usr) != 0) {
             $qb->andWhere('usr_id = :usr_id')
                 ->setParameter('usr_id', $usr);
         }
+        // user is NULL
         else if ($usr === null) {
             $qb->andWhere('usr_id is NULL');
         }
+        // user login
         else {
             $qb->leftjoin('exd', 'ts_user_usr', 'usr', 'exd.usr_id = usr.usr_id')
                 ->andWhere('usr.usr_nickname = :login')
