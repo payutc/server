@@ -108,9 +108,9 @@ abstract class DatabaseTest extends \PHPUnit_Extensions_Database_TestCase
 	protected function getTearDownOperation()
 	{
 		$cascadeTruncates = false; // True if you want cascading truncates, false otherwise. If unsure choose false.
-        return new TruncateOperation($cascadeTruncates);
-    }
-    
+		return new TruncateOperation($cascadeTruncates);
+	}
+	
 	function computeDataset($fixture)
 	{
 		if (!is_array($fixture)) {
