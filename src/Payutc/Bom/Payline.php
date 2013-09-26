@@ -10,7 +10,7 @@
 namespace Payutc\Bom;
 use \Payutc\Log;
 use \Payutc\Config;
-use \Payutc\Db;
+use \Payutc\Db\Dbal;
 
 class Payline {
     
@@ -90,7 +90,7 @@ class Payline {
         $this->payline->notificationURL = Config::get('server_url') . "PAYLINE/Notification"; 
 
         // Insert a payline row in db and get the payment ref
-        $conn = Db::getConnection();
+        $conn = Dbal::conn();
         $conn->insert('t_paybox_pay',
             array(
                 "usr_id" => $usr->getId(),
@@ -158,9 +158,9 @@ class Payline {
         if(isset($response)){
             // Paiement valide
             if($response["result"]["code"] == "00000") {
-                $conn = Db::getConnection();
+                $conn = Dbal::conn();
                 // Recuperation du rechargement
-                $qb = Db::createQueryBuilder();
+                $qb = Dbal::createQueryBuilder();
                 $qb->select('pay_step', 'pay_id', 'usr_id')
                    ->from('t_paybox_pay', 'pay')
                    ->where('pay.pay_token = :token')->setParameter('token', $token);
@@ -211,7 +211,7 @@ class Payline {
 
             } else {
                 // Indique le rechargement comme aborted
-                $conn = Db::getConnection();
+                $conn = Dbal::conn();
                 $conn->update('t_paybox_pay', 
                                 array("pay_step" => 'A', 
                                       "pay_date_retour" => new \DateTime(),
