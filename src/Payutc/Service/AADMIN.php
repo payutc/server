@@ -22,10 +22,10 @@
 namespace Payutc\Service;
 
 use \Cas;
-use \User;
+use \Payutc\Bom\User;
 use \Image;
 use \ComplexData;
-use \Db_buckutt;
+use \Payutc\Db\DbBuckutt;
 use \PlageHoraire;
 
 /**
@@ -53,7 +53,7 @@ class AADMIN {
 	 * Constructeur.
 	 */
 	public function __construct() {
-		$this->db = Db_buckutt::getInstance();
+		$this->db = DbBuckutt::getInstance();
 	}
 
 	protected function getRemoteIp() {
@@ -93,12 +93,14 @@ class AADMIN {
 	 * @return int $state
 	 */
     public function loginCas($ticket, $service) {
-		$login = Cas::authenticate($ticket, $service);
-		if ($login < 0) {
-			return -1;
-		}
-		$this->user = new User($login, 1, "", 0, 1, 0);
-		return $this->user->getState();
+        try {
+            $this->user = User::getUserFromCas($ticket, $service);
+        }
+        catch(\Exception $ex){
+            return -1;
+        }
+
+		return 1;
     }
 
 	/**
@@ -987,7 +989,6 @@ WHERE poi.poi_id = jur.poi_id AND fun_id = '%u' AND poi_removed = '0' AND jur.ri
 	*/
   public function uploadImage($image){
     $oldgd = imagecreatefromstring(base64_decode($image));
-    error_log($image);
     
     ob_start();
     imagepng($oldgd);

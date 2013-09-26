@@ -75,13 +75,13 @@ $_CONFIG['PAYLINE_ACCESS_KEY'] = 'fAPFZ5vkg0K734953kKG' ; // Certificate key
 $_CONFIG['PAYLINE_PRODUCTION'] = false ; // production mode
 
 // Configuration de ginger (outil cotisant)
-// Laisser la clé vide pour désactiver les appels à ginger
-$_CONFIG['ginger_key'] = "abc";
+$_CONFIG['ginger_key'] = "fauxginger";
+$_CONFIG['ginger_url'] = "http://localhost:33434/index.php/v1/";
 
 // Configuration de Slim
 $_CONFIG['slim_config'] = array(
-    'mode' => 'developement',
-    'debug' => true,
+    'mode' => 'production',
+    'debug' => false,
     'log.level' => \Slim\Log::DEBUG,
     'log.enabled' => true,
     'log.writer' => new \Slim\Extras\Log\DateTimeFileWriter(array(

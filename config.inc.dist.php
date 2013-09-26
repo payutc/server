@@ -78,6 +78,7 @@ $_CONFIG['PAYLINE_PRODUCTION'] = false ; // production mode
 // Configuration de ginger (outil cotisant)
 // Laisser la clé vide pour désactiver les appels à ginger
 $_CONFIG['ginger_key'] = "abc";
+$_CONFIG['ginger_url'] = "";
 
 // Configuration de Slim
 $_CONFIG['slim_config'] = array(

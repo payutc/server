@@ -22,7 +22,7 @@ class PurchaseRodbTest extends ReadOnlyDatabaseTest
         // Pour les category ça renvoit 0 pour le moment car la reucrsion n'est pas encore implémenté
         $r = Purchase::getNbSell(1, 1);
         $this->assertEquals(0,$r);
-        $r = Purchase::getNbSell(2, 1);
+        $r = Purchase::getNbSell(9447, 1);
         $this->assertEquals(0,$r);
 
         // Pour les articles
@@ -72,6 +72,17 @@ class PurchaseRodbTest extends ReadOnlyDatabaseTest
             ));
         $this->assertEquals($waited,$r);
 
+    }
+    
+    public function testGetPurchasesForUser() {
+        $purchases = Purchase::getPurchasesForUser(9447);
+        $this->assertTrue(count($purchases) > 0);
+        $pur = $purchases[0];
+        $this->assertArrayHasKey('pur_id', $pur);
+        $this->assertArrayHasKey('obj_id', $pur);
+        $this->assertArrayHasKey('pur_price', $pur);
+        $this->assertArrayHasKey('pur_qte', $pur);
+        $this->assertArrayHasKey('pur_date', $pur);
     }
 }
 

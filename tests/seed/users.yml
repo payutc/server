@@ -9,11 +9,11 @@ ts_user_usr:
     usr_credit: 9000
   -
     usr_id: 2
-    usr_firstname: No
-    usr_lastname: Credit
-    usr_nickname: nocredit
+    usr_firstname: Arthur
+    usr_lastname: Puyou
+    usr_nickname: puyouart
     usr_adult: 1
-    usr_mail: nocredit@bidon.com
+    usr_mail: puyouart@etu.utc.fr
     usr_credit: 0
   -
     usr_id: 3
@@ -45,11 +45,17 @@ tj_usr_mol_jum:
     mol_id: 1
     jum_data: trecouvr
   -
-    usr_id: 2
+    usr_id: 9447
     mol_id: 1
     jum_data: mguffroy
-
-
+  -
+    usr_id: 1
+    mol_id: 5
+    jum_data: ABCDABCD
+  -
+    usr_id: 2
+    mol_id: 5
+    jum_data: NOCREDIT
 
 tj_usr_rig_jur:
   -

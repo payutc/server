@@ -7,12 +7,14 @@
  * Table: tj_app_fun_afu
  */
 
+use \Payutc\Db\Dbal;
+use \Payutc\Db\DbBuckutt;
 
 class ApplicationRight {
     protected $db;
 
     public function __construct() {
-        $this->db = Db_buckutt::getInstance();        
+        $this->db = DbBuckutt::getInstance();        
     }
     
     /**
@@ -20,7 +22,7 @@ class ApplicationRight {
      * Lorsque les droits n'existe pas throw an exception
      */
     public static function check($application_id, $service_name = false, $check_fundation = false, $fundation_id = NULL) {
-        $db = Db_buckutt::getInstance();
+        $db = DbBuckutt::getInstance();
         $req = "SELECT afu.afu_id FROM tj_app_fun_afu afu 
                             WHERE afu.app_id = '%u' 
                             AND (afu.afu_service = '%s' OR afu.afu_service IS NULL)
@@ -49,7 +51,7 @@ class ApplicationRight {
      * Retourne les fundations où l'application "application_id" à des droits sur "service_name"
      */
     public static function getFundations($application_id, $service_name) {
-        $db = Db_buckutt::getInstance();
+        $db = DbBuckutt::getInstance();
         $res = $db->query("SELECT fun.fun_id, fun.fun_name
                     FROM t_fundation_fun fun, tj_app_fun_afu afu
                     WHERE (afu.fun_id = fun.fun_id OR afu.fun_id is NULL)
@@ -69,7 +71,7 @@ class ApplicationRight {
      * Retourne les droits pour une fundation donné
      */
     public static function getRights($fun_id) {
-        $db = Db_buckutt::getInstance();
+        $db = DbBuckutt::getInstance();
         if($fun_id) {
             $res = $db->query("SELECT afu.afu_id, afu.app_id, afu.fun_id, afu.afu_service
                         FROM tj_app_fun_afu afu
@@ -102,36 +104,51 @@ class ApplicationRight {
      * Donne les droits à une application sur un service et une fundation
      */
     public static function setRight($app_id, $service, $fun_id) {
-        $db = Db_buckutt::getInstance();
-        $query_start = "INSERT INTO tj_app_fun_afu (app_id";
-        $query_end = ") VALUES('%u'";
-        $var = array($app_id);
+        $allready_set = true;        
+        try {
+            if($app_id) {
+                static::check($app_id, $service, true, $fun_id);
+            } else {
+                static::check($app_id, $service, false);
+            }
+        } catch (Exception $e) {
+            $allready_set = false;
+        }
+        if($allready_set) {
+            throw new Exception("L'application à déjà ce droit.");
+        }
+
+        $conn = Dbal::conn();
+        $insert = array(
+            "app_id" => $app_id,
+            "afu_inserted" => new \DateTime()
+        );
+        $type = array("integer", "datetime");
         
         // Si fun_id = 0 ou false ou NULL alors c'est un passe partout
         if($fun_id) {
-            $query_start .= ", fun_id";
-            $query_end .= ", '%u'";
-            $var[] = $fun_id;
+            $insert['fun_id'] = $fun_id;
         } else {
-            $query_start .= ", fun_id";
-            $query_end .= ", NULL";
-        }            
+            $insert['fun_id'] = null;
+        }
+        $type[] = "integer";
 
         // Si $service = 0 ou false ou NULL alors c'est un passe partout
         if($service) {
-            $query_start .= ", afu_service";
-            $query_end .= ", '%s'";
-            $var[] = $service;
+            $insert['afu_service'] = $service;
         } else {
-            $query_start .= ", afu_service";
-            $query_end .= ", NULL";
-        }    
+            $insert['afu_service'] = null;
+        }
+        $type[] = "string";
 
-        $db->query($query_start . $query_end . ");", $var);
-        if ($db->affectedRows() != 1) {
+        $conn->insert('tj_app_fun_afu', $insert, $type);
+        $afu_id = $conn->lastInsertId();
+
+        if (!$afu_id) {
             throw new Exception("Une erreur s'est produite lors de l'ajout du droit.");
         }
-        return $db->insertId();
+
+        return $afu_id;
     }
 
     /**
@@ -139,7 +156,7 @@ class ApplicationRight {
     * 
     */
     public static function removeRight($app_id, $service, $fun_id) {
-        $db = Db_buckutt::getInstance();
+        $db = DbBuckutt::getInstance();
         $query = "UPDATE tj_app_fun_afu SET afu_removed=NOW() WHERE app_id='%u' ";
         $var = array($app_id);
 

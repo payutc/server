@@ -1,10 +1,12 @@
 {
     "require": {
-        "slim/slim": "2.*",
+        "slim/slim": "2.3.*",
         "slim/extras": "*",
         "ginger/client": "2.*",
         "zendframework/zendframework": "2.*",
-        "doctrine/dbal": "2.*"
+        "doctrine/dbal": "2.*",
+        "doctrine/migrations": "v1.0-ALPHA1",
+        "symfony/console": "2.*"
     },
     "require-dev": {
         "phpunit/phpunit": "*",
@@ -14,7 +16,7 @@
     },
     "include-path": ["./"],
     "autoload": {
-        "classmap": ["class/", "db/", "vendor/payline/"],
+        "classmap": ["class/", "vendor/payline/"],
         "psr-0": {
             "Payutc": "src/"
         }

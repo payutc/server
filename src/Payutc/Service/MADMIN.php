@@ -21,13 +21,14 @@
 
 namespace Payutc\Service;
 
-use \Db_buckutt;
+use \Payutc\Db\DbBuckutt;
 use \Cas;
-use \User;
+use \Payutc\Bom\User;
 use \ComplexData;
 use \Paybox;
 use \Payutc\Log;
 use \Payutc\Config;
+use \Payutc\Exception\UserNotFound;
 
 /**
  * MADMIN.class
@@ -39,7 +40,7 @@ use \Payutc\Config;
  */
 
 
-class MADMIN extends \WsdlBase {
+class MADMIN {
 
     private  $User;
     private $loginToRegister;
@@ -49,8 +50,52 @@ class MADMIN extends \WsdlBase {
      * @return
      */
     public function __construct() {
-        $this->db = Db_buckutt::getInstance();
+        $this->db = DbBuckutt::getInstance();
     }
+    
+	/**
+	 * Retourne l'url du CAS
+	 * @return String $url
+	 */
+	public function getCasUrl() {
+	 return Cas::getUrl();
+	}
+    
+	/**
+	* Récupérer les informations sur une erreur à partir de son id.
+	*
+	* @param int $id
+	* @return String $csv
+	*/
+	public function getErrorDetail($id) {
+		if (is_array($don = $this->db->fetchArray($this->db->query("SELECT err_code, err_name, err_description FROM ts_error_err WHERE err_code = '%u';", Array($id))))) {
+			$txt = new ComplexData(array($don['err_code'],$don['err_name'],$don['err_description']));
+			return $txt->csvArrays();
+		} else {
+			return "430";
+		}
+	}
+    
+	
+	/**
+	 * Renvoie la liste des user pour un autocomplete.
+	 * 
+	 * @param String $queryString
+	 * @return String $txt
+	 */
+	public function getRpcUser($queryString) {
+		
+		$res = $this->db->query("SELECT usr_id, usr_firstname, usr_lastname FROM ts_user_usr WHERE (UPPER(usr_firstname) LIKE '%s%%' OR UPPER(usr_lastname) LIKE '%s%%') ORDER BY usr_lastname ASC;", Array(strtoupper($queryString), strtoupper($queryString)));
+		$txt = '';
+		if ($this->db->affectedRows() >= 1) {
+			while ($don = $this->db->fetchArray($res)) {
+				$user_info = "'".$don['usr_id']."!!!".$don['usr_firstname']."!!!".$don['usr_lastname']."'";
+				$txt .= '<li onclick="fill('.$user_info.')">'.$don['usr_firstname'].' '.$don['usr_lastname'].'</li>'; 
+			}
+			
+		}
+		return $txt;
+	}    
     
     /**
      * Connecter le user avec un ticket CAS.
@@ -60,22 +105,16 @@ class MADMIN extends \WsdlBase {
      * @return array $state
      */
     public function loginCas($ticket, $service) {
-        $login = Cas::authenticate($ticket, $service);
-        if ($login < 0) {
-               return array("error"=>-1, "error_msg"=>"Erreur de login CAS.");
-        }
-        $this->User = new User($login, 1, "", 0, 1, 0);
-    
-        $r = $this->User->getState();
-        if($r == 405){
-            $this->loginToRegister = $login;
-            return array("error"=>$r, "error_msg"=>"Le user n'existe pas ici.");
-        }
-        elseif($r != 1) {
-            return array("error"=>$r, "error_msg"=>"Le user n'a pas pu être chargé.");
-        }
-        else {
+        try {
+            $this->User = User::getUserFromCas($ticket, $service);
             return array("success"=>"ok");
+        }
+        catch(UserNotFound $ex) {
+            $this->loginToRegister = $ex->login;
+            return array("error"=>405, "error_msg"=>"Le user n'existe pas ici.");
+        }
+        catch(\Exception $ex) {
+            return array("error"=>400, "error_msg"=>"Le user n'a pas pu être chargé.");
         }
     }
     
@@ -85,45 +124,19 @@ class MADMIN extends \WsdlBase {
      * @return array $state
      */
     public function register() {
-    
-        $this->User = new User($this->loginToRegister, 1, "", 0, 1, 0);
-
-        $r = $this->User->getState();
-    
-        if($r != 405){
-            return array("error"=>$r, "error_msg"=>"Le user existe déjà.");
+        if(empty($this->loginToRegister)){
+            return array("error"=>400, "error_msg"=>"Pas de login à enregistrer");
         }
         
-        // On vérifie que le user est bien cotisant
         try {
-            $ginger_key = Config::get('ginger_key');
-            if(!empty($ginger_key))
-            {
-                $ginger = new \Ginger\Client\GingerClient(Config::get('ginger_key'));
-                $user = $ginger->getUser($this->loginToRegister);
-            }
-            else 
-            {
-                $user = new \StdClass;
-                $user->login = $this->loginToRegister;
-                $user->prenom = "Test";
-                $user->nom = "User";
-                $user->mail = "payutc-test@assos.utc.fr";
-                $user->badge_uid = "123456AB";
-                $user->is_cotisant = true;
-            }
+            $this->User = new User($this->loginToRegister);
+            return array("error"=>400, "error_msg"=>"Le user existe déjà.");
         }
-        catch (\Exception $ex) {
-            return array("error"=>400, "error_msg"=>"Utilisateur introuvable dans Ginger (".$ex->getCode().")");
+        catch(UserNotFound $ex){
+            // This is normal, it's even what we want
         }
-        if (!($user->is_cotisant)) {
-            return array("error"=>400, "error_msg"=>"L'utilisateur n'est pas cotisant");
-        }
-        if(empty($user->badge_uid)) {    
-            return array("error"=>400, "error_msg"=>"L'utilisateur n'a pas de badge déclaré. Contactez payutc@assos.utc.fr");
-        }
-    
-        // On récupére l'ancien solde et on le passe à zero.
+        
+        // On récupére l'ancien solde
         $res = $this->db->query("SELECT osr_credit
 FROM `t_oldusr_osr` 
 WHERE osr_login = '%s'", Array($this->loginToRegister));
@@ -134,32 +147,21 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
             }
         }
 
-        // TODO METTRE A 0 LE SOLDE
-
-    
-        if($user->is_adulte) $adult = 1; else $adult = 0;
-
-        // On est là, on va pouvoir insérer
-        $this->db->query("INSERT INTO ts_user_usr (usr_pwd, usr_firstname, usr_lastname, usr_nickname, usr_mail, usr_adult) VALUES ('81dc9bdb52d04dc20036dbd8313ed055', '%s', '%s', '%s', '%s', '%u')", array($user->prenom, $user->nom, $user->login, $user->mail, $adult));
-        $userid = $this->db->insertId();
-        $this->db->query("INSERT INTO tj_usr_mol_jum (usr_id, mol_id, jum_data) VALUES (%d, 1, '%s')", array($userid, $this->loginToRegister));
-        
-        $this->db->query("INSERT INTO tj_usr_mol_jum (usr_id, mol_id, jum_data) VALUES (%d, 5, '%s')", array($userid, $user->badge_uid));
-
-        
-        $this->db->query("INSERT INTO t_recharge_rec (rty_id, usr_id_buyer, usr_id_operator, poi_id, rec_date, rec_credit, rec_trace) VALUES ('%u', '%u', '%u', '%u', NOW(), '%u', '%s')", array(7, $userid, $userid, 1, $solde, "Import demo"));
-        $this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id = '%u';", Array($solde, $userid));
-        
-        // Maintenant on devrait pouvoir se logguer
-        $this->User = new User($this->loginToRegister, 1, "", 0, 1, 0);
-    
-        $r = $this->User->getState();
-        if($r != 1) {
+        // On créé le user et on lui ajoute son crédit
+        try {
+            $this->User = User::createAndGetNewUser($this->loginToRegister);
+            if($solde > 0){
+                $this->User->incCredit($solde);
+                $userid = $this->User->getId();        
+                $this->db->query("INSERT INTO t_recharge_rec (rty_id, usr_id_buyer, usr_id_operator, poi_id, rec_date, rec_credit, rec_trace) VALUES ('%u', '%u', '%u', '%u', NOW(), '%u', '%s')", array(7, $userid, $userid, 1, $solde, "Import ancien solde"));                
+            }
+        }
+        catch (\Exception $ex){
+            Log::error("Impossible de créer le user $this->loginToRegister: ".$ex->getMessage());
             return array("error"=>$r, "error_msg"=>"Le user n'a pas pu être chargé.");
         }
-        else {
-            return array("success"=>"ok");
-        }
+
+        return array("success"=>"ok");
     }
 
     /**
@@ -220,13 +222,13 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
             return "";
         }
         $txt = new ComplexData(array());
-        $res = $this->db->query("SELECT UNIX_TIMESTAMP(vir.vir_date) AS vir_date, vir.vir_amount, usr_to.usr_firstname, usr_to.usr_lastname 
+        $res = $this->db->query("SELECT UNIX_TIMESTAMP(vir.vir_date) AS vir_date, vir.vir_amount, vir.vir_message, usr_to.usr_firstname, usr_to.usr_lastname 
             FROM t_virement_vir vir, ts_user_usr usr_to  
             WHERE vir.usr_id_to = usr_to.usr_id AND UNIX_TIMESTAMP(vir.vir_date) >= '%u' AND UNIX_TIMESTAMP(vir.vir_date) < '%u' AND vir.usr_id_from = '%u' ORDER BY vir.vir_date DESC"
             , Array($date_start, $date_end, $this->User->getId()));
         if ($this->db->affectedRows() >= 1) {
             while ($don = $this->db->fetchArray($res)) {
-                $txt->addLine(array($don['vir_date'], $don['vir_amount'], $don['usr_firstname'], $don['usr_lastname'], "out"));
+                $txt->addLine(array($don['vir_date'], $don['vir_amount'], $don['usr_firstname'] . " " . $don['usr_lastname'], $don['vir_message'], "out"));
             }
             return $txt->csvArrays();
         } else {
@@ -246,13 +248,13 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
             return "";
         }
         $txt = new ComplexData(array());
-        $res = $this->db->query("SELECT UNIX_TIMESTAMP(vir.vir_date) AS vir_date, vir.vir_amount, usr_from.usr_firstname, usr_from.usr_lastname 
+        $res = $this->db->query("SELECT UNIX_TIMESTAMP(vir.vir_date) AS vir_date, vir.vir_amount, vir.vir_message, usr_from.usr_firstname, usr_from.usr_lastname 
             FROM t_virement_vir vir, ts_user_usr usr_from  
             WHERE vir.usr_id_from = usr_from.usr_id AND UNIX_TIMESTAMP(vir.vir_date) >= '%u' AND UNIX_TIMESTAMP(vir.vir_date) < '%u' AND vir.usr_id_to = '%u' ORDER BY vir.vir_date DESC"
             , Array($date_start, $date_end, $this->User->getId()));
         if ($this->db->affectedRows() >= 1) {
             while ($don = $this->db->fetchArray($res)) {
-                $txt->addLine(array($don['vir_date'], $don['vir_amount'], $don['usr_firstname'], $don['usr_lastname'], "in"));
+                $txt->addLine(array($don['vir_date'], $don['vir_amount'], $don['usr_firstname'] . " " . $don['usr_lastname'], $don['vir_message'], "in"));
             }
             return $txt->csvArrays();
         } else {
@@ -371,10 +373,13 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      * @return int $state
      */
     public function blockMe() {
-        if ($this->User->blockMe()) {
-            $state = 1;
-        } else { $state = 440; }            
-        return $state;
+        try {
+            $this->User->setSelfBlock(1);
+            return 1;
+        }
+        catch(\Exception $ex){
+            return 440;
+        }
     }
     
     /**
@@ -384,10 +389,13 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      * @return int $state
      */
     public function deblock() {
-        if ($this->User->deblockMe()) {
-            $state = 1;
-        } else { $state = 440; }            
-        return $state;
+        try {
+            $this->User->setSelfBlock(0);
+            return 1;
+        }
+        catch(\Exception $ex){
+            return 440;
+        }
     }
     
     /**
@@ -404,11 +412,12 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
      * 
      * @param int $amount montant du virement en centimes
      * @param int $userID Id de la personne a qui l'on vire de l'argent.
+     * @param string $message 
      * @return int $error (1 c'est que tout va bien sinon faut aller voir le code d'erreur)
      */
-    public function transfert($amount, $userID) {
+    public function transfert($amount, $userID, $message="") {
         if($amount < 0) {
-            Log::warning("TRANSFERT D'ARGENT : TENTATIVE DE FRAUDE... Montant négatif par l'userID ".$this->User->getId()." vers l'user ".$userID);
+            Log::warn("TRANSFERT D'ARGENT : TENTATIVE DE FRAUDE... Montant négatif par l'userID ".$this->User->getId()." vers l'user ".$userID);
             return 466; //C'est pas fair play de voler de l'argent à ces petits camarades...
         } else if($this->getCredit() < $amount) {
             return 462; // PAS ASSEZ D'ARGENT
@@ -420,7 +429,7 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
                 return 465; // il n'y a pas d'utilisateur à qui verser l'argent...
             } else {
                 $this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit - '%u') WHERE usr_id = '%u';", Array($amount, $this->User->getId()));
-                $this->db->query(("INSERT INTO t_virement_vir (vir_date, vir_amount, usr_id_from, usr_id_to) VALUES (NOW(), '%u', '%u', '%u')"), array($amount, $this->User->getId(), $userID));
+                $this->db->query(("INSERT INTO t_virement_vir (vir_date, vir_amount, usr_id_from, usr_id_to, vir_message) VALUES (NOW(), '%u', '%u', '%u', '%s')"), array($amount, $this->User->getId(), $userID, $message));
                 return 1;
             }
         }

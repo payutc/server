@@ -9,6 +9,7 @@
  * @package buckutt
  */
 
+use \Payutc\Db\DbBuckutt;
 
 class CheckRight {
 
@@ -28,7 +29,7 @@ class CheckRight {
      */
     public function __construct($user_id, $poi_id, &$fun_id)
     {
-        $this->db = Db_buckutt::getInstance();
+        $this->db = DbBuckutt::getInstance();
         $this->user_id = $user_id;
         $this->poi_id = $poi_id;
         if($fun_id == NULL) {

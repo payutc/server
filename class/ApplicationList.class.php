@@ -7,13 +7,14 @@
  */
 
 
+use \Payutc\Db\DbBuckutt;
 
 class ApplicationList {
     protected $db;
     protected $apps;
 
     public function __construct() {
-        $this->db = Db_buckutt::getInstance();        
+        $this->db = DbBuckutt::getInstance();        
     }
     
     /**

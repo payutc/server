@@ -27,15 +27,18 @@ class Log
     
     public static function isInit() 
     {
-        $environment = \Slim\Environment::getInstance();
-        return isset($environment['slim.log']);
+        $app = \Slim\Slim::getInstance();
+        if ($app === null) {
+            return false;
+        }
+        return $app->getLog() != NULL;
     }
     
     public static function getInstance()
     {
         static::initLog();
-        $environment = \Slim\Environment::getInstance();
-        return $environment['slim.log'];
+        $app = \Slim\Slim::getInstance();
+        return $app->getLog();
     }
     
     public static function __callstatic($name, $args)

@@ -6,10 +6,20 @@ require_once 'bootstrap.php';
 class MyWriter
 {
 	protected $logs;
+	protected $level_to_string = array(
+		\Slim\Log::EMERGENCY => "emergency",
+		\Slim\Log::ALERT => "alert",
+		\Slim\Log::CRITICAL => "critical",
+		\Slim\Log::ERROR => "error",
+		\Slim\Log::WARN => "warn",
+		\Slim\Log::NOTICE => "notice",
+		\Slim\Log::INFO => "info",
+		\Slim\Log::DEBUG => "debug"
+	);
 	
 	public function write($m, $level)
 	{
-		$this->logs .= "[$level] $m\n";
+		$this->logs .= "[".$this->level_to_string[$level]."] $m\n";
 	}
 	
 	public function clean()
@@ -31,6 +41,12 @@ class LogTest extends PHPUnit_Framework_TestCase
 	
 	public function __construct()
 	{
+		global $_CONFIG;
+		global $_SERVER;
+		$_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+		
+		Config::initFromArray($_CONFIG);
+        
 		$log = Log::getInstance();
 		$log->setWriter(new MyWriter());
 		$log->setLevel(\Slim\Log::DEBUG);
@@ -71,7 +87,7 @@ class LogTest extends PHPUnit_Framework_TestCase
 	public function testLogDebug()
 	{
 		Log::debug("coucou");
-		$this->assertEquals("[4] coucou\n", Log::getWriter()->getLogs());
+		$this->assertEquals("[debug] coucou\n", Log::getWriter()->getLogs());
 	}
 	
 	/**
@@ -81,7 +97,7 @@ class LogTest extends PHPUnit_Framework_TestCase
 	public function testLogInfo()
 	{
 		Log::info("coucou");
-		$this->assertEquals("[3] coucou\n", Log::getWriter()->getLogs());
+		$this->assertEquals("[info] coucou\n", Log::getWriter()->getLogs());
 	}
 	
 	/**
@@ -91,7 +107,7 @@ class LogTest extends PHPUnit_Framework_TestCase
 	public function testLogWarn()
 	{
 		Log::warn("coucou");
-		$this->assertEquals("[2] coucou\n", Log::getWriter()->getLogs());
+		$this->assertEquals("[warn] coucou\n", Log::getWriter()->getLogs());
 	}
 	
 	/**
@@ -101,17 +117,17 @@ class LogTest extends PHPUnit_Framework_TestCase
 	public function testLogError()
 	{
 		Log::error("coucou");
-		$this->assertEquals("[1] coucou\n", Log::getWriter()->getLogs());
+		$this->assertEquals("[error] coucou\n", Log::getWriter()->getLogs());
 	}
 	
 	/**
 	 * @depends testGetInstance
 	 * @depends testGetWriter
 	 */
-	public function testLogFatal()
+	public function testLogCritical()
 	{
-		Log::fatal("coucou");
-		$this->assertEquals("[0] coucou\n", Log::getWriter()->getLogs());
+		Log::critical("coucou");
+		$this->assertEquals("[critical] coucou\n", Log::getWriter()->getLogs());
 	}
 }
 

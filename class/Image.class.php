@@ -19,6 +19,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+use \Payutc\Db\DbBuckutt;
+
 /**
  * Image.class
  * 
@@ -51,7 +53,7 @@ class Image
 	*/
 	public function __construct($img_id = 0, $mime = 0, $width = 0, $length = 0, $content = 0)
 	{
-		$this->db = Db_buckutt::getInstance();
+		$this->db = DbBuckutt::getInstance();
 		
 		if ($img_id == 0) {
 			$this->db->query("INSERT INTO ts_image_img (img_mime, img_width, img_length, img_content) VALUES('%s','%u','%u','%s')", Array($mime, $width, $length, $content));
@@ -157,7 +159,7 @@ class Image
     public static function remove($img_id)
     {
         // TODO Supprimer le contenu de l'image aussi ? (Enfin à discuter)
-        Db_buckutt::getInstance()->query("UPDATE ts_image_img SET img_removed = '1' WHERE img_id = '%u'", array($img_id));
+        DbBuckutt::getInstance()->query("UPDATE ts_image_img SET img_removed = '1' WHERE img_id = '%u'", array($img_id));
     }
 
 

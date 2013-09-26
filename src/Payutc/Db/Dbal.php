@@ -1,13 +1,21 @@
-<?php namespace Payutc;
+<?php
+
+namespace Payutc\Db;
 
 use \Payutc\Config;
 
-class Db
+class Dbal
 {
     private static $config = null;
     private static $conn = null;
+
+    public static function createQueryBuilder()
+    {
+        return static::conn()->createQueryBuilder();
+    }
     
-    public static function getConnection() {
+    public static function conn()
+    {
         if (static::$conn === null) {
             static::$config = new \Doctrine\DBAL\Configuration();
             $connectionParams = array(
@@ -16,15 +24,27 @@ class Db
                 'user'     => Config::get('sql_user'),
                 'password' => Config::get('sql_pass'),
                 'dbname'   => Config::get('sql_db'),
+                'charset'  => 'utf8',
             );
             static::$conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, static::$config);
+            static::$conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
         }
         return static::$conn;
     }
-
-    public static function createQueryBuilder()
+    
+    public static function beginTransaction()
     {
-        return static::getConnection()->createQueryBuilder();
+        static::$conn->beginTransaction();
+    }
+    
+    public static function commit()
+    {
+        static::conn()->commit();
+    }
+    
+    public static function rollback()
+    {
+        static::conn()->rollback();
     }
 }
 

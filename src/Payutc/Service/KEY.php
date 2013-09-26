@@ -25,7 +25,10 @@ use \ApplicationList;
 	*/
 	public function registerApplication($app_url, $app_name, $app_desc=null) {
         // Pour déclarer une nouvelle application on a besoin d'un user, mais pas d'être une application.
-        $this->checkRight(true, false);
+        if(!$this->user()) {
+            throw new \Payutc\Exception\CheckRightException("Vous devez connecter un utilisateur ! (method loginCas)");
+        }
+
 		$application = new Application();
 		$application->fromArray(Array(
             "app_id" => null,
@@ -48,11 +51,13 @@ use \ApplicationList;
 	 */
 	 public function getCurrentUserApplications() {
         // On a besoin d'avoir un user logged
-        $this->checkRight(true, false);
+        if(!$this->user()) {
+            throw new \Payutc\Exception\CheckRightException("Vous devez connecter un utilisateur ! (method loginCas)");
+        }
         $application_list = new ApplicationList();
-        $application_list->from_login($this->user()->getNickname());
+        $application_list->fromLogin($this->user()->getNickname());
         // On retourne la liste d'applications (mais sans la clef, car on ne ne veut pas qu'un service "malintentioné" puisse récupérer les clefs d'un user).
-		return $application_list->to_array(0);
+		return $application_list->toArray(0);
 	 }
 	
  }
