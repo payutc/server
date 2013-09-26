@@ -420,8 +420,10 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
             Log::warn("TRANSFERT D'ARGENT : TENTATIVE DE FRAUDE... Montant négatif par l'userID ".$this->User->getId()." vers l'user ".$userID);
             return 466; //C'est pas fair play de voler de l'argent à ces petits camarades...
         } else if($this->getCredit() < $amount) {
+            Log:warn($this->User->getId()." n'a pas assez d'argent (".$this->getcredit()." < ".$amount.")");
             return 462; // PAS ASSEZ D'ARGENT
         } else if($this->User->getId() == $userID){
+            Log:warn($this->User->getId() ." a essayé de se virer de l'argen à soi-même");
             return 464; // Petit malin, se virer de l'argent à soi même n'a aucun sens !
         } else {
             $this->db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id = '%u';", Array($amount, $userID));
