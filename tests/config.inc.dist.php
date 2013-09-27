@@ -47,20 +47,6 @@ $_CONFIG['proxy_host'] = null;
 $_CONFIG['proxy_port'] = null;
 $_CONFIG['proxy_login'] = "";
 $_CONFIG['proxy_password'] = "";
-$_CONFIG['proxy'] = $_CONFIG['proxy_host'] . ":" . $_CONFIG['proxy_port'];
-
-/** 
-    PAYBOX
-    Parametres de paybox par défaut pour le mode dévellopeur
-    A modifier par ces propres paramétres.
-*/
-$_CONFIG['PBX_SITE'] = "1999888";
-$_CONFIG['PBX_RANG'] = "82";
-$_CONFIG['PBX_IDENTIFIANT'] = "110532808";
-// Ou se trouve l'executable paybox ?
-$_CONFIG['PBX_EXE'] = "/usr/share/buckutt/modulev3.cgi";
-// CLEF PUBLIQUE PAYBOX
-$_CONFIG['PBX_PUBPEM'] = "somewhere/pubkey.pem";
 
 /**
     PAYLINE
@@ -69,10 +55,10 @@ $_CONFIG['PBX_PUBPEM'] = "somewhere/pubkey.pem";
     n'est apporté quand au fait qu'il restera accessible dans la durée.
     Vous pouvez ouvrir un compte de test sur le site www.payline.com
 */
-$_CONFIG['PAYLINE_CONTRACT_NUMBER'] = "123456";
-$_CONFIG['PAYLINE_MERCHANT_ID'] = '70038023549152' ; // Merchant ID
-$_CONFIG['PAYLINE_ACCESS_KEY'] = 'fAPFZ5vkg0K734953kKG' ; // Certificate key
-$_CONFIG['PAYLINE_PRODUCTION'] = false ; // production mode
+$_CONFIG['payline_contract_number'] = "1234567";
+$_CONFIG['payline_merchant_id'] = '70038023549152' ; // Merchant ID
+$_CONFIG['payline_access_key'] = 'fAPFZ5vkg0K734953kKG' ; // Certificate key
+$_CONFIG['payline_production'] = false ; // production mode
 
 // Configuration de ginger (outil cotisant)
 $_CONFIG['ginger_key'] = "fauxginger";
