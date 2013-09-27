@@ -4,7 +4,7 @@ namespace Payutc\Service;
 
 use \Application;
 use \ApplicationList;
-use \Log;
+use \Payutc\Log;
 
 /**
  * KEY.services.php
