@@ -56,21 +56,6 @@ if(!empty($_CONFIG['proxy_host'])) {
     $_CONFIG['proxy'] = "";
 }
 
-/** 
-    PAYBOX
-    Parametres de paybox par défaut pour le mode dévellopeur
-    A modifier par ces propres paramétres.
-*/
-$_CONFIG['PBX_SITE'] = "1999888";
-$_CONFIG['PBX_RANG'] = "82";
-$_CONFIG['PBX_IDENTIFIANT'] = "110532808";
-// Ou se trouve l'executable paybox ?
-$_CONFIG['PBX_EXE'] = "/usr/share/buckutt/modulev3.cgi";
-// CLEF PUBLIQUE PAYBOX
-$_CONFIG['PBX_PUBPEM'] = "somewhere/pubkey.pem";
-$_CONFIG['PBX_URL'] = "https://tpeweb.paybox.com/cgi/MYchoix_pagepaiement.cgi";
-$_CONFIG['PBX_MOBILE_URL'] = "https://tpeweb.paybox.com/cgi/ChoixPaiementMobile.cgi";
-
 /**
     PAYLINE
     Parametres de payline
