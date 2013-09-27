@@ -87,7 +87,7 @@ class Payline {
         } else {
             $this->payline->cancelURL = $returnURL;
         }
-        $this->payline->notificationURL = Config::get('server_url') . "PAYLINE/Notification"; 
+        $this->payline->notificationURL = Config::get('server_url') . "PAYLINE/notification"; 
 
         // Insert a payline row in db and get the payment ref
         $conn = Dbal::conn();
@@ -149,7 +149,7 @@ class Payline {
     /*
         Recoit une notification de payline
     */
-    public function Notification($token) {
+    public function notification($token) {
         $array = array();
         $array['token'] = $token;
         $array['version'] = '';

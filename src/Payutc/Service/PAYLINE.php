@@ -14,11 +14,11 @@ namespace Payutc\Service;
 	/**
 	* Declenchement d'une notification de payline
 	*/
-	public function Notification() {
+	public function notification() {
         global $_GET;
         if(isset($_GET['token'])) {
             $pl = new \Payutc\Bom\Payline(0, "PAYLINE");
-            $pl->Notification($_GET['token']);
+            $pl->notification($_GET['token']);
         }
 	}
 	
