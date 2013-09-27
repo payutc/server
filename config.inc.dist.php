@@ -46,15 +46,6 @@ $_CONFIG['proxy_host'] = null;
 $_CONFIG['proxy_port'] = null;
 $_CONFIG['proxy_login'] = "";
 $_CONFIG['proxy_password'] = "";
-if(!empty($_CONFIG['proxy_host'])) {
-    if(!empty($_CONFIG['proxy_port'])) {
-        $_CONFIG['proxy'] = $_CONFIG['proxy_host'] . ":" . $_CONFIG['proxy_port'];
-    } else {
-        $_CONFIG['proxy'] = $_CONFIG['proxy_host'];
-    }
-} else {
-    $_CONFIG['proxy'] = "";
-}
 
 /**
     PAYLINE
