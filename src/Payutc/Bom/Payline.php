@@ -134,10 +134,19 @@ class Payline {
             // You can go pay on this url
             return $result['redirectURL'];
         } else if(isset($result)) {
-            $conn->update('t_paybox_pay', array("pay_step" => 'A', "pay_date_retour" => new \DateTime()), array('pay_id' => $ref), array("string", "datetime"));
+            $conn->update(
+                't_paybox_pay', 
+                array(
+                    "pay_step" => 'A', 
+                    "pay_date_retour" => new \DateTime(), 
+                    "pay_error" => $response["result"]["code"]), 
+                array('pay_id' => $ref), 
+                array("string", "datetime", "string"));
+            Log::warning("PAYLINE : Erreur au moment de créer le rechargement. \n".print_r($response, true),10);
             throw new \Payutc\Exception\PaylineException($result['result']['longMessage'], $result['result']['code']);
         } else {
             $conn->update('t_paybox_pay', array("pay_step" => 'A', "pay_date_retour" => new \DateTime()), array('pay_id' => $ref), array("string", "datetime"));
+            Log::warning("PAYLINE : Erreur critique au moment de créer le rechargement. \n",10);
             throw new \Payutc\Exception\PaylineException("Payline erreur critique");
         }
     }
