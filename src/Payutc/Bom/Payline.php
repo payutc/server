@@ -24,45 +24,43 @@ class Payline {
      * $service => Permet de loguer le service utilisé pour effectuer la requete (MADMIN / VENTEWEB ?)
     */
     public function __construct($app_id, $service) {
-      // DEFINITION DES PARAMETRES DE CONFIG DE PAYLINE
-	    define('PAYMENT_CURRENCY', 978); // Default payment currency (ex: 978 = EURO)
-	    define('ORDER_CURRENCY', PAYMENT_CURRENCY);
-	    define('SECURITY_MODE', ''); // Protocol (ex: SSL = HTTPS)
-	    define('LANGUAGE_CODE', ''); // Payline pages language
-	    define('PAYMENT_ACTION', 101); // Default payment method
-	    define('PAYMENT_MODE', 'CPT'); // Default payment mode
-	    define('CANCEL_URL', ''); // Default cancel URL
-	    define('NOTIFICATION_URL',''); // Default notification URL
-	    define('RETURN_URL', ''); // Default return URL
-	    define('CUSTOM_PAYMENT_TEMPLATE_URL', ''); // Default payment template URL
-	    define('CUSTOM_PAYMENT_PAGE_CODE', '');
-	    define('CONTRACT_NUMBER', Config::get('payline_contract_number')); // Contract type default (ex: 001 = CB, 003 = American Express...)
-	    define('CONTRACT_NUMBER_LIST', '' ); // Contract type multiple values (separator: ;)
-	    define('SECOND_CONTRACT_NUMBER_LIST', ''); // Contract type multiple values (separator: ;)
+        // DEFINITION DES PARAMETRES DE CONFIG DE PAYLINE
+	      define('PAYMENT_CURRENCY', 978); // Default payment currency (ex: 978 = EURO)
+	      define('ORDER_CURRENCY', PAYMENT_CURRENCY);
+	      define('SECURITY_MODE', ''); // Protocol (ex: SSL = HTTPS)
+	      define('LANGUAGE_CODE', ''); // Payline pages language
+	      define('PAYMENT_ACTION', 101); // Default payment method
+	      define('PAYMENT_MODE', 'CPT'); // Default payment mode
+	      define('CANCEL_URL', ''); // Default cancel URL
+	      define('NOTIFICATION_URL',''); // Default notification URL
+	      define('RETURN_URL', ''); // Default return URL
+	      define('CUSTOM_PAYMENT_TEMPLATE_URL', ''); // Default payment template URL
+	      define('CUSTOM_PAYMENT_PAGE_CODE', '');
+	      define('CONTRACT_NUMBER', Config::get('payline_contract_number')); // Contract type default (ex: 001 = CB, 003 = American Express...)
+	      define('CONTRACT_NUMBER_LIST', '' ); // Contract type multiple values (separator: ;)
+	      define('SECOND_CONTRACT_NUMBER_LIST', ''); // Contract type multiple values (separator: ;)
 	
-	    // Durées du timeout d'appel des webservices
-	    define('PRIMARY_CALL_TIMEOUT', 15);
-	    define('SECONDARY_CALL_TIMEOUT', 15);
+	      // Durées du timeout d'appel des webservices
+	      define('PRIMARY_CALL_TIMEOUT', 15);
+	      define('SECONDARY_CALL_TIMEOUT', 15);
 	
-	    // Nombres de tentatives sur les chaines primaire et secondaire par transaction
-	    define('PRIMARY_MAX_FAIL_RETRY', 1);
-	    define('SECONDARY_MAX_FAIL_RETRY', 2);
+	      // Nombres de tentatives sur les chaines primaire et secondaire par transaction
+	      define('PRIMARY_MAX_FAIL_RETRY', 1);
+	      define('SECONDARY_MAX_FAIL_RETRY', 2);
 	
-	    // Durées d'attente avant le rejoue de la transaction
-	    define('PRIMARY_REPLAY_TIMER', 15);
-	    define('SECONDARY_REPLAY_TIMER', 15);
+	      // Durées d'attente avant le rejoue de la transaction
+	      define('PRIMARY_REPLAY_TIMER', 15);
+	      define('SECONDARY_REPLAY_TIMER', 15);
 		
-	    define('PAYLINE_ERR_CODE', '02101,02102,02103'); // Codes erreurs payline qui signifie l'échec de la transaction
-	    define('PAYLINE_WS_SWITCH_ENABLE',  ''); // Nom des services web autorisés à basculer
-	    define('PAYLINE_SWITCH_BACK_TIMER', 600); // Durées d'attente pour rebasculer en mode nominal
-	    define('PRIMARY_TOKEN_PREFIX', '1'); // Préfixe du token sur le site primaire
-	    define('SECONDARY_TOKEN_PREFIX', '2'); // Préfixe du token sur le site secondaire
-	    define('INI_FILE' , __DIR__ . '/../../../HighDefinition.ini'); // Chemin du fichier ini
-	    define('PAYLINE_ERR_TOKEN', '02317,02318'); // Préfixe du token sur le site primaire
+	      define('PAYLINE_ERR_CODE', '02101,02102,02103'); // Codes erreurs payline qui signifie l'échec de la transaction
+	      define('PAYLINE_WS_SWITCH_ENABLE',  ''); // Nom des services web autorisés à basculer
+	      define('PAYLINE_SWITCH_BACK_TIMER', 600); // Durées d'attente pour rebasculer en mode nominal
+	      define('PRIMARY_TOKEN_PREFIX', '1'); // Préfixe du token sur le site primaire
+	      define('SECONDARY_TOKEN_PREFIX', '2'); // Préfixe du token sur le site secondaire
+	      define('INI_FILE' , __DIR__ . '/../../../HighDefinition.ini'); // Chemin du fichier ini
+	      define('PAYLINE_ERR_TOKEN', '02317,02318'); // Préfixe du token sur le site primaire
 
-        /*
-            Appel du constructeur de paylineSDK
-        */
+        // Appel du constructeur de paylineSDK
         $this->payline = new \paylineSDK(
                             Config::get('payline_merchant_id'),
                             Config::get('payline_access_key'),
