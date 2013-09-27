@@ -168,10 +168,11 @@ class Payline {
                 $qb = Dbal::createQueryBuilder();
                 $qb->select('pay_step', 'pay_id', 'usr_id')
                    ->from('t_paybox_pay', 'pay')
-                   ->where('pay.pay_token = :token')->setParameter('token', $token);
+                   ->where('pay.pay_token = :token')
+                   ->setParameter('token', $token);
 
                 $result = $qb->execute()->fetch();
-		        if($result['pay_step'] != "W") {
+                if($result['pay_step'] != "W") {
                     // ERROR ! Ce rechargement n'est pas en attente.
                     // Tentative de double rechargement ?
                     Log::warning("PAYLINE : Tentative de double rechargement ! $token \n".print_r($response, true),10);
