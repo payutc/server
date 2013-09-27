@@ -54,10 +54,10 @@ $_CONFIG['proxy_password'] = "";
     n'est apporté quand au fait qu'il restera accessible dans la durée.
     Vous pouvez ouvrir un compte de test sur le site www.payline.com
 */
-$_CONFIG['PAYLINE_CONTRACT_NUMBER'] = "1234567";
-$_CONFIG['PAYLINE_MERCHANT_ID'] = '70038023549152' ; // Merchant ID
-$_CONFIG['PAYLINE_ACCESS_KEY'] = 'fAPFZ5vkg0K734953kKG' ; // Certificate key
-$_CONFIG['PAYLINE_PRODUCTION'] = false ; // production mode
+$_CONFIG['payline_contract_number'] = "1234567";
+$_CONFIG['payline_merchant_id'] = '70038023549152' ; // Merchant ID
+$_CONFIG['payline_access_key'] = 'fAPFZ5vkg0K734953kKG' ; // Certificate key
+$_CONFIG['payline_production'] = false ; // production mode
 
 // Configuration de ginger (outil cotisant)
 // Laisser la clé vide pour désactiver les appels à ginger

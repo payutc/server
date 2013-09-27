@@ -36,7 +36,7 @@ class Payline {
 	    define('RETURN_URL', ''); // Default return URL
 	    define('CUSTOM_PAYMENT_TEMPLATE_URL', ''); // Default payment template URL
 	    define('CUSTOM_PAYMENT_PAGE_CODE', '');
-	    define('CONTRACT_NUMBER', Config::get('PAYLINE_CONTRACT_NUMBER')); // Contract type default (ex: 001 = CB, 003 = American Express...)
+	    define('CONTRACT_NUMBER', Config::get('payline_contract_number')); // Contract type default (ex: 001 = CB, 003 = American Express...)
 	    define('CONTRACT_NUMBER_LIST', '' ); // Contract type multiple values (separator: ;)
 	    define('SECOND_CONTRACT_NUMBER_LIST', ''); // Contract type multiple values (separator: ;)
 	
@@ -64,13 +64,13 @@ class Payline {
             Appel du constructeur de paylineSDK
         */
         $this->payline = new \paylineSDK(
-                            Config::get('PAYLINE_MERCHANT_ID'),
-                            Config::get('PAYLINE_ACCESS_KEY'),
+                            Config::get('payline_merchant_id'),
+                            Config::get('payline_access_key'),
                             Config::get('proxy_host'),
                             Config::get('proxy_port'),
                             Config::get('proxy_login'),
                             Config::get('proxy_password'),
-                            Config::get('PAYLINE_PRODUCTION')
+                            Config::get('payline_production')
                             );
 
         // Sauvegarde des parametres
