@@ -57,7 +57,7 @@ class Payline {
 	      define('PAYLINE_SWITCH_BACK_TIMER', 600); // Durées d'attente pour rebasculer en mode nominal
 	      define('PRIMARY_TOKEN_PREFIX', '1'); // Préfixe du token sur le site primaire
 	      define('SECONDARY_TOKEN_PREFIX', '2'); // Préfixe du token sur le site secondaire
-	      define('INI_FILE' , __DIR__ . '/../../../HighDefinition.ini'); // Chemin du fichier ini
+	      define('INI_FILE' , __DIR__ . '/../../../vendor/payline/HighDefinition.ini'); // Chemin du fichier ini
 	      define('PAYLINE_ERR_TOKEN', '02317,02318'); // Préfixe du token sur le site primaire
 
         // Appel du constructeur de paylineSDK
@@ -84,6 +84,7 @@ class Payline {
             $this->payline->cancelURL = $returnURL;
         }
         $this->payline->notificationURL = Config::get('server_url') . "PAYLINE/notification"; 
+        Log::debug("Payline notificationURL = ".$this->payline->notificationURL);
 
         // Insert a payline row in db and get the payment ref
         $conn = Dbal::conn();
@@ -126,14 +127,14 @@ class Payline {
         $result = $this->payline->doWebPayment($array);
 
         // Check Result
-        if(isset($result) && $result['result']['code'] == '00000') {
+        if(isset($result) && is_array($result) && $result['result']['code'] == '00000') {
             // That's OK
             // Save the token
             $conn->update('t_paybox_pay', array("pay_token" => $result['token']), array('pay_id' => $ref));    
 
             // You can go pay on this url
             return $result['redirectURL'];
-        } else if(isset($result)) {
+        } else if(isset($result) && is_array($result)) {
             $conn->update(
                 't_paybox_pay', 
                 array(
@@ -142,11 +143,11 @@ class Payline {
                     "pay_error" => $response["result"]["code"]), 
                 array('pay_id' => $ref), 
                 array("string", "datetime", "string"));
-            Log::warning("PAYLINE : Erreur au moment de créer le rechargement. \n".print_r($response, true),10);
+            Log::warn("PAYLINE : Erreur au moment de créer le rechargement. \n".print_r($response, true));
             throw new \Payutc\Exception\PaylineException($result['result']['longMessage'], $result['result']['code']);
         } else {
             $conn->update('t_paybox_pay', array("pay_step" => 'A', "pay_date_retour" => new \DateTime()), array('pay_id' => $ref), array("string", "datetime"));
-            Log::warning("PAYLINE : Erreur critique au moment de créer le rechargement. \n",10);
+            Log::warn("PAYLINE : Erreur critique au moment de créer le rechargement. \n \$result => $result");
             throw new \Payutc\Exception\PaylineException("Payline erreur critique");
         }
     }
@@ -159,6 +160,7 @@ class Payline {
         $array['token'] = $token;
         $array['version'] = '';
 
+        Log::debug("step in notification($token)");
         $response = $this->payline->getWebPaymentDetails($array);
         if(isset($response)){
             // Paiement valide
@@ -175,8 +177,8 @@ class Payline {
                 if($result['pay_step'] != "W") {
                     // ERROR ! Ce rechargement n'est pas en attente.
                     // Tentative de double rechargement ?
-                    Log::warning("PAYLINE : Tentative de double rechargement ! $token \n".print_r($response, true),10);
-                    return;
+                    Log::warn("PAYLINE : Tentative de double rechargement ! $token \n".print_r($response, true));
+                    return "Deja fait";
                 }
                 
                 // insertion du rechargement
@@ -207,13 +209,14 @@ class Payline {
                                       "pay_error" => $response["result"]["code"]),
                                 array("pay_token" => $token),
                                 array("string", "datetime", "integer", "string", "string", "string"));
-                Log::info("PAYLINE : succes ! $token \n".print_r($response, true),1);
+                Log::debug("PAYLINE : succes ! $token \n".print_r($response, true));
+                return "success";
 
             // Paiement en cours, l'utilisateur n'a pas annulé ni validé...
             } else if ($response["result"]["code"] == "02306") {
                 // Log this, peut etre que le petit malin essaie de nous rouler ^^
-                Log::warning("PAYLINE : Tentative de validation avant erreur ou succes ! $token \n".print_r($response, true),10);
-                return;
+                Log::warn("PAYLINE : Tentative de validation avant erreur ou succes ! $token \n".print_r($response, true));
+                return 02306;
 
             } else {
                 // Indique le rechargement comme aborted
@@ -227,9 +230,30 @@ class Payline {
                                       "pay_error" => $response["result"]["code"]),
                                 array("pay_token" => $token),
                                 array("string", "datetime", "integer", "string", "string", "string"));
-                Log::info("PAYLINE : error ! $token \n".print_r($response, true),5);
-                return;
+                Log::info("PAYLINE : error ! $token \n".print_r($response, true));
+                return print_r($response, true);
             }
+        }
+    }
+
+    /*
+        On verifie les rechargement d'un utilisateur donné (failover au cas ou l'on aurait pas reçu la notification)
+    */
+    public function checkUser($user) {
+        $qb = Dbal::createQueryBuilder();
+        $qb->select('pay.pay_token')
+           ->from('t_paybox_pay', 'pay')
+           ->where('pay.pay_step = :pay_step')
+           ->andWhere('pay.usr_id = :usr_id')
+           ->andWhere('pay.pay_token IS NOT NULL')
+           ->setParameters(array(
+               'pay_step' => 'W',
+               'usr_id' => $user->getId()
+           ));
+
+        $res = $qb->execute();
+        while($don = $res->fetch()) {
+            $this->notification($don['pay_token']);
         }
     }
 

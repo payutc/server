@@ -271,6 +271,8 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
         if(empty($this->User)) {
             return "";
         }
+        $pl = new \Payutc\Bom\Payline(0, "MADMIN");
+        $pl->checkUser($this->User);
         return $this->User->getCredit();
     }    
 
