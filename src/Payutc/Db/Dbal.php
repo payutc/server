@@ -8,7 +8,7 @@ class Dbal
 {
     private static $config = null;
     private static $conn = null;
-    
+
     public static function createQueryBuilder()
     {
         return static::conn()->createQueryBuilder();

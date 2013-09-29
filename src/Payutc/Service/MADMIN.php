@@ -271,6 +271,8 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
         if(empty($this->User)) {
             return "";
         }
+        $pl = new \Payutc\Bom\Payline(0, "MADMIN");
+        $pl->checkUser($this->User);
         return $this->User->getCredit();
     }    
 
@@ -362,8 +364,8 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
               if($auth != 1)
                     return "<error>".$this->getErrorDetail($auth)."</error>";
 
-        $pb = new Paybox($this->User);
-        return $pb->execute($amount, $callbackUrl);
+        $pl = new \Payutc\Bom\Payline(-1 , "MADMIN");
+        return $pl->doWebPayment($this->User, $amount, $callbackUrl);
     }
     
     /**

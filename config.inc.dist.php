@@ -42,22 +42,22 @@ $_CONFIG['credit_max'] = 10000;
 $_CONFIG['rechargement_min'] = 1000;
 
 // Adresse du proxy
-$_CONFIG['proxy'] = "proxyweb.utc.fr:3128";
+$_CONFIG['proxy_host'] = null;
+$_CONFIG['proxy_port'] = null;
+$_CONFIG['proxy_login'] = "";
+$_CONFIG['proxy_password'] = "";
 
-/** 
-    PAYBOX
-    Parametres de paybox par défaut pour le mode dévellopeur
-    A modifier par ces propres paramétres.
+/**
+    PAYLINE
+    Parametres de payline
+    Ces parametres sont preconfigures sur un compte de test, aucune garantie
+    n'est apporté quand au fait qu'il restera accessible dans la durée.
+    Vous pouvez ouvrir un compte de test sur le site www.payline.com
 */
-$_CONFIG['PBX_SITE'] = "1999888";
-$_CONFIG['PBX_RANG'] = "82";
-$_CONFIG['PBX_IDENTIFIANT'] = "110532808";
-// Ou se trouve l'executable paybox ?
-$_CONFIG['PBX_EXE'] = "/usr/share/buckutt/modulev3.cgi";
-// CLEF PUBLIQUE PAYBOX
-$_CONFIG['PBX_PUBPEM'] = "somewhere/pubkey.pem";
-$_CONFIG['PBX_URL'] = "https://tpeweb.paybox.com/cgi/MYchoix_pagepaiement.cgi";
-$_CONFIG['PBX_MOBILE_URL'] = "https://tpeweb.paybox.com/cgi/ChoixPaiementMobile.cgi";
+$_CONFIG['payline_contract_number'] = "1234567";
+$_CONFIG['payline_merchant_id'] = '70038023549152' ; // Merchant ID
+$_CONFIG['payline_access_key'] = 'fAPFZ5vkg0K734953kKG' ; // Certificate key
+$_CONFIG['payline_production'] = false ; // production mode
 
 // Configuration de ginger (outil cotisant)
 // Laisser la clé vide pour désactiver les appels à ginger

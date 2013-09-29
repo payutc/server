@@ -16,7 +16,7 @@
     },
     "include-path": ["./"],
     "autoload": {
-        "classmap": ["class/"],
+        "classmap": ["class/", "vendor/payline/"],
         "psr-0": {
             "Payutc": "src/"
         }
