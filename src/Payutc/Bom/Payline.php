@@ -178,7 +178,7 @@ class Payline {
                     // ERROR ! Ce rechargement n'est pas en attente.
                     // Tentative de double rechargement ?
                     Log::warn("PAYLINE : Tentative de double rechargement ! $token \n".print_r($response, true));
-                    return "Deja fait";
+                    return;
                 }
                 
                 // insertion du rechargement
@@ -210,13 +210,13 @@ class Payline {
                                 array("pay_token" => $token),
                                 array("string", "datetime", "integer", "string", "string", "string"));
                 Log::debug("PAYLINE : succes ! $token \n".print_r($response, true));
-                return "success";
+                return;
 
             // Paiement en cours, l'utilisateur n'a pas annulé ni validé...
             } else if ($response["result"]["code"] == "02306") {
                 // Log this, peut etre que le petit malin essaie de nous rouler ^^
                 Log::warn("PAYLINE : Tentative de validation avant erreur ou succes ! $token \n".print_r($response, true));
-                return 02306;
+                return;
 
             } else {
                 // Indique le rechargement comme aborted
@@ -231,7 +231,7 @@ class Payline {
                                 array("pay_token" => $token),
                                 array("string", "datetime", "integer", "string", "string", "string"));
                 Log::info("PAYLINE : error ! $token \n".print_r($response, true));
-                return print_r($response, true);
+                return;
             }
         }
     }
