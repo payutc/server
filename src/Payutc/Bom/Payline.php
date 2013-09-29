@@ -181,37 +181,45 @@ class Payline {
                     return;
                 }
                 
-                // insertion du rechargement
-                $conn->insert('t_recharge_rec',
-                array(
-                    "rty_id" => 3, // Type de rechargement => Rechargement en ligne
-                    "usr_id_buyer" => $result['usr_id'], 
-                    "usr_id_operator" => $result['usr_id'],
-                    "poi_id" => 1, // Historique... useless maintenant TODO mettre l'id d'app
-                    "rec_date" =>  new \DateTime(),
-                    "rec_credit" => $response["payment"]["amount"],
-                    "rec_trace" => $result['pay_id'],
-                    "rec_removed" => 0
-                ),
-                array(
-                    "integer", "integer", "integer", "integer", "datetime", "integer", "string", "integer"
-                ));
+                $conn->beginTransaction();
+                try {
+                    // insertion du rechargement
+                    $conn->insert('t_recharge_rec',
+                    array(
+                        "rty_id" => 3, // Type de rechargement => Rechargement en ligne
+                        "usr_id_buyer" => $result['usr_id'], 
+                        "usr_id_operator" => $result['usr_id'],
+                        "poi_id" => 1, // Historique... useless maintenant TODO mettre l'id d'app
+                        "rec_date" =>  new \DateTime(),
+                        "rec_credit" => $response["payment"]["amount"],
+                        "rec_trace" => $result['pay_id'],
+                        "rec_removed" => 0
+                    ),
+                    array(
+                        "integer", "integer", "integer", "integer", "datetime", "integer", "string", "integer"
+                    ));
 
-                // Recharge user maintenant
-                $conn->executeQuery('UPDATE ts_user_usr SET usr_credit = (usr_credit + ?) WHERE usr_id = ?', array($response["payment"]["amount"], $result['usr_id']));
+                    // Recharge user maintenant
+                    $conn->executeQuery('UPDATE ts_user_usr SET usr_credit = (usr_credit + ?) WHERE usr_id = ?', array($response["payment"]["amount"], $result['usr_id']));
 
-                $conn->update('t_paybox_pay', 
-                                array("pay_step" => 'V', 
-                                      "pay_date_retour" => new \DateTime(),
-                                      "pay_amount" => $response["payment"]["amount"],
-                                      "pay_auto" => $response["authorization"]["number"],
-                                      "pay_trans" => $response["transaction"]["id"],
-                                      "pay_error" => $response["result"]["code"]),
-                                array("pay_token" => $token),
-                                array("string", "datetime", "integer", "string", "string", "string"));
-                Log::debug("PAYLINE : succes ! $token \n".print_r($response, true));
-                return;
+                    $conn->update('t_paybox_pay', 
+                                    array("pay_step" => 'V', 
+                                          "pay_date_retour" => new \DateTime(),
+                                          "pay_amount" => $response["payment"]["amount"],
+                                          "pay_auto" => $response["authorization"]["number"],
+                                          "pay_trans" => $response["transaction"]["id"],
+                                          "pay_error" => $response["result"]["code"]),
+                                    array("pay_token" => $token),
+                                    array("string", "datetime", "integer", "string", "string", "string"));
 
+                    $conn->commit();
+                    Log::debug("PAYLINE : succes ! $token \n".print_r($response, true));
+                    return;
+                } catch (Exception $e) {
+                    $conn->rollback();
+                    Log::error("PAYLINE : Error during notification of $token \n Exception : \n".print_r($e, true));
+                    throw $e;
+                }
             // Paiement en cours, l'utilisateur n'a pas annulé ni validé...
             } else if ($response["result"]["code"] == "02306") {
                 // Log this, peut etre que le petit malin essaie de nous rouler ^^
