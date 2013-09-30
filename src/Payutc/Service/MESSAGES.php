@@ -3,13 +3,13 @@
 namespace Payutc\Service;
 
 /**
-* MESSAGE.services.php
+* MESSAGES.services.php
 *
 * Ce service permet de changer le message perso d’une fundation par ses administrateurs
 *
 */
 
-class MESSAGE extends \ServiceBase {
+class MESSAGES extends \ServiceBase {
 
     public function __construct() {
         parent::__construct();
