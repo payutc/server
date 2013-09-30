@@ -187,10 +187,3 @@ INSERT INTO `tj_usr_rig_jur` (`jur_id`, `usr_id`, `rig_id`, `per_id`, `fun_id`, 
 (21, NULL, 7, NULL, 2, 46, 0),
 (27, 9447, 5, NULL, 2, NULL, 0);
 
-
---
--- Contenu de la table `t_oldusr_osr`
---
-
-INSERT INTO `t_oldusr_osr` (`osr_login`, `osr_credit`, `osr_date`) VALUES
-('puyouart', 465, '2012-06-15 20:46:45');
