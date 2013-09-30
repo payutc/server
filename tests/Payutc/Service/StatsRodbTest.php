@@ -57,7 +57,25 @@ class StatsRodbTest extends ServiceBaseRodbTest
                 'usr_nickname' => 'mguffroy'
                 )), $r->body);
     }
- 
+
+    /* ========== TEST DE GETRECETTE =============================== */
+    /**
+     * @requires PHP 5.4
+     */
+    public function testGetRecette()
+    {
+        $cookie = '';
+        $r = null;
+        $this->loginCas($cookie, $r, 'mguffroy@POSS3', 'POSS3');
+        $this->loginApp($cookie, $r, 'app_stats');
+        $r = httpSend('STATS', 'getRecette', $cookie, array(
+                                                            'fun_id' => '1',
+                                                            'app_id' => '51'
+                                                            ));
+        $this->assertEquals(200, $r->code);
+        $this->assertEquals(630, $r->body);
+    }
+
 }
 
 

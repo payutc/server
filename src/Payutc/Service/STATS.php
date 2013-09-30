@@ -24,6 +24,19 @@ class STATS extends \ServiceBase {
     }
  
     /**
+     * Retourne le montant des ventes sur une période
+     *
+     * fun_id => Obligatoire
+     * app_id => Pour récupérer les recettes d'une application seulement
+     * $start => date de départ de la recherche, format mysql, si null pas de limite
+     * $end => date de fin de la recherche, format mysql, si null pas de limite
+     **/
+    public function getRecette($fun_id, $app_id=null, $start=null, $end=null) {
+        $this->checkRight(false, true, true, $fun_id);
+        return \Payutc\Bom\Purchase::getRecette($fun_id, $app_id, $start, $end);
+    }
+
+    /**
      * Retourne le classement des ventes pour un objet sur une période
      *
      * $fun_id => Obligatoire, permet de vérifier les droits, l'obj_id doit correspondre.
