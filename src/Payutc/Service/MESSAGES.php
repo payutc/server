@@ -28,7 +28,7 @@ class MESSAGES extends \ServiceBase {
 */
     public function changeMsg($fun_id, $message) {
         $this->checkRight(true, true, true, $fun_id);
-        return \Payutc\Bom\MsgPerso::setMsgPerso($message, NULL, $funId);
+        return \Payutc\Bom\MsgPerso::setMsgPerso($message, NULL, $fun_id);
     }
 
 }
