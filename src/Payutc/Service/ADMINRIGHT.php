@@ -9,18 +9,18 @@ use \Application;
 
 /**
  * ADMINRIGHT.services.php
- * 
+ *
  * Ce service permet de gérer les droits.
  * Seul les utilisateurs ayant le droit ADMINRIGHT peuvent venir ici.
  *
  */
- 
+
  class ADMINRIGHT extends \ServiceBase {
-	 
+
     public function __construct() {
         parent::__construct();
     }
-    
+
     /**
      * Recuperer la liste des droits attribuables (les noms de service en fait)
      * Comme on ne veut pas forcément lister tout les services possibles et que l'ont veut leur donner un petit nom sympa et une description
@@ -32,14 +32,14 @@ use \Application;
      * clef "user" => doit on pouvoir donner ce droit à un user
      * clef "app" => doit on pouvoir donner ce droit à une app (en soit c'est toujours le cas, mais veut on le faire apparaitre par défaut dans les menus)
      *
-     * Pour les clefs user et app, ce n'est que pour l'ergonomie de l'interface utilisateur. 
+     * Pour les clefs user et app, ce n'est que pour l'ergonomie de l'interface utilisateur.
      * @return array $services
      */
     public function getServices() {
         return array(
                     array(
                         "service" => "ADMINRIGHT",
-                        "name"    => "Administrateur de fondation", 
+                        "name"    => "Administrateur de fondation",
                         "desc"    => "Permet la gestion des droits pour les utilisateurs de la fondations",
                         "user"    => true,
                         "app"     => false
@@ -50,7 +50,7 @@ use \Application;
                         "user"    => true,
                         "app"     => true
                     ), array(
-                        "service" => "VENTEWEB", 
+                        "service" => "VENTEWEB",
                         "name"    => "Vente en ligne",
                         "desc"    => "Permet la vente depuis une application",
                         "user"    => false,
@@ -79,99 +79,105 @@ use \Application;
                         "desc"    => "Permet de récupérer différentes informations statistiques sur la fundation.",
                         "user"    => true,
                         "app"     => true
+                    ), array(
+                        "service" => "MESSAGES",
+                        "name"    => "Messages de fundation",
+                        "desc"    => "Permet de modifier le message d’une fundation.",
+                        "user"    => true,
+                        "app"     => true
                     )
                 );
     }
-     
-	/**
-	* Donner un droit liant un user à une fundation.
-	*
-	* @param string $usr_login
-	* @param string $service
-	* @param int $fun_id
-	* @return array $result
-	*/
-	public function setUserRight($usr_id, $service, $fun_id){
+
+    /**
+    * Donner un droit liant un user à une fundation.
+    *
+    * @param string $usr_login
+    * @param string $service
+    * @param int $fun_id
+    * @return array $result
+    */
+    public function setUserRight($usr_id, $service, $fun_id){
         $this->checkRight(true, true, true, $fun_id);
         // L'utilisateur à les droits de donner ce droit :)
         return UserRight::setRight($usr_id, $service, $fun_id);
-	}
+    }
 
-	/**
-	* Donner un droit liant une application à une fundation.
-	*
-	* @param int $app_id
-	* @param string $service
-	* @param int $fun_id
-	* @return array $result
-	*/
-	public function setApplicationRight($app_id, $service, $fun_id){
+    /**
+    * Donner un droit liant une application à une fundation.
+    *
+    * @param int $app_id
+    * @param string $service
+    * @param int $fun_id
+    * @return array $result
+    */
+    public function setApplicationRight($app_id, $service, $fun_id){
         $this->checkRight(true, true, true, $fun_id);
         // L'utilisateur à les droits de donner ce droit :)
         ApplicationRight::setRight($app_id, $service, $fun_id);
-	}
+    }
 
-	/**
-	* Supprimer un droit liant un user à une fundation.
-	*
-	* @param int $usr_id
-	* @param string $service
-	* @param int $fun_id
-	* @return array $result
-	*/
-	public function removeUserRight($usr_id, $service, $fun_id){
+    /**
+    * Supprimer un droit liant un user à une fundation.
+    *
+    * @param int $usr_id
+    * @param string $service
+    * @param int $fun_id
+    * @return array $result
+    */
+    public function removeUserRight($usr_id, $service, $fun_id){
         $this->checkRight(true, true, true, $fun_id);
         // L'utilisateur à les droits de retirer ce droit :)
         UserRight::removeRight($usr_id, $service, $fun_id);
-	}
+    }
 
-	/**
-	* Supprimer un droit liant une application à une fundation.
-	*
-	* @param int $app_id
-	* @param string $service
-	* @param int $fun_id
-	* @return array $result
-	*/
-	public function removeApplicationRight($app_id, $service, $fun_id){
+    /**
+    * Supprimer un droit liant une application à une fundation.
+    *
+    * @param int $app_id
+    * @param string $service
+    * @param int $fun_id
+    * @return array $result
+    */
+    public function removeApplicationRight($app_id, $service, $fun_id){
         $this->checkRight(true, true, true, $fun_id);
         // L'utilisateur à les droits de retirer ce droit :)
         ApplicationRight::removeRight($app_id, $service, $fun_id);
-	}
+    }
 
-	/**
-	* Obtenir les droits liant des user à une fundation.
-	*
-	* @param int $fun_id
-	* @return array $result
-	*/
-	public function getUserRights($fun_id){
+    /**
+    * Obtenir les droits liant des user à une fundation.
+    *
+    * @param int $fun_id
+    * @return array $result
+    */
+    public function getUserRights($fun_id){
         $this->checkRight(true, true, true, $fun_id);
         // L'utilisateur à les droits de regarder ces droits :)
         return UserRight::getRights($fun_id);
-	}
+    }
 
-	/**
-	* Obtenir les droits liant des applications à une fundation.
-	*
-	* @param int $fun_id
-	* @return array $result
-	*/
-	public function getApplicationRights($fun_id){
+    /**
+    * Obtenir les droits liant des applications à une fundation.
+    *
+    * @param int $fun_id
+    * @return array $result
+    */
+    public function getApplicationRights($fun_id){
         $this->checkRight(true, true, true, $fun_id);
         // L'utilisateur à les droits de regarder ces droits :)
         return ApplicationRight::getRights($fun_id);
-	}
-	
-	/**
-	* Obtenir les applications déclarés (pour l'interface utilisateur des droits)
-	*
-	* @return array $result
-	*/
-	public function getApplications(){
+    }
+
+    /**
+    * Obtenir les applications déclarés (pour l'interface utilisateur des droits)
+    *
+    * @return array $result
+    */
+    public function getApplications(){
         $this->checkRight();
         // L'utilisateur à les droits de regarder la liste des applications
         return Application::getAll();
-	}
+    }
 
  }
