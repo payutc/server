@@ -55,6 +55,38 @@ class Purchase
             return $result['nb'];
         }
     }
+
+    /**
+     * getRecette() retourne le montant total des ventes
+     * d'une fondation $fun_id pour l'application $app_id
+     * ou de toutes les applications si $app_id est nullf
+     * depuis $start jusqu'à $end
+     */
+    public static function getRecette($fun_id, $app_id=null, $start=null, $end=null)
+    {
+        $qb = Dbal::createQueryBuilder();
+        $qb->select('sum(pur_price) as total')
+            ->from('t_purchase_pur', 'pur')
+            ->andWhere('pur.fun_id = :fun_id')->setParameter('fun_id', $fun_id)
+            ->andWhere('pur.pur_removed = 0');
+
+        if($app_id != null) {
+            $qb->andWhere('pur.poi_id = :poi_id')->setParameter('poi_id', $app_id);
+        }
+
+        if($start != null) {
+            $qb->andWhere('pur.pur_date >= :start')
+                ->setParameter('start', $start);
+        }
+
+        if($end != null) {
+            $qb->andWhere('pur.pur_date <= :end')
+                ->setParameter('end', $end);
+        }
+
+        $result = $qb->execute()->fetch();
+        return $result['total'];
+    }
     
     public static function getPurchaseById($pur_id)
     {
