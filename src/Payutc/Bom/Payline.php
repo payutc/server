@@ -11,6 +11,7 @@ namespace Payutc\Bom;
 use \Payutc\Log;
 use \Payutc\Config;
 use \Payutc\Db\Dbal;
+use \Payutc\Bom\User;
 
 class Payline {
     
@@ -217,7 +218,7 @@ class Payline {
                     ));
 
                     // Recharge user maintenant
-                    $conn->executeQuery('UPDATE ts_user_usr SET usr_credit = (usr_credit + ?) WHERE usr_id = ?', array($response["payment"]["amount"], $result['usr_id']));
+                    User::incCreditById($result['usr_id'], $response["payment"]["amount"]);
 
                     $conn->commit();
                     Log::debug("PAYLINE : succes ! $token \n".print_r($response, true));
