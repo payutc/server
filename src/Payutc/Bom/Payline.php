@@ -183,6 +183,23 @@ class Payline {
                 
                 $conn->beginTransaction();
                 try {
+                    // On update la transaction payline
+                    // Passe uniquement les 'W' à 'V' impossible de passer une transaction déjà à 'V'
+                    $numrows = $conn->update('t_paybox_pay', 
+                    array("pay_step" => 'V', 
+                          "pay_date_retour" => new \DateTime(),
+                          "pay_amount" => $response["payment"]["amount"],
+                          "pay_auto" => $response["authorization"]["number"],
+                          "pay_trans" => $response["transaction"]["id"],
+                          "pay_error" => $response["result"]["code"]),
+                    array("pay_token" => $token, "pay_step" => 'W'),
+                    array("string", "datetime", "integer", "string", "string", "string"));
+                
+                    if($numrows != 1) {
+                        Log::warn("PAYLINE : Tentative de double rechargement ! $token (ou token inexistant) \n".print_r($response, true));
+                        throw new \Exception("Tentative double rechargement.");
+                    }
+                
                     // insertion du rechargement
                     $conn->insert('t_recharge_rec',
                     array(
@@ -202,23 +219,12 @@ class Payline {
                     // Recharge user maintenant
                     $conn->executeQuery('UPDATE ts_user_usr SET usr_credit = (usr_credit + ?) WHERE usr_id = ?', array($response["payment"]["amount"], $result['usr_id']));
 
-                    $conn->update('t_paybox_pay', 
-                                    array("pay_step" => 'V', 
-                                          "pay_date_retour" => new \DateTime(),
-                                          "pay_amount" => $response["payment"]["amount"],
-                                          "pay_auto" => $response["authorization"]["number"],
-                                          "pay_trans" => $response["transaction"]["id"],
-                                          "pay_error" => $response["result"]["code"]),
-                                    array("pay_token" => $token),
-                                    array("string", "datetime", "integer", "string", "string", "string"));
-
                     $conn->commit();
                     Log::debug("PAYLINE : succes ! $token \n".print_r($response, true));
                     return;
                 } catch (Exception $e) {
                     $conn->rollback();
                     Log::error("PAYLINE : Error during notification of $token \n Exception : \n".print_r($e, true));
-                    throw $e;
                 }
             // Paiement en cours, l'utilisateur n'a pas annulé ni validé...
             } else if ($response["result"]["code"] == "02306") {
