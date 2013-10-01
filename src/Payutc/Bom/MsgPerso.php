@@ -57,6 +57,7 @@ class MsgPerso
     public function setMsgPerso($msgPerso, $usrId = NULL, $funId = NULL)
     {
         $db = DbBuckutt::getInstance();
+        $msgPerso = htmlspecialchars($msgPerso);
         if (mb_check_encoding($msgPerso, 'UTF-8')) {
             if (strlen($msgPerso) < 255){
                 if (($usrId != NULL) && ($funId != NULL)) {
