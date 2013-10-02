@@ -1,22 +1,23 @@
 <?php 
 /**
-    BuckUTT - Buckutt est un système de paiement avec porte-monnaie électronique.
-    Copyright (C) 2011 BuckUTT <buckutt@utt.fr>
-
-	This file is part of BuckUTT
-	
-    BuckUTT is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    BuckUTT is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*	payutc
+* Copyright (C) 2011 BuckUTT <buckutt@utt.fr>
+*	Copyright (C) 2013 payutc <payutc@assos.utc.fr>
+*
+*	This file is part of payutc
+*	
+*	payutc is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*
+*	payutc is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*	GNU General Public License for more details.
+*
+*	You should have received a copy of the GNU General Public License
+*	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 // Paramètres de BDD
@@ -24,7 +25,6 @@ $_CONFIG['sql_host'] = "localhost";
 $_CONFIG['sql_db'] = "buckutt_test";
 $_CONFIG['sql_user'] = "root";
 $_CONFIG['sql_pass'] = "";
-
 
 // Chemin vers le serveur CAS (avec le / final)
 $_CONFIG['cas_url'] = "http://localhost:33435/";
@@ -48,11 +48,10 @@ $_CONFIG['proxy_login'] = "";
 $_CONFIG['proxy_password'] = "";
 
 /**
-    PAYLINE
-    Parametres de payline
-    Ces parametres sont preconfigures sur un compte de test, aucune garantie
-    n'est apporté quand au fait qu'il restera accessible dans la durée.
-    Vous pouvez ouvrir un compte de test sur le site www.payline.com
+*   PAYLINE
+*   Ces paramètres sont pré-configurés sur un compte de test, aucune garantie
+*   n'est apporté quand au fait qu'il restera accessible dans la durée.
+*   Vous pouvez ouvrir un compte de test sur le site www.payline.com
 */
 $_CONFIG['payline_contract_number'] = "1234567";
 $_CONFIG['payline_merchant_id'] = '70038023549152' ; // Merchant ID
@@ -60,6 +59,7 @@ $_CONFIG['payline_access_key'] = 'fAPFZ5vkg0K734953kKG' ; // Certificate key
 $_CONFIG['payline_production'] = false ; // production mode
 
 // Configuration de ginger (outil cotisant)
+// En environnement de dev, utiliser https://github.com/simde-utc/faux-ginger
 $_CONFIG['ginger_key'] = "fauxginger";
 $_CONFIG['ginger_url'] = "http://localhost:33434/index.php/v1/";
 
