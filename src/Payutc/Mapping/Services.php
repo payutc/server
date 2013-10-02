@@ -16,7 +16,8 @@ class Services {
         'GESARTICLE',
         'PAYLINE',
         'RELOAD',
-        'MYACCOUNT'
+        'MYACCOUNT',
+        'TRANSFER'
     );
     
     public static function get($name) {

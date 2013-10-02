@@ -26,6 +26,7 @@ use \Payutc\Exception\UserNotFound;
 use \Payutc\Exception\GingerFailure;
 use \Payutc\Exception\UpdateFailed;
 use \Payutc\Exception\LoginError;
+use \Payutc\Exception\TransferException;
 use \Payutc\Bom\Blocked;
 use \Payutc\Bom\MsgPerso;
 use \Payutc\Log;
@@ -362,6 +363,49 @@ ORDER BY  `date` DESC', array($this->getId(), $this->getId(), $this->getId(), $t
         return $this->gingerUser->is_cotisant && 
             ($this->getCredit() + $amount) <= Config::get('credit_max');
     }
+
+    /**
+     * VIREMENT
+     * 
+     * @param int $amount montant du virement en centimes
+     * @param int $userID Id de la personne a qui l'on vire de l'argent.
+     * @param string $message 
+     * @return int $error (1 c'est que tout va bien sinon faut aller voir le code d'erreur)
+     */
+    public function transfer($amount, $userID, $message="") {
+        if($amount < 0) {
+            Log::warn("TRANSFERT D'ARGENT : TENTATIVE DE FRAUDE... Montant négatif par l'userID ".$this->getId()." vers l'user ".$userID);
+            throw TransferException("C'est pas fair play de voler de l'argent à ces petits camarades...");
+        } else if($this->getCredit() < $amount) {
+            throw TransferException("Pas assez d'argent pour effectuer le virement.");
+        } else if($this->User->getId() == $userID) {
+            throw TransferException("Petit malin, se virer de l'argent à soi même n'a aucun sens !");
+        } else {
+            if(!User::userExistById($userID)) {
+                throw TransferException("Il n'y a pas d'utilisateur à qui verser l'argent...");
+            } else {
+                $conn = Dbal::conn();
+                $conn->beginTransaction();
+                try {
+                    User::incCreditById($userID, $amount);
+                    $this->decCredit($amount);
+                    $conn->insert('t_virement_vir',
+                        array(
+                            "vir_date" => "NOW()",
+                            "vir_amount" => $amount,
+                            "usr_id_from" => $this->getId(),
+                            "usr_id_to" => $userID,
+                            "vir_message" => $message));
+                    $conn->commit();
+                    return 1;
+                } catch (\Exception $e) {
+                    $conn->rollback();
+                    Log::error("Error during transfer from ".$this->getId()." to ".$userID." amount:".$amount);
+                    throw TransferException("Erreur pendant le virement...");
+                }
+            }
+        }
+    }  
 
     /**
     * Returns the last purchases from the user (to allow the seller to cancel them)

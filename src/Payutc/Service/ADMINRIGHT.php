@@ -91,7 +91,14 @@ use \Application;
                         "desc"    => "Permet de consulter un historique, et de bloquer/débloquer sa carte",
                         "user"    => false,
                         "app"     => false
+                    ), array(
+                        "service" => "TRANSFER",
+                        "name"    => "Virer de l'argent",
+                        "desc"    => "Permet de virer de l'argent vers un autre utilisateur",
+                        "user"    => false,
+                        "app"     => false
                     )
+                    
                 );
     }
      
