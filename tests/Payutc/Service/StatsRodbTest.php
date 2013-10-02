@@ -62,13 +62,13 @@ class StatsRodbTest extends ServiceBaseRodbTest
     /**
      * @requires PHP 5.4
      */
-    public function testGetRecette()
+    public function testGetRevenue()
     {
         $cookie = '';
         $r = null;
         $this->loginCas($cookie, $r, 'mguffroy@POSS3', 'POSS3');
         $this->loginApp($cookie, $r, 'app_stats');
-        $r = httpSend('STATS', 'getRecette', $cookie, array(
+        $r = httpSend('STATS', 'getRevenue', $cookie, array(
                                                             'fun_id' => '1',
                                                             'app_id' => '51'
                                                             ));
