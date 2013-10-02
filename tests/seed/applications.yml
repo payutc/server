@@ -34,3 +34,10 @@ t_application_app:
     app_creator: mguffroy
     app_lastuse: 2013-10-02
     app_created: 2013-10-02
+  -
+    app_id: 6
+    app_key: app_transfer
+    app_name: app_transfer
+    app_creator: mguffroy
+    app_lastuse: 2013-10-03
+    app_created: 2013-10-03

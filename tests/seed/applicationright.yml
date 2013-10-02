@@ -26,3 +26,7 @@ tj_app_fun_afu:
     app_id: 5
     fun_id: null
     afu_service: MYACCOUNT
+  -
+    app_id: 6
+    fun_id: null
+    afu_service: TRANSFER
