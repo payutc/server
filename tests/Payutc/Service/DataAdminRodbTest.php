@@ -47,7 +47,6 @@ class DataAdminRodbTest extends ServiceBaseRodbTest
             'login' => 'trecouvr',
             'key' => 'key-user'
         ));
-        print_r($r->body);
         $this->assertEquals(200, $r->code);
         $this->assertEquals('value1', $r->body);
     }

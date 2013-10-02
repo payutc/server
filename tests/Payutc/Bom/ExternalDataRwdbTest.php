@@ -5,6 +5,7 @@ require_once 'bootstrap.php';
 
 use \Payutc\Bom\ExternalData;
 
+        use \Payutc\Db\Dbal;
 
 class ExternalDataRwdbTest extends ReadOnlyDatabaseTest {
     
@@ -35,6 +36,7 @@ class ExternalDataRwdbTest extends ReadOnlyDatabaseTest {
         ExternalData::set(1, 'key-fun', $a.'-newvalue');
         $b = ExternalData::get(1, 'key-fun');
         $this->assertEquals($a.'-newvalue', $b);
+        
         // check that this does not affect the others
         $this->assertEquals($orig_user, ExternalData::get(1, 'key-user', 1));
         $this->assertEquals($orig_fun, ExternalData::get(1, 'key-user', 1));

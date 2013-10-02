@@ -16,24 +16,24 @@ class DATAADMIN extends \ServiceBase {
      * $usr = array('login' => 'trecouvr');
      * $usr = array('badge' => 'ABCDEABCDE');
      * $usr = array('id' => 1);
-     * $usr = 1;
-     * $usr = 'trecouvr';
-     * $usr = NULL
+     * $usr = null
      * 
      * output:
-     * (id : int) OR (login : string) OR (NULL)
+     * id : int or null
      */
     protected function convertUsrArg($usr) {
-        if (is_array($usr)) {
+        if ($usr !== null) {
             if (isset($usr['badge'])) {
                 $u = User::getUserFromBadge($usr['badge']);
                 $usr = $u->getId();
             }
             else if (isset($usr['login'])) {
-                $usr = $usr['login'];
+                $u = new User($usr['login']);
+                $usr = $u->getId();
             }
             else if (isset($usr['id'])) {
                 $usr = $usr['id'];
+
             }
         }
         return $usr;
@@ -55,8 +55,8 @@ class DATAADMIN extends \ServiceBase {
         return $this->get($fun_id, $key);
     }
     
-    public function setFunData($fun_id, $key, $val, $usr_id = null) {
-        return $this->set($fun_id, $key, $val, $usr_id);
+    public function setFunData($fun_id, $key, $val) {
+        return $this->set($fun_id, $key, $val);
     }
     
     public function getUsrDataByLogin($fun_id, $login, $key) {

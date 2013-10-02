@@ -19,8 +19,8 @@ class Version20130921203415 extends AbstractMigration
               `usr_id` int(11) unsigned,
               `exd_key` varchar(128) NOT NULL,
               `exd_val` varchar(1024) NOT NULL,
-              `exd_inserted` date NOT NULL,
-              `exd_removed` date,
+              `exd_inserted` datetime NOT NULL,
+              `exd_removed` datetime,
               PRIMARY KEY (`exd_id`),
               KEY `fun_id` (`fun_id`),
               KEY `usr_id` (`usr_id`),
@@ -29,8 +29,7 @@ class Version20130921203415 extends AbstractMigration
         $this->addSql("            
             ALTER TABLE `t_external_data_exd`
               ADD CONSTRAINT `t_external_data_exd_ibfk_2` FOREIGN KEY (`usr_id`) REFERENCES `ts_user_usr` (`usr_id`),
-              ADD CONSTRAINT `t_external_data_exd_ibfk_1` FOREIGN KEY (`fun_id`) REFERENCES `t_fundation_fun` (`fun_id`),
-              ADD UNIQUE  `fun_usr_key_uniq` (  `fun_id` ,  `usr_id` ,  `exd_key`, `exd_removed` )");
+              ADD CONSTRAINT `t_external_data_exd_ibfk_1` FOREIGN KEY (`fun_id`) REFERENCES `t_fundation_fun` (`fun_id`)");
     }
 
     public function down(Schema $schema)

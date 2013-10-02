@@ -3,6 +3,7 @@
 require_once 'bootstrap.php';
 
 use \Payutc\Bom\ExternalData;
+        use \Payutc\Db\Dbal;
 
 
 class ExternalDataRodbTest extends ReadOnlyDatabaseTest {
@@ -23,8 +24,6 @@ class ExternalDataRodbTest extends ReadOnlyDatabaseTest {
     public function testGetUserData()
     {
         $a = ExternalData::get(1, 'key-user', 1);
-        $this->assertEquals('value1', $a);
-        $a = ExternalData::get(1, 'key-user', 'trecouvr');
         $this->assertEquals('value1', $a);
     }
     
