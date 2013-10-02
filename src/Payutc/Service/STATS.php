@@ -31,9 +31,10 @@ class STATS extends \ServiceBase {
      * $start => date de départ de la recherche, format mysql, si null pas de limite
      * $end => date de fin de la recherche, format mysql, si null pas de limite
      **/
-    public function getRecette($fun_id, $app_id=null, $start=null, $end=null) {
+    public function getRevenue($fun_id, $app_id=null, $start=null, $end=null, $tick=null) {
         $this->checkRight(false, true, true, $fun_id);
-        return \Payutc\Bom\Purchase::getRecette($fun_id, $app_id, $start, $end);
+
+        return \Payutc\Bom\Purchase::getRevenue($fun_id, $app_id, $start, $end, $tick);
     }
 
     /**
