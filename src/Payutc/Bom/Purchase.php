@@ -57,15 +57,18 @@ class Purchase
     }
 
     /**
-     * getRecette() retourne le montant total des ventes
+     * getRevenue() retourne le montant total des ventes
      * d'une fondation $fun_id pour l'application $app_id
      * ou de toutes les applications si $app_id est nullf
      * depuis $start jusqu'à $end
+     *
+     * $tick permet de découper le resultat par tranche (pour afficher une courbe d'évolution)
+     * il faut indiquer un nombre de secondes à $tick
      */
-    public static function getRecette($fun_id, $app_id=null, $start=null, $end=null)
+    public static function getRevenue($fun_id, $app_id=null, $start=null, $end=null, $tick=null)
     {
         $qb = Dbal::createQueryBuilder();
-        $qb->select('sum(pur_price) as total')
+        $qb->select('sum(pur_price) as total', 'pur.pur_date')
             ->from('t_purchase_pur', 'pur')
             ->andWhere('pur.fun_id = :fun_id')->setParameter('fun_id', $fun_id)
             ->andWhere('pur.pur_removed = 0');
@@ -84,8 +87,17 @@ class Purchase
                 ->setParameter('end', $end);
         }
 
-        $result = $qb->execute()->fetch();
-        return $result['total'];
+        if($tick != null) {
+            $qb->groupBy('UNIX_TIMESTAMP( pur.pur_date ) DIV :tick')
+                ->setParameter('tick', $tick);
+            $result = array();
+            $a = $qb->execute();
+            while($r = $a->fetch(3)) { $result[] = $r; }
+            return $result;
+        } else {
+            $result = $qb->execute()->fetch();
+            return $result['total'];
+        }
     }
     
     public static function getPurchaseById($pur_id)
