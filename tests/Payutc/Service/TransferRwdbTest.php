@@ -35,12 +35,10 @@ class TransferRwdbTest extends DatabaseTest
         $this->assertEquals(200, $r->code);
 
         $r = httpSend('TRANSFER', 'transfer', $cookie, array("amount" => 1100, "userID" => 9447, "message" => "coucou"));
-        print_r($r);
         $this->assertEquals(200, $r->code);
     
         $u = new User("mguffroy");
-        $this->assertEquals($u->getCredit(), 5100);
-    
+        $this->assertEquals($u->getCredit(), 6100);
     }
 }
 
