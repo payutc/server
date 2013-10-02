@@ -480,10 +480,10 @@ class MADMIN {
     }
 
 	/**
-	 * Check si le user est loggué
-	 * 
-	 * @return Array $userDetails
-	 */
+    * Récupère les infos d'un user loggué
+    *
+    * @return Array $userDetails
+    */
     public function getUserDetails() {
         if($this->User) {
             return array(
