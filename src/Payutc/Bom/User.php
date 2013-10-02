@@ -378,7 +378,7 @@ ORDER BY  `date` DESC', array($this->getId(), $this->getId(), $this->getId(), $t
             throw TransferException("C'est pas fair play de voler de l'argent à ces petits camarades...");
         } else if($this->getCredit() < $amount) {
             throw TransferException("Pas assez d'argent pour effectuer le virement.");
-        } else if($this->User->getId() == $userID) {
+        } else if($this->getId() == $userID) {
             throw TransferException("Petit malin, se virer de l'argent à soi même n'a aucun sens !");
         } else {
             if(!User::userExistById($userID)) {
