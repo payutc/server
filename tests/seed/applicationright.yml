@@ -22,3 +22,7 @@ tj_app_fun_afu:
     app_id: 4
     fun_id: null
     afu_service: RELOAD
+  -
+    app_id: 5
+    fun_id: null
+    afu_service: MYACCOUNT

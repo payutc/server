@@ -27,3 +27,10 @@ t_application_app:
     app_creator: mguffroy
     app_lastuse: 2013-10-01
     app_created: 2013-10-01
+  -
+    app_id: 5
+    app_key: app_myaccount
+    app_name: app_myaccount
+    app_creator: mguffroy
+    app_lastuse: 2013-10-02
+    app_created: 2013-10-02
