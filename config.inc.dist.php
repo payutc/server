@@ -30,7 +30,6 @@ $_CONFIG['cas_url'] = "";
 
 // URL publique http(s) du serveur (avec le / final)
 $_CONFIG['server_url'] = "http://localhost/buckutt/";
-$_CONFIG['http_server_url'] = "http://localhost/buckutt/";
 
 // Méthode de cache côté serveur pour les wsdl (mettre WSDL_CACHE_BOTH en prod)
 $_CONFIG['wsdl_cache'] = WSDL_CACHE_NONE;
