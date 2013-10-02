@@ -34,8 +34,6 @@ class Version20131002042353 extends AbstractMigration
 
     public function down(Schema $schema)
     {
-        $this->addSql("
-            DROP TABLE `t_external_data_exd`;
-            ALTER TABLE  `payutc`.`t_external_data_exd` DROP INDEX  `fun_usr_key_uniq`;");
+        $this->addSql("DROP TABLE `t_external_data_exd`;");
     }
 }
