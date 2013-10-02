@@ -355,9 +355,12 @@ ORDER BY  `date` DESC', array($this->getId(), $this->getId(), $this->getId(), $t
     *
     * @return bool
     */
-    public function canReload() {
+    public function canReload($amount=1000) {
+        if($amount<Config::get('rechargement_min', 1000)) {
+            return false;
+        }
         return $this->gingerUser->is_cotisant && 
-            ($this->getCredit() + Config::get('rechargement_min', 1000)) <= Config::get('credit_max');
+            ($this->getCredit() + $amount) <= Config::get('credit_max');
     }
 
     /**
