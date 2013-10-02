@@ -1,12 +1,5 @@
 #!/bin/bash
 
-PHPVER=`echo "<?php echo PHP_VERSION_ID;" | php`
-if [ "$PHPVER" -lt 50400 ]
-then
-    echo "PHP version < 5.4.0, skipping"
-    exit 0
-fi
-
 cd `dirname $0`
 
 FAUX_GINGER_PORT=33434
@@ -26,6 +19,13 @@ pushd ..
 php db.php migrations:migrate --no-interaction
 echo "If migrations failed, you should probably empty your test database"
 popd
+
+PHPVER=`echo "<?php echo PHP_VERSION_ID;" | php`
+if [ "$PHPVER" -lt 50400 ]
+then
+    echo "PHP version < 5.4.0, skipping"
+    exit 0
+fi
 
 echo "Get faux-ginger"
 if [ -d faux-ginger ]
