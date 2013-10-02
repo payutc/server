@@ -51,12 +51,22 @@ class DATAADMIN extends \ServiceBase {
         return ExternalData::set($fun_id, $key, $val, $usr);
     }
     
+    protected function del($fun_id, $key, $usr = null) {
+        $this->checkRight(true, true, true, $fun_id);
+        $usr = $this->convertUsrArg($usr);
+        return ExternalData::del($fun_id, $key, $usr);
+    }
+    
     public function getFunData($fun_id, $key) {
         return $this->get($fun_id, $key);
     }
     
     public function setFunData($fun_id, $key, $val) {
         return $this->set($fun_id, $key, $val);
+    }
+    
+    public function delFunData($fun_id, $key) {
+        return $this->del($fun_id, $key);
     }
     
     public function getUsrDataByLogin($fun_id, $login, $key) {
@@ -73,6 +83,14 @@ class DATAADMIN extends \ServiceBase {
     
     public function setUsrDataByBadge($fun_id, $badge, $key, $val) {
         return $this->set($fun_id, $key, $val, array('badge'=>$badge));
+    }
+    
+    public function delUsrDataByLogin($fun_id, $login, $key) {
+        return $this->del($fun_id, $key, array('login'=>$login));
+    }
+    
+    public function delUsrDataByBadge($fun_id, $badge, $key) {
+        return $this->del($fun_id, $key, array('badge'=>$badge));
     }
 }
 

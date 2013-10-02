@@ -33,6 +33,11 @@ class ExternalData {
             'exd_inserted' => 'NOW()'));
     }
     
+    /**
+     * @param $fun_id
+     * @param $key
+     * @param $usr_id
+     */
     public static function get($fun_id, $key, $usr_id = null, $full = false) {
         static::checkKey($key);
         $qb = Dbal::createQueryBuilder();
@@ -50,7 +55,8 @@ class ExternalData {
     /**
      * @param $fun_id
      * @param $key
-     * @param usr user id or user nickname
+     * @param $val
+     * @param $usr_id
      */
     public static function set($fun_id, $key, $val, $usr_id = null) {
         static::checkKey($key);
@@ -58,34 +64,10 @@ class ExternalData {
         
         $conn->beginTransaction();
         try {
-            $qb = $conn->createQueryBuilder();
-            $qb->update('t_external_data_exd', 'exd')
-                ->where('fun_id = :fun_id')
-                ->setParameter('fun_id', $fun_id)
-                ->where('exd_key = :key')
-                ->setParameter('key', $key)
-                ->andWhere('exd_removed is NULL')
-                ->set('exd_removed', 'NOW()');
             
-            if ($usr_id === null) {
-                $qb->andWhere('usr_id is NULL');
-            }
-            else {
-                $qb->andWhere('usr_id = :usr_id')
-                    ->setParameter('usr_id', $usr_id);
-            }
+            $affected_rows = static::del($fun_id, $key, $usr_id);
             
-            $affected_rows = $qb->execute();
-            
-            if ($affected_rows > 1) {
-                Log::warning("multiple rows has been affected"); // TODO
-            }
-            // one row affected, the record was already existing
-            else if ($affected_rows == 1) {
-                
-            }
-            // 0 row affected, the record does not exist
-            else {
+            if ($affected_rows == 0) {
                 Log::info("create new external data ($fun_id, $key, $val, $usr_id)");
             }
             
@@ -98,6 +80,48 @@ class ExternalData {
             $conn->rollback();
             throw $e;
         }
+    }
+    
+    /**
+     * @param $fun_id
+     * @param $key
+     * @param $usr_id
+     */
+    public static function del($fun_id, $key, $usr_id = null) {
+        static::checkKey($key);
+        
+        $qb = Dbal::createQueryBuilder();
+        $qb->update('t_external_data_exd', 'exd')
+            ->where('fun_id = :fun_id')
+            ->setParameter('fun_id', $fun_id)
+            ->where('exd_key = :key')
+            ->setParameter('key', $key)
+            ->andWhere('exd_removed is NULL')
+            ->set('exd_removed', 'NOW()');
+        
+        if ($usr_id === null) {
+            $qb->andWhere('usr_id is NULL');
+        }
+        else {
+            $qb->andWhere('usr_id = :usr_id')
+                ->setParameter('usr_id', $usr_id);
+        }
+        
+        $affected_rows = $qb->execute();
+        
+        if ($affected_rows > 1) {
+            Log::warning("multiple rows has been deleted ($fun_id, $key, $usr_id)"); // TODO
+        }
+        // one row affected, the record was already existing
+        else if ($affected_rows == 1) {
+            
+        }
+        // 0 row affected, the record does not exist
+        else {
+            
+        }
+        
+        return $affected_rows;
     }
     
     protected static function checkKey($key) {

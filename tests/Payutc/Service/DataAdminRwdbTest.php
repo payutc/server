@@ -87,5 +87,31 @@ class DataAdminRwdbTest extends ServiceBaseRodbTest
         $this->assertEquals(200, $r->code);
         $this->assertEquals($orig_usr.'n', ExternalData::get(1, 'key-user', 1));
     }
+    
+    
+    /**
+     * @requires PHP 5.4
+     */
+    public function testDelData()
+    {
+        $provider = array(
+            'delUsrDataByBadge' => array('badge' => 'ABCDABCD'),
+            'delUsrDataByLogin' => array('login' => 'trecouvr'),
+            'delFunData' => null
+        );
+        foreach ($provider as $meth=>$data) {
+            $args = array(
+                'fun_id' => '1',
+                'key' => 'key-doesnotexist',
+            );
+            if ($data !== null) {
+                $args = array_merge($args, $data);
+            }
+            $r = httpSend('DATAADMIN', $meth, $this->cookie, $args);
+            var_dump($r->body);
+            $this->assertEquals(200, $r->code);
+            $this->assertEquals(0, $r->body);
+        }
+    }
 }
 

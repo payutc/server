@@ -4,8 +4,7 @@
 require_once 'bootstrap.php';
 
 use \Payutc\Bom\ExternalData;
-
-        use \Payutc\Db\Dbal;
+use \Payutc\Db\Dbal;
 
 class ExternalDataRwdbTest extends ReadOnlyDatabaseTest {
     
@@ -112,5 +111,61 @@ class ExternalDataRwdbTest extends ReadOnlyDatabaseTest {
     {
         ExternalData::get(1, 'key\'');
     }
+    
+    /**
+     * Test delete
+     */
+    public function testDelUsrData()
+    {
+        // create new data
+        ExternalData::set(1, 'key-usr-to-delete', 'blabla', 1);
+        
+        // count rows
+        $qb = Dbal::createQueryBuilder();
+        $qb->select('count(*) as c')
+            ->from('t_external_data_exd', 'exd')
+            ->where('exd_removed is NULL');
+        $c = $qb->execute()->fetch()['c'];
+        
+        // delete
+        ExternalData::del(1, 'key-usr-to-delete', 1);
+        
+        // count rows
+        $qb = Dbal::createQueryBuilder();
+        $qb->select('count(*) as c')
+            ->from('t_external_data_exd', 'exd')
+            ->where('exd_removed is NULL');
+        $c2 = $qb->execute()->fetch()['c'];
+        
+        $this->assertEquals($c - 1, $c2);
+     }
+    
+    /**
+     * Test delete
+     */
+    public function testDelFunData()
+    {
+        // create new data
+        ExternalData::set(1, 'key-fun-to-delete', 'blabla');
+        
+        // count rows
+        $qb = Dbal::createQueryBuilder();
+        $qb->select('count(*) as c')
+            ->from('t_external_data_exd', 'exd')
+            ->where('exd_removed is NULL');
+        $c = $qb->execute()->fetch()['c'];
+        
+        // delete
+        ExternalData::del(1, 'key-fun-to-delete');
+        
+        // count rows
+        $qb = Dbal::createQueryBuilder();
+        $qb->select('count(*) as c')
+            ->from('t_external_data_exd', 'exd')
+            ->where('exd_removed is NULL');
+        $c2 = $qb->execute()->fetch()['c'];
+        
+        $this->assertEquals($c - 1, $c2);
+     }
 }
 

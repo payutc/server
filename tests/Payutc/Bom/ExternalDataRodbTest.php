@@ -3,7 +3,6 @@
 require_once 'bootstrap.php';
 
 use \Payutc\Bom\ExternalData;
-        use \Payutc\Db\Dbal;
 
 
 class ExternalDataRodbTest extends ReadOnlyDatabaseTest {
