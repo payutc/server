@@ -15,7 +15,8 @@ class Services {
         'BLOCKED',
         'GESARTICLE',
         'PAYLINE',
-        'RELOAD'
+        'RELOAD',
+        'MYACCOUNT'
     );
     
     public static function get($name) {

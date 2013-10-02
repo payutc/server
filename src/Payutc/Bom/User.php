@@ -190,6 +190,45 @@ class User {
     }
 
     /**
+    * Fonction pour récupérer l'historique de l'utilisateur
+    *
+    * @return array
+    */
+    public function getHistorique() {
+        $conn = Dbal::conn();
+        $query = $conn->executeQuery('
+    SELECT pur.pur_date AS date, pur.pur_price AS amount, "PURCHASE" AS 
+type, obj.obj_name as name, fun.fun_name as fun, NULL as firstname, NULL as lastname
+FROM t_purchase_pur pur, t_object_obj obj, t_fundation_fun fun, t_application_app app
+WHERE 
+    pur.usr_id_buyer = ?
+    AND pur.obj_id = obj.obj_id
+    AND pur.fun_id = fun.fun_id
+UNION 
+SELECT rec.rec_date AS date, rec.rec_credit AS amount, "RECHARGE" AS 
+type, NULL as name, NULL as fun, NULL as firstname, NULL as lastname
+FROM t_recharge_rec rec
+WHERE 
+    rec.usr_id_buyer = ?
+UNION
+SELECT virin.vir_date AS date, virin.vir_amount AS amount, "VIRIN" AS 
+type, virin.vir_message as name, NULL as fun, usrfrom.usr_firstname as firstname, usrfrom.usr_lastname as lastname
+FROM t_virement_vir virin, ts_user_usr usrfrom
+WHERE 
+    virin.usr_id_to = ?
+    AND virin.usr_id_from = usrfrom.usr_id
+UNION
+SELECT virout.vir_date AS date, virout.vir_amount AS amount, "VIROUT" AS 
+type, virout.vir_message as name, NULL as fun, usrto.usr_firstname as firstname, usrto.usr_lastname as lastname
+FROM t_virement_vir virout, ts_user_usr usrto
+WHERE 
+    virout.usr_id_from = ?
+    AND virout.usr_id_to = usrto.usr_id
+ORDER BY  `date` DESC', array($this->getId(), $this->getId(), $this->getId(), $this->getId()));
+    return $query->fetchAll();
+    }
+
+    /**
     * Fonction pour se bloquer soi même (en cas de perte/vol par exemple)
     * 
     * @param int $blocage 1 to block the User

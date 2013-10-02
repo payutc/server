@@ -82,7 +82,13 @@ use \Application;
                     ), array(
                         "service" => "RELOAD",
                         "name"    => "Rechargement",
-                        "desc"    => "Permettre le rechargement des utilisateurs",
+                        "desc"    => "Permet le rechargement des utilisateurs",
+                        "user"    => false,
+                        "app"     => false
+                    ), array(
+                        "service" => "MYACCOUNT",
+                        "name"    => "Gestion de mon compte",
+                        "desc"    => "Permet de consulter un historique, et de bloquer/débloquer sa carte",
                         "user"    => false,
                         "app"     => false
                     )
