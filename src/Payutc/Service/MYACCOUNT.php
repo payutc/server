@@ -9,11 +9,7 @@ namespace Payutc\Service;
  * (Visualisation de l'historique, Blocage/Déblocage de sa carte)
  */
  
- class MYACCOUNT extends \ServiceBase {
-	 
-    public function __construct() {
-        parent::__construct();
-    }
+class MYACCOUNT extends \ServiceBase {
      
 	/**
 	* Recupere l'historique d'un utilisateur (+ son solde pour éviter une requete a casper)

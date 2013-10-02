@@ -11,11 +11,7 @@ use \Payutc\Config;
  *
  */
  
- class RELOAD extends \ServiceBase {
-	 
-    public function __construct() {
-        parent::__construct();
-    }
+class RELOAD extends \ServiceBase {
      
 	/**
 	* Retourne les infos utiles pour recharger (Min recharge, Max recharge, Can reload (true/false) 
