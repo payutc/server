@@ -310,6 +310,16 @@ class User {
     public function isCotisant() {
         return $this->gingerUser->is_cotisant;
     }
+    
+    /**
+    *   Retourne si l'utilisateur à le droit de recharger ou non
+    *
+    * @return bool
+    */
+    public function canReload() {
+        return $this->gingerUser->is_cotisant && 
+            ($this->getCredit() + Config::get('rechargement_min', 1000)) <= Config::get('credit_max');
+    }
 
     /**
     * Returns the last purchases from the user (to allow the seller to cancel them)

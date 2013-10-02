@@ -79,6 +79,12 @@ use \Application;
                         "desc"    => "Permet de récupérer différentes informations statistiques sur la fundation.",
                         "user"    => true,
                         "app"     => true
+                    ), array(
+                        "service" => "RELOAD",
+                        "name"    => "Rechargement",
+                        "desc"    => "Permettre le rechargement des utilisateurs",
+                        "user"    => false,
+                        "app"     => false
                     )
                 );
     }
