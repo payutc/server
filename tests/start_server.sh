@@ -21,6 +21,12 @@ fi
 echo "Copy test config"
 cp config.inc.php ../
 
+echo "Migrating database structure"
+pushd ..
+php db.php migrations:migrate --no-interaction
+echo "If migrations failed, you should probably empty your test database"
+popd
+
 echo "Get faux-ginger"
 if [ -d faux-ginger ]
 then
