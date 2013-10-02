@@ -14,7 +14,8 @@ class Services {
         'ADMINRIGHT',
         'BLOCKED',
         'GESARTICLE',
-        'DATAADMIN'
+        'DATAADMIN',
+        'PAYLINE'
     );
     
     public static function get($name) {

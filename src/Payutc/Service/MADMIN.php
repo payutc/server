@@ -136,25 +136,9 @@ class MADMIN {
             // This is normal, it's even what we want
         }
         
-        // On récupére l'ancien solde
-        $res = $this->db->query("SELECT osr_credit
-FROM `t_oldusr_osr` 
-WHERE osr_login = '%s'", Array($this->loginToRegister));
-        $solde = 0;
-        if ($this->db->affectedRows() >= 1) {
-            while ($don = $this->db->fetchArray($res)) {
-                $solde = $don['osr_credit'];
-            }
-        }
-
         // On créé le user et on lui ajoute son crédit
         try {
             $this->User = User::createAndGetNewUser($this->loginToRegister);
-            if($solde > 0){
-                $this->User->incCredit($solde);
-                $userid = $this->User->getId();        
-                $this->db->query("INSERT INTO t_recharge_rec (rty_id, usr_id_buyer, usr_id_operator, poi_id, rec_date, rec_credit, rec_trace) VALUES ('%u', '%u', '%u', '%u', NOW(), '%u', '%s')", array(7, $userid, $userid, 1, $solde, "Import ancien solde"));                
-            }
         }
         catch (\Exception $ex){
             Log::error("Impossible de créer le user $this->loginToRegister: ".$ex->getMessage());
@@ -271,6 +255,8 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
         if(empty($this->User)) {
             return "";
         }
+        $pl = new \Payutc\Bom\Payline(0, "MADMIN");
+        $pl->checkUser($this->User);
         return $this->User->getCredit();
     }    
 
@@ -362,8 +348,8 @@ WHERE osr_login = '%s'", Array($this->loginToRegister));
               if($auth != 1)
                     return "<error>".$this->getErrorDetail($auth)."</error>";
 
-        $pb = new Paybox($this->User);
-        return $pb->execute($amount, $callbackUrl);
+        $pl = new \Payutc\Bom\Payline(-1 , "MADMIN");
+        return $pl->doWebPayment($this->User, $amount, $callbackUrl);
     }
     
     /**
