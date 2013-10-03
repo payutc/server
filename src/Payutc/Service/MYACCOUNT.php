@@ -59,7 +59,7 @@ class MYACCOUNT extends \ServiceBase {
         }
         
         // Save user in session for all service
-        $_SESSION['ServiceBase']['user'] = $user;
+        $this->setUser($user);
         return $user->getNickname();
     }
 

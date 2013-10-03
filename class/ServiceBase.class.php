@@ -98,9 +98,14 @@ class ServiceBase {
 
         $user = User::getUserFromCas($ticket, $service);
         
+        $this->setUser($user);
+        
+        return $user->getNickname();
+    }
+    
+    protected function setUser($user) {
         // Save user in session for all service
         $_SESSION['ServiceBase']['user'] = $user;
-        return $user->getNickname();
     }
 
 	/**
@@ -406,7 +411,7 @@ class ServiceBase {
         else {
             return $session[$key];
         }
-    }
+    } 
 }
 
 
