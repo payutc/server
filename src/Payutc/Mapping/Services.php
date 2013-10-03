@@ -8,7 +8,6 @@ class Services {
         'POSS2WithExceptions',
         'POSS3',
         'AADMIN',
-        'MADMIN',
         'STATS',
         'KEY',
         'ADMINRIGHT',
