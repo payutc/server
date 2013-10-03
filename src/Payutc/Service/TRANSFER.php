@@ -19,7 +19,7 @@ class TRANSFER extends \ServiceBase {
 	* @return 1 or exception
 	*/
 	public function transfer($amount, $userID, $message="") {
-	    // On a une appli qui a les droits ?
+        // On a une appli qui a les droits ?
         $this->checkRight(false, true, true, null);
         // on a un user ?
         if(!$this->user()) {
