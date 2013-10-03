@@ -26,6 +26,7 @@ use \Payutc\Exception\UserNotFound;
 use \Payutc\Exception\GingerFailure;
 use \Payutc\Exception\UpdateFailed;
 use \Payutc\Exception\LoginError;
+use \Payutc\Exception\CannotReload;
 use \Payutc\Exception\TransferException;
 use \Payutc\Bom\Blocked;
 use \Payutc\Bom\MsgPerso;
@@ -352,16 +353,26 @@ ORDER BY  `date` DESC', array($this->getId(), $this->getId(), $this->getId(), $t
     }
     
     /**
-    *   Retourne si l'utilisateur à le droit de recharger ou non
+    *   Vérifie qu'un utilisateur peut recharger
     *
-    * @return bool
+    * @throws CannotReload
     */
-    public function canReload($amount=1000) {
-        if($amount<Config::get('rechargement_min', 1000)) {
-            return false;
+    public function checkReload($amount = null) {
+        if($amount === null){
+            $amount = Config::get('rechargement_min', 1000);
         }
-        return $this->gingerUser->is_cotisant && 
-            ($this->getCredit() + $amount) <= Config::get('credit_max');
+        
+        if($amount < Config::get('rechargement_min', 1000)) {
+            throw new CannotReload("Le montant du rechargement est inférieur au minimum autorisé");
+        }
+        
+        if(($this->getCredit() + $amount) > Config::get('credit_max')){
+            throw new CannotReload("Le rechargement ferait dépasser le plafond maximum");
+        }
+        
+        if(!$this->isCotisant()){
+            throw new CannotReload("Il faut être cotisant pour pouvoir recharger");
+        }
     }
 
     /**
