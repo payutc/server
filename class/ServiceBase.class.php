@@ -135,7 +135,12 @@ class ServiceBase {
             $user = $this->user()->getNickname();
         else
             $user = null;
-        return array("application" => $app, "user" => $user);
+        return array(
+            "application" => $app, 
+            "user" => $user, 
+            "user_data"=> array(
+                "firstname"=>$this->user()->getFirstname(), 
+                "lastname"=>$this->user()->getLastname()));
     }
 
     /**
