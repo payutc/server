@@ -374,15 +374,17 @@ ORDER BY  `date` DESC', array($this->getId(), $this->getId(), $this->getId(), $t
      */
     public function transfer($amount, $userID, $message="") {
         if($amount < 0) {
-            Log::warn("TRANSFERT D'ARGENT : TENTATIVE DE FRAUDE... Montant négatif par l'userID ".$this->getId()." vers l'user ".$userID);
-            throw TransferException("C'est pas fair play de voler de l'argent à ces petits camarades...");
+            Log::warn("TRANSFERT: Montant négatif par l'userID ".$this->getId()." vers l'user ".$userID);
+            throw new TransferException("Tu ne peux pas faire un virement négatif (bien essayé)");
+        } else if($amount == 0) {
+            throw new TransferException("Pas de montant saisi");
         } else if($this->getCredit() < $amount) {
-            throw TransferException("Pas assez d'argent pour effectuer le virement.");
+            throw new TransferException("Tu n'as pas assez d'argent pour réaliser ce virement");
         } else if($this->getId() == $userID) {
-            throw TransferException("Petit malin, se virer de l'argent à soi même n'a aucun sens !");
+            throw new TransferException("Se virer de l'argent à soi même n'a aucun sens...");
         } else {
             if(!User::userExistById($userID)) {
-                throw TransferException("Il n'y a pas d'utilisateur à qui verser l'argent...");
+                throw new TransferException("Pas de destinataire choisi");
             } else {
                 $conn = Dbal::conn();
                 $conn->beginTransaction();
@@ -391,17 +393,18 @@ ORDER BY  `date` DESC', array($this->getId(), $this->getId(), $this->getId(), $t
                     $this->decCredit($amount);
                     $conn->insert('t_virement_vir',
                         array(
-                            "vir_date" => "NOW()",
+                            "vir_date" => new \DateTime(),
                             "vir_amount" => $amount,
                             "usr_id_from" => $this->getId(),
                             "usr_id_to" => $userID,
-                            "vir_message" => $message));
+                            "vir_message" => $message),
+                        array("datetime", "integer", "integer", "integer", "string")
+                    );
                     $conn->commit();
-                    return 1;
                 } catch (\Exception $e) {
                     $conn->rollback();
-                    Log::error("Error during transfer from ".$this->getId()." to ".$userID." amount:".$amount);
-                    throw TransferException("Erreur pendant le virement...");
+                    Log::error("Error during transaction for transfer (from ".$this->getId()." to $userID amount: $amount): ".$e->getMessage());
+                    throw new TransferException("Une erreur inconnue s'est produite pendant le virement");
                 }
             }
         }
