@@ -7,6 +7,7 @@ namespace Payutc\Service;
 use \Payutc\Config;
 use \Payutc\Log;
 use \Payutc\Bom\ExternalData;
+use \Payutc\Exception\ExternalDataException;
 use \Payutc\Bom\User;
 
 class DATAADMIN extends \ServiceBase {
@@ -57,6 +58,20 @@ class DATAADMIN extends \ServiceBase {
         return ExternalData::del($fun_id, $key, $usr);
     }
     
+    protected function transform($fun_id, $key, $func, $usr = null) {
+        $this->checkRight(true, true, true, $fun_id);
+        $usr = $this->convertUsrArg($usr);
+        $func = json_decode($func, true);
+        if ($func === null) {
+            Log::warning("'$func' is not a valid format for transform method");
+            throw new ExternalDataException('Invalid format');
+        }
+        return ExternalData::transform($fun_id, $key, $func, $usr);
+    }
+    
+    
+    /// FUN DATA
+    
     public function getFunData($fun_id, $key) {
         return $this->get($fun_id, $key);
     }
@@ -68,6 +83,12 @@ class DATAADMIN extends \ServiceBase {
     public function delFunData($fun_id, $key) {
         return $this->del($fun_id, $key);
     }
+    
+    public function transformFunData($fun_id, $key, $func) {
+        return $this->transform($fun_id, $key, $func);
+    }
+    
+    /// USR DATA
     
     public function getUsrDataByLogin($fun_id, $login, $key) {
         return $this->get($fun_id, $key, array('login'=>$login));
@@ -91,6 +112,14 @@ class DATAADMIN extends \ServiceBase {
     
     public function delUsrDataByBadge($fun_id, $badge, $key) {
         return $this->del($fun_id, $key, array('badge'=>$badge));
+    }
+    
+    public function transformUsrDataByLogin($fun_id, $login, $key, $func) {
+        return $this->transform($fun_id, $key, $func, array('login'=>$login));
+    }
+    
+    public function transformUsrDataByBadge($fun_id, $badge, $key, $func) {
+        return $this->transform($fun_id, $key, $func, array('badge'=>$login));
     }
 }
 

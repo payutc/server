@@ -108,10 +108,28 @@ class DataAdminRwdbTest extends ServiceBaseRodbTest
                 $args = array_merge($args, $data);
             }
             $r = httpSend('DATAADMIN', $meth, $this->cookie, $args);
-            var_dump($r->body);
             $this->assertEquals(200, $r->code);
             $this->assertEquals(0, $r->body);
         }
+    }
+    
+    /**
+     * @requires PHP 5.4
+     */
+    public function testTransformData()
+    {
+        $a = 42;
+        $inc = 5;
+        ExternalData::set(1, 'key-transform', $a);
+        
+        $r = httpSend('DATAADMIN', 'transformFunData', $this->cookie, array(
+            'fun_id' => 1,
+            'key' => 'key-transform',
+            'func' => '{"$inc": '.$inc.'}'
+        ));
+        var_dump($r->body);
+        $this->assertEquals(200, $r->code);
+        $this->assertEquals($a+$inc, $r->body);
     }
 }
 

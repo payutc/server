@@ -37,11 +37,16 @@ class ExternalData {
      * @param $fun_id
      * @param $key
      * @param $usr_id
+     * @param $full true to get full record, false to get only the value
+     * @param $for_update true to do a SELECT ... FOR UPDATE statement
      */
-    public static function get($fun_id, $key, $usr_id = null, $full = false) {
+    public static function get($fun_id, $key, $usr_id = null, $full = false, $for_update = false) {
         static::checkKey($key);
         $qb = Dbal::createQueryBuilder();
         $qb->select($full ? '*' : 'exd_val');
+        if ($for_update) {
+            $qb->forUpdate();
+        }
         static::addSelectConditions($qb, $fun_id, $usr_id);
         $qb->andWhere('exd_key = :exd_key')
             ->setParameter('exd_key', $key);
@@ -53,6 +58,7 @@ class ExternalData {
     }
     
     /**
+     * 
      * @param $fun_id
      * @param $key
      * @param $val
@@ -122,6 +128,50 @@ class ExternalData {
         }
         
         return $affected_rows;
+    }
+    
+    
+    /**
+     * Available transformations ($func):
+     * array('$inc'=> (int))
+     * array('$dec'=> (int))
+     * 
+     * @param $fun_id
+     * @param $key
+     * @param $fun the transformation to apply
+     * @param $usr_id
+     * @return the new value
+     */
+    public static function transform($fun_id, $key, array $func, $usr_id = null) {
+        static::checkKey($key);
+        $conn = Dbal::conn();
+        
+        $conn->beginTransaction();
+        try {
+            $full = false;
+            $res = self::get($fun_id, $key, $usr_id, $full, true);
+            $transform = key($func);
+            $value = reset($func);
+            switch ($transform) {
+                case '$dec':
+                    $value = -(int)$value;
+                break;
+                case '$inc':
+                    $res = (int)$res + (int)$value;
+                break;
+                default:
+                    throw new ExternalDataException('Invalid transformation');
+                break;
+            }
+            self::set($fun_id, $key, $res, $usr_id);
+            $conn->commit();
+        }
+        catch (Exception $e) {
+            $conn->rollback();
+            Log::error("Impossible d\'effectuer la transformation ($fun_id, $key, $func, $usr_id) ".$e->getMessage());
+        }
+        
+        return $res;
     }
     
     protected static function checkKey($key) {

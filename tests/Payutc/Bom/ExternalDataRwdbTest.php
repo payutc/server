@@ -149,7 +149,7 @@ class ExternalDataRwdbTest extends ReadOnlyDatabaseTest {
     {
         // create new data
         ExternalData::set(1, 'key-fun-to-delete', 'blabla');
-        
+
         // count rows
         $qb = Dbal::createQueryBuilder();
         $qb->select('count(*) as c')
@@ -157,10 +157,10 @@ class ExternalDataRwdbTest extends ReadOnlyDatabaseTest {
             ->where('exd_removed is NULL');
         $res = $qb->execute()->fetch();
         $c = $res['c'];
-        
+
         // delete
         ExternalData::del(1, 'key-fun-to-delete');
-        
+
         // count rows
         $qb = Dbal::createQueryBuilder();
         $qb->select('count(*) as c')
@@ -168,8 +168,22 @@ class ExternalDataRwdbTest extends ReadOnlyDatabaseTest {
             ->where('exd_removed is NULL');
         $res = $qb->execute()->fetch();
         $c2 = $res['c'];
-        
+
         $this->assertEquals($c - 1, $c2);
-     }
+    }
+     
+    /**
+     * Test increment
+     */
+    public function testIncFunData()
+    {
+        $a = 42;
+        $inc = 3;
+        ExternalData::set(1, 'key-testinc', $a);
+        $aa = ExternalData::transform(1, 'key-testinc', array('$inc'=>$inc));
+        $this->assertEquals($a+$inc, $aa);
+        $aa = ExternalData::get(1, 'key-testinc');
+        $this->assertEquals($a+$inc, $aa);
+    }
 }
 
