@@ -37,7 +37,7 @@ class MYACCOUNT extends \ServiceBase {
     */
     public function register() {
         $login = $this->sessionGet('login_to_register', null);
-        if(!empty($login)) {
+        if(empty($login)) {
             throw new PayutcException("Pas de login à enregistrer");
         }
 
