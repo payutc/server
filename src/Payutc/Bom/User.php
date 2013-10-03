@@ -420,6 +420,7 @@ class User {
      * @return int $error (1 c'est que tout va bien sinon faut aller voir le code d'erreur)
      */
     public function transfer($amount, $userID, $message="") {
+        $message = htmlspecialchars($message);
         if($amount < 0) {
             Log::warn("TRANSFERT: Montant négatif par l'userID ".$this->getId()." vers l'user ".$userID);
             throw new TransferException("Tu ne peux pas faire un virement négatif (bien essayé)");
