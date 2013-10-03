@@ -27,7 +27,7 @@ class MYACCOUNT extends \ServiceBase {
         try {
             return parent::loginCas($ticket,$service);
         } catch (UserNotFound $ex) {
-            $_SESSION['ServiceBase']['login_to_register'] = $ex->login;
+            $this->sessionSet('login_to_register', $ex->login);
             throw $ex;
         }
     }
@@ -36,12 +36,13 @@ class MYACCOUNT extends \ServiceBase {
     * Enregistre un nouvel utilisateur (signifie qu'il a signé la charte sur CASPER)
     */
     public function register() {
-        if(!isset($_SESSION['ServiceBase']['login_to_register'])){
+        $login = $this->sessionGet('login_to_register', null);
+        if(!empty($login)) {
             throw new PayutcException("Pas de login à enregistrer");
         }
 
         try {
-            $user = new User($_SESSION['ServiceBase']['login_to_register']);
+            $user = new User($login);
             throw new PayutcException("Le user existe déjà");
         }
         catch(UserNotFound $ex){
@@ -50,10 +51,10 @@ class MYACCOUNT extends \ServiceBase {
 
         // On créé le user et on lui ajoute son crédit
         try {
-            $user = User::createAndGetNewUser($_SESSION['ServiceBase']['login_to_register']);
+            $user = User::createAndGetNewUser($login);
         }
         catch (\Exception $ex){
-            Log::error("Impossible de créer le user ".$_SESSION['ServiceBase']['login_to_register'].": ".$ex->getMessage());
+            Log::error("Impossible de créer le user $login: ".$ex->getMessage());
             throw new PayutcException("Le user n'a pas pu être chargé");
         }
         
