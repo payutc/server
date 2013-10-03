@@ -27,8 +27,7 @@ class ReloadRodbTest extends ServiceBaseRodbTest
         $this->assertEquals(array(
 		    "min" => 1000,
 		    "max_credit" => 10000,
-		    "max_reload" => 5000,
-		    "can" => true), $r->body);
+		    "max_reload" => 5000), $r->body);
     }
 
     /**
