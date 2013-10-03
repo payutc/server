@@ -529,7 +529,7 @@ ORDER BY  `date` DESC', array($this->getId(), $this->getId(), $this->getId(), $t
         catch (\Exception $ex) {
             Log::error("User: Ginger exception ".$ex->getCode().": ".$ex->getMessage());
             if($ex->getCode() == 404){
-                throw new UserNotFound();
+                throw new UserNotFound("Utilisateur non trouvé dans Ginger");
             }
             throw new GingerFailure($ex);
         }
