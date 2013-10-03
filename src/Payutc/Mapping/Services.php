@@ -8,14 +8,16 @@ class Services {
         'POSS2WithExceptions',
         'POSS3',
         'AADMIN',
-        'MADMIN',
         'STATS',
         'KEY',
         'ADMINRIGHT',
         'BLOCKED',
         'GESARTICLE',
         'DATAADMIN',
-        'PAYLINE'
+        'PAYLINE',
+        'RELOAD',
+        'MYACCOUNT',
+        'TRANSFER'
     );
     
     public static function get($name) {

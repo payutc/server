@@ -26,6 +26,8 @@ use \Payutc\Exception\UserNotFound;
 use \Payutc\Exception\GingerFailure;
 use \Payutc\Exception\UpdateFailed;
 use \Payutc\Exception\LoginError;
+use \Payutc\Exception\CannotReload;
+use \Payutc\Exception\TransferException;
 use \Payutc\Bom\Blocked;
 use \Payutc\Bom\MsgPerso;
 use \Payutc\Log;
@@ -190,6 +192,81 @@ class User {
     }
 
     /**
+    * Fonction pour récupérer l'historique de l'utilisateur
+    *
+    * @return array
+    */
+    public function getHistorique() {
+        $conn = Dbal::conn();
+        $query = $conn->executeQuery(
+            'SELECT 
+                pur.pur_date AS date, 
+                pur.pur_price AS amount, 
+                "PURCHASE" AS type,
+                obj.obj_name AS name,
+                fun.fun_name AS fun,
+                NULL AS firstname,
+                NULL AS lastname
+            FROM 
+                t_purchase_pur pur,
+                t_object_obj obj,
+                t_fundation_fun fun,
+                t_application_app app
+            WHERE 
+                pur.usr_id_buyer = ?
+                AND pur.obj_id = obj.obj_id
+                AND pur.fun_id = fun.fun_id
+            UNION 
+            SELECT 
+                rec.rec_date AS date,
+                rec.rec_credit AS amount,
+                "RECHARGE" AS type,
+                NULL AS name,
+                NULL AS fun,
+                NULL AS firstname,
+                NULL AS lastname
+            FROM 
+                t_recharge_rec rec
+            WHERE 
+                rec.usr_id_buyer = ?
+            UNION
+            SELECT
+                virin.vir_date AS date,
+                virin.vir_amount AS amount,
+                "VIRIN" AS type,
+                virin.vir_message AS name,
+                NULL AS fun,
+                usrfrom.usr_firstname AS firstname,
+                usrfrom.usr_lastname AS lastname
+            FROM 
+                t_virement_vir virin,
+                ts_user_usr usrfrom
+            WHERE 
+                virin.usr_id_to = ?
+                AND virin.usr_id_from = usrfrom.usr_id
+            UNION
+            SELECT
+                virout.vir_date AS date,
+                virout.vir_amount AS amount,
+                "VIROUT" AS type, 
+                virout.vir_message AS name,
+                NULL AS fun,
+                usrto.usr_firstname AS firstname,
+                usrto.usr_lastname AS lastname
+            FROM
+                t_virement_vir virout, 
+                ts_user_usr usrto
+            WHERE 
+                virout.usr_id_from = ?
+                AND virout.usr_id_to = usrto.usr_id
+            ORDER BY  `date` DESC',
+            array($this->getId(), $this->getId(), $this->getId(), $this->getId()),
+            array("integer", "integer", "integer", "integer")
+        );
+    return $query->fetchAll();
+    }
+
+    /**
     * Fonction pour se bloquer soi même (en cas de perte/vol par exemple)
     * 
     * @param int $blocage 1 to block the User
@@ -310,6 +387,75 @@ class User {
     public function isCotisant() {
         return $this->gingerUser->is_cotisant;
     }
+    
+    /**
+    *   Vérifie qu'un utilisateur peut recharger
+    *
+    * @throws CannotReload
+    */
+    public function checkReload($amount = null) {
+        if($amount === null){
+            $amount = Config::get('rechargement_min', 1000);
+        }
+        
+        if($amount < Config::get('rechargement_min', 1000)) {
+            throw new CannotReload("Le montant du rechargement est inférieur au minimum autorisé");
+        }
+        
+        if(($this->getCredit() + $amount) > Config::get('credit_max')){
+            throw new CannotReload("Le rechargement ferait dépasser le plafond maximum");
+        }
+        
+        if(!$this->isCotisant()){
+            throw new CannotReload("Il faut être cotisant pour pouvoir recharger");
+        }
+    }
+
+    /**
+     * VIREMENT
+     * 
+     * @param int $amount montant du virement en centimes
+     * @param int $userID Id de la personne a qui l'on vire de l'argent.
+     * @param string $message 
+     * @return int $error (1 c'est que tout va bien sinon faut aller voir le code d'erreur)
+     */
+    public function transfer($amount, $userID, $message="") {
+        if($amount < 0) {
+            Log::warn("TRANSFERT: Montant négatif par l'userID ".$this->getId()." vers l'user ".$userID);
+            throw new TransferException("Tu ne peux pas faire un virement négatif (bien essayé)");
+        } else if($amount == 0) {
+            throw new TransferException("Pas de montant saisi");
+        } else if($this->getCredit() < $amount) {
+            throw new TransferException("Tu n'as pas assez d'argent pour réaliser ce virement");
+        } else if($this->getId() == $userID) {
+            throw new TransferException("Se virer de l'argent à soi même n'a aucun sens...");
+        } else {
+            if(!User::userExistById($userID)) {
+                throw new TransferException("Pas de destinataire choisi");
+            } else {
+                $conn = Dbal::conn();
+                $conn->beginTransaction();
+                try {
+                    User::incCreditById($userID, $amount);
+                    $this->decCredit($amount);
+                    $conn->insert('t_virement_vir',
+                        array(
+                            "vir_date" => new \DateTime(),
+                            "vir_amount" => $amount,
+                            "usr_id_from" => $this->getId(),
+                            "usr_id_to" => $userID,
+                            "vir_message" => $message),
+                        array("datetime", "integer", "integer", "integer", "string")
+                    );
+                    $conn->commit();
+                } catch (\Exception $e) {
+                    $conn->rollback();
+                    Log::error("Error during transaction for transfer (from ".$this->getId()." to $userID amount: $amount): ".$e->getMessage());
+                    throw new TransferException("Une erreur inconnue s'est produite pendant le virement");
+                }
+            }
+        }
+    }  
 
     /**
     * Returns the last purchases from the user (to allow the seller to cancel them)
@@ -430,7 +576,7 @@ class User {
         catch (\Exception $ex) {
             Log::error("User: Ginger exception ".$ex->getCode().": ".$ex->getMessage());
             if($ex->getCode() == 404){
-                throw new UserNotFound();
+                throw new UserNotFound("Utilisateur non trouvé dans Ginger");
             }
             throw new GingerFailure($ex);
         }

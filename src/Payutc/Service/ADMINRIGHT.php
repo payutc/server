@@ -79,7 +79,26 @@ use \Application;
                         "desc"    => "Permet de récupérer différentes informations statistiques sur la fundation.",
                         "user"    => true,
                         "app"     => true
+                    ), array(
+                        "service" => "RELOAD",
+                        "name"    => "Rechargement",
+                        "desc"    => "Permet le rechargement des utilisateurs",
+                        "user"    => false,
+                        "app"     => false
+                    ), array(
+                        "service" => "MYACCOUNT",
+                        "name"    => "Gestion de mon compte",
+                        "desc"    => "Permet de consulter un historique, et de bloquer/débloquer sa carte",
+                        "user"    => false,
+                        "app"     => false
+                    ), array(
+                        "service" => "TRANSFER",
+                        "name"    => "Virer de l'argent",
+                        "desc"    => "Permet de virer de l'argent vers un autre utilisateur",
+                        "user"    => false,
+                        "app"     => false
                     )
+                    
                 );
     }
      

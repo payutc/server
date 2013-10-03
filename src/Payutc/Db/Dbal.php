@@ -25,6 +25,7 @@ class Dbal
                 'password' => Config::get('sql_pass'),
                 'dbname'   => Config::get('sql_db'),
                 'charset'  => 'utf8',
+                'wrapperClass' => '\Payutc\Db\Dbal\Connection'
             );
             static::$conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, static::$config);
             static::$conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
