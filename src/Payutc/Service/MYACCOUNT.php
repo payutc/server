@@ -35,13 +35,13 @@ class MYACCOUNT extends \ServiceBase {
     * Enregistre un nouvel utilisateur (signifie qu'il a signé la charte sur CASPER)
     */
     public function register() {
-        if(isset($_SESSION['ServiceBase']['login_to_register'])){
+        if(!isset($_SESSION['ServiceBase']['login_to_register'])){
             throw new PayutcException("Pas de login à enregistrer");
         }
 
         try {
             $user = new User($_SESSION['ServiceBase']['login_to_register']);
-            throw new PayutcException("Le user existe déjà.");
+            throw new PayutcException("Le user existe déjà");
         }
         catch(UserNotFound $ex){
             // This is normal, it's even what we want
@@ -53,7 +53,7 @@ class MYACCOUNT extends \ServiceBase {
         }
         catch (\Exception $ex){
             Log::error("Impossible de créer le user ".$_SESSION['ServiceBase']['login_to_register'].": ".$ex->getMessage());
-            throw new PayutcException("Le user n'a pas pu être chargé.");
+            throw new PayutcException("Le user n'a pas pu être chargé");
         }
         
         // Save user in session for all service
