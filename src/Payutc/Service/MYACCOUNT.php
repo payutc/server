@@ -5,6 +5,7 @@ namespace Payutc\Service;
 use \Payutc\Exception\UserNotFound;
 use \Payutc\Exception\PayutcException;
 use \Payutc\Bom\User;
+use \Payutc\Log;
 
 /**
  * MYACCOUNT.php
