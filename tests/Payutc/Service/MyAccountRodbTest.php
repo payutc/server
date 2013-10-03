@@ -18,7 +18,7 @@ class MyAccountRodbTest extends ServiceBaseRodbTest
     {
         $cookie = '';
         $r = null;
-        $this->loginCas($cookie, $r, 'mguffroy@POSS3', 'POSS3');
+        $this->loginCas($cookie, $r, 'mguffroy@MYACCOUNT', 'MYACCOUNT');
         $this->loginApp($cookie, $r, 'app_myaccount');
         $r = httpSend('MYACCOUNT', 'historique', $cookie, array());    
         $this->assertEquals(200, $r->code);

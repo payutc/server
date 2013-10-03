@@ -2,6 +2,10 @@
 
 namespace Payutc\Service;
 
+use \Payutc\Exception\UserNotFound;
+use \Payutc\Exception\PayutcException;
+use \Payutc\Bom\User;
+
 /**
  * MYACCOUNT.php
  * 
@@ -11,6 +15,52 @@ namespace Payutc\Service;
  
 class MYACCOUNT extends \ServiceBase {
      
+    /**
+	 * Connecter le user avec un ticket CAS.
+	 * 
+	 * @param String $ticket
+	 * @param String $service
+	 * @return bool $success
+	 */
+    public function loginCas($ticket, $service) {
+        try {
+            return parent::loginCas($ticket,$service);
+        } catch (UserNotFound $ex) {
+            $_SESSION['ServiceBase']['login_to_register'] = $ex->login;
+            throw $ex;
+        }
+    }
+
+    /**
+    * Enregistre un nouvel utilisateur (signifie qu'il a signé la charte sur CASPER)
+    */
+    public function register() {
+        if(isset($_SESSION['ServiceBase']['login_to_register'])){
+            throw new PayutcException("Pas de login à enregistrer");
+        }
+
+        try {
+            $user = new User($_SESSION['ServiceBase']['login_to_register']);
+            throw new PayutcException("Le user existe déjà.");
+        }
+        catch(UserNotFound $ex){
+            // This is normal, it's even what we want
+        }
+
+        // On créé le user et on lui ajoute son crédit
+        try {
+            $user = User::createAndGetNewUser($_SESSION['ServiceBase']['login_to_register']);
+        }
+        catch (\Exception $ex){
+            Log::error("Impossible de créer le user ".$_SESSION['ServiceBase']['login_to_register'].": ".$ex->getMessage());
+            throw new PayutcException("Le user n'a pas pu être chargé.");
+        }
+        
+        // Save user in session for all service
+        $_SESSION['ServiceBase']['user'] = $user;
+        return $user->getNickname();
+    }
+
 	/**
 	* Recupere l'historique d'un utilisateur (+ son solde pour éviter une requete a casper)
 	* @return array historique de l'utilisateur (+ son solde)
