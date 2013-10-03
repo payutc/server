@@ -131,16 +131,21 @@ class ServiceBase {
             $app = $this->application()->toArray(0);
         else
             $app = null;
-        if($this->user())
+        if($this->user()) {
             $user = $this->user()->getNickname();
-        else
+            $firstname = $this->user()->getFirstname();
+            $lastname = $this->user()->getLastname();
+        } else {
             $user = null;
+            $firstname = null;
+            $lastname = null;
+        }
         return array(
             "application" => $app, 
             "user" => $user, 
-            "user_data"=> array(
-                "firstname"=>$this->user()->getFirstname(), 
-                "lastname"=>$this->user()->getLastname()));
+            "user_data" => array(
+                "firstname" => $firstname, 
+                "lastname" => $lastname));
     }
 
     /**
