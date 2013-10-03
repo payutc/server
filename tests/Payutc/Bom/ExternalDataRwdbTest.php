@@ -125,7 +125,8 @@ class ExternalDataRwdbTest extends ReadOnlyDatabaseTest {
         $qb->select('count(*) as c')
             ->from('t_external_data_exd', 'exd')
             ->where('exd_removed is NULL');
-        $c = $qb->execute()->fetch()['c'];
+        $res = $qb->execute()->fetch();
+        $c = $res['c'];
         
         // delete
         ExternalData::del(1, 'key-usr-to-delete', 1);
@@ -135,7 +136,8 @@ class ExternalDataRwdbTest extends ReadOnlyDatabaseTest {
         $qb->select('count(*) as c')
             ->from('t_external_data_exd', 'exd')
             ->where('exd_removed is NULL');
-        $c2 = $qb->execute()->fetch()['c'];
+        $res = $qb->execute()->fetch();
+        $c2 = $res['c'];
         
         $this->assertEquals($c - 1, $c2);
      }
