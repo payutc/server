@@ -31,7 +31,7 @@ class ReloadRodbTest extends ServiceBaseRodbTest
     }
 
     /**
-     * PAs d'app connecté, verifie l'erreur
+     * Pas d'app connecté, verifie l'erreur
      * @requires PHP 5.4
      */    
     public function testInfo2()
@@ -43,7 +43,7 @@ class ReloadRodbTest extends ServiceBaseRodbTest
     }  
     
     /**
-     * PAs d'user connecté, verifie l'erreur
+     * Pas d'user connecté, verifie l'erreur
      * @requires PHP 5.4
      */    
     public function testInfo3()
@@ -70,7 +70,7 @@ class ReloadRodbTest extends ServiceBaseRodbTest
     }
 
     /**
-     * PAs d'app connecté, verifie l'erreur
+     * Pas d'app connecté, verifie l'erreur
      * @requires PHP 5.4
      */    
     public function testReload2()
@@ -83,7 +83,7 @@ class ReloadRodbTest extends ServiceBaseRodbTest
     }  
     
     /**
-     * PAs d'user connecté, verifie l'erreur
+     * Pas d'user connecté, verifie l'erreur
      * @requires PHP 5.4
      */    
     public function testReload3()

@@ -26,7 +26,7 @@ class MyAccountRodbTest extends ServiceBaseRodbTest
     }
 
     /**
-     * PAs d'app connecté, verifie l'erreur
+     * Pas d'app connecté, verifie l'erreur
      * @requires PHP 5.4
      */    
     public function testHistorique2()
@@ -38,7 +38,7 @@ class MyAccountRodbTest extends ServiceBaseRodbTest
     }  
     
     /**
-     * PAs d'user connecté, verifie l'erreur
+     * Pas d'user connecté, verifie l'erreur
      * @requires PHP 5.4
      */    
     public function testHistorique3()
