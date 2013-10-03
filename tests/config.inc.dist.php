@@ -67,13 +67,10 @@ $_CONFIG['ginger_url'] = "http://localhost:33434/index.php/v1/";
 // Configuration de Slim
 $_CONFIG['slim_config'] = array(
     'mode' => 'production',
-    'debug' => false,
-    'log.level' => \Slim\Log::DEBUG,
-    'log.enabled' => true,
-    'log.writer' => new \Slim\Extras\Log\DateTimeFileWriter(array(
-        'path' => __DIR__.'/logs',
-        'name_format' => 'Y-m-d',
-        'message_format' => '%label% - %date% - %message%'
-    ))
+    'debug' => false
 );
+
+// Configuration des logs
+$_CONFIG['log_mode'] = 'DEV';
+$_CONFIG['log_filename'] = __DIR__.'/log.txt';
 

@@ -4,7 +4,12 @@ require_once '../vendor/autoload.php';
 
 require_once 'config.inc.php';
 
-\Payutc\Config::initFromArray($_CONFIG);
+use \Payutc\Config;
+use \Payutc\Log;
+
+Config::initFromArray($_CONFIG);
+
+Log::init(Config::get('log_mode'), Config::get('log_filename'));
 
 $app = new \Slim\Slim(\Payutc\Config::get('slim_config'));
 
