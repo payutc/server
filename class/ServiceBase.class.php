@@ -98,9 +98,14 @@ class ServiceBase {
 
         $user = User::getUserFromCas($ticket, $service);
         
+        $this->setUser($user);
+        
+        return $user->getNickname();
+    }
+    
+    protected function setUser($user) {
         // Save user in session for all service
         $_SESSION['ServiceBase']['user'] = $user;
-        return $user->getNickname();
     }
 
 	/**
@@ -131,11 +136,21 @@ class ServiceBase {
             $app = $this->application()->toArray(0);
         else
             $app = null;
-        if($this->user())
+        if($this->user()) {
             $user = $this->user()->getNickname();
-        else
+            $firstname = $this->user()->getFirstname();
+            $lastname = $this->user()->getLastname();
+        } else {
             $user = null;
-        return array("application" => $app, "user" => $user);
+            $firstname = null;
+            $lastname = null;
+        }
+        return array(
+            "application" => $app, 
+            "user" => $user, 
+            "user_data" => array(
+                "firstname" => $firstname, 
+                "lastname" => $lastname));
     }
 
     /**
@@ -264,7 +279,7 @@ class ServiceBase {
     */
     public function userAutocomplete($queryString) {
         // Verification sur le droits avant toute choses
-        $this->checkRight();
+        $this->checkRight(false, true, false);
         $res = $this->db->query("SELECT usr_id, usr_firstname, usr_lastname
             FROM ts_user_usr WHERE (UPPER(usr_firstname) LIKE '%s%%' OR UPPER(usr_lastname) LIKE '%s%%')
             ORDER BY usr_lastname ASC LIMIT 10;", array(strtoupper($queryString), strtoupper($queryString)));
@@ -396,7 +411,7 @@ class ServiceBase {
         else {
             return $session[$key];
         }
-    }
+    } 
 }
 
 
