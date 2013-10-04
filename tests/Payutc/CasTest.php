@@ -1,7 +1,7 @@
 <?php
 
 
-include 'bootstrap.php';
+require_once 'bootstrap.php';
 
 
 use \Payutc\Cas;
