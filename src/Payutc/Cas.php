@@ -17,23 +17,27 @@ class Cas
           ->send();
         $r->body = str_replace("\n", "", $r->body);
         $xml = new SimpleXMLElement($r->body);
-        $xml->registerXPathNamespace('cas', 'http://www.yale.edu/tp/cas');
-        $result = $xml->xpath('//cas:serviceResponse/*');
-        if (count($result) < 1) {
-            Log::error("Cas return is weird : '{$r->body}'");
-            throw new CasFormatError($r->body);
+        $namespaces = $xml->getNamespaces();
+        
+        $serviceResponse = $xml->children($namespaces['cas']);
+        $user = $serviceResponse->authenticationSuccess->user;
+        
+        if ($user) {
+            return "".$user; // cast simplexmlelement to string
         }
-        foreach ($result as $t) {
-            if ($t->getName() == "authenticationSuccess") {
-                $users = $t->xpath('//cas:user');
-                $user = $users[0];
-                return "".$user;
+        else {
+            $authFailed = $serviceResponse->authenticationFailure;
+            if ($authFailed) {
+                $attributes = $authFailed->attributes();
+                Log::warning("AuthenticationFailure : ".$attributes['code']." ($ticket, $service)");
+                throw new CasAuthenticationFailed("AuthenticationFailure: ".$attributes['code']);
             }
             else {
-                Log::warning("Authentication failed : ".$t->getName().":".$t['code']." ($ticket, $service)");
-                throw new CasAuthenticationFailed("".$t->getName().":".$t['code']);
+                Log::error("Cas return is weird : '{$r->body}'");
+                throw new CasFormatError($r->body);
             }
         }
+        // never reach there
     }
 	
 	public static function getURl() {
