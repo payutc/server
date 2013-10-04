@@ -21,7 +21,7 @@
 
 namespace Payutc\Service;
 
-use \Cas;
+use \Payutc\Cas;
 use \Payutc\Bom\User;
 use \Image;
 use \ComplexData;

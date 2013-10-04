@@ -33,7 +33,7 @@ use \Payutc\Bom\MsgPerso;
 use \Payutc\Log;
 use \Payutc\Config;
 use \Payutc\Db\Dbal;
-use \Cas;
+use \Payutc\Cas;
 use \Ginger\Client\GingerClient;
 
 /**
@@ -528,11 +528,16 @@ class User {
 
     public static function getUserFromCas($ticket, $service) {
         Log::debug("User: getUserFromCas($ticket, $service)");
-    
-        $login = Cas::authenticate($ticket, $service);
-        if ($login === -1) {
-            Log::warn("User: getUserFromCas($ticket, $service): CAS returned -1");
-            throw new LoginError("Impossible de valider le ticket CAS fourni", -1);
+        
+        try {
+            $login = Cas::authenticate($ticket, $service);
+        }
+        catch (CasAuthenticationFailed $e) {
+            throw new LoginError("Impossible de valider le ticket CAS fourni");
+        }
+        catch (Exception $e) {
+            Log::error("User: getUserFromCas($ticket, $service) ".$e->getMessage());
+            throw new LoginError("Impossible de valider le ticket CAS fourni");
         }
     
         return new User($login);

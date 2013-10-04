@@ -22,7 +22,7 @@
 
 namespace Payutc\Service;
 
-use \Cas;
+use \Payutc\Cas;
 use \Image;
 use \Payutc\Db\DbBuckutt;
 use \CheckRight;
