@@ -5,6 +5,8 @@ php:
 before_script:
   - touch log.txt
   - chmod 777 log.txt
+  - mkdir logs
+  - chmod 777 logs
   - cp tests/config.inc.dist.php config.inc.php
   - mkdir tests/log.txt
   - chmod 777 tests/log.txt
