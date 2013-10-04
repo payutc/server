@@ -124,17 +124,17 @@ class POSS3 extends \ServiceBase {
         // tranformer la chaine passee en un array exploitable
         // il y a deux formats : ids séparés par des espaces (pas de quantités) ou json
         $objects = json_decode($obj_ids);
-        if (is_null($objects)) { // espaces
-            $objects_ids = explode(" ", trim($obj_ids));
-
-            $objects = array();
-            foreach ($objects_ids as $id) {
-                $objects[] = array($id, 1);
-            }
-        } else {
+        Log::debug(print_r($objects,true));
+        if (is_array($objects)) { 
             $objects_ids = array();
             foreach($objects as $object) {
                 $objects_ids[] = $object[0];
+            }
+        } else { // ids séparés par des espaces
+            $objects_ids = explode(" ", trim($obj_ids));
+            $objects = array();
+            foreach ($objects_ids as $id) {
+                $objects[] = array($id, 1);
             }
         }
 
