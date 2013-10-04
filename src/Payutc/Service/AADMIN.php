@@ -27,6 +27,7 @@ use \Image;
 use \ComplexData;
 use \Payutc\Db\DbBuckutt;
 use \PlageHoraire;
+use \Payutc\Config;
 
 /**
  * AAdmin.class
@@ -65,7 +66,7 @@ class AADMIN {
 	 * @return String $url
 	 */
 	public function getCasUrl() {
-	 return Cas::getUrl();
+	 return Config::get('cas_url');
 	}
 
 

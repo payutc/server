@@ -9,13 +9,29 @@ use \Payutc\Exception\AuthenticationFailure;
 
 class Cas
 {
-    public static function authenticate($ticket,$service)
+    protected $url;
+    protected $timeout;
+    
+    public function __construct($url, $timeout=10)
     {
-        $r = Request::get(self::getValidateUrl($ticket, $service))
+        $this->url = $url;
+        $this->timeout = $timeout;
+    }
+    
+    public function authenticate($ticket, $service)
+    {
+        $r = Request::get($this->getValidateUrl($ticket, $service))
           ->sendsXml()
+          ->timeoutIn($this->timeout)
           ->send();
         $r->body = str_replace("\n", "", $r->body);
-        $xml = new SimpleXMLElement($r->body);
+        try {
+            $xml = new SimpleXMLElement($r->body);
+        }
+        catch (\Exception $e) {
+            throw new \UnexpectedValueException("Return cannot be parsed : '{$r->body}'");
+        }
+        
         $namespaces = $xml->getNamespaces();
         
         $serviceResponse = $xml->children($namespaces['cas']);
@@ -29,23 +45,19 @@ class Cas
             if ($authFailed) {
                 $attributes = $authFailed->attributes();
                 Log::warning("AuthenticationFailure : ".$attributes['code']." ($ticket, $service)");
-                throw new AuthenticationFailure("AuthenticationFailure: ".$attributes['code']);
+                throw new AuthenticationFailure("".$attributes['code']);
             }
             else {
                 Log::error("Cas return is weird : '{$r->body}'");
-                throw new UnexpectedValueException($r->body);
+                throw new \UnexpectedValueException($r->body);
             }
         }
         // never reach there
     }
-	
-	public static function getURl() {
-		return Config::get('cas_url');
-	}
     
-    public static function getValidateUrl($ticket, $service)
+    public function getValidateUrl($ticket, $service)
     {
-        return self::getURl()."serviceValidate?ticket=".$ticket."&service=".$service;
+        return $this->url."serviceValidate?ticket=".$ticket."&service=".$service;
     }
 }
 

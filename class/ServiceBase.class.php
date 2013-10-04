@@ -26,6 +26,7 @@ use \Payutc\Exception\UserNotFound;
 use \Payutc\Exception\UserError;
 use \Payutc\Bom\User;
 use \Payutc\Log;
+use \Payutc\Config;
 
 /**
 * ServiceBase.class
@@ -125,7 +126,7 @@ class ServiceBase {
     * @return String $url
     */
     public function getCasUrl() {
-        return Cas::getUrl();
+        return Config::get('cas_url');
     }
 
     /**

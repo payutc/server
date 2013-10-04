@@ -530,8 +530,9 @@ class User {
     public static function getUserFromCas($ticket, $service) {
         Log::debug("User: getUserFromCas($ticket, $service)");
         
+        $cas = new Cas(Config::get('cas_url'));
         try {
-            $login = Cas::authenticate($ticket, $service);
+            $login = $cas->authenticate($ticket, $service);
         }
         catch (AuthenticationFailure $e) {
             throw new LoginError("Impossible de valider le ticket CAS fourni");
