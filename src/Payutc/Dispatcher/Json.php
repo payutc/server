@@ -51,7 +51,7 @@ class Json
     public function handleError($e) {
         $app = \Slim\Slim::getInstance();
         
-        Log::error(get_class($e)."({$e->getCode()}) {$e->getMessage()} at {$e->getFile()}:{$e->getLine()}", $e->getTrace());
+        Log::error(get_class($e)."({$e->getCode()}) {$e->getMessage()} at {$e->getFile()}:{$e->getLine()}\n{$e->getTraceAsString()}");
         
         $err_array = array(
             'type' => get_class($e), 
