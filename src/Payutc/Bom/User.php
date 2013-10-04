@@ -207,15 +207,12 @@ class User {
                 fun.fun_name AS fun,
                 NULL AS firstname,
                 NULL AS lastname
-            FROM 
-                t_purchase_pur pur,
-                t_object_obj obj,
-                t_fundation_fun fun,
-                t_application_app app
+            FROM
+                t_purchase_pur pur
+            INNER JOIN t_object_obj obj ON pur.obj_id = obj.obj_id
+            INNER JOIN t_fundation_fun fun ON pur.fun_id = fun.fun_id
             WHERE 
                 pur.usr_id_buyer = ?
-                AND pur.obj_id = obj.obj_id
-                AND pur.fun_id = fun.fun_id
             UNION ALL
             SELECT 
                 rec.rec_date AS date,
@@ -239,11 +236,10 @@ class User {
                 usrfrom.usr_firstname AS firstname,
                 usrfrom.usr_lastname AS lastname
             FROM 
-                t_virement_vir virin,
-                ts_user_usr usrfrom
+                t_virement_vir virin
+            INNER JOIN ts_user_usr usrfrom ON virin.usr_id_from = usrfrom.usr_id
             WHERE 
                 virin.usr_id_to = ?
-                AND virin.usr_id_from = usrfrom.usr_id
             UNION ALL
             SELECT
                 virout.vir_date AS date,
@@ -254,11 +250,10 @@ class User {
                 usrto.usr_firstname AS firstname,
                 usrto.usr_lastname AS lastname
             FROM
-                t_virement_vir virout, 
-                ts_user_usr usrto
+                t_virement_vir virout
+            INNER JOIN ts_user_usr usrto ON virout.usr_id_to = usrto.usr_id
             WHERE 
                 virout.usr_id_from = ?
-                AND virout.usr_id_to = usrto.usr_id
             ORDER BY  `date` DESC',
             array($this->getId(), $this->getId(), $this->getId(), $this->getId()),
             array("integer", "integer", "integer", "integer")
