@@ -3,6 +3,7 @@
 namespace Payutc;
 
 use Monolog\Logger;
+use Monolog\ErrorHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\ChromePHPHandler;
@@ -101,6 +102,8 @@ class Log
             self::$logger->pushHandler(self::$chromePhpHandler);
         }
         self::$logger->pushHandler(self::$streamHandler);
+        
+        ErrorHandler::register(self::$logger);
     }
     
     public static function debug($msg, $data = array()) {
