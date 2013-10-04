@@ -3,13 +3,11 @@ php:
   - 5.3
   - 5.4
 before_script:
-  - touch log.txt
-  - chmod 777 log.txt
   - mkdir logs
   - chmod 777 logs
   - cp tests/config.inc.dist.php config.inc.php
-  - mkdir tests/log.txt
-  - chmod 777 tests/log.txt
+  - mkdir tests/logs
+  - chmod 777 tests/logs
   - cp tests/config.inc.dist.php tests/config.inc.php
   - curl -s https://getcomposer.org/installer | php
   - php composer.phar install --dev --prefer-source --no-interaction

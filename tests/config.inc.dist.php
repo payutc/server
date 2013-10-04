@@ -72,5 +72,5 @@ $_CONFIG['slim_config'] = array(
 
 // Configuration des logs
 $_CONFIG['log_mode'] = 'DEV';
-$_CONFIG['log_filename'] = __DIR__.'/log.txt';
+$_CONFIG['log_filename'] = __DIR__.'/logs/log.txt';
 
