@@ -216,7 +216,7 @@ class User {
                 pur.usr_id_buyer = ?
                 AND pur.obj_id = obj.obj_id
                 AND pur.fun_id = fun.fun_id
-            UNION 
+            UNION ALL
             SELECT 
                 rec.rec_date AS date,
                 rec.rec_credit AS amount,
@@ -229,7 +229,7 @@ class User {
                 t_recharge_rec rec
             WHERE 
                 rec.usr_id_buyer = ?
-            UNION
+            UNION ALL
             SELECT
                 virin.vir_date AS date,
                 virin.vir_amount AS amount,
@@ -244,7 +244,7 @@ class User {
             WHERE 
                 virin.usr_id_to = ?
                 AND virin.usr_id_from = usrfrom.usr_id
-            UNION
+            UNION ALL
             SELECT
                 virout.vir_date AS date,
                 virout.vir_amount AS amount,
