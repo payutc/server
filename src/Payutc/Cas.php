@@ -5,8 +5,7 @@ namespace Payutc;
 use \SimpleXMLElement;
 use \Httpful\Request;
 
-use \Payutc\Exception\CasAuthenticationFailed;
-use \Payutc\Exception\CasFormatError;
+use \Payutc\Exception\AuthenticationFailure;
 
 class Cas
 {
@@ -30,11 +29,11 @@ class Cas
             if ($authFailed) {
                 $attributes = $authFailed->attributes();
                 Log::warning("AuthenticationFailure : ".$attributes['code']." ($ticket, $service)");
-                throw new CasAuthenticationFailed("AuthenticationFailure: ".$attributes['code']);
+                throw new AuthenticationFailure("AuthenticationFailure: ".$attributes['code']);
             }
             else {
                 Log::error("Cas return is weird : '{$r->body}'");
-                throw new CasFormatError($r->body);
+                throw new UnexpectedValueException($r->body);
             }
         }
         // never reach there

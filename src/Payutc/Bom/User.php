@@ -34,6 +34,7 @@ use \Payutc\Log;
 use \Payutc\Config;
 use \Payutc\Db\Dbal;
 use \Payutc\Cas;
+use \Payutc\Exception\AuthenticationFailure;
 use \Ginger\Client\GingerClient;
 
 /**
@@ -532,7 +533,7 @@ class User {
         try {
             $login = Cas::authenticate($ticket, $service);
         }
-        catch (CasAuthenticationFailed $e) {
+        catch (AuthenticationFailure $e) {
             throw new LoginError("Impossible de valider le ticket CAS fourni");
         }
         catch (Exception $e) {
