@@ -117,7 +117,7 @@ class POSS3 extends \ServiceBase {
             $buyer->checkNotBlockedFun($fun_id);
         }
         catch (UserIsBlockedException $e) {
-            Log::warn("transaction($fund_id, $badge_id, $obj_ids) : Blocked user ({$e->getMessage()})");
+            Log::warn("transaction($fun_id, $badge_id, $obj_ids) : Blocked user ({$e->getMessage()})");
             throw new PossException($e->getMessage());
         }
 
