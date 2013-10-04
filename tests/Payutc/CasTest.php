@@ -20,6 +20,9 @@ class CasTest extends PHPUnit_Framework_TestCase
         $cas = new Cas("http://cas.coucou.fr/");
     }
     
+    /**
+     * @requires PHP 5.4
+     */
     public function testAuthenticateSuccess()
     {
         $cas = new Cas(Config::get('cas_url'));
@@ -28,6 +31,7 @@ class CasTest extends PHPUnit_Framework_TestCase
     }
     
     /**
+     * @requires PHP 5.4
      * @expectedException \Payutc\Exception\AuthenticationFailure
      */
     public function testAuthenticationFailure()
@@ -55,6 +59,7 @@ class CasTest extends PHPUnit_Framework_TestCase
     }
     
     /**
+     * @requires PHP 5.4
      * @expectedException \UnexpectedValueException
      */
     public function testNoXmlResponse()
