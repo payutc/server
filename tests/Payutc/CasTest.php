@@ -31,6 +31,17 @@ class CasTest extends PHPUnit_Framework_TestCase
     }
     
     /**
+     * Test cas can handle special chars like &, #
+     * @requires PHP 5.4
+     */
+    public function testAuthenticateSuccessWithSpecialChar()
+    {
+        $cas = new Cas(Config::get('cas_url'));
+        $user = $cas->authenticate('trecouvr@couc#u&', 'couc#u&');
+        $this->assertEquals('trecouvr', $user);
+    }
+    
+    /**
      * @requires PHP 5.4
      * @expectedException \Payutc\Exception\AuthenticationFailure
      */

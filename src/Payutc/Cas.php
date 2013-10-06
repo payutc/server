@@ -57,7 +57,7 @@ class Cas
     
     public function getValidateUrl($ticket, $service)
     {
-        return $this->url."serviceValidate?ticket=".$ticket."&service=".$service;
+        return $this->url."serviceValidate?ticket=".urlencode($ticket)."&service=".urlencode($service);
     }
 }
 
