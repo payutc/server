@@ -38,14 +38,14 @@ class Cas
         $user = $serviceResponse->authenticationSuccess->user;
         
         if ($user) {
-            return "".$user; // cast simplexmlelement to string
+            return (string)$user; // cast simplexmlelement to string
         }
         else {
             $authFailed = $serviceResponse->authenticationFailure;
             if ($authFailed) {
                 $attributes = $authFailed->attributes();
                 Log::warning("AuthenticationFailure : ".$attributes['code']." ($ticket, $service)");
-                throw new AuthenticationFailure("".$attributes['code']);
+                throw new AuthenticationFailure((string)$attributes['code']);
             }
             else {
                 Log::error("Cas return is weird : '{$r->body}'");
