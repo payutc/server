@@ -30,6 +30,7 @@
 namespace Payutc\Dispatcher;
 
 use \Payutc\Exception\PayutcException;
+use \Payutc\Log;
 
 class Json
 {
@@ -49,6 +50,8 @@ class Json
     
     public function handleError($e) {
         $app = \Slim\Slim::getInstance();
+        
+        Log::error(get_class($e)."({$e->getCode()}) {$e->getMessage()} at {$e->getFile()}:{$e->getLine()}", array('e'=>$e, 'trace'=>$e->getTrace()));
         
         $err_array = array(
             'type' => get_class($e), 

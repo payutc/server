@@ -2,53 +2,140 @@
 
 namespace Payutc;
 
-use \Payutc\Config;
+use Monolog\Logger;
+use Monolog\ErrorHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Handler\ChromePHPHandler;
+use Monolog\Handler\TestHandler;
+use Monolog\Processor\UidProcessor;
+use Monolog\Processor\WebProcessor;
+use Monolog\Formatter\LineFormatter;
+
+use Payutc\Config;
+use Payutc\Log\ContextProcessor;
+use Payutc\Log\IntrospectionProcessor;
 
 class Log
-{
-    public static function initLog()
+{ 
+    const DEV = 0;
+    const PRD = 1;
+    const TEST = 2;
+    
+    const DEBUG = Logger::DEBUG;
+    const INFO = Logger::INFO;
+    const NOTICE = Logger::NOTICE;
+    const WARNING = Logger::WARNING;
+    const ERROR = Logger::ERROR;
+    const CRITICAL = Logger::CRITICAL;
+    const ALERT = Logger::ALERT;
+    const EMERGENCY = Logger::EMERGENCY;
+    
+    
+    protected static $service = null;
+    protected static $method = null;
+    protected static $streamHandler = null;
+    protected static $chromePhpHandler = null;
+    protected static $logger = null;
+    
+    public static function init($mode = null, $filename = null)
     {
-        global $_SERVER;
-        
-        if (!isset($_SERVER['REQUEST_METHOD'])) $_SERVER['REQUEST_METHOD'] = null;
-        if (!isset($_SERVER['REMOTE_ADDR'])) $_SERVER['REMOTE_ADDR'] = null;
-        if (!isset($_SERVER['REQUEST_URI'])) $_SERVER['REQUEST_URI'] = null;
-        if (!isset($_SERVER['SERVER_NAME'])) $_SERVER['SERVER_NAME'] = null;
-        if (!isset($_SERVER['SERVER_PORT'])) $_SERVER['SERVER_PORT'] = null;
-        
-        if (static::isInit()) return;
-        
-        $app = \Slim\Slim::getInstance();
-        if ($app === null) {
-            $userSettings = Config::get('slim_config');
-            $app = new \Slim\Slim($userSettings);
+        if ($mode === null) {
+            $mode = Config::get('log_mode');
         }
+        else if (is_string($mode)) {
+            switch ($mode) {
+                case 'PRD':
+                    $mode = self::PRD;
+                break;
+                case 'TEST':
+                    $mode = self::TEST;
+                break;
+                case 'DEV':
+                default:
+                    $mode = self::DEV;
+                break;
+            }
+        }
+        if ($filename == null) {
+            $filename = Config::get('log_filename');
+            if ($filename === null) {
+                $filename = 'default.log';
+            }
+        }
+        
+        self::$logger = new Logger('root');
+        
+        switch ($mode) {
+            case self::PRD:
+                $introspectionProcessorLevel = Logger::INFO;
+                self::$streamHandler = new StreamHandler($filename, Logger::INFO);
+            break;
+            case self::TEST:
+                $introspectionProcessorLevel = Logger::DEBUG;
+                self::$streamHandler = new TestHandler(Logger::DEBUG, false);
+            break;
+            default:
+            case self::DEV:
+                $introspectionProcessorLevel = Logger::DEBUG;
+                
+                self::$chromePhpHandler = new ChromePHPHandler($filename, Logger::DEBUG);
+                self::$streamHandler = new RotatingFileHandler($filename, Logger::DEBUG);
+            break;
+        }
+        
+        // the default output format is "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n"
+        $output = "[%datetime%] %level_name%: %message% %context% %extra%\n";
+        // finally, create a formatter
+        $formatter = new LineFormatter($output);
+        // set the formatter
+        self::$streamHandler->setFormatter($formatter);
+        
+        // get informations about the file, the function, etc...
+        self::$streamHandler->pushProcessor(new WebProcessor());
+        self::$logger->pushProcessor(new IntrospectionProcessor($introspectionProcessorLevel));
+        self::$logger->pushProcessor(new ContextProcessor());
+        self::$logger->pushProcessor(new UidProcessor(32));
+        
+        // add the handlers
+        if (self::$chromePhpHandler) {
+            self::$logger->pushHandler(self::$chromePhpHandler);
+        }
+        self::$logger->pushHandler(self::$streamHandler);
+        
+        ErrorHandler::register(self::$logger);
     }
     
-    public static function isInit() 
-    {
-        $app = \Slim\Slim::getInstance();
-        if ($app === null) {
-            return false;
-        }
-        return $app->getLog() != NULL;
+    public static function debug($msg, $data = array()) {
+        self::$logger->addDebug($msg, $data);
     }
     
-    public static function getInstance()
-    {
-        static::initLog();
-        $app = \Slim\Slim::getInstance();
-        return $app->getLog();
+    public static function info($msg, $data = array()) {
+        self::$logger->addInfo($msg, $data);
     }
     
-    public static function __callstatic($name, $args)
-    {
-        if (array_key_exists($name, get_class_methods('Payutc\Log'))) {
-            return call_user_func_array("static::$name", $args);
-        }
-        else {
-            return call_user_func_array(array(static::getInstance(),$name), $args);
-        }
+    public static function warning($msg, $data = array()) {
+        self::$logger->addWarning($msg, $data);
+    }
+    
+    public static function warn($msg, $data = array()) {
+        self::warning($msg, $data);
+    }
+    
+    public static function error($msg, $data = array()) {
+        self::$logger->addError($msg, $data);
+    }
+    
+    public static function critical($msg, $data = array()) {
+        self::$logger->addCritical($msg, $data);
+    }
+    
+    public static function getLogger() {
+        return self::$logger;
+    }
+    
+    public static function getStreamHandler() {
+        return self::$streamHandler;
     }
 }
 
