@@ -7,6 +7,7 @@ require_once './config.inc.php';
 
 use \Payutc\Config;
 use \Httpful\Request;
+use \Payutc\Log;
 
 $SEED_DIR = dirname(__FILE__)."/seed/";
 function filepathSeed($fixture)
@@ -73,6 +74,7 @@ abstract class DatabaseTest extends \PHPUnit_Extensions_Database_TestCase
 		
 		Config::initFromArray($_CONFIG);
 		
+        Log::init(Config::get('log_mode'), Config::get('log_filename'));
 		
 		$this->pdo = new PDO('mysql:dbname='.Config::get('sql_db').';host='.Config::get('sql_host'),
 			Config::get('sql_user'),

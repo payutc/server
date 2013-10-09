@@ -67,12 +67,9 @@ $_CONFIG['ginger_url'] = "";
 $_CONFIG['slim_config'] = array(
     'mode' => 'developement',
     'debug' => true,
-    'log.level' => \Slim\Log::DEBUG,
-    'log.enabled' => true,
-    'log.writer' => new \Slim\Extras\Log\DateTimeFileWriter(array(
-        'path' => __DIR__.'/logs',
-        'name_format' => 'Y-m-d',
-        'message_format' => '%label% - %date% - %message%'
-    ))
 );
 
+
+// Configuration des logs
+$_CONFIG['log_mode'] = 'DEV';
+$_CONFIG['log_filename'] = __DIR__.'/logs/log.txt';
