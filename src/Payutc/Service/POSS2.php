@@ -22,7 +22,7 @@
 
 namespace Payutc\Service;
 
-use \Cas;
+use \Payutc\Cas;
 use \Image;
 use \Payutc\Db\DbBuckutt;
 use \CheckRight;
@@ -60,7 +60,7 @@ class POSS2 {
 	 * @return array $url
 	 */
 	public function getCasUrl() {
-	 return array("success"=>Cas::getUrl());
+	 return array("success"=>Config::get('cas_url'));
 	}
 
 	/**
@@ -119,7 +119,7 @@ class POSS2 {
 			unset($this->Seller);
 			session_destroy();
 			Log::info("logout() : OK");
-			return array("success"=>"ok", "url"=>Cas::getUrl()."/logout");
+			return array("success"=>"ok", "url"=>Config::get('cas_url')."/logout");
 		} else {
 			Log::warn("logout() : No seller loaded");
 			return array("error"=>"1401", "error_msg"=>"Aucun seller n'est logué.");
