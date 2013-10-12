@@ -19,12 +19,14 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+use \Payutc\Cas;
 use \Payutc\Mapping\Services;
 use \Payutc\Exception\LoginError;
 use \Payutc\Exception\UserNotFound;
 use \Payutc\Exception\UserError;
 use \Payutc\Bom\User;
 use \Payutc\Log;
+use \Payutc\Config;
 
 /**
 * ServiceBase.class
@@ -124,7 +126,7 @@ class ServiceBase {
     * @return String $url
     */
     public function getCasUrl() {
-        return Cas::getUrl();
+        return Config::get('cas_url');
     }
 
     /**
