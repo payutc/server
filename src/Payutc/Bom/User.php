@@ -273,9 +273,10 @@ class User {
         
         $qb = Dbal::createQueryBuilder();
         $qb->update('ts_user_usr', 'usr')
-            ->set('usr_blocked', $qb->expr()->literal($blocage))
+            ->set('usr_blocked', ':usr_blocked')
             ->where('usr_id = :usr_id')
-            ->setParameter('usr_id', $this->idUser);
+            ->setParameter('usr_id', $this->idUser, "integer")
+            ->setParameter('usr_blocked', $blocage, "integer");
         
         $affectedRows = $qb->execute();
         if ($affectedRows != 1){
