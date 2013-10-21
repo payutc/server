@@ -146,6 +146,11 @@ class POSS2 {
 	public function getSellerIdentity() {
 		if ($this->isLoadedSeller()) {
 			$identity = $this->Seller->getIdentity();
+			
+			$res = DbBuckutt::getInstance()->query("SELECT fun_name FROM t_fundation_fun WHERE fun_id = '%u';", array($this->Fun_id));
+			$fundation = DbBuckutt::getInstance()->fetchArray($res);
+			$identity['fun_name'] = $fundation['fun_name'];
+			
 			return array("success"=>$identity);
 		} else {
 			Log::warn("getSellerIdentity() : No Seller loaded");

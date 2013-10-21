@@ -6,3 +6,6 @@
 /tests/config.inc.php
 /tests/faux-cas
 /tests/faux-ginger
+/log*.txt
+/tests/log*.txt
+
