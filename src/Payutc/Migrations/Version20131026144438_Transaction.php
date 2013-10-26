@@ -8,7 +8,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration,
 /**
  * This migration adds the transaction column to the purchase table
  */
-class Version20130708144438_Transaction extends AbstractMigration
+class Version20131026144438_Transaction extends AbstractMigration
 {
     public function up(Schema $schema)
     {
