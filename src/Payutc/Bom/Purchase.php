@@ -27,24 +27,25 @@ class Purchase
     public static function getNbSell($obj_id, $fun_id, $start=null, $end=null, $tick=null) 
     {
         $qb = Dbal::createQueryBuilder();
-        $qb->select('sum(pur_qte) as nb', 'pur.pur_date')
+        $qb->select('sum(pur_qte) as nb', 'tra.tra_date')
            ->from('t_purchase_pur', 'pur')
+           ->innerJoin('pur', 't_transaction_tra', 'tra', 'pur.tra_id = tra.tra_id')
            ->where('pur.obj_id = :obj_id')->setParameter('obj_id', $obj_id)
-           ->andWhere('pur.fun_id = :fun_id')->setParameter('fun_id', $fun_id)
+           ->andWhere('tra.fun_id = :fun_id')->setParameter('fun_id', $fun_id)
            ->andWhere('pur.pur_removed = 0');
         
         if($start != null) {
-            $qb->andWhere('pur.pur_date >= :start')
+            $qb->andWhere('tra.tra_date >= :start')
                ->setParameter('start', $start);
         }
 
         if($end != null) {
-            $qb->andWhere('pur.pur_date <= :end')
+            $qb->andWhere('tra.tra_date <= :end')
                ->setParameter('end', $end);
         }
 
         if($tick != null) {
-            $qb->groupBy('UNIX_TIMESTAMP( pur.pur_date ) DIV :tick')
+            $qb->groupBy('UNIX_TIMESTAMP( tra.tra_date ) DIV :tick')
                ->setParameter('tick', $tick);
             $result = array();
             $a = $qb->execute();
@@ -105,6 +106,7 @@ class Purchase
         $qb = Dbal::createQueryBuilder();
             $qb->select('*', 'pur.pur_date')
                ->from('t_purchase_pur', 'pur')
+               ->innerJoin('pur', 't_transaction_tra', 'tra', 'pur.tra_id = tra.tra_id')
                ->where('pur.pur_id = :pur_id')
            ->setParameter('pur_id', $pur_id);
         return $qb->execute()->fetch();
@@ -143,40 +145,44 @@ class Purchase
      */
     public static function transaction($usr_id_buyer, $items, $poi_id, $fun_id, $usr_id_seller, $pur_ip)
     {
-        $total_price = 0;
-        $purchases = array();
-        foreach ($items as $itm) {
-            $price = $itm['price'] * $itm['qte'];
-            $total_price += $price;
-            $purchases[] = array(
-            'pur_date' => date('Y-m-d H:i:s'),
-            'pur_type' => 'product',
-            'obj_id' => $itm['id'],
-            'pur_qte' => $itm['qte'],
-            'pur_price' => $price,
-            'pur_unit_price' => $itm['price'],
-            'usr_id_buyer' => $usr_id_buyer,
-            'usr_id_seller' => $usr_id_seller,
-            'poi_id' => $poi_id,
-            'fun_id' => $fun_id,
-            'pur_ip' => $pur_ip
-            );
-        }
-        
-        
         $conn = Dbal::conn();
         
         $conn->beginTransaction();
+        
         try {
+            // Insert the transaction
+            $conn->insert('t_transaction_tra', array(
+                'tra_date' => date('Y-m-d H:i:s'),
+                'usr_id_buyer' => $usr_id_buyer,
+                'usr_id_seller' => $usr_id_seller,
+                'poi_id' => $poi_id,
+                'fun_id' => $fun_id,
+                'tra_ip' => $pur_ip,    
+            ));
+            $transactionId = $conn->lastInsertId();
+            
+            // Build the purchases (transaction ID is required here)
+            $total_price = 0;
+            foreach ($items as $itm) {
+                $price = $itm['price'] * $itm['qte'];
+                $total_price += $price;
+                
+                Product::decStockById($itm['id'], $itm['qte']);
+                $conn->insert('t_purchase_pur', array(
+                    'tra_id' => $transactionId,
+                    'obj_id' => $itm['id'],
+                    'pur_qte' => $itm['qte'],
+                    'pur_price' => $price,
+                    'pur_unit_price' => $itm['price'],
+                ));
+            }
+
+            // Remove credit from the user
             User::decCreditById($usr_id_buyer, $total_price);
             
-            foreach ($purchases as $pur) {
-            $a = $conn->insert('t_purchase_pur', $pur);
-            Product::decStockById($pur['obj_id'], $pur['pur_qte']);
-            }
             $conn->commit();
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             $conn->rollback();
             throw $e;
         }
@@ -194,8 +200,9 @@ class Purchase
         $qb->select('sum(pur.pur_price) as totalPrice', 'sum(pur_qte) as nbBuy', 'usr.usr_firstname', 'usr.usr_lastname', 'usr.usr_nickname')
            ->from('t_purchase_pur', 'pur')
            ->from('ts_user_usr', 'usr')
-           ->where('usr.usr_id = pur.usr_id_buyer')
-           ->andWhere('pur.fun_id = :fun_id')->setParameter('fun_id', $fun_id)
+           ->innerJoin('pur', 't_transaction_tra', 'tra', 'pur.tra_id = tra.tra_id')
+           ->where('usr.usr_id = tra.usr_id_buyer')
+           ->andWhere('tra.fun_id = :fun_id')->setParameter('fun_id', $fun_id)
            ->andWhere('pur.pur_removed = 0');
 
         if($obj_id != null) {
@@ -204,16 +211,16 @@ class Purchase
         }
 
         if($start != null) {
-            $qb->andWhere('pur.pur_date >= :start')
+            $qb->andWhere('tra.tra_date >= :start')
                ->setParameter('start', $start);
         }
 
         if($end != null) {
-            $qb->andWhere('pur.pur_date <= :end')
+            $qb->andWhere('tra.tra_date <= :end')
                ->setParameter('end', $end);
         }
  
-        $qb->groupBy('pur.usr_id_buyer');
+        $qb->groupBy('tra.usr_id_buyer');
 
         if($sort_by == "totalPrice") {
             $qb->orderBy('sum(pur.pur_price)', 'DESC');
@@ -235,13 +242,14 @@ class Purchase
     public static function getPurchasesForUser($usr_id, $time_limit=null)
     {
         $qb = Dbal::createQueryBuilder();
-        $qb->select('pur_id', 'obj_id', 'pur_price', 'pur_qte', 'pur_date')
+        $qb->select('pur_id', 'obj_id', 'pur_price', 'pur_qte', 'tra_date AS pur_date')
            ->from('t_purchase_pur', 'pur')
+           ->innerJoin('pur', 't_transaction_tra', 'tra', 'pur.tra_id = tra.tra_id')
            ->Where('usr_id_buyer = :usr_id')
            ->andWhere('pur_removed = 0')
            ->setParameter('usr_id', $usr_id);
         if ($time_limit) {
-            $qb->andWhere('TIME_TO_SEC(TIMEDIFF( NOW( ) , pur_date )) <= :time_limit')
+            $qb->andWhere('TIME_TO_SEC(TIMEDIFF( NOW( ) , tra_date )) <= :time_limit')
                ->setParameter('time_limit', $time_limit);
         }
         return $qb->execute()->fetchAll();

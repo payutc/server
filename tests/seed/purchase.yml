@@ -1,132 +1,163 @@
-t_purchase_pur:
+t_transaction_tra:
   -
-    pur_id: 1
-    pur_date: "2013-04-07"
-    pur_type: product
-    obj_id: 3
-    pur_price: 70
+    tra_id: 1
+    tra_date: "2013-04-07"
     usr_id_buyer: 9447
     usr_id_seller: 1
     poi_id: 51
     fun_id: 1
-    pur_ip: 1.2.3.4
-    pur_removed: 0
+    tra_ip: 1.2.3.4
 
   -
-    pur_id:
-    pur_date: "2013-04-07 18:32:25"
-    pur_type: product
-    obj_id: 3
-    pur_price: 70
+    tra_id: 2
+    tra_date: "2013-04-07 18:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
     poi_id: 51
     fun_id: 1
-    pur_ip: 1.2.3.4
+    tra_ip: 1.2.3.4
+
+  -
+    tra_id: 3
+    tra_date: "2013-04-07 18:32:25"
+    usr_id_buyer: 9447
+    usr_id_seller: 9447
+    poi_id: 51
+    fun_id: 1
+    tra_ip: 1.2.3.4
+
+  -
+    tra_id: 4
+    tra_date: "2013-04-07 19:32:25"
+    usr_id_buyer: 9447
+    usr_id_seller: 9447
+    poi_id: 51
+    fun_id: 1
+    tra_ip: 1.2.3.4
+
+  -
+    tra_id: 5
+    tra_date: "2013-04-07 20:32:25"
+    usr_id_buyer: 9447
+    usr_id_seller: 9447
+    poi_id: 51
+    fun_id: 1
+    tra_ip: 1.2.3.4
+
+  -
+    tra_id: 6
+    tra_date: "2013-04-08 16:32:25"
+    usr_id_buyer: 9447
+    usr_id_seller: 9447
+    poi_id: 51
+    fun_id: 1
+    tra_ip: 1.2.3.4
+
+  -
+    tra_id: 7
+    tra_date: "2013-04-08 18:32:25"
+    usr_id_buyer: 9447
+    usr_id_seller: 9447
+    poi_id: 51
+    fun_id: 1
+    tra_ip: 1.2.3.4
+
+  -
+    tra_id: 8
+    tra_date: "2013-04-08 19:32:25"
+    usr_id_buyer: 9447
+    usr_id_seller: 9447
+    poi_id: 51
+    fun_id: 1
+    tra_ip: 1.2.3.4
+
+  -
+    tra_id: 9
+    tra_date: "2013-04-08 20:32:25"
+    usr_id_buyer: 9447
+    usr_id_seller: 9447
+    poi_id: 51
+    fun_id: 1
+    tra_ip: 1.2.3.4
+
+  -
+    tra_id: 10
+    tra_date: "2013-04-08 20:34:25"
+    usr_id_buyer: 9447
+    usr_id_seller: 9447
+    poi_id: 51
+    fun_id: 1
+    tra_ip: 1.2.3.4
+
+t_purchase_pur:
+  -
+    pur_id: 1
+    tra_id: 1
+    obj_id: 3
+    pur_price: 70
+    pur_removed: 0
+
+  -
+    pur_id: 2
+    tra_id: 2
+    obj_id: 3
+    pur_price: 70
     pur_removed: 1
 
   -
-    pur_id:
-    pur_date: "2013-04-07 18:32:25"
-    pur_type: product
+    pur_id: 3
+    tra_id: 3
     obj_id: 4
     pur_price: 70
-    usr_id_buyer: 9447
-    usr_id_seller: 9447
-    poi_id: 51
-    fun_id: 1
-    pur_ip: 1.2.3.4
     pur_removed: 0
 
   -
-    pur_id:
-    pur_date: "2013-04-07 19:32:25"
-    pur_type: product
+    pur_id: 4
+    tra_id: 4
     obj_id: 4
     pur_price: 70
-    usr_id_buyer: 9447
-    usr_id_seller: 9447
-    poi_id: 51
-    fun_id: 1
-    pur_ip: 1.2.3.4
     pur_removed: 0
 
   -
-    pur_id:
-    pur_date: "2013-04-07 20:32:25"
-    pur_type: product
+    pur_id: 5
+    tra_id: 5
     obj_id: 4
     pur_price: 70
-    usr_id_buyer: 9447
-    usr_id_seller: 9447
-    poi_id: 51
-    fun_id: 1
-    pur_ip: 1.2.3.4
     pur_removed: 0
 
   -
-    pur_id:
-    pur_date: "2013-04-08 16:32:25"
-    pur_type: product
+    pur_id: 6
+    tra_id: 6
     obj_id: 4
     pur_price: 70
-    usr_id_buyer: 9447
-    usr_id_seller: 9447
-    poi_id: 51
-    fun_id: 1
-    pur_ip: 1.2.3.4
     pur_removed: 0
 
   -
-    pur_id:
-    pur_date: "2013-04-08 18:32:25"
-    pur_type: product
+    pur_id: 7
+    tra_id: 7
     obj_id: 4
     pur_price: 70
-    usr_id_buyer: 9447
-    usr_id_seller: 9447
-    poi_id: 51
-    fun_id: 1
-    pur_ip: 1.2.3.4
     pur_removed: 0
 
   -
-    pur_id:
-    pur_date: "2013-04-08 19:32:25"
-    pur_type: product
+    pur_id: 8
+    tra_id: 8
     obj_id: 4
     pur_price: 70
-    usr_id_buyer: 9447
-    usr_id_seller: 9447
-    poi_id: 51
-    fun_id: 1
-    pur_ip: 1.2.3.4
     pur_removed: 0
 
   -
-    pur_id:
-    pur_date: "2013-04-08 20:32:25"
-    pur_type: product
+    pur_id: 9
+    tra_id: 9
     obj_id: 4
     pur_price: 70
-    usr_id_buyer: 9447
-    usr_id_seller: 9447
-    poi_id: 51
-    fun_id: 1
-    pur_ip: 1.2.3.4
     pur_removed: 0
 
   -
-    pur_id:
-    pur_date: "2013-04-08 20:34:25"
-    pur_type: product
+    pur_id: 10
+    tra_id: 10
     obj_id: 4
     pur_price: 70
-    usr_id_buyer: 9447
-    usr_id_seller: 9447
-    poi_id: 51
-    fun_id: 1
-    pur_ip: 1.2.3.4
     pur_removed: 0
 
 
