@@ -89,6 +89,16 @@ t_transaction_tra:
     fun_id: 1
     tra_ip: 1.2.3.4
 
+  -
+    tra_id: 11
+    tra_date: "2013-04-07 18:32:25"
+    usr_id_buyer: 9447
+    usr_id_seller: 9447
+    poi_id: 51
+    fun_id: 1
+    tra_ip: 1.2.3.4
+    
+
 t_purchase_pur:
   -
     pur_id: 1
@@ -180,6 +190,23 @@ t_purchase_pur:
     pur_price: 70
     pur_removed: 0
 
+  -
+    pur_id: 11
+    tra_id: 11
+    obj_id: 4
+    pur_qte: 1
+    pur_unit_price: 70
+    pur_price: 70
+    pur_removed: 0
+
+  -
+    pur_id: 12
+    tra_id: 11
+    obj_id: 4
+    pur_qte: 1
+    pur_unit_price: 70
+    pur_price: 70
+    pur_removed: 0
 
 t_point_poi:
   -
