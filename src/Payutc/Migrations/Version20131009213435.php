@@ -10,7 +10,7 @@ class Version20131009213435 extends AbstractMigration
     public function up(Schema $schema)
     {
         $this->addSql("DROP TABLE `ts_callback_cal`");
-        $this->addSql("DROP TABLE `obj_poi_jop`");
+        $this->addSql("DROP TABLE `tj_obj_poi_jop`");
         $this->addSql("DROP TABLE `tj_usr_grp_jug`");
         $this->addSql("DROP TABLE `ts_log_log`");
         $this->addSql("DROP TABLE `t_group_grp`");
