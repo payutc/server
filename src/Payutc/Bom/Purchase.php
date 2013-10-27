@@ -69,27 +69,28 @@ class Purchase
     public static function getRevenue($fun_id, $app_id=null, $start=null, $end=null, $tick=null)
     {
         $qb = Dbal::createQueryBuilder();
-        $qb->select('sum(pur_price) as total', 'pur.pur_date')
+        $qb->select('sum(pur_price) as total', 'tra.tra_date')
             ->from('t_purchase_pur', 'pur')
-            ->andWhere('pur.fun_id = :fun_id')->setParameter('fun_id', $fun_id)
+            ->innerJoin('pur', 't_transaction_tra', 'tra', 'pur.tra_id = tra.tra_id')
+            ->andWhere('tra.fun_id = :fun_id')->setParameter('fun_id', $fun_id)
             ->andWhere('pur.pur_removed = 0');
 
         if($app_id != null) {
-            $qb->andWhere('pur.poi_id = :poi_id')->setParameter('poi_id', $app_id);
+            $qb->andWhere('tra.poi_id = :poi_id')->setParameter('poi_id', $app_id);
         }
 
         if($start != null) {
-            $qb->andWhere('pur.pur_date >= :start')
+            $qb->andWhere('tra.tra_date >= :start')
                 ->setParameter('start', $start);
         }
 
         if($end != null) {
-            $qb->andWhere('pur.pur_date <= :end')
+            $qb->andWhere('tra.tra_date <= :end')
                 ->setParameter('end', $end);
         }
 
         if($tick != null) {
-            $qb->groupBy('UNIX_TIMESTAMP( pur.pur_date ) DIV :tick')
+            $qb->groupBy('UNIX_TIMESTAMP( tra.tra_date ) DIV :tick')
                 ->setParameter('tick', $tick);
             $result = array();
             $a = $qb->execute();
@@ -104,7 +105,7 @@ class Purchase
     public static function getPurchaseById($pur_id)
     {
         $qb = Dbal::createQueryBuilder();
-            $qb->select('*', 'pur.pur_date')
+            $qb->select('*', 'tra.tra_date')
                ->from('t_purchase_pur', 'pur')
                ->innerJoin('pur', 't_transaction_tra', 'tra', 'pur.tra_id = tra.tra_id')
                ->where('pur.pur_id = :pur_id')
