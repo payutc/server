@@ -5,7 +5,6 @@ namespace Payutc\Mapping;
 class Services {
     protected static $services = array(
         'POSS3',
-        'AADMIN',
         'STATS',
         'KEY',
         'ADMINRIGHT',
