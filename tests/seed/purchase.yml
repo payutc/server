@@ -94,6 +94,8 @@ t_purchase_pur:
     pur_id: 1
     tra_id: 1
     obj_id: 3
+    pur_qte: 1
+    pur_unit_price: 70
     pur_price: 70
     pur_removed: 0
 
@@ -101,6 +103,8 @@ t_purchase_pur:
     pur_id: 2
     tra_id: 2
     obj_id: 3
+    pur_qte: 1
+    pur_unit_price: 70
     pur_price: 70
     pur_removed: 1
 
@@ -108,6 +112,8 @@ t_purchase_pur:
     pur_id: 3
     tra_id: 3
     obj_id: 4
+    pur_qte: 1
+    pur_unit_price: 70
     pur_price: 70
     pur_removed: 0
 
@@ -115,6 +121,8 @@ t_purchase_pur:
     pur_id: 4
     tra_id: 4
     obj_id: 4
+    pur_qte: 1
+    pur_unit_price: 70
     pur_price: 70
     pur_removed: 0
 
@@ -122,6 +130,8 @@ t_purchase_pur:
     pur_id: 5
     tra_id: 5
     obj_id: 4
+    pur_qte: 1
+    pur_unit_price: 70
     pur_price: 70
     pur_removed: 0
 
@@ -129,6 +139,8 @@ t_purchase_pur:
     pur_id: 6
     tra_id: 6
     obj_id: 4
+    pur_qte: 1
+    pur_unit_price: 70
     pur_price: 70
     pur_removed: 0
 
@@ -136,6 +148,8 @@ t_purchase_pur:
     pur_id: 7
     tra_id: 7
     obj_id: 4
+    pur_qte: 1
+    pur_unit_price: 70
     pur_price: 70
     pur_removed: 0
 
@@ -143,6 +157,8 @@ t_purchase_pur:
     pur_id: 8
     tra_id: 8
     obj_id: 4
+    pur_qte: 1
+    pur_unit_price: 70
     pur_price: 70
     pur_removed: 0
 
@@ -150,6 +166,8 @@ t_purchase_pur:
     pur_id: 9
     tra_id: 9
     obj_id: 4
+    pur_qte: 1
+    pur_unit_price: 70
     pur_price: 70
     pur_removed: 0
 
@@ -157,6 +175,8 @@ t_purchase_pur:
     pur_id: 10
     tra_id: 10
     obj_id: 4
+    pur_qte: 1
+    pur_unit_price: 70
     pur_price: 70
     pur_removed: 0
 
