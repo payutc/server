@@ -54,8 +54,8 @@ class PurchaseRodbTest extends ReadOnlyDatabaseTest
     public function testGetRank() {
         $r = Purchase::GetRank(1, null, "2012-04-08 18:30:00", "2014-04-08 18:40:00", 1, "totalPrice");
         $waited = array(array(
-            "totalPrice" => "630",
-            "nbBuy" => "9",
+            "totalPrice" => "970",
+            "nbBuy" => "11",
             "usr_firstname" => "Matthieu",
             "usr_lastname" => "Guffroy",
             "usr_nickname" => "mguffroy"

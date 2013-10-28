@@ -50,8 +50,8 @@ class StatsRodbTest extends ServiceBaseRodbTest
         ));
         $this->assertEquals(200, $r->code);
         $this->assertEquals(array(array(
-                'totalPrice' => 630,
-                'nbBuy' => 9,
+                'totalPrice' => 970,
+                'nbBuy' => 11,
                 'usr_firstname' => 'Matthieu',
                 'usr_lastname' => 'Guffroy',
                 'usr_nickname' => 'mguffroy'
@@ -73,7 +73,7 @@ class StatsRodbTest extends ServiceBaseRodbTest
                                                             'app_id' => '51'
                                                             ));
         $this->assertEquals(200, $r->code);
-        $this->assertEquals(630, $r->body);
+        $this->assertEquals(970, $r->body);
     }
 
 }
