@@ -54,18 +54,21 @@ class PurchaseRwdbTest extends DatabaseTest
     {
         $conn = Dbal::conn();
         $nb_purchases = count(Purchase::getPurchasesForUser(1), 200);
-        $conn->insert('t_purchase_pur', array(
-                     'pur_date' => date('Y-m-d H:i:s'),
-                     'pur_type' => 'product',
-                     'obj_id' => 1,
-                     'pur_qte' => 1,
-                     'pur_unit_price' => 70,
-                     'pur_price' => 70,
+        $conn->insert('t_transaction_tra', array(
+                     'tra_id' => 43,
+                     'tra_date' => date('Y-m-d H:i:s'),
                      'usr_id_buyer' => 1,
                      'usr_id_seller' => 1,
                      'poi_id' => 42,
                      'fun_id' => 1,
-                     'pur_ip' => ''
+                     'tra_ip' => ''
+        ));
+        $conn->insert('t_purchase_pur', array(
+                     'tra_id' => 43,
+                     'obj_id' => 1,
+                     'pur_qte' => 1,
+                     'pur_unit_price' => 70,
+                     'pur_price' => 70
         ));
         $r = count(Purchase::getPurchasesForUser(1), 200);
         $this->assertEquals($nb_purchases+1, count($r));

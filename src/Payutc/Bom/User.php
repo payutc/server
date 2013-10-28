@@ -201,7 +201,7 @@ class User {
         $conn = Dbal::conn();
         $query = $conn->executeQuery(
             'SELECT 
-                pur.pur_date AS date, 
+                tra.tra_date AS date, 
                 pur.pur_price AS amount, 
                 "PURCHASE" AS type,
                 obj.obj_name AS name,
@@ -210,10 +210,11 @@ class User {
                 NULL AS lastname
             FROM
                 t_purchase_pur pur
+            INNER JOIN t_transaction_tra tra ON pur.tra_id = tra.tra_id
             INNER JOIN t_object_obj obj ON pur.obj_id = obj.obj_id
-            INNER JOIN t_fundation_fun fun ON pur.fun_id = fun.fun_id
+            INNER JOIN t_fundation_fun fun ON tra.fun_id = fun.fun_id
             WHERE 
-                pur.usr_id_buyer = ?
+                tra.usr_id_buyer = ?
             UNION ALL
             SELECT 
                 rec.rec_date AS date,
