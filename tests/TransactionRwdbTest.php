@@ -109,7 +109,5 @@ class TransactionRwdbTest extends DatabaseTest
         $transaction2 = Transaction::getById($transaction->getId());
         $this->assertEquals("arthur@puyou.fr", $transaction2->getEmail());
     }
-    
-    // TODO try buying with not enough credit, validating with not enough credit, adding wrong articles
 }
 
