@@ -56,20 +56,20 @@ class WEBSALE extends \ServiceBase {
     * @param int $tr_id (id de la transaction a checker)
     * @return array
     */
-    public function GetTransactionInfo($fun_id, $tr_id) {
+    public function GetTransactionInfo($fun_id, $tra_id) {
         // On a une appli qui a les droits ?
         $this->checkRight(false, true, true, $fun_id);
         
         // Get info on this transaction
-        $transaction = \Payutc\Bom\Transaction::getById($tr_id);
+        $transaction = \Payutc\Bom\Transaction::getById($tra_id);
         
         // Check fun_id is correct
         if($fun_id != $transaction->getFunId()) {
-            throw new \Payutc\Exception\TransactionNotFound("La transaction $idTrans n'existe pas");
+            throw new \Payutc\Exception\TransactionNotFound("La transaction $tra_id n'existe pas");
         }
         
         return array(
-            "id" => $tr_id,
+            "id" => $tra_id,
             "status" => $transaction->getStatus(),
             "purchases" => $transaction->getPurchases(),
             "created" => $transaction->getDate()

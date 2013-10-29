@@ -3,6 +3,7 @@
 namespace Payutc\Service;
 
 use \Payutc\Config;
+use \Payutc\Exception\PayutcException;
 
 /**
  * WEBSALECONFIRM.php
@@ -20,12 +21,16 @@ class WEBSALECONFIRM extends \ServiceBase {
     * @param int $tr_id (id de la transaction a checker)
     * @return array
     */
-    public function getTransactionInfo($tr_id) {
+    public function getTransactionInfo($tra_id, $token) {
         // On a une appli qui a les droits ?
         $this->checkRight(false, true, true, null);
         
         // Get info on this transaction
-        $transaction = \Payutc\Bom\Transaction::getById($tr_id);
+        $transaction = \Payutc\Bom\Transaction::getById($tra_id);
+        
+        if($transaction->getToken() != $token) {
+            throw new PayutcException("Token non valide");
+        }
         
         // TODO : Récupérer le nom de la fundation pour qu'on puisse afficher à qui l'utilisateur va payer.
         
@@ -51,11 +56,15 @@ class WEBSALECONFIRM extends \ServiceBase {
     * $mail n'est utilisé que s'il n'y a pas d'utilisateur connecté.
     * $mail est obligatoire dans ce cas la et doit être un email valide !
     */
-    public function doTransaction($tr_id, $montant_reload, $mail=null) {
+    public function doTransaction($tra_id, $token, $montant_reload, $mail=null) {
         // On a une appli qui a les droits ?
         $this->checkRight(false, true, true, null);
         
-        $transaction = \Payutc\Bom\Transaction::getById($tr_id);
+        $transaction = \Payutc\Bom\Transaction::getById($tra_id);
+        
+        if($transaction->getToken() != $token) {
+            throw new PayutcException("Token non valide");
+        }
         
         if($this->user()) {
             if($montant_reload == 0) {
