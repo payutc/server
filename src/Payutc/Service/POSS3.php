@@ -4,6 +4,7 @@ namespace Payutc\Service;
 
 use \Payutc\Bom\Purchase;
 use \Payutc\Bom\Product;
+use \Payutc\Bom\Transaction;
 use \Payutc\Exception\PossException;
 use \Payutc\Exception\UserNotFound;
 use \Payutc\Exception\UserIsBlockedException;
@@ -123,14 +124,11 @@ class POSS3 extends \ServiceBase {
 
         // tranformer la chaine passee en un array exploitable
         // il y a deux formats : ids séparés par des espaces (pas de quantités) ou json
+        // $objects est un array de array($idProduct, $qte)
         $objects = json_decode($obj_ids);
         Log::debug(print_r($objects,true));
-        if (is_array($objects)) { 
-            $objects_ids = array();
-            foreach($objects as $object) {
-                $objects_ids[] = $object[0];
-            }
-        } else { // ids séparés par des espaces
+        
+        if (!is_array($objects)) { 
             $objects_ids = explode(" ", trim($obj_ids));
             $objects = array();
             foreach ($objects_ids as $id) {
@@ -138,63 +136,9 @@ class POSS3 extends \ServiceBase {
             }
         }
 
-        // récupérer les objets dans la db (note: pas de doublon)
-        $r = Product::getAll(array('obj_ids'=>array_unique($objects_ids), 'fun_ids'=>array($fun_id)));
-        $items = array();
-        foreach($r as $itm) {
-            $items[$itm['id']] = $itm;
-        }
+        // Création de la transaction, validée immédiatement
+        Transaction::createAndValidate($buyer, $this->user(), $this->application()->getId(), $fun_id, $objects);
         
-        // y'a t il de l'alcool ?
-        $alcool = false;
-        foreach($items as $itm) {
-            if ($itm['alcool'] > 0) {
-                $alcool = true;
-                break;
-            }
-        }
-        // si alcool, vérifier que le buyer est majeur
-        if($alcool)
-            {
-                if($buyer->isAdult() == 0) {
-                    Log::warn("transaction($badge_id, $obj_ids) : Under-18 users can't buy alcohol");
-                    throw new PossException($buyer->getNickname()." est mineur il ne peut pas acheter d'alcool !");
-                }
-            }
-
-        // calcul le prix total et création de la liste des items à acheter (note: il peut y avoir des doublons)
-        $total = 0;
-        $items_to_buy = array();
-        foreach($objects as $object)
-            {
-                if(isset($items[$object[0]]))
-                    {
-                        if (count($object) > 1 && !empty($object[1]) && $object[1] > 0) {
-                            $item = $items[$object[0]];
-                            $item['qte'] = $object[1];
-                            $items_to_buy[] = $item;
-                        } else {
-                            Log::warn("transaction($fun_id, $badge_id, $obj_ids) : Null quantity for article $object[0]");
-                            throw new PossException("La quantité pour l'article est $object[0] nulle.");
-                        }
-                        $total += $item['price'] * $item['qte'];
-                    } else {
-                    Log::warn("transaction($badge_id, ...) : ${object[0]} is unavailable");
-                    throw new PossException("L'article ${object[0]} n'est pas disponible à la vente.");
-                }
-            }
-
-        // vérifier que le buyer a assez d'argent
-        if($buyer->getCredit() < $total) {
-            Log::warn("transaction($badge_id, $obj_ids) : Buyer have not enough money");
-            throw new PossException($buyer->getNickname()." n'a pas assez d'argent pour effectuer la transaction.");
-        }
-        
-        // effectuer les achats
-        Purchase::transaction($buyer->getId(), $items_to_buy,
-                              $this->application()->getId(), $fun_id,
-                              $this->user()->getId(), $this->getRemoteIp());
-
         // Retourner les infos sur l'utilisateur
         $msg = $buyer->getMsgPerso($fun_id);
 

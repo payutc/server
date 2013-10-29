@@ -22,8 +22,11 @@
 namespace Payutc\Bom;
 
 use \Payutc\Log;
+use \Payutc\Utils;
 use \Payutc\Bom\User;
 use \Payutc\Db\Dbal;
+use \Payutc\Exception\InvalidData;
+use \Payutc\Exception\PossException;
 use \Payutc\Exception\NotEnoughMoney;
 use \Payutc\Exception\TransactionAborted;
 use \Payutc\Exception\TransactionNotFound;
@@ -35,6 +38,7 @@ class Transaction {
     protected $validatedDate;
     protected $buyerId;
     protected $sellerId;
+    protected $email;
     protected $appId;
     protected $funId;
     protected $purchases;
@@ -86,14 +90,38 @@ class Transaction {
     }
     
     public function getToken(){
-        // TODO
+        if(empty($this->token)){
+            $this->token = Utils::getRandomString(32);
+        
+            Dbal::conn()->update('t_transaction_tra',
+                array('tra_token' => $this->token),
+                array('tra_id' => $this->id),
+                array("string", "integer")
+            );
+        }
+        
+        return $this->token;
     }
     
-    public function setEmail(){
-        // TODO + throw exception if invalid
+    public function getEmail(){
+        return $this->email;
     }
     
     // --- Helpers
+
+    public function setEmail($email){
+        if(!Utils::validateEmail($email)){
+            throw new InvalidData("L'adresse email est incorrecte.");
+        }
+        
+        $this->email = $email;
+        
+        Dbal::conn()->update('t_transaction_tra',
+            array('tra_email' => $this->email),
+            array('tra_id' => $this->id),
+            array("string", "integer")
+        );
+    }
     
     public function getMontantTotal(){
         $total = 0;
@@ -101,6 +129,24 @@ class Transaction {
             $total += $purchase['pur_price'];
         }
         return $total;
+    }
+    
+    public function abort(){
+        if($this->status == 'V'){
+            throw new TransactionAlreadyValidated();
+        }
+        
+        if($this->status == 'A'){
+            throw new TransactionAborted();
+        }
+        
+        $conn->update('t_transaction_tra',
+            array('tra_status' => 'A'),
+            array('tra_id' => $this->id),
+            array("string", "integer")
+        );
+        
+        // TODO Callback if any
     }
 
     public function validate(){
@@ -142,13 +188,10 @@ class Transaction {
                 $buyer = User::getById($this->buyerId);
                 
                 if($total > User::getCreditById($this->buyerId)){
-                    throw new NotEnougMoney();
+                    throw new NotEnoughMoney();
                 }
 
                 User::decCreditById($this->buyerId, $this->getMontantTotal());
-            }
-            else {
-                // TODO Check that payline payment equals transaction total amount
             }
             
             $conn->commit();
@@ -162,30 +205,49 @@ class Transaction {
         $this->validatedDate = $now;
         $this->status = 'V';
         
-        // Send callback if any
-        // TODO
+        // TODO Callback if any
     }
     
     // --- Generators
     
-    static public function getById($idTrans){
-        Log::debug("Transaction: getById($idTrans)");    
-        
-        $query = Dbal::createQueryBuilder()
-            ->select('tra.tra_id', 'tra.tra_date', 'tra.tra_validated', 'tra.usr_id_buyer', 'tra.usr_id_seller', 'tra.app_id',
+    static protected function getQbBase(){
+        return Dbal::createQueryBuilder()
+            ->select('tra.tra_id', 'tra.tra_date', 'tra.tra_validated', 'tra.usr_id_buyer', 'tra.usr_id_seller',
+                'tra.tra_email', 'tra.app_id',
                 'tra.tra_status', 'tra.tra_callback_url', 'tra.tra_return_url', 'tra.tra_token',
                 'tra.fun_id', 'pur.pur_id', 'pur.obj_id', 'pur.pur_qte', 'pur.pur_unit_price',
                 'pur.pur_price', 'pur.pur_removed')
             ->from('t_transaction_tra', 'tra')
-            ->innerJoin('tra', 't_purchase_pur', 'pur', 'pur.tra_id = tra.tra_id')
+            ->innerJoin('tra', 't_purchase_pur', 'pur', 'pur.tra_id = tra.tra_id');
+    }
+    
+    static public function getById($idTrans){
+        Log::debug("Transaction: getById($idTrans)");
+
+        $qb = self::getQbBase()
             ->where('tra.tra_id = :tra_id')
-            ->setParameter('tra_id', $idTrans)
-            ->execute();
+            ->setParameter('tra_id', $idTrans);
+        return self::getByQb($qb);
+    }
+    
+    static public function getByToken($token){
+        Log::debug("Transaction: getByToken($token)");
+
+        $qb = self::getQbBase()
+            ->where('tra.tra_token = :tra_token')
+            ->setParameter('tra_token', $token);
+        return self::getByQb($qb);
+    }
+       
+    static protected function getByQb($qb){
+        Log::debug("Transaction: getByQb(...)");
+        
+        $query = $qb->execute();
 
         // Check that the transaction exists
         if ($query->rowCount() == 0) {
-            Log::warn("Transaction: Transaction $idTrans not found");
-            throw new TransactionNotFound("La transaction $idTrans n'existe pas");
+            Log::warn("Transaction: Transaction not found");
+            throw new TransactionNotFound("La transaction n'existe pas");
         }
                         
         // Get remaining data from the database
@@ -197,6 +259,7 @@ class Transaction {
         $transaction->validatedDate = $don['tra_validated'];
         $transaction->buyerId = $don['usr_id_buyer'];
         $transaction->sellerId = $don['usr_id_seller'];
+        $transaction->email = $don['tra_email'];
         $transaction->appId = $don['app_id'];
         $transaction->funId = $don['fun_id'];
         $transaction->status = $don['tra_status'];
@@ -218,12 +281,29 @@ class Transaction {
         return $transaction;
     }
     
-    static public function create($buyerId, $sellerId, $appId, $funId, $items, $callbackUrl = null, $returnUrl = null){
-        $conn = Dbal::conn();        
-        // TODO check que les articles existent et que leurs prix sont ok (cf poss3)            
+    static public function create($buyer, $seller, $appId, $funId, $objects, $callbackUrl = null, $returnUrl = null){
+        $conn = Dbal::conn();
+        
+        // Create a list of all the IDs we want to buy
+        $objectsIds = array();
+        foreach($objects as $object){
+            $objectsIds[] = $object[0];
+        }
+        
+        // Get all the corresponding products
+        $products = Product::getAll(array('obj_ids' => array_unique($objectsIds), 'fun_ids' => array($funId)));
+        
+        // Index the products by their ID
+        $items = array();
+        foreach($products as $item) {
+            $items[$item['id']] = $item;
+        }
         
         try {
             $conn->beginTransaction();
+            
+            $buyerId = $buyer ? $buyer->getId() : null;
+            $sellerId = $seller ? $seller->getId() : null;
 
             // Insert the transaction
             $conn->insert('t_transaction_tra', array(
@@ -239,15 +319,37 @@ class Transaction {
             
             $transactionId = $conn->lastInsertId();
 
-            // Build the purchases (transaction ID is required here)
-            foreach ($items as $itm) {
+            // Go through all the products we are buying
+            foreach($objects as $object){
+                // If the product does not exist, fail
+                if(!isset($items[$object[0]])){
+                    Log::warn("Transaction::create(...) : ${object[0]} is unavailable");
+                    throw new PossException("L'article ${object[0]} n'est pas disponible à la vente.");
+                }
+                
+                // The product that we are buying
+                $product = $items[$object[0]];
+            
+                // If alcohol and our buyer is <18, then fail
+                if ($product['alcool'] > 0 && $buyer->isAdult() == 0) {
+                    Log::warn("transaction($badge_id, $obj_ids) : Under-18 users can't buy alcohol");
+                    throw new PossException($buyer->getNickname()." est mineur il ne peut pas acheter d'alcool !");
+                }
+                
+                // If there is no quantity for this product, fail
+                if(count($object) != 2 || empty($object[1])){
+                    Log::warn("transaction($fun_id, $badge_id, $obj_ids) : Null quantity for article $object[0]");
+                    throw new PossException("La quantité pour l'article est $object[0] nulle.");
+                }
+            
+                // Add the product to the transaction
                 $conn->insert('t_purchase_pur', array(
                     'tra_id' => $transactionId,
-                    'obj_id' => $itm['id'],
-                    'pur_qte' => $itm['qte'],
-                    'pur_price' => $itm['price'] * $itm['qte'],
-                    'pur_unit_price' => $itm['price'],
-                ), array("integer", "integer", "integer", "integer", "integer"));                
+                    'obj_id' => $product['id'],
+                    'pur_qte' => $object[1],
+                    'pur_price' => $product['price'] * $object[1],
+                    'pur_unit_price' => $product['price'],
+                ), array("integer", "integer", "integer", "integer", "integer"));
             }
 
             $conn->commit();
@@ -260,7 +362,7 @@ class Transaction {
         return self::getById($transactionId);
     }
     
-    static public function createAndValidate($buyerId, $sellerId, $appId, $funId, $items, $callbackUrl = null, $returnUrl = null){
+    static public function createAndValidate($buyer, $seller, $appId, $funId, $items, $callbackUrl = null, $returnUrl = null){
         $conn = Dbal::conn();
         
         try {
@@ -268,7 +370,7 @@ class Transaction {
             // See http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/transactions.html
             $conn->beginTransaction();
             
-            $transaction = self::create($buyerId, $sellerId, $appId, $funId, $items, $callbackUrl, $returnUrl);
+            $transaction = self::create($buyer, $seller, $appId, $funId, $items, $callbackUrl, $returnUrl);
             $transaction->validate();
             
             $conn->commit();
