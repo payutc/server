@@ -132,11 +132,21 @@ class Transaction {
     }
     
     public function abort(){
+        if($this->status == 'V'){
+            throw new TransactionAlreadyValidated();
+        }
+        
+        if($this->status == 'A'){
+            throw new TransactionAborted();
+        }
+        
         $conn->update('t_transaction_tra',
             array('tra_status' => 'A'),
             array('tra_id' => $this->id),
             array("string", "integer")
         );
+        
+        // TODO Callback if any
     }
 
     public function validate(){
@@ -195,8 +205,7 @@ class Transaction {
         $this->validatedDate = $now;
         $this->status = 'V';
         
-        // Send callback if any
-        // TODO
+        // TODO Callback if any
     }
     
     // --- Generators
