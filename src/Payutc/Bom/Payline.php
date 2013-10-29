@@ -116,7 +116,7 @@ class Payline {
                 "pay_callback_url" => $returnURL
             ),
             array(
-                "integer", "string", "integer", "datetime", "string"
+                "integer", "integer", "string", "integer", "datetime", "string"
             ));
         $ref = $conn->lastInsertId();
 
@@ -252,7 +252,7 @@ class Payline {
                             $transaction = \Payutc\Bom\Transaction::getById($result['tra_id']);
                             $transaction->validate();
                         }
-                    catch (Exception $e) {
+                    } catch (Exception $e) {
                         Log::error("PAYLINE : Validation of transaction (tra_id)".$result['tra_id']." has failed... Token: $token \nException : \n".print_r($e, true));
                     }
                     
