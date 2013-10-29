@@ -36,6 +36,16 @@ t_object_obj:
     obj_stock: 23
     fun_id: 1
 
+  - 
+    obj_id: 5
+    obj_name: Cuvee
+    obj_type: product
+    obj_single: 0
+    obj_tva: 0
+    obj_alcool: 0
+    obj_stock: 42
+    fun_id: 1
+
 
 tj_object_link_oli:
   -
@@ -55,6 +65,11 @@ tj_object_link_oli:
     obj_id_child: 4
     oli_step: 0
 
+  -
+    obj_id_parent: 1001
+    obj_id_child: 5
+    oli_step: 0
+
 
 
 t_price_pri:
@@ -70,3 +85,7 @@ t_price_pri:
   -
     obj_id: 4
     pri_credit: 150
+
+  -
+    obj_id: 5
+    pri_credit: 170

@@ -61,6 +61,16 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
                  "alcool" => "0",
                  "image" => null
             ),
+            array(
+                 "id" => "5",
+                 "name" => "Cuvee",
+                 "categorie_id" => "1001",
+                 "fundation_id" => "1",
+                 "stock" => "42",
+                 "price" => "170",
+                 "alcool" => "0",
+                 "image" => null
+            ),
         );
         $r = Product::getAll();
         sort_by_key($r, 'id');
