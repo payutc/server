@@ -101,6 +101,28 @@ class TransactionRwdbTest extends DatabaseTest
         $r = Purchase::getNbSell(5, 1);
         $this->assertEquals(4, $r);
     }
+    
+    public function testCreateToken(){
+        $items = array(
+        	array(
+        		'id' => 4,
+        		'qte' => 1,
+        		'price' => 150,
+        	),
+        	array(
+        		'id' => 4,
+        		'qte' => 3,
+        		'price' => 150,
+        	),
+        );
+        $transaction = Transaction::create(9447, 9447, 51, 1, $items, null, null);
+        
+        $token = $transaction->getToken();
+        
+        $transaction2 = Transaction::getByToken($token);
+
+        $this->assertEquals(600, $transaction2->getMontantTotal());
+    }
 	
 	/**
 	 * Test validating an already validated transaction

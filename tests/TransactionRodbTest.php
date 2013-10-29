@@ -52,7 +52,7 @@ class TransactionRodbTest extends ReadOnlyDatabaseTest
 	 * Test retrieving an unknown transaction
 	 * 
 	 * @expectedException		 \Payutc\Exception\TransactionNotFound
-	 * @expectedExceptionMessage La transaction 742 n'existe pas
+	 * @expectedExceptionMessage La transaction n'existe pas
      * @requires PHP 5.4
 	 */
 	public function testRetrieveUnknown()

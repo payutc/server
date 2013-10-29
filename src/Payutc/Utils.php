@@ -72,6 +72,19 @@ class Utils
     	}
     	return call_user_func_array($function_or_array, $real_params);
     }
+    
+    public static function getRandomString($length = 32, $chars = null){
+        if($chars == null){
+            $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        }
+        
+        $output = "";
+        for($i = 0; $i<$length; $i++) {
+            $output .= mb_substr($chars, rand(0, $count - 1), 1);
+        }
+        
+        return $output;
+    }
 
 }
 ?>

@@ -22,6 +22,7 @@
 namespace Payutc\Bom;
 
 use \Payutc\Log;
+use \Payutc\Utils;
 use \Payutc\Bom\User;
 use \Payutc\Db\Dbal;
 use \Payutc\Exception\NotEnoughMoney;
@@ -86,7 +87,17 @@ class Transaction {
     }
     
     public function getToken(){
-        // TODO
+        if(empty($this->token)){
+            $this->token = Utils::getRandomString(32);
+        
+            Dbal::conn()->update('t_transaction_tra',
+                array('tra_token' => $this->token),
+                array('tra_id' => $this->id),
+                array("string", "integer")
+            );
+        }
+        
+        return $this->token;
     }
     
     public function setEmail(){
@@ -168,24 +179,43 @@ class Transaction {
     
     // --- Generators
     
-    static public function getById($idTrans){
-        Log::debug("Transaction: getById($idTrans)");    
-        
-        $query = Dbal::createQueryBuilder()
+    static protected function getQbBase(){
+        return Dbal::createQueryBuilder()
             ->select('tra.tra_id', 'tra.tra_date', 'tra.tra_validated', 'tra.usr_id_buyer', 'tra.usr_id_seller', 'tra.app_id',
                 'tra.tra_status', 'tra.tra_callback_url', 'tra.tra_return_url', 'tra.tra_token',
                 'tra.fun_id', 'pur.pur_id', 'pur.obj_id', 'pur.pur_qte', 'pur.pur_unit_price',
                 'pur.pur_price', 'pur.pur_removed')
             ->from('t_transaction_tra', 'tra')
-            ->innerJoin('tra', 't_purchase_pur', 'pur', 'pur.tra_id = tra.tra_id')
+            ->innerJoin('tra', 't_purchase_pur', 'pur', 'pur.tra_id = tra.tra_id');
+    }
+    
+    static public function getById($idTrans){
+        Log::debug("Transaction: getById($idTrans)");
+
+        $qb = self::getQbBase()
             ->where('tra.tra_id = :tra_id')
-            ->setParameter('tra_id', $idTrans)
-            ->execute();
+            ->setParameter('tra_id', $idTrans);
+        return self::getByQb($qb);
+    }
+    
+    static public function getByToken($token){
+        Log::debug("Transaction: getByToken($token)");
+
+        $qb = self::getQbBase()
+            ->where('tra.tra_token = :tra_token')
+            ->setParameter('tra_token', $token);
+        return self::getByQb($qb);
+    }
+       
+    static protected function getByQb($qb){
+        Log::debug("Transaction: getByQb(...)");
+        
+        $query = $qb->execute();
 
         // Check that the transaction exists
         if ($query->rowCount() == 0) {
-            Log::warn("Transaction: Transaction $idTrans not found");
-            throw new TransactionNotFound("La transaction $idTrans n'existe pas");
+            Log::warn("Transaction: Transaction not found");
+            throw new TransactionNotFound("La transaction n'existe pas");
         }
                         
         // Get remaining data from the database
