@@ -7,96 +7,137 @@ t_transaction_tra:
     app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
+    tra_status: 'V'
 
   -
     tra_id: 2
     tra_date: "2013-04-07 18:32:25"
+    tra_validated: "2013-04-07 18:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
     app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
+    tra_status: 'V'
 
   -
     tra_id: 3
     tra_date: "2013-04-07 18:32:25"
+    tra_validated: "2013-04-07 18:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
     app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
+    tra_status: 'V'
 
   -
     tra_id: 4
     tra_date: "2013-04-07 19:32:25"
+    tra_validated: "2013-04-07 19:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
     app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
+    tra_status: 'V'
 
   -
     tra_id: 5
     tra_date: "2013-04-07 20:32:25"
+    tra_validated: "2013-04-07 20:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
     app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
+    tra_status: 'V'
 
   -
     tra_id: 6
     tra_date: "2013-04-08 16:32:25"
+    tra_validated: "2013-04-08 16:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
     app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
+    tra_status: 'V'
 
   -
     tra_id: 7
     tra_date: "2013-04-08 18:32:25"
+    tra_validated: "2013-04-08 18:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
     app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
+    tra_status: 'V'
 
   -
     tra_id: 8
     tra_date: "2013-04-08 19:32:25"
+    tra_validated: "2013-04-08 19:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
     app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
+    tra_status: 'V'
 
   -
     tra_id: 9
     tra_date: "2013-04-08 20:32:25"
+    tra_validated: "2013-04-08 20:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
     app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
+    tra_status: 'V'
 
   -
     tra_id: 10
     tra_date: "2013-04-08 20:34:25"
+    tra_validated: "2013-04-08 20:34:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
     app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
+    tra_status: 'V'
 
   -
     tra_id: 11
+    tra_date: "2013-04-07 18:32:25"
+    tra_validated: "2013-04-07 18:32:25"
+    usr_id_buyer: 9447
+    usr_id_seller: 9447
+    app_id: 51
+    fun_id: 1
+    tra_ip: 1.2.3.4
+    tra_status: 'V'
+
+  -
+    tra_id: 12
     tra_date: "2013-04-07 18:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
     app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
+    tra_status: W
+
+  -
+    tra_id: 13
+    tra_date: "2013-04-07 18:32:25"
+    usr_id_buyer: 9447
+    usr_id_seller: 9447
+    app_id: 51
+    fun_id: 1
+    tra_ip: 1.2.3.4
+    tra_status: A
     
 
 t_purchase_pur:
@@ -202,6 +243,33 @@ t_purchase_pur:
   -
     pur_id: 12
     tra_id: 11
+    obj_id: 5
+    pur_qte: 1
+    pur_unit_price: 170
+    pur_price: 170
+    pur_removed: 0
+
+  -
+    pur_id: 13
+    tra_id: 12
+    obj_id: 5
+    pur_qte: 1
+    pur_unit_price: 170
+    pur_price: 170
+    pur_removed: 0
+
+  -
+    pur_id: 14
+    tra_id: 12
+    obj_id: 5
+    pur_qte: 1
+    pur_unit_price: 170
+    pur_price: 170
+    pur_removed: 0
+
+  -
+    pur_id: 15
+    tra_id: 13
     obj_id: 5
     pur_qte: 1
     pur_unit_price: 170

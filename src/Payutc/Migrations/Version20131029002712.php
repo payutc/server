@@ -13,11 +13,14 @@ class Version20131029002712 extends AbstractMigration
     public function up(Schema $schema)
     {
         $this->addSql("ALTER TABLE `t_transaction_tra`
+            ADD `tra_validated` DATETIME NULL COMMENT 'Time when transaction was validated' AFTER `tra_date`,
             ADD `tra_status` ENUM('W', 'V', 'A') NOT NULL DEFAULT 'W' COMMENT 'Transaction status' AFTER `fun_id`,
             ADD `tra_callback_url` VARCHAR(200) NULL COMMENT 'URL to call when status changes' AFTER `tra_status`,
             ADD `tra_return_url` VARCHAR(200) NULL COMMENT 'Return URL at the end of the transaction' AFTER `tra_callback_url`,
             ADD `tra_token` VARCHAR(32) NULL COMMENT 'Transaction token for WEBSALE' AFTER `tra_return_url`,
             CHANGE `poi_id` `app_id` INT(11) unsigned NOT NULL COMMENT 'ID of the application that created this transaction',
+            CHANGE `usr_id_buyer` `usr_id_buyer` INT(11) UNSIGNED NULL COMMENT 'Identifiant de l\'acheteur',
+            CHANGE `usr_id_seller` `usr_id_seller` INT(11) UNSIGNED NULL COMMENT 'Identifiant du vendeur',
             ADD INDEX (`tra_status`)");
         
         $this->addSql("ALTER TABLE `t_paybox_pay`
@@ -49,10 +52,13 @@ class Version20131029002712 extends AbstractMigration
         
         $this->addSql("ALTER TABLE `t_transaction_tra`
             DROP INDEX `tra_status`,
+            DROP `tra_validated`,
             DROP `tra_status`,
             DROP `tra_callback_url`,
             DROP `tra_return_url`,
             DROP `tra_token`,
-            CHANGE `app_id` `poi_id` int(11) unsigned NOT NULL COMMENT 'Identifiant du point de vente'");
+            CHANGE `app_id` `poi_id` int(11) unsigned NOT NULL COMMENT 'Identifiant du point de vente',
+            CHANGE `usr_id_buyer` `usr_id_buyer` INT(11) UNSIGNED NOT NULL COMMENT 'Identifiant de l\'acheteur',
+            CHANGE `usr_id_seller` `usr_id_seller` INT(11) UNSIGNED NOT NULL COMMENT 'Identifiant du vendeur'");
     }
 }

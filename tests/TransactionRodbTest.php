@@ -49,7 +49,7 @@ class TransactionRodbTest extends ReadOnlyDatabaseTest
     }
 	
 	/**
-	 * Test the user is not blocked in all Payutc
+	 * Test retrieving an unknown transaction
 	 * 
 	 * @expectedException		 \Payutc\Exception\TransactionNotFound
 	 * @expectedExceptionMessage La transaction 742 n'existe pas
