@@ -123,6 +123,28 @@ class TransactionRwdbTest extends DatabaseTest
 
         $this->assertEquals(600, $transaction2->getMontantTotal());
     }
+    
+    public function testCreateEmail(){
+        $items = array(
+        	array(
+        		'id' => 4,
+        		'qte' => 1,
+        		'price' => 150,
+        	),
+        	array(
+        		'id' => 4,
+        		'qte' => 3,
+        		'price' => 150,
+        	),
+        );
+        $transaction = Transaction::create(9447, 9447, 51, 1, $items, null, null);
+        $transaction->setEmail("arthur@puyou.fr");
+        
+        $this->assertEquals("arthur@puyou.fr", $transaction->getEmail());
+        
+        $transaction2 = Transaction::getById($transaction->getId());
+        $this->assertEquals("arthur@puyou.fr", $transaction2->getEmail());
+    }
 	
 	/**
 	 * Test validating an already validated transaction

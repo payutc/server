@@ -25,6 +25,7 @@ use \Payutc\Log;
 use \Payutc\Utils;
 use \Payutc\Bom\User;
 use \Payutc\Db\Dbal;
+use \Payutc\Exception\InvalidData;
 use \Payutc\Exception\NotEnoughMoney;
 use \Payutc\Exception\TransactionAborted;
 use \Payutc\Exception\TransactionNotFound;
@@ -36,6 +37,7 @@ class Transaction {
     protected $validatedDate;
     protected $buyerId;
     protected $sellerId;
+    protected $email;
     protected $appId;
     protected $funId;
     protected $purchases;
@@ -100,11 +102,25 @@ class Transaction {
         return $this->token;
     }
     
-    public function setEmail(){
-        // TODO + throw exception if invalid
+    public function getEmail(){
+        return $this->email;
     }
     
     // --- Helpers
+
+    public function setEmail($email){
+        if(!Utils::validateEmail($email)){
+            throw new InvalidData("L'adresse email est incorrecte.");
+        }
+        
+        $this->email = $email;
+        
+        Dbal::conn()->update('t_transaction_tra',
+            array('tra_email' => $this->email),
+            array('tra_id' => $this->id),
+            array("string", "integer")
+        );
+    }
     
     public function getMontantTotal(){
         $total = 0;
@@ -181,7 +197,8 @@ class Transaction {
     
     static protected function getQbBase(){
         return Dbal::createQueryBuilder()
-            ->select('tra.tra_id', 'tra.tra_date', 'tra.tra_validated', 'tra.usr_id_buyer', 'tra.usr_id_seller', 'tra.app_id',
+            ->select('tra.tra_id', 'tra.tra_date', 'tra.tra_validated', 'tra.usr_id_buyer', 'tra.usr_id_seller',
+                'tra.tra_email', 'tra.app_id',
                 'tra.tra_status', 'tra.tra_callback_url', 'tra.tra_return_url', 'tra.tra_token',
                 'tra.fun_id', 'pur.pur_id', 'pur.obj_id', 'pur.pur_qte', 'pur.pur_unit_price',
                 'pur.pur_price', 'pur.pur_removed')
@@ -227,6 +244,7 @@ class Transaction {
         $transaction->validatedDate = $don['tra_validated'];
         $transaction->buyerId = $don['usr_id_buyer'];
         $transaction->sellerId = $don['usr_id_seller'];
+        $transaction->email = $don['tra_email'];
         $transaction->appId = $don['app_id'];
         $transaction->funId = $don['fun_id'];
         $transaction->status = $don['tra_status'];

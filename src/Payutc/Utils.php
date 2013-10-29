@@ -79,11 +79,16 @@ class Utils
         }
         
         $output = "";
+        $count = mb_strlen($chars);
         for($i = 0; $i<$length; $i++) {
             $output .= mb_substr($chars, rand(0, $count - 1), 1);
         }
         
         return $output;
+    }
+    
+    public static function validateEmail($email){
+        return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
 }
