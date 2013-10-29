@@ -4,7 +4,7 @@ t_transaction_tra:
     tra_date: "2013-04-07"
     usr_id_buyer: 9447
     usr_id_seller: 1
-    poi_id: 51
+    app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
 
@@ -13,7 +13,7 @@ t_transaction_tra:
     tra_date: "2013-04-07 18:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
-    poi_id: 51
+    app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
 
@@ -22,7 +22,7 @@ t_transaction_tra:
     tra_date: "2013-04-07 18:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
-    poi_id: 51
+    app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
 
@@ -31,7 +31,7 @@ t_transaction_tra:
     tra_date: "2013-04-07 19:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
-    poi_id: 51
+    app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
 
@@ -40,7 +40,7 @@ t_transaction_tra:
     tra_date: "2013-04-07 20:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
-    poi_id: 51
+    app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
 
@@ -49,7 +49,7 @@ t_transaction_tra:
     tra_date: "2013-04-08 16:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
-    poi_id: 51
+    app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
 
@@ -58,7 +58,7 @@ t_transaction_tra:
     tra_date: "2013-04-08 18:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
-    poi_id: 51
+    app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
 
@@ -67,7 +67,7 @@ t_transaction_tra:
     tra_date: "2013-04-08 19:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
-    poi_id: 51
+    app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
 
@@ -76,7 +76,7 @@ t_transaction_tra:
     tra_date: "2013-04-08 20:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
-    poi_id: 51
+    app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
 
@@ -85,7 +85,7 @@ t_transaction_tra:
     tra_date: "2013-04-08 20:34:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
-    poi_id: 51
+    app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
 
@@ -94,7 +94,7 @@ t_transaction_tra:
     tra_date: "2013-04-07 18:32:25"
     usr_id_buyer: 9447
     usr_id_seller: 9447
-    poi_id: 51
+    app_id: 51
     fun_id: 1
     tra_ip: 1.2.3.4
     
@@ -208,8 +208,11 @@ t_purchase_pur:
     pur_price: 170
     pur_removed: 0
 
-t_point_poi:
+t_application_app:
   -
-    poi_id: 51
-    poi_name: Caisse du pic
-    poi_removed: 0
+    app_id: 51
+    app_name: Caisse du pic
+    app_key: abc
+    app_creator: puyouart
+    app_lastuse: "2013-04-07 20:32:25"
+    app_created: "1991-02-16 09:12:53"

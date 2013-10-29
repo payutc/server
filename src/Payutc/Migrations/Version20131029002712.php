@@ -17,6 +17,7 @@ class Version20131029002712 extends AbstractMigration
             ADD `tra_callback_url` VARCHAR(200) NULL COMMENT 'URL to call when status changes' AFTER `tra_status`,
             ADD `tra_return_url` VARCHAR(200) NULL COMMENT 'Return URL at the end of the transaction' AFTER `tra_callback_url`,
             ADD `tra_token` VARCHAR(32) NULL COMMENT 'Transaction token for WEBSALE' AFTER `tra_return_url`,
+            CHANGE `poi_id` `app_id` INT(11) unsigned NOT NULL COMMENT 'ID of the application that created this transaction',
             ADD INDEX (`tra_status`)");
         
         $this->addSql("ALTER TABLE `t_paybox_pay`
@@ -51,6 +52,7 @@ class Version20131029002712 extends AbstractMigration
             DROP `tra_status`,
             DROP `tra_callback_url`,
             DROP `tra_return_url`,
-            DROP `tra_token`");
+            DROP `tra_token`,
+            CHANGE `app_id` `poi_id` int(11) unsigned NOT NULL COMMENT 'Identifiant du point de vente'");
     }
 }

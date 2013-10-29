@@ -73,7 +73,7 @@ class Transaction {
         $transaction->date = $don['tra_date'];
         $transaction->buyerId = $don['usr_id_buyer'];
         $transaction->sellerId = $don['usr_id_seller'];
-        $transaction->appId = $don['fun_id'];
+        $transaction->appId = $don['app_id'];
         $transaction->purchases = array();
         do {
             $transaction->purchases[] = array(

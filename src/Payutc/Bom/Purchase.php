@@ -76,7 +76,7 @@ class Purchase
             ->andWhere('pur.pur_removed = 0');
 
         if($app_id != null) {
-            $qb->andWhere('tra.poi_id = :poi_id')->setParameter('poi_id', $app_id);
+            $qb->andWhere('tra.app_id = :app_id')->setParameter('app_id', $app_id);
         }
 
         if($start != null) {
@@ -144,7 +144,7 @@ class Purchase
      * @param array $itm_ids array des articles à acheter
      * @param int $total_price prix total de la transaction
      */
-    public static function transaction($usr_id_buyer, $items, $poi_id, $fun_id, $usr_id_seller, $pur_ip)
+    public static function transaction($usr_id_buyer, $items, $app_id, $fun_id, $usr_id_seller, $pur_ip)
     {
         $conn = Dbal::conn();
         
@@ -156,7 +156,7 @@ class Purchase
                 'tra_date' => date('Y-m-d H:i:s'),
                 'usr_id_buyer' => $usr_id_buyer,
                 'usr_id_seller' => $usr_id_seller,
-                'poi_id' => $poi_id,
+                'app_id' => $app_id,
                 'fun_id' => $fun_id,
                 'tra_ip' => $pur_ip,    
             ));

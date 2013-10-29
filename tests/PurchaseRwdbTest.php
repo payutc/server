@@ -59,7 +59,7 @@ class PurchaseRwdbTest extends DatabaseTest
                      'tra_date' => date('Y-m-d H:i:s'),
                      'usr_id_buyer' => 1,
                      'usr_id_seller' => 1,
-                     'poi_id' => 42,
+                     'app_id' => 42,
                      'fun_id' => 1,
                      'tra_ip' => ''
         ));
