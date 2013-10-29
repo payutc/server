@@ -109,30 +109,6 @@ class TransactionRwdbTest extends DatabaseTest
         $transaction2 = Transaction::getById($transaction->getId());
         $this->assertEquals("arthur@puyou.fr", $transaction2->getEmail());
     }
-	
-	/**
-	 * Test validating an already validated transaction
-	 * 
-	 * @expectedException		 \Payutc\Exception\TransactionAlreadyValidated
-     * @requires PHP 5.4
-	 */
-	public function testAlreadyValidatedTransaction()
-	{
-        $transaction = Transaction::getById(1);
-        $transaction->validate();
-	}
-    
-	/**
-	 * Test validating an aborted transaction
-	 * 
-	 * @expectedException		 \Payutc\Exception\TransactionAborted
-     * @requires PHP 5.4
-	 */
-	public function testAbortedTransaction()
-	{
-        $transaction = Transaction::getById(13);
-        $transaction->validate();
-	}
     
     // TODO try buying with not enough credit, validating with not enough credit, adding wrong articles
 }

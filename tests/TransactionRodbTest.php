@@ -59,5 +59,29 @@ class TransactionRodbTest extends ReadOnlyDatabaseTest
 	{
 		$transaction = Transaction::getById(742);
 	}
+    
+	/**
+	 * Test validating an already validated transaction
+	 * 
+	 * @expectedException		 \Payutc\Exception\TransactionAlreadyValidated
+     * @requires PHP 5.4
+	 */
+	public function testAlreadyValidatedTransaction()
+	{
+        $transaction = Transaction::getById(1);
+        $transaction->validate();
+	}
+    
+	/**
+	 * Test validating an aborted transaction
+	 * 
+	 * @expectedException		 \Payutc\Exception\TransactionAborted
+     * @requires PHP 5.4
+	 */
+	public function testAbortedTransaction()
+	{
+        $transaction = Transaction::getById(13);
+        $transaction->validate();
+	}
 }
 
