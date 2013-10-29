@@ -612,4 +612,35 @@ class User {
         $res = $q->execute()->fetch();
         return 0 != $res['count'];
     }
+    
+    public static function getById($id) {
+        $qb = Dbal::createQueryBuilder();
+        $q = $qb->select('usr_nickname')
+                ->from('ts_user_usr', 'usr')
+                ->where('usr_id = :id')
+                ->setParameter('id', $id);
+        $res = $q->execute()->fetch();
+        return new User($res['usr_nickname']);
+    }
+    
+    public static function getCreditById($id){
+        Log::debug("User::getCreditById($id)");
+        
+        $query = Dbal::createQueryBuilder()
+            ->select('usr_credit')
+            ->from('ts_user_usr', 'usr')
+            ->where('usr.usr_id = :usr_id')
+            ->setParameter('usr_id', $id)
+            ->execute();
+
+        // Check that the user exists
+        if ($query->rowCount() != 1) {
+            Log::debug("User: User not found for id $id");
+            throw new UserNotFound();
+        }
+
+        // Get data from the database
+        $don = $query->fetch();
+        return $don['usr_credit'];
+    }
 }

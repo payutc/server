@@ -32,6 +32,7 @@ class Purchase
            ->innerJoin('pur', 't_transaction_tra', 'tra', 'pur.tra_id = tra.tra_id')
            ->where('pur.obj_id = :obj_id')->setParameter('obj_id', $obj_id)
            ->andWhere('tra.fun_id = :fun_id')->setParameter('fun_id', $fun_id)
+           ->andWhere("tra.tra_status = 'V'")
            ->andWhere('pur.pur_removed = 0');
         
         if($start != null) {
@@ -73,10 +74,11 @@ class Purchase
             ->from('t_purchase_pur', 'pur')
             ->innerJoin('pur', 't_transaction_tra', 'tra', 'pur.tra_id = tra.tra_id')
             ->andWhere('tra.fun_id = :fun_id')->setParameter('fun_id', $fun_id)
+            ->andWhere("tra.tra_status = 'V'")
             ->andWhere('pur.pur_removed = 0');
 
         if($app_id != null) {
-            $qb->andWhere('tra.poi_id = :poi_id')->setParameter('poi_id', $app_id);
+            $qb->andWhere('tra.app_id = :app_id')->setParameter('app_id', $app_id);
         }
 
         if($start != null) {
@@ -105,10 +107,11 @@ class Purchase
     public static function getPurchaseById($pur_id)
     {
         $qb = Dbal::createQueryBuilder();
-            $qb->select('*', 'tra.tra_date')
-               ->from('t_purchase_pur', 'pur')
-               ->innerJoin('pur', 't_transaction_tra', 'tra', 'pur.tra_id = tra.tra_id')
-               ->where('pur.pur_id = :pur_id')
+        $qb->select('*', 'tra.tra_date')
+           ->from('t_purchase_pur', 'pur')
+           ->innerJoin('pur', 't_transaction_tra', 'tra', 'pur.tra_id = tra.tra_id')
+           ->where('pur.pur_id = :pur_id')
+           ->andWhere("tra.tra_status = 'V'")
            ->setParameter('pur_id', $pur_id);
         return $qb->execute()->fetch();
     }
@@ -144,7 +147,7 @@ class Purchase
      * @param array $itm_ids array des articles à acheter
      * @param int $total_price prix total de la transaction
      */
-    public static function transaction($usr_id_buyer, $items, $poi_id, $fun_id, $usr_id_seller, $pur_ip)
+    public static function transaction($usr_id_buyer, $items, $app_id, $fun_id, $usr_id_seller, $pur_ip)
     {
         $conn = Dbal::conn();
         
@@ -156,9 +159,10 @@ class Purchase
                 'tra_date' => date('Y-m-d H:i:s'),
                 'usr_id_buyer' => $usr_id_buyer,
                 'usr_id_seller' => $usr_id_seller,
-                'poi_id' => $poi_id,
+                'app_id' => $app_id,
                 'fun_id' => $fun_id,
-                'tra_ip' => $pur_ip,    
+                'tra_status' => 'V',
+                'tra_ip' => $pur_ip,
             ));
             $transactionId = $conn->lastInsertId();
             
@@ -204,6 +208,7 @@ class Purchase
            ->innerJoin('pur', 't_transaction_tra', 'tra', 'pur.tra_id = tra.tra_id')
            ->where('usr.usr_id = tra.usr_id_buyer')
            ->andWhere('tra.fun_id = :fun_id')->setParameter('fun_id', $fun_id)
+           ->andWhere("tra.tra_status = 'V'")
            ->andWhere('pur.pur_removed = 0');
 
         if($obj_id != null) {
@@ -247,6 +252,7 @@ class Purchase
            ->from('t_purchase_pur', 'pur')
            ->innerJoin('pur', 't_transaction_tra', 'tra', 'pur.tra_id = tra.tra_id')
            ->Where('usr_id_buyer = :usr_id')
+           ->andWhere("tra.tra_status = 'V'")
            ->andWhere('pur_removed = 0')
            ->setParameter('usr_id', $usr_id);
         if ($time_limit) {
