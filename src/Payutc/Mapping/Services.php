@@ -13,7 +13,9 @@ class Services {
         'PAYLINE',
         'RELOAD',
         'MYACCOUNT',
-        'TRANSFER'
+        'TRANSFER',
+        'WEBSALE',
+        'WEBSALECONFIRM'
     );
     
     public static function get($name) {
