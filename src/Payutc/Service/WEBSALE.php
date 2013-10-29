@@ -3,6 +3,7 @@
 namespace Payutc\Service;
 
 use \Payutc\Config;
+use \Payutc\Bom\Transaction;
 
 /**
  * WEBSALE.php
@@ -15,7 +16,7 @@ class WEBSALE extends \ServiceBase {
      
 	/**
 	* Crée une transaction 
-	* $objs = array( array($id_article => $qte), ... );
+	* $objs = [[id, qte], ...]
 	* $fun_id = Fundation qui réalise la vente
 	* $retour_url = URL ou l'on doit revenir à la fin de la transaction
 	* $callback_url = URL de callback (à la fin de la transaction on vient dire coucou à l'application avec le tr_id)
@@ -26,8 +27,15 @@ class WEBSALE extends \ServiceBase {
         $this->checkRight(false, true, true, $funId);
         
         // Create the transaction, get transaction ID, and token
-        $transaction = \Payutc\Bom\Transaction::createTransaction(null, null, $this->application()->getId(), $this->getRemoteIp(), $items, $callbackUrl, $returnUrl)
-        $tr_id = $transaction->getId();
+        $transaction = Transaction::create(
+            null, // Buyer
+            null, // Seller
+            $this->application()->getId(), // appId
+            $funId, // funId
+            json_decode($items), // objects
+            $callbackUrl, // callbackUrl
+            $returnUrl); // returnUrl
+        $tra_id = $transaction->getId();
         $token_id = $transaction->getToken();
         
         // Get the service url of application with WEBSALECONFIRM right
@@ -36,8 +44,8 @@ class WEBSALE extends \ServiceBase {
         $app_url = $app->getUrl();
         
 		return array(
-		    "tr_id" => $tr_id,
-		    "url" => $app_url . "validation/" . $tr_id . "/" . $token_id
+		    "tra_id" => $tra_id,
+		    "url" => $app_url . "validation/" . $tra_id . "/" . $token_id
 		);
 	}
 
