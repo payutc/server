@@ -129,6 +129,14 @@ class Transaction {
         }
         return $total;
     }
+    
+    public function abort(){
+        $conn->update('t_transaction_tra',
+            array('tra_status' => 'A'),
+            array('tra_id' => $this->id),
+            array("string", "integer")
+        );
+    }
 
     public function validate(){
         if($this->status == 'V'){
@@ -173,9 +181,6 @@ class Transaction {
                 }
 
                 User::decCreditById($this->buyerId, $this->getMontantTotal());
-            }
-            else {
-                // TODO Check that payline payment equals transaction total amount
             }
             
             $conn->commit();
