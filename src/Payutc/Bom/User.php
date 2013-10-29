@@ -391,7 +391,7 @@ class User {
     *
     * @throws CannotReload
     */
-    public function checkReload($amount = null) {
+    public function checkReload($amount = null, $credit_max = null) {
         if($amount === null){
             $amount = Config::get('rechargement_min', 1000);
         }
@@ -400,7 +400,10 @@ class User {
             throw new CannotReload("Le montant du rechargement est inférieur au minimum autorisé");
         }
         
-        if(($this->getCredit() + $amount) > Config::get('credit_max')){
+        if($credit_max === null) {
+            $credit_max = Config::get('credit_max');
+        }
+        if(($this->getCredit() + $amount) > $credit_max){
             throw new CannotReload("Le rechargement ferait dépasser le plafond maximum");
         }
         

@@ -77,7 +77,7 @@ class Payline {
         $this->$service = $service; 
     }
     
-    public function doWebPayment($usr, $amount, $returnURL, $cancelURL=null) {
+    public function doWebPayment($usr, $transaction, $amount, $returnURL, $cancelURL=null, $mail=null) {
         $this->payline->returnURL = $returnURL;
         if($cancelURL) {
             $this->payline->cancelURL = $cancelURL;
@@ -87,11 +87,29 @@ class Payline {
         $this->payline->notificationURL = Config::get('server_url') . "PAYLINE/notification"; 
         Log::debug("Payline notificationURL = ".$this->payline->notificationURL);
 
+        // Get usr_id and tra_id
+        if($usr) {
+            $usr_id = $usr->getId();
+        } else {
+            $usr_id = null;
+        }
+        
+        if($transaction) {
+            $tra_id = $transaction->getId();
+        } else {
+            $tra_id = null;
+        }   
+
+        if($usr_id == null and $tra_id == null) {
+            throw new \Payutc\Exception\PaylineException("Le paiement sert a rien");
+        }
+
         // Insert a payline row in db and get the payment ref
         $conn = Dbal::conn();
         $conn->insert('t_paybox_pay',
             array(
-                "usr_id" => $usr->getId(),
+                "usr_id" => $usr_id,
+                "tra_id" => $tra_id,
                 "pay_step" => "W",  // Etat de la transaction (W: Wait, V: Valide, A: Annule/Aborted)
                 "pay_amount" => $amount,
                 "pay_date_create" => new \DateTime(), 
@@ -115,7 +133,11 @@ class Payline {
         $array['order']['currency'] = PAYMENT_CURRENCY;
 
         // BUYER INFO
-        $array['buyer']['email'] = $usr->getMail();
+        if($usr) {    
+            $array['buyer']['email'] = $usr->getMail();
+        } else {
+            $array['buyer']['email'] = $mail;
+        }
 
         // CONTRACT NUMBERS
         $array['payment']['contractNumber'] = CONTRACT_NUMBER;
@@ -169,7 +191,7 @@ class Payline {
                 $conn = Dbal::conn();
                 // Recuperation du rechargement
                 $qb = Dbal::createQueryBuilder();
-                $qb->select('pay_step', 'pay_id', 'usr_id')
+                $qb->select('pay_step', 'pay_id', 'usr_id', 'tra_id')
                    ->from('t_paybox_pay', 'pay')
                    ->where('pay.pay_token = :token')
                    ->setParameter('token', $token);
@@ -202,25 +224,38 @@ class Payline {
                     }
                 
                     // insertion du rechargement
-                    $conn->insert('t_recharge_rec',
-                    array(
-                        "rty_id" => 3, // Type de rechargement => Rechargement en ligne
-                        "usr_id_buyer" => $result['usr_id'], 
-                        "usr_id_operator" => $result['usr_id'],
-                        "poi_id" => 1, // Historique... useless maintenant TODO mettre l'id d'app
-                        "rec_date" =>  new \DateTime(),
-                        "rec_credit" => $response["payment"]["amount"],
-                        "rec_trace" => $result['pay_id'],
-                        "rec_removed" => 0
-                    ),
-                    array(
-                        "integer", "integer", "integer", "integer", "datetime", "integer", "string", "integer"
-                    ));
+                    if($result['usr_id']) {
+                        $conn->insert('t_recharge_rec',
+                        array(
+                            "rty_id" => 3, // Type de rechargement => Rechargement en ligne
+                            "usr_id_buyer" => $result['usr_id'], 
+                            "usr_id_operator" => $result['usr_id'],
+                            "poi_id" => 1, // Historique... useless maintenant TODO mettre l'id d'app
+                            "rec_date" =>  new \DateTime(),
+                            "rec_credit" => $response["payment"]["amount"],
+                            "rec_trace" => $result['pay_id'],
+                            "rec_removed" => 0
+                        ),
+                        array(
+                            "integer", "integer", "integer", "integer", "datetime", "integer", "string", "integer"
+                        ));
 
-                    // Recharge user maintenant
-                    User::incCreditById($result['usr_id'], $response["payment"]["amount"]);
+                        // Recharge user maintenant
+                        User::incCreditById($result['usr_id'], $response["payment"]["amount"]);
+                    }
 
                     $conn->commit();
+                    
+                    // validation de la transaction
+                    try {
+                        if($result['tra_id']) {
+                            $transaction = \Payutc\Bom\Transaction::getById($result['tra_id']);
+                            $transaction->validate();
+                        }
+                    catch (Exception $e) {
+                        Log::error("PAYLINE : Validation of transaction (tra_id)".$result['tra_id']." has failed... Token: $token \nException : \n".print_r($e, true));
+                    }
+                    
                     Log::debug("PAYLINE : succes ! $token \n".print_r($response, true));
                     return;
                 } catch (Exception $e) {
