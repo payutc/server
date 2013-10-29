@@ -101,9 +101,9 @@ class Poss3RodbTest extends ServiceBaseRodbTest
         ));
         $a = array (
             'error' => array (
-                'type' => 'Payutc\\Exception\\PossException',
+                'type' => 'Payutc\\Exception\\NotEnoughMoney',
                 'code' => 0,
-                'message' => 'puyouart n\'a pas assez d\'argent pour effectuer la transaction.',
+                'message' => '',
             ));
         $this->assertEquals($a, $r->body);
     }

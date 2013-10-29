@@ -24,34 +24,19 @@ class TransactionRwdbTest extends DatabaseTest
 	
     public function testCreate(){
         $items = array(
-        	array(
-        		'id' => 4,
-        		'qte' => 1,
-        		'price' => 150,
-        	),
-        	array(
-        		'id' => 4,
-        		'qte' => 3,
-        		'price' => 150,
-        	),
+            array(4, 1),
+            array(4, 3)
         );
-        $transaction = Transaction::create(9447, 9447, 51, 1, $items, null, null);
+        $matthieu = new User("mguffroy");
+        $transaction = Transaction::create($matthieu, $matthieu, 51, 1, $items, null, null);
 
         $this->assertEquals(600, $transaction->getMontantTotal());
     }
     
     public function testCreateWithNoBuyer(){
         $items = array(
-        	array(
-        		'id' => 4,
-        		'qte' => 1,
-        		'price' => 150,
-        	),
-        	array(
-        		'id' => 4,
-        		'qte' => 3,
-        		'price' => 150,
-        	),
+            array(4, 1),
+            array(4, 3)
         );
         $transaction = Transaction::create(null, null, 51, 1, $items, null, null);
 
@@ -76,19 +61,12 @@ class TransactionRwdbTest extends DatabaseTest
     
     public function testCreateAndValidate(){
         $items = array(
-        	array(
-        		'id' => 5,
-        		'qte' => 1,
-        		'price' => 170,
-        	),
-        	array(
-        		'id' => 5,
-        		'qte' => 1,
-        		'price' => 170,
-        	),
+            array(5, 1),
+            array(5, 1)
         );
 
-        $transaction = Transaction::createAndValidate(9447, 9447, 51, 1, $items, null, null);
+        $matthieu = new User("mguffroy");
+        $transaction = Transaction::createAndValidate($matthieu, $matthieu, 51, 1, $items, null, null);
 
         $this->assertEquals('V', $transaction->getStatus());
 
@@ -104,18 +82,11 @@ class TransactionRwdbTest extends DatabaseTest
     
     public function testCreateToken(){
         $items = array(
-        	array(
-        		'id' => 4,
-        		'qte' => 1,
-        		'price' => 150,
-        	),
-        	array(
-        		'id' => 4,
-        		'qte' => 3,
-        		'price' => 150,
-        	),
+            array(4, 1),
+            array(4, 3)
         );
-        $transaction = Transaction::create(9447, 9447, 51, 1, $items, null, null);
+        $matthieu = new User("mguffroy");
+        $transaction = Transaction::create($matthieu, $matthieu, 51, 1, $items, null, null);
         
         $token = $transaction->getToken();
         
@@ -126,18 +97,11 @@ class TransactionRwdbTest extends DatabaseTest
     
     public function testCreateEmail(){
         $items = array(
-        	array(
-        		'id' => 4,
-        		'qte' => 1,
-        		'price' => 150,
-        	),
-        	array(
-        		'id' => 4,
-        		'qte' => 3,
-        		'price' => 150,
-        	),
+            array(4, 1),
+            array(4, 3)
         );
-        $transaction = Transaction::create(9447, 9447, 51, 1, $items, null, null);
+        $matthieu = new User("mguffroy");
+        $transaction = Transaction::create($matthieu, $matthieu, 51, 1, $items, null, null);
         $transaction->setEmail("arthur@puyou.fr");
         
         $this->assertEquals("arthur@puyou.fr", $transaction->getEmail());

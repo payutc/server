@@ -26,6 +26,7 @@ use \Payutc\Utils;
 use \Payutc\Bom\User;
 use \Payutc\Db\Dbal;
 use \Payutc\Exception\InvalidData;
+use \Payutc\Exception\PossException;
 use \Payutc\Exception\NotEnoughMoney;
 use \Payutc\Exception\TransactionAborted;
 use \Payutc\Exception\TransactionNotFound;
@@ -177,7 +178,7 @@ class Transaction {
                 $buyer = User::getById($this->buyerId);
                 
                 if($total > User::getCreditById($this->buyerId)){
-                    throw new NotEnougMoney();
+                    throw new NotEnoughMoney();
                 }
 
                 User::decCreditById($this->buyerId, $this->getMontantTotal());
@@ -271,12 +272,29 @@ class Transaction {
         return $transaction;
     }
     
-    static public function create($buyerId, $sellerId, $appId, $funId, $items, $callbackUrl = null, $returnUrl = null){
-        $conn = Dbal::conn();        
-        // TODO check que les articles existent et que leurs prix sont ok (cf poss3)            
+    static public function create($buyer, $seller, $appId, $funId, $objects, $callbackUrl = null, $returnUrl = null){
+        $conn = Dbal::conn();
+        
+        // Create a list of all the IDs we want to buy
+        $objectsIds = array();
+        foreach($objects as $object){
+            $objectsIds[] = $object[0];
+        }
+        
+        // Get all the corresponding products
+        $products = Product::getAll(array('obj_ids' => array_unique($objectsIds), 'fun_ids' => array($funId)));
+        
+        // Index the products by their ID
+        $items = array();
+        foreach($products as $item) {
+            $items[$item['id']] = $item;
+        }
         
         try {
             $conn->beginTransaction();
+            
+            $buyerId = $buyer ? $buyer->getId() : null;
+            $sellerId = $seller ? $seller->getId() : null;
 
             // Insert the transaction
             $conn->insert('t_transaction_tra', array(
@@ -292,15 +310,37 @@ class Transaction {
             
             $transactionId = $conn->lastInsertId();
 
-            // Build the purchases (transaction ID is required here)
-            foreach ($items as $itm) {
+            // Go through all the products we are buying
+            foreach($objects as $object){
+                // If the product does not exist, fail
+                if(!isset($items[$object[0]])){
+                    Log::warn("Transaction::create(...) : ${object[0]} is unavailable");
+                    throw new PossException("L'article ${object[0]} n'est pas disponible à la vente.");
+                }
+                
+                // The product that we are buying
+                $product = $items[$object[0]];
+            
+                // If alcohol and our buyer is <18, then fail
+                if ($product['alcool'] > 0 && $buyer->isAdult() == 0) {
+                    Log::warn("transaction($badge_id, $obj_ids) : Under-18 users can't buy alcohol");
+                    throw new PossException($buyer->getNickname()." est mineur il ne peut pas acheter d'alcool !");
+                }
+                
+                // If there is no quantity for this product, fail
+                if(count($object) != 2 || empty($object[1])){
+                    Log::warn("transaction($fun_id, $badge_id, $obj_ids) : Null quantity for article $object[0]");
+                    throw new PossException("La quantité pour l'article est $object[0] nulle.");
+                }
+            
+                // Add the product to the transaction
                 $conn->insert('t_purchase_pur', array(
                     'tra_id' => $transactionId,
-                    'obj_id' => $itm['id'],
-                    'pur_qte' => $itm['qte'],
-                    'pur_price' => $itm['price'] * $itm['qte'],
-                    'pur_unit_price' => $itm['price'],
-                ), array("integer", "integer", "integer", "integer", "integer"));                
+                    'obj_id' => $product['id'],
+                    'pur_qte' => $object[1],
+                    'pur_price' => $product['price'] * $object[1],
+                    'pur_unit_price' => $product['price'],
+                ), array("integer", "integer", "integer", "integer", "integer"));
             }
 
             $conn->commit();
@@ -313,7 +353,7 @@ class Transaction {
         return self::getById($transactionId);
     }
     
-    static public function createAndValidate($buyerId, $sellerId, $appId, $funId, $items, $callbackUrl = null, $returnUrl = null){
+    static public function createAndValidate($buyer, $seller, $appId, $funId, $items, $callbackUrl = null, $returnUrl = null){
         $conn = Dbal::conn();
         
         try {
@@ -321,7 +361,7 @@ class Transaction {
             // See http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/transactions.html
             $conn->beginTransaction();
             
-            $transaction = self::create($buyerId, $sellerId, $appId, $funId, $items, $callbackUrl, $returnUrl);
+            $transaction = self::create($buyer, $seller, $appId, $funId, $items, $callbackUrl, $returnUrl);
             $transaction->validate();
             
             $conn->commit();
