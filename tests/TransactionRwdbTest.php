@@ -22,6 +22,9 @@ class TransactionRwdbTest extends DatabaseTest
         ));
 	}
 	
+	/**
+     * @requires PHP 5.4
+	 */    
     public function testCreate(){
         $items = array(
             array(4, 1),
@@ -43,6 +46,9 @@ class TransactionRwdbTest extends DatabaseTest
         $this->assertEquals(600, $transaction->getMontantTotal());
     }
     
+	/**
+     * @requires PHP 5.4
+	 */
     public function testValidate(){
         $transaction = Transaction::getById(12);
         $transaction->validate();
@@ -59,6 +65,9 @@ class TransactionRwdbTest extends DatabaseTest
         $this->assertEquals(4, $r);
     }
     
+	/**
+     * @requires PHP 5.4
+	 */
     public function testCreateAndValidate(){
         $items = array(
             array(5, 1),
@@ -80,6 +89,9 @@ class TransactionRwdbTest extends DatabaseTest
         $this->assertEquals(4, $r);
     }
     
+	/**
+     * @requires PHP 5.4
+	 */
     public function testCreateToken(){
         $items = array(
             array(4, 1),
@@ -95,6 +107,9 @@ class TransactionRwdbTest extends DatabaseTest
         $this->assertEquals(600, $transaction2->getMontantTotal());
     }
     
+	/**
+     * @requires PHP 5.4
+	 */
     public function testCreateEmail(){
         $items = array(
             array(4, 1),
