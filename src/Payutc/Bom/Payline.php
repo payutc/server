@@ -12,6 +12,7 @@ use \Payutc\Log;
 use \Payutc\Config;
 use \Payutc\Db\Dbal;
 use \Payutc\Bom\User;
+use \Payutc\Bom\Transaction;
 
 class Payline {
     
@@ -249,7 +250,11 @@ class Payline {
                     // validation de la transaction
                     try {
                         if($result['tra_id']) {
-                            $transaction = \Payutc\Bom\Transaction::getById($result['tra_id']);
+                            $transaction = Transaction::getById($result['tra_id']);
+                            if(!$result['usr_id'] && $response["payment"]["amount"] != $transaction->getMontantTotal()) {
+                                $transaction->abort();
+                                throw new Exception("Le montant payé et le montant de la transaction ne correspondent pas");
+                            }
                             $transaction->validate();
                         }
                     } catch (Exception $e) {
