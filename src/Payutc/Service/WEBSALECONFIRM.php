@@ -101,7 +101,7 @@ class WEBSALECONFIRM extends \ServiceBase {
                 $transaction->getMontantTotal(), 
                 $transaction->getReturnUrl(),
                 null,
-                $mail);
+                $transaction->getEmail());
         }
     }
 
