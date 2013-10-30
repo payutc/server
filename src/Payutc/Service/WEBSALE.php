@@ -26,7 +26,7 @@ class WEBSALE extends \ServiceBase {
 	*/
     public function createTransaction($items, $fun_id, $return_url, $callback_url=null) {
         // On a une appli qui a les droits ?
-        $this->checkRight(false, true, true, $funId);
+        $this->checkRight(false, true, true, $fun_id);
         
         // Verifions que les parametres sont a peu pres cohérents
         $objects = json_decode($items);
