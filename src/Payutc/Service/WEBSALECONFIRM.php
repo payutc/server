@@ -35,7 +35,7 @@ class WEBSALECONFIRM extends \ServiceBase {
         // TODO : Récupérer le nom de la fundation pour qu'on puisse afficher à qui l'utilisateur va payer.
         
         return array(
-            "id" => $tr_id,
+            "id" => $tra_id,
             "status" => $transaction->getStatus(),
             "purchases" => $transaction->getPurchases(),
             "created" => $transaction->getDate()
