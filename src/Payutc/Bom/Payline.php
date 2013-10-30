@@ -114,7 +114,7 @@ class Payline {
                 "pay_step" => "W",  // Etat de la transaction (W: Wait, V: Valide, A: Annule/Aborted)
                 "pay_amount" => $amount,
                 "pay_date_create" => new \DateTime(), 
-                "pay_callback_url" => $returnURL
+                "pay_callback_url" => $this->payline->notificationURL
             ),
             array(
                 "integer", "integer", "string", "integer", "datetime", "string"
