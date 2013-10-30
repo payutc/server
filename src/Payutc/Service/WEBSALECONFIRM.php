@@ -6,6 +6,7 @@ use \Payutc\Config;
 use \Payutc\Exception\PayutcException;
 use \Payutc\Bom\Transaction;
 use \Payutc\Bom\Product;
+use \Payutc\Bom\Fundation;
 
 /**
  * WEBSALECONFIRM.php
@@ -34,7 +35,9 @@ class WEBSALECONFIRM extends \ServiceBase {
             throw new PayutcException("Token non valide");
         }
         
-        // TODO : Récupérer le nom de la fundation pour qu'on puisse afficher à qui l'utilisateur va payer.
+        // Récupérer le nom de la fundation pour qu'on puisse afficher à qui l'utilisateur va payer.
+        $fun = Fundation::getById($transaction->getFunId());
+        $fun_name = $fun->getName();
         
         // Récupération du noms des articles
         $purchases = $transaction->getPurchases();
@@ -51,7 +54,8 @@ class WEBSALECONFIRM extends \ServiceBase {
             "purchases" => $purchases,
             "products" => $products,
             "created" => $transaction->getDate(),
-            "total" => $transaction->getMontantTotal()
+            "total" => $transaction->getMontantTotal(),
+            "fun_name" => $fun_name
         );
     }
     
