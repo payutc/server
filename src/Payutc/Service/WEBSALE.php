@@ -4,6 +4,7 @@ namespace Payutc\Service;
 
 use \Payutc\Config;
 use \Payutc\Bom\Transaction;
+use \Payutc\Exception\InvalidData;
 use \Payutc\Exception\PayutcException;
 use \Payutc\Exception\TransactionNotFound;
 
@@ -28,6 +29,11 @@ class WEBSALE extends \ServiceBase {
     public function createTransaction($items, $fun_id, $mail, $return_url, $callback_url=null) {
         // On a une appli qui a les droits ?
         $this->checkRight(false, true, true, $fun_id);
+        
+        // return_url est obligatoire dans ce service
+        if(empty($return_url)){
+            throw new InvalidData("return_url cannot be empty");
+        }
         
         // Verifions que les parametres sont a peu pres cohérents
         $objects = json_decode($items);

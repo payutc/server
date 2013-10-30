@@ -36,6 +36,9 @@ class TransactionRwdbTest extends DatabaseTest
         $this->assertEquals(600, $transaction->getMontantTotal());
     }
     
+	/**
+     * @requires PHP 5.4
+	 */
     public function testCreateWithNoBuyer(){
         $items = array(
             array(4, 1),
@@ -44,6 +47,14 @@ class TransactionRwdbTest extends DatabaseTest
         $transaction = Transaction::create(null, null, 51, 1, $items, null, null);
 
         $this->assertEquals(600, $transaction->getMontantTotal());
+        
+        $u = new User("mguffroy");
+        $transaction->setBuyer($u);        
+        $this->assertEquals(9447, $transaction->getBuyerId());
+        
+        $u = new User("trecouvr");
+        $transaction->setSeller($u);
+        $this->assertEquals(1, $transaction->getSellerId());
     }
     
 	/**

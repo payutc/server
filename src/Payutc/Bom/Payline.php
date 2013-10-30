@@ -114,7 +114,7 @@ class Payline {
                 "pay_step" => "W",  // Etat de la transaction (W: Wait, V: Valide, A: Annule/Aborted)
                 "pay_amount" => $amount,
                 "pay_date_create" => new \DateTime(), 
-                "pay_callback_url" => $returnURL
+                "pay_callback_url" => $this->payline->notificationURL
             ),
             array(
                 "integer", "integer", "string", "integer", "datetime", "string"
@@ -164,10 +164,10 @@ class Payline {
                 array(
                     "pay_step" => 'A', 
                     "pay_date_retour" => new \DateTime(), 
-                    "pay_error" => $response["result"]["code"]), 
+                    "pay_error" => $result["result"]["code"]), 
                 array('pay_id' => $ref), 
                 array("string", "datetime", "string"));
-            Log::warn("PAYLINE : Erreur au moment de créer le rechargement. \n".print_r($response, true));
+            Log::warn("PAYLINE : Erreur au moment de créer le rechargement. \n".print_r($result, true));
             throw new \Payutc\Exception\PaylineException($result['result']['longMessage'], $result['result']['code']);
         } else {
             $conn->update('t_paybox_pay', array("pay_step" => 'A', "pay_date_retour" => new \DateTime()), array('pay_id' => $ref), array("string", "datetime"));
