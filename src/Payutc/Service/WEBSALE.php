@@ -4,6 +4,8 @@ namespace Payutc\Service;
 
 use \Payutc\Config;
 use \Payutc\Bom\Transaction;
+use \Payutc\Exception\PayutcException;
+use \Payutc\Exception\TransactionNotFound;
 
 /**
  * WEBSALE.php
@@ -26,13 +28,18 @@ class WEBSALE extends \ServiceBase {
         // On a une appli qui a les droits ?
         $this->checkRight(false, true, true, $funId);
         
+        $objects = json_decode($items);
+        if(!is_array($objects)) {
+            throw new PayutcException("Erreur de parametre");
+        }
+        
         // Create the transaction, get transaction ID, and token
         $transaction = Transaction::create(
             null, // Buyer
             null, // Seller
             $this->application()->getId(), // appId
             $funId, // funId
-            json_decode($items), // objects
+            $objects, // objects
             $callbackUrl, // callbackUrl
             $returnUrl); // returnUrl
         $tra_id = $transaction->getId();
@@ -45,7 +52,7 @@ class WEBSALE extends \ServiceBase {
         
 		return array(
 		    "tra_id" => $tra_id,
-		    "url" => $app_url . "validation/" . $tra_id . "/" . $token_id
+		    "url" => $app_url . "validation?tra_id=" . $tra_id . "&token=" . $token_id
 		);
 	}
 
@@ -53,7 +60,7 @@ class WEBSALE extends \ServiceBase {
     * Fonction pour recupérer le statut d'une transaction
     * 
     * @param int $fun_id (check de la fundation)
-    * @param int $tr_id (id de la transaction a checker)
+    * @param int $tra_id (id de la transaction a checker)
     * @return array
     */
     public function getTransactionInfo($fun_id, $tra_id) {
@@ -61,11 +68,11 @@ class WEBSALE extends \ServiceBase {
         $this->checkRight(false, true, true, $fun_id);
         
         // Get info on this transaction
-        $transaction = \Payutc\Bom\Transaction::getById($tra_id);
+        $transaction = Transaction::getById($tra_id);
         
         // Check fun_id is correct
         if($fun_id != $transaction->getFunId()) {
-            throw new \Payutc\Exception\TransactionNotFound("La transaction $tra_id n'existe pas");
+            throw new TransactionNotFound("La transaction $tra_id n'existe pas");
         }
         
         return array(
