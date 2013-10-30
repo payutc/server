@@ -22,7 +22,7 @@ class WEBSALE extends \ServiceBase {
 	* $callback_url = URL de callback (à la fin de la transaction on vient dire coucou à l'application avec le tr_id)
 	* @return array
 	*/
-    public function CreateTransaction($items, $funId, $returnUrl, $callbackUrl=null) {
+    public function createTransaction($items, $funId, $returnUrl, $callbackUrl=null) {
         // On a une appli qui a les droits ?
         $this->checkRight(false, true, true, $funId);
         
@@ -56,7 +56,7 @@ class WEBSALE extends \ServiceBase {
     * @param int $tr_id (id de la transaction a checker)
     * @return array
     */
-    public function GetTransactionInfo($fun_id, $tra_id) {
+    public function getTransactionInfo($fun_id, $tra_id) {
         // On a une appli qui a les droits ?
         $this->checkRight(false, true, true, $fun_id);
         
