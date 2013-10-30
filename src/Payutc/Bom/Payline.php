@@ -286,6 +286,24 @@ class Payline {
                                 array("pay_token" => $token),
                                 array("string", "datetime", "integer", "string", "string", "string"));
                 Log::info("PAYLINE : error ! $token \n".print_r($response, true));
+                
+                // annulation de la transaction
+                try {
+                    $qb = Dbal::createQueryBuilder();
+                    $qb->select('pay_step', 'pay_id', 'usr_id', 'tra_id')
+                       ->from('t_paybox_pay', 'pay')
+                       ->where('pay.pay_token = :token')
+                       ->setParameter('token', $token);
+
+                    $result = $qb->execute()->fetch();
+                    
+                    if($result['tra_id']) {
+                        $transaction = Transaction::getById($result['tra_id']);
+                        $transaction->abort();
+                    }
+                } catch (Exception $e) {
+                    Log::error("PAYLINE : Aborting of transaction (tra_id)".$result['tra_id']." failed... Token: $token \nException : \n".print_r($e, true));
+                }
                 return;
             }
         }
