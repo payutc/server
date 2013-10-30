@@ -4,6 +4,7 @@ namespace Payutc\Service;
 
 use \Payutc\Config;
 use \Payutc\Exception\PayutcException;
+use \Payutc\Bom\Transaction;
 use \Payutc\Bom\Product;
 
 /**
@@ -27,7 +28,7 @@ class WEBSALECONFIRM extends \ServiceBase {
         $this->checkRight(false, true, true, null);
         
         // Get info on this transaction
-        $transaction = \Payutc\Bom\Transaction::getById($tra_id);
+        $transaction = Transaction::getById($tra_id);
         
         if($transaction->getToken() != $token) {
             throw new PayutcException("Token non valide");
@@ -49,7 +50,8 @@ class WEBSALECONFIRM extends \ServiceBase {
             "status" => $transaction->getStatus(),
             "purchases" => $purchases,
             "products" => $products,
-            "created" => $transaction->getDate()
+            "created" => $transaction->getDate(),
+            "total" => $transaction->getMontantTotal()
         );
     }
     
