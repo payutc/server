@@ -84,7 +84,6 @@ class WEBSALECONFIRM extends \ServiceBase {
         
         if($this->user()) {
             if($montant_reload == 0) {
-                $transaction->setBuyer($this->user());
                 $transaction->validate();
                 return $transaction->getReturnUrl();
             } else {
@@ -92,10 +91,11 @@ class WEBSALECONFIRM extends \ServiceBase {
                 $credit_max = Config::get('credit_max') + $transaction->getMontantTotal();
                 
                 $this->user()->checkReload($montant_reload, $credit_max);
+
                 $transaction->setBuyer($this->user());
 
                 $pl = new Payline($this->application()->getId(), $this->service_name);
-
+                
                 return $pl->doWebPayment(
                     $this->user(), 
                     $transaction, 
