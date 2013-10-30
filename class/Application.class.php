@@ -113,8 +113,8 @@ class Application {
         }
         
         $result = $qb->execute()->fetch();
-        if(!result) {
-            throw new ApplicationException("Il n'y a pas d'application ayant le droit $service, pour la fundation $fun_id");
+        if(!$result) {
+            throw new ApplicationException("Il n'y a pas d'application ayant le droit $service pour la fundation $fun_id");
         }
         $this->fromArray($result);
     }
