@@ -40,12 +40,15 @@ class WebsaleRwdbTest extends DatabaseTest
         $r = httpSend('WEBSALE', 'createTransaction', $cookie, array(
             'items' => json_encode($articles),
             'fun_id' => 1,
+            'mail' => 'mguffroy@etu.utc.fr',
             'return_url' => 'http://localhost/websale/'
         ));
 
         $transactionId = $r->body['tra_id'];
         $transaction = Transaction::GetById($transactionId);
         $token = $transaction->getToken();
+        $mail = $transaction->getEmail();
+        $this->assertEquals('mguffroy@etu.utc.fr', $mail);
 
         $o = array(
             'tra_id' => $transactionId,

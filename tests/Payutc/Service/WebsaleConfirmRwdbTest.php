@@ -75,7 +75,8 @@ class WebsaleConfirmRwdbTest extends DatabaseTest
                         )
 
                 ),
-            "created" => "2013-04-07 18:32:25"
+            "created" => "2013-04-07 18:32:25",
+            "total" => 340
         );
         
         $this->assertEquals(12, $r->body['id']);

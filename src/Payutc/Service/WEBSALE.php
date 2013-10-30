@@ -50,7 +50,7 @@ class WEBSALE extends \ServiceBase {
             $callback_url, // callbackUrl
             $return_url); // returnUrl
 
-        $transaction->setMail($mail);
+        $transaction->setEmail($mail);
         $tra_id = $transaction->getId();
         $token_id = $transaction->getToken();
         
