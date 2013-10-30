@@ -28,10 +28,16 @@ class WEBSALE extends \ServiceBase {
         // On a une appli qui a les droits ?
         $this->checkRight(false, true, true, $funId);
         
+        // Verifions que les parametres sont a peu pres cohérents
         $objects = json_decode($items);
         if(!is_array($objects)) {
             throw new PayutcException("Erreur de parametre");
         }
+                
+        // Get the service url of application with WEBSALECONFIRM right
+        $app = new \Application();
+        $app->fromRight("WEBSALECONFIRM");
+        $app_url = $app->getUrl();
         
         // Create the transaction, get transaction ID, and token
         $transaction = Transaction::create(
@@ -44,11 +50,6 @@ class WEBSALE extends \ServiceBase {
             $return_url); // returnUrl
         $tra_id = $transaction->getId();
         $token_id = $transaction->getToken();
-        
-        // Get the service url of application with WEBSALECONFIRM right
-        $app = new \Application();
-        $app->fromRight("WEBSALECONFIRM");
-        $app_url = $app->getUrl();
         
 		return array(
 		    "tra_id" => $tra_id,

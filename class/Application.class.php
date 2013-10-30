@@ -8,6 +8,7 @@
 
 use \Payutc\Db\Dbal;
 use \Payutc\Db\DbBuckutt;
+use \Payutc\Exception\ApplicationException;
 
 class Application {
     protected $db;
@@ -36,6 +37,9 @@ class Application {
      * Get URL
      */
     public function getUrl() {
+        if(!$this->app_url) {
+            throw new ApplicationException("Cette application n'a pas d'url");
+        }
         return $this->app_url;
     }
 
