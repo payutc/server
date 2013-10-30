@@ -34,10 +34,19 @@ class WEBSALECONFIRM extends \ServiceBase {
         
         // TODO : Récupérer le nom de la fundation pour qu'on puisse afficher à qui l'utilisateur va payer.
         
+        // Récupération du noms des articles
+        $purchases = $transaction->getPurchases();
+        $objects_ids = array();
+        foreach($purchases as $purchase) {
+            $objects_ids = $purchase['obj_id'];
+        }
+        $products = Product::getAll(array('obj_ids' => array_unique($objects_ids)));
+        
         return array(
-            "id" => $tr_id,
+            "id" => $tra_id,
             "status" => $transaction->getStatus(),
-            "purchases" => $transaction->getPurchases(),
+            "purchases" => $purchases,
+            "products" => $products,
             "created" => $transaction->getDate()
         );
     }
