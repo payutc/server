@@ -123,6 +123,26 @@ class Transaction {
         );
     }
     
+    public function setBuyer($buyer){
+        $this->buyerId = $buyer->getId();
+        
+        Dbal::conn()->update('t_transaction_tra',
+            array('usr_id_buyer' => $this->buyerId),
+            array('tra_id' => $this->id),
+            array("integer", "integer")
+        );
+    }
+    
+    public function setSeller($seller){
+        $this->sellerId = $seller->getId();
+        
+        Dbal::conn()->update('t_transaction_tra',
+            array('usr_id_seller' => $this->sellerId),
+            array('tra_id' => $this->id),
+            array("integer", "integer")
+        );
+    }
+        
     public function getMontantTotal(){
         $total = 0;
         foreach($this->purchases as $purchase){
