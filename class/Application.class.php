@@ -54,7 +54,7 @@ class Application {
                                 Array($this->app_key));		
         $row = $this->db->fetchArray($query);
         if ($this->db->affectedRows() != 1) {
-            throw new Exception("La clef d'application n'a pas été reconnu !");
+            throw new ApplicationException("La clef d'application n'a pas été reconnu !");
         }
         $this->fromArray($row);
     }
@@ -69,7 +69,7 @@ class Application {
                                 Array($this->app_id));		
         $row = $this->db->fetchArray($query);
         if ($this->db->affectedRows() != 1) {
-            throw new Exception("Il n'existe pas d'application correspondant à cet ID !");
+            throw new ApplicationException("Il n'existe pas d'application correspondant à cet ID !");
         }
         $this->fromArray($row);
     }
@@ -113,6 +113,9 @@ class Application {
         }
         
         $result = $qb->execute()->fetch();
+        if(!result) {
+            throw new ApplicationException("Il n'y a pas d'application ayant le droit $service, pour la fundation $fun_id");
+        }
         $this->fromArray($result);
     }
     
