@@ -31,7 +31,7 @@ class Product {
     /*
      * Retourne tous les produits
      * $params['fun_ids']
-     * $params['obj_ids']
+     * $params['itm_ids']
      */
     public static function getAll($params = array()) {
         $default = array(

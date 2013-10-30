@@ -291,7 +291,7 @@ class Transaction {
         }
         
         // Get all the corresponding products
-        $products = Product::getAll(array('obj_ids' => array_unique($objectsIds), 'fun_ids' => array($funId)));
+        $products = Product::getAll(array('itm_ids' => array_unique($objectsIds), 'fun_ids' => array($funId)));
         
         // Index the products by their ID
         $items = array();

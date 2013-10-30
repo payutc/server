@@ -4,6 +4,7 @@ namespace Payutc\Service;
 
 use \Payutc\Config;
 use \Payutc\Exception\PayutcException;
+use \Payutc\Bom\Product;
 
 /**
  * WEBSALECONFIRM.php
@@ -21,7 +22,7 @@ class WEBSALECONFIRM extends \ServiceBase {
     * @param int $tra_id (id de la transaction a checker)
     * @return array
     */
-    public function getTransactionInfo($tra_id, $token) {
+    public function getTransactionInfo($tra_id, $token) {       
         // On a une appli qui a les droits ?
         $this->checkRight(false, true, true, null);
         
@@ -38,9 +39,10 @@ class WEBSALECONFIRM extends \ServiceBase {
         $purchases = $transaction->getPurchases();
         $objects_ids = array();
         foreach($purchases as $purchase) {
-            $objects_ids = $purchase['obj_id'];
+            $objects_ids[] = $purchase['obj_id'];
         }
-        $products = Product::getAll(array('obj_ids' => array_unique($objects_ids)));
+        
+        $products = Product::getAll(array('itm_ids' => array_unique($objects_ids)));
         
         return array(
             "id" => $tra_id,
