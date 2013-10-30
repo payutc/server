@@ -64,10 +64,8 @@ class WEBSALECONFIRM extends \ServiceBase {
     * Sinon:
     *  - On crée un rechargement payline, qu'on associe uniquement à cette transaction.
     *  On utilise $mail pour indiquer le mail de l'achteur à payline
-    * $mail n'est utilisé que s'il n'y a pas d'utilisateur connecté.
-    * $mail est obligatoire dans ce cas la et doit être un email valide !
     */
-    public function doTransaction($tra_id, $token, $montant_reload, $mail=null) {
+    public function doTransaction($tra_id, $token, $montant_reload) {
         // On a une appli qui a les droits ?
         $this->checkRight(false, true, true, null);
         
@@ -94,7 +92,6 @@ class WEBSALECONFIRM extends \ServiceBase {
                     $transaction->getReturnUrl());
             }
         } else {
-            $transaction->setMail($mail);
             $pl = new \Payutc\Bom\Payline($this->application()->getId(), $this->service_name);
             return $pl->doWebPayment(
                 null, 

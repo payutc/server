@@ -78,8 +78,6 @@ class WebsaleConfirmRwdbTest extends DatabaseTest
             "created" => "2013-04-07 18:32:25"
         );
         
-        print_r($r->body);
-        
         $this->assertEquals(12, $r->body['id']);
         $this->assertEquals('W', $r->body['status']);
         $this->assertEquals($o, $r->body);
