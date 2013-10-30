@@ -7,6 +7,7 @@ use \Payutc\Exception\PayutcException;
 use \Payutc\Bom\Transaction;
 use \Payutc\Bom\Product;
 use \Payutc\Bom\Fundation;
+use \Payutc\Bom\Payline;
 
 /**
  * WEBSALECONFIRM.php
@@ -75,7 +76,7 @@ class WEBSALECONFIRM extends \ServiceBase {
         // On a une appli qui a les droits ?
         $this->checkRight(false, true, true, null);
         
-        $transaction = \Payutc\Bom\Transaction::getById($tra_id);
+        $transaction = Transaction::getById($tra_id);
         
         if($transaction->getToken() != $token) {
             throw new PayutcException("Token non valide");
@@ -90,7 +91,7 @@ class WEBSALECONFIRM extends \ServiceBase {
                 $credit_max = Config::get('credit_max') + $transaction->getMontantTotal();
                 
                 $this->user()->checkReload($montant_reload, $credit_max);
-                $pl = new \Payutc\Bom\Payline($this->application()->getId(), $this->service_name);
+                $pl = new Payline($this->application()->getId(), $this->service_name);
                 return $pl->doWebPayment(
                     $this->user(), 
                     $transaction, 
@@ -98,7 +99,7 @@ class WEBSALECONFIRM extends \ServiceBase {
                     $transaction->getReturnUrl());
             }
         } else {
-            $pl = new \Payutc\Bom\Payline($this->application()->getId(), $this->service_name);
+            $pl = new Payline($this->application()->getId(), $this->service_name);
             return $pl->doWebPayment(
                 null, 
                 $transaction, 
