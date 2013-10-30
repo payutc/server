@@ -160,7 +160,7 @@ class Transaction {
             throw new TransactionAborted();
         }
         
-        $conn->update('t_transaction_tra',
+        Dbal::conn()->update('t_transaction_tra',
             array('tra_status' => 'A'),
             array('tra_id' => $this->id),
             array("string", "integer")

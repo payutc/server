@@ -179,30 +179,44 @@ class Payline {
     /*
         Recoit une notification de payline
     */
-    public function notification($token) {
+    public function notification($token, $want_return=False) {
         $array = array();
         $array['token'] = $token;
         $array['version'] = '';
 
         Log::debug("step in notification($token)");
+        
+        // Recuperation du rechargement
+        $qb = Dbal::createQueryBuilder();
+        $qb->select('pay_step', 'pay_id', 'usr_id', 'tra_id')
+           ->from('t_paybox_pay', 'pay')
+           ->where('pay.pay_token = :token')
+           ->setParameter('token', $token);
+
+        $result = $qb->execute()->fetch();
+        
+        // On recupere la transaction associé s'il y'en a une
+        $transaction = null;
+        $return_url = null;
+        if($result['tra_id']) {
+            $transaction = Transaction::getById($result['tra_id']);
+            $return_url = $transaction->getReturnUrl();
+        }
+        if(!$want_return) {
+            $return_url = "";
+        }
+        
         $response = $this->payline->getWebPaymentDetails($array);
         if(isset($response)){
             // Paiement valide
             if($response["result"]["code"] == "00000") {
                 $conn = Dbal::conn();
-                // Recuperation du rechargement
-                $qb = Dbal::createQueryBuilder();
-                $qb->select('pay_step', 'pay_id', 'usr_id', 'tra_id')
-                   ->from('t_paybox_pay', 'pay')
-                   ->where('pay.pay_token = :token')
-                   ->setParameter('token', $token);
 
-                $result = $qb->execute()->fetch();
                 if($result['pay_step'] != "W") {
                     // ERROR ! Ce rechargement n'est pas en attente.
                     // Tentative de double rechargement ?
                     Log::warn("PAYLINE : Tentative de double rechargement ! $token \n".print_r($response, true));
-                    return;
+                    return $return_url;
                 }
                 
                 $conn->beginTransaction();
@@ -250,7 +264,6 @@ class Payline {
                     // validation de la transaction
                     try {
                         if($result['tra_id']) {
-                            $transaction = Transaction::getById($result['tra_id']);
                             if(!$result['usr_id'] && $response["payment"]["amount"] != $transaction->getMontantTotal()) {
                                 $transaction->abort();
                                 throw new Exception("Le montant payé et le montant de la transaction ne correspondent pas");
@@ -262,7 +275,7 @@ class Payline {
                     }
                     
                     Log::debug("PAYLINE : succes ! $token \n".print_r($response, true));
-                    return;
+                    return $return_url;
                 } catch (Exception $e) {
                     $conn->rollback();
                     Log::error("PAYLINE : Error during notification of $token \n Exception : \n".print_r($e, true));
@@ -271,7 +284,6 @@ class Payline {
             } else if ($response["result"]["code"] == "02306") {
                 // Log this, peut etre que le petit malin essaie de nous rouler ^^
                 Log::warn("PAYLINE : Tentative de validation avant erreur ou succes ! $token \n".print_r($response, true));
-                return;
 
             } else {
                 // Indique le rechargement comme aborted
@@ -304,9 +316,9 @@ class Payline {
                 } catch (Exception $e) {
                     Log::error("PAYLINE : Aborting of transaction (tra_id)".$result['tra_id']." failed... Token: $token \nException : \n".print_r($e, true));
                 }
-                return;
             }
         }
+        return $return_url;
     }
 
     /*

@@ -82,6 +82,12 @@ class WEBSALECONFIRM extends \ServiceBase {
             throw new PayutcException("Token non valide");
         }
         
+        // On determine l'url de retour pour payline
+        $app = new \Application();
+        $app->fromRight("WEBSALECONFIRM");
+        $app_url = $app->getUrl();
+        $returnUrl = $app_url . "validationReturn";
+        
         if($this->user()) {
             if($montant_reload == 0) {
                 $transaction->validate();
@@ -100,7 +106,7 @@ class WEBSALECONFIRM extends \ServiceBase {
                     $this->user(), 
                     $transaction, 
                     $montant_reload, 
-                    $transaction->getReturnUrl());
+                    $returnUrl);
             }
         } else {
             $pl = new Payline($this->application()->getId(), $this->service_name);
@@ -108,11 +114,21 @@ class WEBSALECONFIRM extends \ServiceBase {
                 null, 
                 $transaction, 
                 $transaction->getMontantTotal(), 
-                $transaction->getReturnUrl(),
+                $returnUrl,
                 null,
                 $transaction->getEmail());
         }
     }
 
-	
+    /*
+    * Après un paiement l'utilisateur est ramené sur casper et casper nous en informe avec le token
+    * payline. Nous on doit aller checker l'état du paiement du coté de payline et renvoyer a casper
+    * l'url de retour demandé par le client initial, pour rediriger l'user sur le bon site
+    */
+    public function notificationPayline($token_payline) {
+        // On a une appli qui a les droits ?
+        $this->checkRight(false, true, true, null);
+        
+        return Payline::notification($token_payline, true);
+    }
  }

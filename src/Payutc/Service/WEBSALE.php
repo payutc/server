@@ -92,5 +92,34 @@ class WEBSALE extends \ServiceBase {
             "created" => $transaction->getDate()
         );
     }
+    
+    /**
+    * Fonction pour annuler une transaction
+    * 
+    * @param int $fun_id (check de la fundation)
+    * @param int $tra_id (id de la transaction a checker)
+    * @return array
+    */
+    public function abortTransaction($fun_id, $tra_id) {
+        // On a une appli qui a les droits ?
+        $this->checkRight(false, true, true, $fun_id);
+        
+        // Get info on this transaction
+        $transaction = Transaction::getById($tra_id);
+        
+        // Check fun_id is correct
+        if($fun_id != $transaction->getFunId()) {
+            throw new TransactionNotFound("La transaction $tra_id n'existe pas");
+        }
+        
+        $transaction->abort();
+        
+        return array(
+            "id" => $tra_id,
+            "status" => $transaction->getStatus(),
+            "purchases" => $transaction->getPurchases(),
+            "created" => $transaction->getDate()
+        );
+    } 
 	
  }
