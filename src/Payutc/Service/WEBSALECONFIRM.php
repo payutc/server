@@ -18,7 +18,7 @@ class WEBSALECONFIRM extends \ServiceBase {
     /**
     * Fonction pour recupérer le statut d'une transaction
     * 
-    * @param int $tr_id (id de la transaction a checker)
+    * @param int $tra_id (id de la transaction a checker)
     * @return array
     */
     public function getTransactionInfo($tra_id, $token) {

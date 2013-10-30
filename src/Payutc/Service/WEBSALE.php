@@ -24,7 +24,7 @@ class WEBSALE extends \ServiceBase {
 	* $callback_url = URL de callback (à la fin de la transaction on vient dire coucou à l'application avec le tr_id)
 	* @return array
 	*/
-    public function createTransaction($items, $funId, $returnUrl, $callbackUrl=null) {
+    public function createTransaction($items, $fun_id, $return_url, $callback_url=null) {
         // On a une appli qui a les droits ?
         $this->checkRight(false, true, true, $funId);
         
@@ -38,10 +38,10 @@ class WEBSALE extends \ServiceBase {
             null, // Buyer
             null, // Seller
             $this->application()->getId(), // appId
-            $funId, // funId
+            $fun_id, // funId
             $objects, // objects
-            $callbackUrl, // callbackUrl
-            $returnUrl); // returnUrl
+            $callback_url, // callbackUrl
+            $return_url); // returnUrl
         $tra_id = $transaction->getId();
         $token_id = $transaction->getToken();
         
