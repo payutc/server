@@ -83,6 +83,7 @@ class WEBSALECONFIRM extends \ServiceBase {
         
         if($this->user()) {
             if($montant_reload == 0) {
+                $transaction->setBuyer($this->user());
                 $transaction->validate();
                 return $transaction->getReturnUrl();
             } else {
@@ -91,6 +92,8 @@ class WEBSALECONFIRM extends \ServiceBase {
                 
                 $this->user()->checkReload($montant_reload, $credit_max);
                 $pl = new \Payutc\Bom\Payline($this->application()->getId(), $this->service_name);
+                
+                $transaction->setBuyer($this->user());
                 return $pl->doWebPayment(
                     $this->user(), 
                     $transaction, 
