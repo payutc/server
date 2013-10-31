@@ -1,6 +1,6 @@
 <?php
 
-require_once 'bootstrap.php';
+require_once 'utils.php';
 
 use \Payutc\Bom\User;
 use \Payutc\Bom\Transaction;

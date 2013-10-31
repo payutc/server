@@ -1,20 +1,20 @@
 <?php
 
-require_once 'bootstrap.php';
+require_once 'utils.php';
 
 
 class ApplicationRightRodbTest extends ReadOnlyDatabaseTest
 {
-	/**
-	 * get db dataset
-	 */
-	public function getDataSet()
-	{
+    /**
+     * get db dataset
+     */
+    public function getDataSet()
+    {
         return $this->computeDataSet(array(
             'applications.yml',
             'applicationright.yml'
         ));
-	}
+    }
     
     public function setUp()
     {
@@ -30,25 +30,25 @@ class ApplicationRightRodbTest extends ReadOnlyDatabaseTest
         $this->ar->check(1, "a_service", true, 1);
     }
     
-	/**
+    /**
      * Check triplet (app,service,fun)
      * Case: app does not have right for service on this fundation
      * 
-	 * @expectedException		 \Payutc\Exception\CheckRightException
-	 * @expectedExceptionMessage L'application_id 1 n'a pas les droits an_other_service sur la fundation n°1
-	 */
+     * @expectedException         \Payutc\Exception\CheckRightException
+     * @expectedExceptionMessage L'application_id 1 n'a pas les droits an_other_service sur la fundation n°1
+     */
     public function testCheckWithNoRightOnService()
     {
         $this->ar->check(1, "an_other_service", true, 1);
     }
     
-	/**
+    /**
      * Check triplet (app,service,fun)
      * Case: app does not have right for service on this fundation
      * 
-	 * @expectedException		 \Payutc\Exception\CheckRightException
-	 * @expectedExceptionMessage L'application_id 1 n'a pas les droits a_service sur la fundation n°2
-	 */
+     * @expectedException         \Payutc\Exception\CheckRightException
+     * @expectedExceptionMessage L'application_id 1 n'a pas les droits a_service sur la fundation n°2
+     */
     public function testCheckWithNoRightOnService2()
     {
         $this->ar->check(1, "a_service", true, 2);
@@ -66,8 +66,8 @@ class ApplicationRightRodbTest extends ReadOnlyDatabaseTest
      * Check tuple (app,service)
      * Case: app does not have right on service for all fundations
      * 
-	 * @expectedException		 \Payutc\Exception\CheckRightException
-	 * @expectedExceptionMessage L'application_id 1 n'a les droits an_other_service sur aucune fundation
+     * @expectedException         \Payutc\Exception\CheckRightException
+     * @expectedExceptionMessage L'application_id 1 n'a les droits an_other_service sur aucune fundation
      */
     public function testCheckOnlyAppNoRightOnService()
     {
@@ -86,8 +86,8 @@ class ApplicationRightRodbTest extends ReadOnlyDatabaseTest
      * Check the application can access all services
      * Case: app does not have access to all services
      * 
-	 * @expectedException		 \Payutc\Exception\CheckRightException
-	 * @expectedExceptionMessage L'application_id 1 n'a les droits  sur aucune fundation
+     * @expectedException         \Payutc\Exception\CheckRightException
+     * @expectedExceptionMessage L'application_id 1 n'a les droits  sur aucune fundation
      */
     public function testCheckAppAllRightsWithNoAllRights()
     {
