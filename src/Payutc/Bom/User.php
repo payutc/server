@@ -214,7 +214,7 @@ class User {
             INNER JOIN t_object_obj obj ON pur.obj_id = obj.obj_id
             INNER JOIN t_fundation_fun fun ON tra.fun_id = fun.fun_id
             WHERE 
-                tra.usr_id_buyer = ? AND tra.tra_status = "V"
+                tra.usr_id_buyer = ? AND tra.tra_status = "V" AND pur.pur_removed = 0
             UNION ALL
             SELECT 
                 rec.rec_date AS date,
@@ -227,7 +227,7 @@ class User {
             FROM 
                 t_recharge_rec rec
             WHERE 
-                rec.usr_id_buyer = ?
+                rec.usr_id_buyer = ? AND rec.rec_removed = 0
             UNION ALL
             SELECT
                 virin.vir_date AS date,
