@@ -23,7 +23,7 @@
 $_CONFIG['sql_host'] = "localhost";
 $_CONFIG['sql_db'] = "payutc_test";
 $_CONFIG['sql_user'] = "root";
-$_CONFIG['sql_pass'] = "root";
+$_CONFIG['sql_pass'] = "";
 
 // Chemin vers le serveur CAS (avec le / final)
 $_CONFIG['cas_url'] = 'http://localhost:33434/';
