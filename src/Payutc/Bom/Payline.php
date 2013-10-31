@@ -266,17 +266,17 @@ class Payline {
                         if($result['tra_id']) {
                             if(!$result['usr_id'] && $response["payment"]["amount"] != $transaction->getMontantTotal()) {
                                 $transaction->abort();
-                                throw new Exception("Le montant payé et le montant de la transaction ne correspondent pas");
+                                throw new \Exception("Le montant payé et le montant de la transaction ne correspondent pas");
                             }
                             $transaction->validate();
                         }
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         Log::error("PAYLINE : Validation of transaction (tra_id)".$result['tra_id']." has failed... Token: $token \nException : \n".print_r($e, true));
                     }
                     
                     Log::debug("PAYLINE : succes ! $token \n".print_r($response, true));
                     return $return_url;
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     $conn->rollback();
                     Log::error("PAYLINE : Error during notification of $token \n Exception : \n".print_r($e, true));
                 }
@@ -313,7 +313,7 @@ class Payline {
                         $transaction = Transaction::getById($result['tra_id']);
                         $transaction->abort();
                     }
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     Log::error("PAYLINE : Aborting of transaction (tra_id)".$result['tra_id']." failed... Token: $token \nException : \n".print_r($e, true));
                 }
             }
