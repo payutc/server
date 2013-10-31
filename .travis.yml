@@ -3,9 +3,6 @@ php:
   - 5.3
   - 5.4
 before_script:
-  - mkdir logs
-  - chmod 777 logs
-  - cp tests/config.inc.dist.php config.inc.php
   - mkdir tests/logs
   - chmod 777 tests/logs
   - cp tests/config-test.inc.dist.php tests/config-test.inc.php
