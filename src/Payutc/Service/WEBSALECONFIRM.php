@@ -130,6 +130,7 @@ class WEBSALECONFIRM extends \ServiceBase {
         // On a une appli qui a les droits ?
         $this->checkRight(false, true, true, null);
         
-        return Payline::notification($token_payline, true);
+        $pl = new \Payutc\Bom\Payline(0, "PAYLINE");
+        return $pl->notification($token_payline, true);
     }
  }
