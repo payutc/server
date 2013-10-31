@@ -201,7 +201,7 @@ class User {
         $conn = Dbal::conn();
         $query = $conn->executeQuery(
             'SELECT 
-                tra.tra_date AS date, 
+                IFNULL(tra.tra_validated, tra.tra_date) AS date, 
                 pur.pur_price AS amount, 
                 "PURCHASE" AS type,
                 obj.obj_name AS name,
