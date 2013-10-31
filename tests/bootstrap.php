@@ -52,6 +52,8 @@ function start_server($docroot, $port, $logfile)
     });//*/
 }
 
-start_server(__DIR__ . '/faux-cas/', PAYUTC_TEST_CAS_PORT, 'logs/cas.log');
-start_server(__DIR__ . '/faux-ginger/', PAYUTC_TEST_GINGER_PORT, 'logs/ginger.log');
-start_server(__DIR__ . '/payutc-server/', PAYUTC_TEST_SERVER_PORT, 'logs/server.log');
+if (PHP_VERSION_ID >= 50400) {
+    start_server(__DIR__ . '/faux-cas/', PAYUTC_TEST_CAS_PORT, 'logs/cas.log');
+    start_server(__DIR__ . '/faux-ginger/', PAYUTC_TEST_GINGER_PORT, 'logs/ginger.log');
+    start_server(__DIR__ . '/payutc-server/', PAYUTC_TEST_SERVER_PORT, 'logs/server.log');
+}
