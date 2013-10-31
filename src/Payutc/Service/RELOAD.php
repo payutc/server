@@ -53,7 +53,7 @@ class RELOAD extends \ServiceBase {
         $this->user()->checkReload($amount);
 
         $pl = new \Payutc\Bom\Payline($this->application()->getId(), $this->service_name);
-        return $pl->doWebPayment($this->user(), $amount, $callbackUrl);
+        return $pl->doWebPayment($this->user(), null, $amount, $callbackUrl);
     }
 	
  }

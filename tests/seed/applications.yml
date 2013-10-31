@@ -41,3 +41,19 @@ t_application_app:
     app_creator: mguffroy
     app_lastuse: 2013-10-03
     app_created: 2013-10-03
+  -
+    app_id: 7
+    app_key: app_websale
+    app_name: app_websale
+    app_creator: puyouart
+    app_lastuse: 2013-10-30
+    app_created: 2013-10-30
+
+  -
+    app_id: 8
+    app_key: app_websaleconfirm
+    app_name: app_websaleconfirm
+    app_url: http://localhost/websaleconfirm/
+    app_creator: puyouart
+    app_lastuse: 2013-10-30
+    app_created: 2013-10-30

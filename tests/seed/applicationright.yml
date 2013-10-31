@@ -30,3 +30,11 @@ tj_app_fun_afu:
     app_id: 6
     fun_id: null
     afu_service: TRANSFER
+  -
+    app_id: 7
+    fun_id: null
+    afu_service: WEBSALE
+  -
+    app_id: 8
+    fun_id: null
+    afu_service: WEBSALECONFIRM

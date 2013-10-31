@@ -123,6 +123,26 @@ class Transaction {
         );
     }
     
+    public function setBuyer($buyer){
+        $this->buyerId = $buyer->getId();
+        
+        Dbal::conn()->update('t_transaction_tra',
+            array('usr_id_buyer' => $this->buyerId),
+            array('tra_id' => $this->id),
+            array("integer", "integer")
+        );
+    }
+    
+    public function setSeller($seller){
+        $this->sellerId = $seller->getId();
+        
+        Dbal::conn()->update('t_transaction_tra',
+            array('usr_id_seller' => $this->sellerId),
+            array('tra_id' => $this->id),
+            array("integer", "integer")
+        );
+    }
+        
     public function getMontantTotal(){
         $total = 0;
         foreach($this->purchases as $purchase){
@@ -140,7 +160,7 @@ class Transaction {
             throw new TransactionAborted();
         }
         
-        $conn->update('t_transaction_tra',
+        Dbal::conn()->update('t_transaction_tra',
             array('tra_status' => 'A'),
             array('tra_id' => $this->id),
             array("string", "integer")
@@ -291,7 +311,7 @@ class Transaction {
         }
         
         // Get all the corresponding products
-        $products = Product::getAll(array('obj_ids' => array_unique($objectsIds), 'fun_ids' => array($funId)));
+        $products = Product::getAll(array('itm_ids' => array_unique($objectsIds), 'fun_ids' => array($funId)));
         
         // Index the products by their ID
         $items = array();

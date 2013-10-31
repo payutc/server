@@ -97,6 +97,18 @@ use \Application;
                         "desc"    => "Permet de virer de l'argent vers un autre utilisateur",
                         "user"    => false,
                         "app"     => false
+                    ), array(
+                        "service" => "WEBSALE",
+                        "name"    => "Encaisser par internet",
+                        "desc"    => "Permet à une application d'encaisser de l'argent par internet",
+                        "user"    => false,
+                        "app"     => true
+                    ), array(
+                        "service" => "WEBSALECONFIRM",
+                        "name"    => "Valider des paiements par internet",
+                        "desc"    => "Permet de valider les paiements en ligne",
+                        "user"    => false,
+                        "app"     => false
                     )
                     
                 );

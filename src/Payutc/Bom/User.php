@@ -201,7 +201,7 @@ class User {
         $conn = Dbal::conn();
         $query = $conn->executeQuery(
             'SELECT 
-                tra.tra_date AS date, 
+                IFNULL(tra.tra_validated, tra.tra_date) AS date, 
                 pur.pur_price AS amount, 
                 "PURCHASE" AS type,
                 obj.obj_name AS name,
@@ -214,7 +214,7 @@ class User {
             INNER JOIN t_object_obj obj ON pur.obj_id = obj.obj_id
             INNER JOIN t_fundation_fun fun ON tra.fun_id = fun.fun_id
             WHERE 
-                tra.usr_id_buyer = ?
+                tra.usr_id_buyer = ? AND tra.tra_status = "V"
             UNION ALL
             SELECT 
                 rec.rec_date AS date,
@@ -391,7 +391,7 @@ class User {
     *
     * @throws CannotReload
     */
-    public function checkReload($amount = null) {
+    public function checkReload($amount = null, $credit_max = null) {
         if($amount === null){
             $amount = Config::get('rechargement_min', 1000);
         }
@@ -400,7 +400,10 @@ class User {
             throw new CannotReload("Le montant du rechargement est inférieur au minimum autorisé");
         }
         
-        if(($this->getCredit() + $amount) > Config::get('credit_max')){
+        if($credit_max === null) {
+            $credit_max = Config::get('credit_max');
+        }
+        if(($this->getCredit() + $amount) > $credit_max){
             throw new CannotReload("Le rechargement ferait dépasser le plafond maximum");
         }
         

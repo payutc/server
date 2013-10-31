@@ -128,6 +128,7 @@ t_transaction_tra:
     fun_id: 1
     tra_ip: 1.2.3.4
     tra_status: W
+    tra_token: token_12
 
   -
     tra_id: 13
