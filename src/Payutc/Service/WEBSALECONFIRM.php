@@ -90,6 +90,7 @@ class WEBSALECONFIRM extends \ServiceBase {
         
         if($this->user()) {
             if($montant_reload == 0) {
+                $transaction->setBuyer($this->user());
                 $transaction->validate();
                 return $transaction->getReturnUrl();
             } else {
