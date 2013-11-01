@@ -10,10 +10,10 @@ usage: $0 [start|stop]
 This script run the php built-in servers for payutc-server, faux-cas and faux-ginger.
 
 OPTIONS:
-   help     Show this message
-   start    Start the servers
-   stop     Stop the servers
-   status   Get the status
+   help         Show this message
+   start|up     Start the servers
+   stop|dw      Stop the servers
+   status|st    Get the status
 EOF
 }
 
