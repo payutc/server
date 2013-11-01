@@ -5,8 +5,6 @@ php:
 before_script:
   - mkdir logs
   - chmod 777 logs
-  - mkdir tests/logs
-  - chmod 777 tests/logs
   - cp tests/config-test.inc.dist.php tests/config-test.inc.php
   - curl -s https://getcomposer.org/installer | php
   - php composer.phar install --dev --prefer-source --no-interaction
