@@ -5,7 +5,7 @@ namespace Payutc;
 use \Payutc\Config;
 use \Payutc\Log;
 
-class Application {
+class WebApp {
     public static function createApplication($config)
     {
         Config::initFromArray($config);
