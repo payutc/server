@@ -6,5 +6,5 @@
 /tests/config-test.inc.php
 /tests/faux-cas
 /tests/faux-ginger
-/tests/logs
+/tests/logs/*.log
 /tests/payutc-server/*.pid
