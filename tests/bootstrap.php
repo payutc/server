@@ -16,15 +16,12 @@ define('PAYUTC_TEST_SERVER_PORT', parse_url(Config::get('server_url'), PHP_URL_P
 define('PAYUTC_TEST_CAS_PORT', parse_url(Config::get('cas_url'), PHP_URL_PORT));
 define('PAYUTC_TEST_GINGER_PORT', parse_url(Config::get('ginger_url'), PHP_URL_PORT));
 
-//echo PAYUTC_TEST_SERVER_PORT."\n";
-//echo PAYUTC_TEST_CAS_PORT."\n";
-//echo PAYUTC_TEST_GINGER_PORT."\n";
-
 function start_server($docroot, $port, $logfile)
 {
     $host = 'localhost';
+    
     // Command that starts the built-in web server
-    $command = sprintf(
+    $command_start = sprintf(
         'php -S %s:%d -t %s >%s 2>&1 & echo $!',
         $host,
         $port,
@@ -32,9 +29,40 @@ function start_server($docroot, $port, $logfile)
         $logfile
     );
     
-    // Execute the command and store the process ID
-    $output = array(); 
-    exec($command, $output);
+    // Command to check if the server is running
+    $command_check_running = sprintf(
+        '
+        if [ -f %s/server.pid ]
+        then
+            PID=`cat %s/server.pid`
+            echo c1
+            ps -p $PID > /dev/null
+            R=$?
+            echo $R
+            exit $R
+        else
+            echo c2
+            exit 1
+        fi
+        '
+        ,
+        $docroot,
+        $docroot
+    );
+    
+    $output = array();
+    $return_code = 0;
+    // Execute the check command
+    exec($command_check_running, $output, $return_code);
+    if ((int)$return_code == 0) {
+        echo "Server $docroot is already running" . PHP_EOL;
+        return;
+    }
+    
+    // Execute the start command and store the process ID
+    $output = array();
+    $return_code = 0;
+    exec($command_start, $output);
     $pid = (int) $output[0];
  
     echo sprintf(
