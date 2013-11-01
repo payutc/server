@@ -3,7 +3,7 @@
 /composer.lock
 /composer.phar
 /logs
-/tests/config.inc.php
+/tests/config-test.inc.php
 /tests/faux-cas
 /tests/faux-ginger
 /tests/logs
