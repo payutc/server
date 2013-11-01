@@ -28,7 +28,7 @@ function start_server
 {
     stop_server $1
     echo -n "Starting server for $1 on http://localhost:$2/ ... "
-    if php -S localhost:$2 -t $1 >$1/server.log 2>&1 & echo $! > $1/server.pid
+    if php -S localhost:$2 -t $1 >logs/$1-access.log 2>&1 & echo $! > $1/server.pid
     then
         echo "OK"
     else

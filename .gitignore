@@ -7,5 +7,4 @@
 /tests/faux-cas
 /tests/faux-ginger
 /tests/logs
-/tests/payutc-server/*.log
 /tests/payutc-server/*.pid
