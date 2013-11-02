@@ -37,31 +37,3 @@ ts_user_usr:
     usr_lastname: Guffroy
     usr_nickname: mguffroy
     usr_credit: 5000
-
-
-tj_usr_mol_jum:
-  -
-    usr_id: 1
-    mol_id: 1
-    jum_data: trecouvr
-  -
-    usr_id: 9447
-    mol_id: 1
-    jum_data: mguffroy
-  -
-    usr_id: 1
-    mol_id: 5
-    jum_data: ABCDABCD
-  -
-    usr_id: 2
-    mol_id: 5
-    jum_data: NOCREDIT
-
-
-
-
-
-
-
-
-
