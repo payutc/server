@@ -5,19 +5,31 @@ require_once 'utils.php';
 
 
 use \Payutc\Cas;
+use \Payutc\Log;
 use \Payutc\Config;
 
 class CasTest extends PHPUnit_Framework_TestCase
 {
     public function __construct()
     {
-        global $_CONFIG;
+        include 'config-test.inc.php';
         Config::initFromArray($_CONFIG);
+        Log::init();
     }
     
     public function testConstruct()
     {
         $cas = new Cas("http://cas.coucou.fr/");
+    }
+    
+    public function setUp()
+    {
+        libxml_use_internal_errors(true);
+    }
+    
+    public function tearDown()
+    {
+        libxml_use_internal_errors(false);
     }
     
     /**
