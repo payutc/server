@@ -1,11 +1,13 @@
 <?php
 
+namespace Payutc\Wrapper;
+
 use Payutc\Log;
 
 /**
  * Overwrite log function to use payutc logger
  */
-class PayutcPaylineSDK extends \PaylineSDK
+class PaylineSdkWrapper extends \paylineSDK
 {
     /**
 	* @method writeTrace
