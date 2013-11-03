@@ -10,6 +10,7 @@ class Services {
         'ADMINRIGHT',
         'BLOCKED',
         'GESARTICLE',
+        'DATAADMIN',
         'PAYLINE',
         'RELOAD',
         'MYACCOUNT',

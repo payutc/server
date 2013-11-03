@@ -15,6 +15,10 @@ tj_app_fun_afu:
     fun_id: 1
     afu_service: ADMINRIGHT
   -
+    app_id: 1
+    fun_id: 1
+    afu_service: DATAADMIN
+  -
     app_id: 3
     fun_id: 1
     afu_service: STATS
