@@ -1,7 +1,7 @@
 <?php
 
 
-require_once "bootstrap.php";
+require_once 'utils.php';
 
 
 class KeyRwdbTest extends DatabaseTest

@@ -1,4 +1,9 @@
-<phpunit>
+<phpunit bootstrap="./bootstrap.php">
+<testsuites>
+  <testsuite name="Payutc tests">
+    <directory>./</directory>
+  </testsuite>
+</testsuites>
 <filter>
   <blacklist>
     <directory suffix=".php">../vendor</directory>

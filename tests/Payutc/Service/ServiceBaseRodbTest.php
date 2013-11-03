@@ -1,9 +1,8 @@
 <?php
 
-require_once "bootstrap.php";
+require_once 'utils.php';
 
 use \Payutc\Config;
-
 
 abstract class ServiceBaseRodbTest extends ReadOnlyDatabaseTest
 {

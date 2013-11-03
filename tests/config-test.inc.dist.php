@@ -1,36 +1,35 @@
 <?php 
 /**
-*	payutc
-* Copyright (C) 2011 BuckUTT <buckutt@utt.fr>
-*	Copyright (C) 2013 payutc <payutc@assos.utc.fr>
-*
-*	This file is part of payutc
-*	
-*	payutc is free software: you can redistribute it and/or modify
-*	it under the terms of the GNU General Public License as published by
-*	the Free Software Foundation, either version 3 of the License, or
-*	(at your option) any later version.
-*
-*	payutc is distributed in the hope that it will be useful,
-*	but WITHOUT ANY WARRANTY; without even the implied warranty of
-*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*	GNU General Public License for more details.
-*
-*	You should have received a copy of the GNU General Public License
-*	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    BuckUTT - Buckutt est un système de paiement avec porte-monnaie électronique.
+    Copyright (C) 2011 BuckUTT <buckutt@utt.fr>
+
+	This file is part of BuckUTT
+	
+    BuckUTT is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    BuckUTT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 // Paramètres de BDD
 $_CONFIG['sql_host'] = "localhost";
-$_CONFIG['sql_db'] = "buckutt_test";
+$_CONFIG['sql_db'] = "payutc_test";
 $_CONFIG['sql_user'] = "root";
 $_CONFIG['sql_pass'] = "";
 
 // Chemin vers le serveur CAS (avec le / final)
-$_CONFIG['cas_url'] = "http://localhost:33435/";
+$_CONFIG['cas_url'] = 'http://localhost:33434/';
 
 // URL publique http(s) du serveur (avec le / final)
-$_CONFIG['server_url'] = "http://localhost/buckutt/";
+$_CONFIG['server_url'] = 'http://localhost:33435/';
 
 // Méthode de cache côté serveur pour les wsdl (mettre WSDL_CACHE_BOTH en prod)
 $_CONFIG['wsdl_cache'] = WSDL_CACHE_NONE;
@@ -61,15 +60,16 @@ $_CONFIG['payline_production'] = false ; // production mode
 // Configuration de ginger (outil cotisant)
 // En environnement de dev, utiliser https://github.com/simde-utc/faux-ginger
 $_CONFIG['ginger_key'] = "fauxginger";
-$_CONFIG['ginger_url'] = "http://localhost:33434/index.php/v1/";
+$_CONFIG['ginger_url'] = 'http://localhost:33436/v1/';
 
-// Configuration de Slim
+// Configuration de Slim, les plus importants sont les 3 premiers paramètres
 $_CONFIG['slim_config'] = array(
     'mode' => 'production',
-    'debug' => false
+    'debug' => false,
 );
 
+
 // Configuration des logs
-$_CONFIG['log_mode'] = 'DEV';
-$_CONFIG['log_filename'] = __DIR__.'/logs/log.txt';
+$_CONFIG['log_mode'] = 'TST';
+$_CONFIG['log_filename'] = __DIR__.'/logs/logs.log';
 

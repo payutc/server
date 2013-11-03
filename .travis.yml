@@ -5,13 +5,10 @@ php:
 before_script:
   - mkdir logs
   - chmod 777 logs
-  - cp tests/config.inc.dist.php config.inc.php
-  - mkdir tests/logs
-  - chmod 777 tests/logs
-  - cp tests/config.inc.dist.php tests/config.inc.php
+  - cp tests/config-test.inc.dist.php tests/config-test.inc.php
   - curl -s https://getcomposer.org/installer | php
   - php composer.phar install --dev --prefer-source --no-interaction
-  - mysql -e 'create database buckutt_test;'
+  - mysql -e 'create database payutc_test;'
 script: ./tests/run_all.sh
 
 
