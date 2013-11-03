@@ -13,6 +13,7 @@ use \Payutc\Config;
 use \Payutc\Db\Dbal;
 use \Payutc\Bom\User;
 use \Payutc\Bom\Transaction;
+use \Payutc\Wrapper\PaylineSdkWrapper;
 
 class Payline {
     
@@ -63,7 +64,7 @@ class Payline {
 	      define('PAYLINE_ERR_TOKEN', '02317,02318'); // Préfixe du token sur le site primaire
 
         // Appel du constructeur de paylineSDK
-        $this->payline = new \paylineSDK(
+        $this->payline = new PaylineSdkWrapper(
                             Config::get('payline_merchant_id'),
                             Config::get('payline_access_key'),
                             Config::get('proxy_host'),
