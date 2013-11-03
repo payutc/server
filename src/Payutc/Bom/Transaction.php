@@ -124,7 +124,12 @@ class Transaction {
     }
     
     public function setBuyer($buyer){
-        $this->buyerId = $buyer->getId();
+        if($buyer == null){
+            $this->buyerId = null;
+        }
+        else {
+            $this->buyerId = $buyer->getId();
+        }
         
         Dbal::conn()->update('t_transaction_tra',
             array('usr_id_buyer' => $this->buyerId),

@@ -111,6 +111,7 @@ class WEBSALECONFIRM extends \ServiceBase {
             }
         } else {
             $pl = new Payline($this->application()->getId(), $this->service_name);
+            $transaction->setBuyer(null);
             return $pl->doWebPayment(
                 null, 
                 $transaction, 
