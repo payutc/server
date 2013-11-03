@@ -167,11 +167,11 @@ class Payline {
                     "pay_error" => $result["result"]["code"]), 
                 array('pay_id' => $ref), 
                 array("string", "datetime", "string"));
-            Log::warn("PAYLINE : Erreur au moment de créer le rechargement. \n".print_r($result, true));
+            Log::warn("PAYLINE : Erreur au moment de créer le rechargement.", array('result' => $result));
             throw new \Payutc\Exception\PaylineException($result['result']['longMessage'], $result['result']['code']);
         } else {
             $conn->update('t_paybox_pay', array("pay_step" => 'A', "pay_date_retour" => new \DateTime()), array('pay_id' => $ref), array("string", "datetime"));
-            Log::warn("PAYLINE : Erreur critique au moment de créer le rechargement. \n \$result => $result");
+            Log::warn("PAYLINE : Erreur critique au moment de créer le rechargement.", array('result' => $result));
             throw new \Payutc\Exception\PaylineException("Payline erreur critique");
         }
     }
@@ -215,7 +215,7 @@ class Payline {
                 if($result['pay_step'] != "W") {
                     // ERROR ! Ce rechargement n'est pas en attente.
                     // Tentative de double rechargement ?
-                    Log::warn("PAYLINE : Tentative de double rechargement ! $token \n".print_r($response, true));
+                    Log::warn("PAYLINE : Tentative de double rechargement !", array('token' => $token, 'response'=>$response));
                     return $return_url;
                 }
                 
@@ -234,7 +234,7 @@ class Payline {
                     array("string", "datetime", "integer", "string", "string", "string"));
                 
                     if($numrows != 1) {
-                        Log::warn("PAYLINE : Tentative de double rechargement ! $token (ou token inexistant) \n".print_r($response, true));
+                        Log::warn("PAYLINE : Tentative de double rechargement ! (ou token inexistant)", array('token' => $token, 'response' => $response));
                         throw new \Exception("Tentative double rechargement.");
                     }
                 
@@ -271,19 +271,20 @@ class Payline {
                             $transaction->validate();
                         }
                     } catch (\Exception $e) {
-                        Log::error("PAYLINE : Validation of transaction (tra_id)".$result['tra_id']." has failed... Token: $token \nException : \n".print_r($e, true));
+                        Log::error("PAYLINE : Validation of transaction (tra_id)".$result['tra_id']." has failed...", 
+                                    array('token' => $token, 'tra_id' => $result['tra_id']), $e);
                     }
                     
-                    Log::debug("PAYLINE : succes ! $token \n".print_r($response, true));
+                    Log::debug("PAYLINE : succes !", array('token' => $token, 'response' => $response));
                     return $return_url;
                 } catch (\Exception $e) {
                     $conn->rollback();
-                    Log::error("PAYLINE : Error during notification of $token \n Exception : \n".print_r($e, true));
+                    Log::error("PAYLINE : Error during notification", array('token' => $token), $e);
                 }
             // Paiement en cours, l'utilisateur n'a pas annulé ni validé...
             } else if ($response["result"]["code"] == "02306") {
                 // Log this, peut etre que le petit malin essaie de nous rouler ^^
-                Log::warn("PAYLINE : Tentative de validation avant erreur ou succes ! $token \n".print_r($response, true));
+                Log::warn("PAYLINE : Tentative de validation avant erreur ou succes !", array('token' => $token, 'response' => $response));
 
             } else {
                 // Indique le rechargement comme aborted
@@ -297,7 +298,7 @@ class Payline {
                                       "pay_error" => $response["result"]["code"]),
                                 array("pay_token" => $token),
                                 array("string", "datetime", "integer", "string", "string", "string"));
-                Log::info("PAYLINE : error ! $token \n".print_r($response, true));
+                Log::warning("PAYLINE : error !", array('token' => $token, "response" => $response));
                 
                 // annulation de la transaction
                 try {
@@ -314,7 +315,9 @@ class Payline {
                         $transaction->abort();
                     }
                 } catch (\Exception $e) {
-                    Log::error("PAYLINE : Aborting of transaction (tra_id)".$result['tra_id']." failed... Token: $token \nException : \n".print_r($e, true));
+                    Log::error("PAYLINE : Aborting of transaction (tra_id)".$result['tra_id']." failed...", 
+                                array('token' => $token, 'tra_id' => $result['tra_id']), 
+                                $e);
                 }
             }
         }
