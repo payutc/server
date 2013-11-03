@@ -126,7 +126,7 @@ class POSS3 extends \ServiceBase {
         // il y a deux formats : ids séparés par des espaces (pas de quantités) ou json
         // $objects est un array de array($idProduct, $qte)
         $objects = json_decode($obj_ids);
-        Log::debug(print_r($objects,true));
+        Log::debug('decoded objects', array('objects' => $objects));
         
         if (!is_array($objects)) { 
             $objects_ids = explode(" ", trim($obj_ids));
