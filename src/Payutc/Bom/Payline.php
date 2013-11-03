@@ -243,7 +243,7 @@ class Payline {
                     if($result['usr_id']) {
                         $conn->insert('t_recharge_rec',
                         array(
-                            "rty_id" => 3, // Type de rechargement => Rechargement en ligne
+                            "rec_type" => 'Internet', // Type de rechargement => Rechargement en ligne
                             "usr_id_buyer" => $result['usr_id'], 
                             "usr_id_operator" => $result['usr_id'],
                             "poi_id" => 1, // Historique... useless maintenant TODO mettre l'id d'app
@@ -253,7 +253,7 @@ class Payline {
                             "rec_removed" => 0
                         ),
                         array(
-                            "integer", "integer", "integer", "integer", "datetime", "integer", "string", "integer"
+                            "string", "integer", "integer", "integer", "datetime", "integer", "string", "integer"
                         ));
 
                         // Recharge user maintenant
