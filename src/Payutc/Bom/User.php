@@ -56,7 +56,7 @@ class User {
     * @param string $username Login of the User object to init
     */
     public function __construct($username, $gingerUser = null) {
-        Log::debug("User: __construct($username, ".print_r($gingerUser, true).")");
+        Log::debug("User: __construct($username, [gingerUser])", array('ginger_user' => $gingerUser));
         
         $query = Dbal::createQueryBuilder()
             ->select('usr_id', 'usr_blocked')
@@ -86,7 +86,7 @@ class User {
                 throw new GingerFailure($ex);
             }    
         }
-        Log::debug("User: data from Ginger: ".print_r($this->gingerUser, true));
+        Log::debug("User: data from Ginger: ", array('data' => $this->gingerUser));
         if($this->gingerUser == null){
             Log::error("Empty gingerUser");
             throw new GingerFailure("Ginger user is empty");
@@ -94,7 +94,7 @@ class User {
                 
         // Get remaining data from the database
         $don = $query->fetch();
-        Log::debug("User: data from database: ".print_r($don, true));
+        Log::debug("User: data from database: ", array('data' => $don));
         
         $this->idUser = $don['usr_id'];
         $this->selfBlocked = $don['usr_blocked'];
