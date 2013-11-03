@@ -135,5 +135,23 @@ class TransactionRwdbTest extends DatabaseTest
         $transaction2 = Transaction::getById($transaction->getId());
         $this->assertEquals("arthur@puyou.fr", $transaction2->getEmail());
     }
+    
+	/**
+     * @requires PHP 5.4
+	 */    
+    public function testSetToNull(){
+        $items = array(
+            array(4, 1),
+            array(4, 3)
+        );
+        $matthieu = new User("mguffroy");
+        $transaction = Transaction::create($matthieu, $matthieu, 51, 1, $items, null, null);
+
+        $this->assertEquals(600, $transaction->getMontantTotal());
+        
+        $transaction->setBuyer(null);
+        
+        $this->assertEquals(null, $transaction->getBuyerId());
+    }
 }
 
