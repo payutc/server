@@ -26,7 +26,7 @@ class Payline {
      * $app_id => Permet de loguer l'id de l'application qui a effectué la requete
      * $service => Permet de loguer le service utilisé pour effectuer la requete (MADMIN / VENTEWEB ?)
     */
-    public function __construct($app_id, $service) {
+    public function __construct($app_id, $service, $paylineSdk = null) {
         // DEFINITION DES PARAMETRES DE CONFIG DE PAYLINE
 	      define('PAYMENT_CURRENCY', 978); // Default payment currency (ex: 978 = EURO)
 	      define('ORDER_CURRENCY', PAYMENT_CURRENCY);
@@ -63,17 +63,22 @@ class Payline {
 	      define('INI_FILE' , __DIR__ . '/../../../vendor/payline/HighDefinition.ini'); // Chemin du fichier ini
 	      define('PAYLINE_ERR_TOKEN', '02317,02318'); // Préfixe du token sur le site primaire
 
-        // Appel du constructeur de paylineSDK
-        $this->payline = new PaylineSdkWrapper(
-                            Config::get('payline_merchant_id'),
-                            Config::get('payline_access_key'),
-                            Config::get('proxy_host'),
-                            Config::get('proxy_port'),
-                            Config::get('proxy_login'),
-                            Config::get('proxy_password'),
-                            Config::get('payline_production')
-                            );
-
+        if ($paylineSdk === null) {
+            // Appel du constructeur de paylineSDK
+            $this->payline = new PaylineSdkWrapper(
+                                Config::get('payline_merchant_id'),
+                                Config::get('payline_access_key'),
+                                Config::get('proxy_host'),
+                                Config::get('proxy_port'),
+                                Config::get('proxy_login'),
+                                Config::get('proxy_password'),
+                                Config::get('payline_production')
+                                );
+        }
+        else {
+            $this->payline = $paylineSdk;
+        }
+        
         // Sauvegarde des parametres
         $this->$app_id = $app_id;
         $this->$service = $service; 

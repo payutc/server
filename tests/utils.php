@@ -113,7 +113,8 @@ abstract class DatabaseTest extends \PHPUnit_Extensions_Database_TestCase
 	 */
 	protected function getTearDownOperation()
 	{
-        return $this->getOperations()->DELETE_ALL();
+        $cascadeTruncates = false;
+        return new TruncateOperation($cascadeTruncates);
     }
     
 	function computeDataset($fixture)
@@ -158,6 +159,88 @@ abstract class ReadOnlyDatabaseTest extends DatabaseTest
 	protected function getTearDownOperation()
 	{
 		return new PHPUnit_Extensions_Database_Operation_Null();
+    }
+}
+
+
+/**
+ * Fake payline sdk
+ */
+class FakePaylineSdk
+{
+    public $returnURL = '';
+    public $cancelURL = '';
+    public $notificationURL = '';
+    public $transactions = array();
+    
+    protected $next_will_fail = false;
+    
+    public function nextWillFail()
+    {
+        $next_will_fail = true;
+    }
+    
+    public function doWebPayment($arr)
+    {
+        $token = uniqid(true);
+        $this->transactions[$token] = array(
+            'amount' => $arr['payment']['amount'],
+            'code' => '02306', // en attente
+            'token' => $token,
+        );
+        
+        $r = array(
+            'result' => array(
+                'code' => '00000',
+            ),
+            'token' => $token,
+            'redirectURL' => 'http://localhost/fakePayline'
+        );
+        
+        if ($this->next_will_fail) {
+            $this->next_will_fail = false;
+            $r['result']['code'] = '1111';
+        }
+        return $r;
+    }
+    
+    public function getWebPaymentDetails($arr)
+    {
+        $token = $arr['token'];
+        
+        $transaction = $this->transactions[$token];
+        
+        $r = array(
+            'payment' => array(
+                'amount' => $transaction['amount']
+            ),
+            'authorization' => array(
+                'number' => 1
+            ),
+            'transaction' => array(
+                'id' => 1
+            ),
+            'result' => array(
+                'code' => $transaction['code']
+            )
+        );
+        return $r;
+    }
+    
+    public function validate($token)
+    {
+        $this->transactions[$token]['code'] = '00000';
+    }
+    
+    public function cancel($token)
+    {
+        $transaction = $this->transactions[$token];
+        $transaction['code'] = '11111';
+    }
+    
+    public function getLastTransaction()
+    {
+        return end($this->transactions);
     }
 }
 
