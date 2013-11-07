@@ -177,7 +177,7 @@ class FakePaylineSdk
     
     public function nextWillFail()
     {
-        $next_will_fail = true;
+        $this->next_will_fail = true;
     }
     
     public function doWebPayment($arr)

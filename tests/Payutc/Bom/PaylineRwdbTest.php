@@ -50,17 +50,35 @@ class PaylineRwdbTest extends DatabaseTest
         $transaction = $this->fakeSdk->getLastTransaction();
         $token = $transaction['token'];
         $this->payline->notification($token);
-        $records = Log::getStreamHandler()->getRecords();
         $s = 'PAYLINE : Tentative de validation avant erreur ou succes !';
-        $found = false;
+        $this->assertTrue($this->strIsInLogs($s));
+    }
+    
+	/**
+	 * Test payline failure of a web payment
+	 * 
+	 * @expectedException		 \Payutc\Exception\PaylineException
+	 */
+    public function testDoWebPaymentFailure()
+    {
+        $t = Transaction::getById(12);
+        $u = User::getById(1);
+        $this->fakeSdk->nextWillFail();
+        $this->payline->doWebPayment($u, $t, 50, 'http://localhost/nowhere');
+    }
+    
+    protected function strIsInLogs($s, $lvl=null)
+    {
+        $records = Log::getStreamHandler()->getRecords();
         foreach($records as $record) {
             // if (message startswith s)
-            if (!strncmp($record['message'], $s, strlen($s))) {
-                $found = true;
-                break;
+            if ($lvl === null or $record['level'] == $lvl) {
+                if (!strncmp($record['message'], $s, strlen($s))) {
+                    return true;
+                }
             }
         }
-        $this->assertTrue($found);
+        return false;
     }
     
 
