@@ -106,27 +106,42 @@ class Log
         ErrorHandler::register(self::$logger);
     }
     
-    public static function debug($msg, $data = array()) {
+    public static function debug($msg, $data = array(), $e = null) {
+        if ($e !== null) {
+            $data['exception'] = static::exceptionToArray($e);
+        }
         self::$logger->addDebug($msg, $data);
     }
     
-    public static function info($msg, $data = array()) {
+    public static function info($msg, $data = array(), $e = null) {
+        if ($e !== null) {
+            $data['exception'] = static::exceptionToArray($e);
+        }
         self::$logger->addInfo($msg, $data);
     }
     
-    public static function warning($msg, $data = array()) {
+    public static function warning($msg, $data = array(), $e = null) {
+        if ($e !== null) {
+            $data['exception'] = static::exceptionToArray($e);
+        }
         self::$logger->addWarning($msg, $data);
     }
     
-    public static function warn($msg, $data = array()) {
-        self::warning($msg, $data);
+    public static function warn($msg, $data = array(), $e = null) {
+        self::warning($msg, $data, $e);
     }
     
-    public static function error($msg, $data = array()) {
+    public static function error($msg, $data = array(), $e = null) {
+        if ($e !== null) {
+            $data['exception'] = static::exceptionToArray($e);
+        }
         self::$logger->addError($msg, $data);
     }
     
-    public static function critical($msg, $data = array()) {
+    public static function critical($msg, $data = array(), $e = null) {
+        if ($e !== null) {
+            $data['exception'] = static::exceptionToArray($e);
+        }
         self::$logger->addCritical($msg, $data);
     }
     
@@ -136,6 +151,15 @@ class Log
     
     public static function getStreamHandler() {
         return self::$streamHandler;
+    }
+    
+    public static function exceptionToArray($e) {
+        return array(
+            "message" => $e->getMessage(), 
+            "file" => $e->getFile(), 
+            "line" => $e->getLine(),  
+            "trace" => $e->getTrace()
+        );
     }
 }
 

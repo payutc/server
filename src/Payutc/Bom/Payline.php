@@ -15,6 +15,46 @@ use \Payutc\Bom\User;
 use \Payutc\Bom\Transaction;
 use \Payutc\Wrapper\PaylineSdkWrapper;
 
+
+if (!defined('__PAYUTC_PAYLINE_OPTIONS')) {
+    define('PAYMENT_CURRENCY', 978); // Default payment currency (ex: 978 = EURO)
+    define('ORDER_CURRENCY', PAYMENT_CURRENCY);
+    define('SECURITY_MODE', ''); // Protocol (ex: SSL = HTTPS)
+    define('LANGUAGE_CODE', ''); // Payline pages language
+    define('PAYMENT_ACTION', 101); // Default payment method
+    define('PAYMENT_MODE', 'CPT'); // Default payment mode
+    define('CANCEL_URL', ''); // Default cancel URL
+    define('NOTIFICATION_URL',''); // Default notification URL
+    define('RETURN_URL', ''); // Default return URL
+    define('CUSTOM_PAYMENT_TEMPLATE_URL', ''); // Default payment template URL
+    define('CUSTOM_PAYMENT_PAGE_CODE', '');
+    define('CONTRACT_NUMBER', Config::get('payline_contract_number')); // Contract type default (ex: 001 = CB, 003 = American Express...)
+    define('CONTRACT_NUMBER_LIST', '' ); // Contract type multiple values (separator: ;)
+    define('SECOND_CONTRACT_NUMBER_LIST', ''); // Contract type multiple values (separator: ;)
+
+    // Durées du timeout d'appel des webservices
+    define('PRIMARY_CALL_TIMEOUT', 15);
+    define('SECONDARY_CALL_TIMEOUT', 15);
+
+    // Nombres de tentatives sur les chaines primaire et secondaire par transaction
+    define('PRIMARY_MAX_FAIL_RETRY', 1);
+    define('SECONDARY_MAX_FAIL_RETRY', 2);
+
+    // Durées d'attente avant le rejoue de la transaction
+    define('PRIMARY_REPLAY_TIMER', 15);
+    define('SECONDARY_REPLAY_TIMER', 15);
+
+    define('PAYLINE_ERR_CODE', '02101,02102,02103'); // Codes erreurs payline qui signifie l'échec de la transaction
+    define('PAYLINE_WS_SWITCH_ENABLE',  ''); // Nom des services web autorisés à basculer
+    define('PAYLINE_SWITCH_BACK_TIMER', 600); // Durées d'attente pour rebasculer en mode nominal
+    define('PRIMARY_TOKEN_PREFIX', '1'); // Préfixe du token sur le site primaire
+    define('SECONDARY_TOKEN_PREFIX', '2'); // Préfixe du token sur le site secondaire
+    define('INI_FILE' , __DIR__ . '/../../../vendor/payline/HighDefinition.ini'); // Chemin du fichier ini
+    define('PAYLINE_ERR_TOKEN', '02317,02318'); // Préfixe du token sur le site primaire
+    define('__PAYUTC_PAYLINE_OPTIONS', '__PAYUTC_PAYLINE_OPTIONS');
+}
+
+
 class Payline {
     
     protected $payline = null;
@@ -27,42 +67,6 @@ class Payline {
      * $service => Permet de loguer le service utilisé pour effectuer la requete (MADMIN / VENTEWEB ?)
     */
     public function __construct($app_id, $service, $paylineSdk = null) {
-        // DEFINITION DES PARAMETRES DE CONFIG DE PAYLINE
-	      define('PAYMENT_CURRENCY', 978); // Default payment currency (ex: 978 = EURO)
-	      define('ORDER_CURRENCY', PAYMENT_CURRENCY);
-	      define('SECURITY_MODE', ''); // Protocol (ex: SSL = HTTPS)
-	      define('LANGUAGE_CODE', ''); // Payline pages language
-	      define('PAYMENT_ACTION', 101); // Default payment method
-	      define('PAYMENT_MODE', 'CPT'); // Default payment mode
-	      define('CANCEL_URL', ''); // Default cancel URL
-	      define('NOTIFICATION_URL',''); // Default notification URL
-	      define('RETURN_URL', ''); // Default return URL
-	      define('CUSTOM_PAYMENT_TEMPLATE_URL', ''); // Default payment template URL
-	      define('CUSTOM_PAYMENT_PAGE_CODE', '');
-	      define('CONTRACT_NUMBER', Config::get('payline_contract_number')); // Contract type default (ex: 001 = CB, 003 = American Express...)
-	      define('CONTRACT_NUMBER_LIST', '' ); // Contract type multiple values (separator: ;)
-	      define('SECOND_CONTRACT_NUMBER_LIST', ''); // Contract type multiple values (separator: ;)
-	
-	      // Durées du timeout d'appel des webservices
-	      define('PRIMARY_CALL_TIMEOUT', 15);
-	      define('SECONDARY_CALL_TIMEOUT', 15);
-	
-	      // Nombres de tentatives sur les chaines primaire et secondaire par transaction
-	      define('PRIMARY_MAX_FAIL_RETRY', 1);
-	      define('SECONDARY_MAX_FAIL_RETRY', 2);
-	
-	      // Durées d'attente avant le rejoue de la transaction
-	      define('PRIMARY_REPLAY_TIMER', 15);
-	      define('SECONDARY_REPLAY_TIMER', 15);
-		
-	      define('PAYLINE_ERR_CODE', '02101,02102,02103'); // Codes erreurs payline qui signifie l'échec de la transaction
-	      define('PAYLINE_WS_SWITCH_ENABLE',  ''); // Nom des services web autorisés à basculer
-	      define('PAYLINE_SWITCH_BACK_TIMER', 600); // Durées d'attente pour rebasculer en mode nominal
-	      define('PRIMARY_TOKEN_PREFIX', '1'); // Préfixe du token sur le site primaire
-	      define('SECONDARY_TOKEN_PREFIX', '2'); // Préfixe du token sur le site secondaire
-	      define('INI_FILE' , __DIR__ . '/../../../vendor/payline/HighDefinition.ini'); // Chemin du fichier ini
-	      define('PAYLINE_ERR_TOKEN', '02317,02318'); // Préfixe du token sur le site primaire
-
         if ($paylineSdk === null) {
             // Appel du constructeur de paylineSDK
             $this->payline = new PaylineSdkWrapper(
@@ -78,7 +82,6 @@ class Payline {
         else {
             $this->payline = $paylineSdk;
         }
-        
         // Sauvegarde des parametres
         $this->$app_id = $app_id;
         $this->$service = $service; 
@@ -173,11 +176,11 @@ class Payline {
                     "pay_error" => $result["result"]["code"]), 
                 array('pay_id' => $ref), 
                 array("string", "datetime", "string"));
-            Log::warn("PAYLINE : Erreur au moment de créer le rechargement. \n".print_r($result, true));
+            Log::warn("PAYLINE : Erreur au moment de créer le rechargement.", array('result' => $result));
             throw new \Payutc\Exception\PaylineException($result['result']['longMessage'], $result['result']['code']);
         } else {
             $conn->update('t_paybox_pay', array("pay_step" => 'A', "pay_date_retour" => new \DateTime()), array('pay_id' => $ref), array("string", "datetime"));
-            Log::warn("PAYLINE : Erreur critique au moment de créer le rechargement. \n \$result => $result");
+            Log::warn("PAYLINE : Erreur critique au moment de créer le rechargement.", array('result' => $result));
             throw new \Payutc\Exception\PaylineException("Payline erreur critique");
         }
     }
@@ -221,7 +224,7 @@ class Payline {
                 if($result['pay_step'] != "W") {
                     // ERROR ! Ce rechargement n'est pas en attente.
                     // Tentative de double rechargement ?
-                    Log::warn("PAYLINE : Tentative de double rechargement ! $token \n".print_r($response, true));
+                    Log::warn("PAYLINE : Tentative de double rechargement !", array('token' => $token, 'response'=>$response));
                     return $return_url;
                 }
                 
@@ -240,7 +243,7 @@ class Payline {
                     array("string", "datetime", "integer", "string", "string", "string"));
                 
                     if($numrows != 1) {
-                        Log::warn("PAYLINE : Tentative de double rechargement ! $token (ou token inexistant) \n".print_r($response, true));
+                        Log::warn("PAYLINE : Tentative de double rechargement ! (ou token inexistant)", array('token' => $token, 'response' => $response));
                         throw new \Exception("Tentative double rechargement.");
                     }
                 
@@ -277,19 +280,20 @@ class Payline {
                             $transaction->validate();
                         }
                     } catch (\Exception $e) {
-                        Log::error("PAYLINE : Validation of transaction (tra_id)".$result['tra_id']." has failed... Token: $token \nException : \n".print_r($e, true));
+                        Log::error("PAYLINE : Validation of transaction (tra_id)".$result['tra_id']." has failed...", 
+                                    array('token' => $token, 'tra_id' => $result['tra_id']), $e);
                     }
                     
-                    Log::debug("PAYLINE : succes ! $token \n".print_r($response, true));
+                    Log::debug("PAYLINE : succes !", array('token' => $token, 'response' => $response));
                     return $return_url;
                 } catch (\Exception $e) {
                     $conn->rollback();
-                    Log::error("PAYLINE : Error during notification of $token \n Exception : \n".print_r($e, true));
+                    Log::error("PAYLINE : Error during notification", array('token' => $token), $e);
                 }
             // Paiement en cours, l'utilisateur n'a pas annulé ni validé...
             } else if ($response["result"]["code"] == "02306") {
                 // Log this, peut etre que le petit malin essaie de nous rouler ^^
-                Log::warn("PAYLINE : Tentative de validation avant erreur ou succes ! $token \n".print_r($response, true));
+                Log::warn("PAYLINE : Tentative de validation avant erreur ou succes !", array('token' => $token, 'response' => $response));
 
             } else {
                 // Indique le rechargement comme aborted
@@ -303,7 +307,7 @@ class Payline {
                                       "pay_error" => $response["result"]["code"]),
                                 array("pay_token" => $token),
                                 array("string", "datetime", "integer", "string", "string", "string"));
-                Log::info("PAYLINE : error ! $token \n".print_r($response, true));
+                Log::warning("PAYLINE : error !", array('token' => $token, "response" => $response));
                 
                 // annulation de la transaction
                 try {
@@ -320,7 +324,9 @@ class Payline {
                         $transaction->abort();
                     }
                 } catch (\Exception $e) {
-                    Log::error("PAYLINE : Aborting of transaction (tra_id)".$result['tra_id']." failed... Token: $token \nException : \n".print_r($e, true));
+                    Log::error("PAYLINE : Aborting of transaction (tra_id)".$result['tra_id']." failed...", 
+                                array('token' => $token, 'tra_id' => $result['tra_id']), 
+                                $e);
                 }
             }
         }

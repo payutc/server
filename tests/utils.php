@@ -200,6 +200,7 @@ class FakePaylineSdk
         if ($this->next_will_fail) {
             $this->next_will_fail = false;
             $r['result']['code'] = '1111';
+            $r['result']['longMessage'] = 'Failure !!';
         }
         return $r;
     }
