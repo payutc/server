@@ -31,6 +31,10 @@ class PaylineRwdbTest extends DatabaseTest
         $this->testHandler = Log::getStreamHandler();
     }
     
+    /**
+     * 
+     * @requires PHP 5.4
+     */
     public function testNoCrash()
     {
         $t = Transaction::getById(12);
@@ -42,6 +46,10 @@ class PaylineRwdbTest extends DatabaseTest
         $this->payline->notification($token);
     }
     
+    /**
+     * 
+     * @requires PHP 5.4
+     */
     public function testNotificationBeforeValidate()
     {
         $t = Transaction::getById(12);
@@ -58,6 +66,7 @@ class PaylineRwdbTest extends DatabaseTest
 	 * Test payline failure of a web payment
 	 * 
 	 * @expectedException		 \Payutc\Exception\PaylineException
+     * @requires PHP 5.4
 	 */
     public function testDoWebPaymentFailure()
     {
