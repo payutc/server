@@ -76,6 +76,20 @@ class PaylineRwdbTest extends DatabaseTest
         $this->payline->doWebPayment($u, $t, 50, 'http://localhost/nowhere');
     }
     
+    public function testDoubleLoading()
+    {
+        $t = Transaction::getById(12);
+        $u = User::getById(1);
+        $this->payline->doWebPayment($u, $t, 50, 'http://localhost/nowhere');
+        $transaction = $this->fakeSdk->getLastTransaction();
+        $token = $transaction['token'];
+        $this->fakeSdk->validate($token);
+        $this->payline->notification($token);
+        $this->payline->notification($token);
+        $s = 'PAYLINE : Tentative de double rechargement !';
+        $this->assertTrue($this->strIsInLogs($s));
+    }
+    
     protected function strIsInLogs($s, $lvl=null)
     {
         $records = Log::getStreamHandler()->getRecords();
