@@ -182,12 +182,7 @@ class FakePaylineSdk
     
     public function doWebPayment($arr)
     {
-        $token = uniqid(true);
-        $this->transactions[$token] = array(
-            'amount' => $arr['payment']['amount'],
-            'code' => '02306', // en attente
-            'token' => $token,
-        );
+        $token = $this->addTransaction($arr['payment']['amount']);
         
         $r = array(
             'result' => array(
@@ -242,6 +237,27 @@ class FakePaylineSdk
     public function getLastTransaction()
     {
         return end($this->transactions);
+    }
+    
+    protected function createTransaction($amount, $token = null)
+    {
+        if ($token === null) {
+            $token = uniqid(true);
+        }
+        $t = array(
+            'amount' => $amount,
+            'code' => '02306', // en attente
+            'token' => $token,
+        );
+        return $t;
+    }
+    
+    protected function addTransaction($amount, $token = null)
+    {
+        $t = $this->createTransaction($amount, $token);
+        $token = $t['token'];
+        $this->transactions[$token] = $t;
+        return $token;
     }
 }
 
