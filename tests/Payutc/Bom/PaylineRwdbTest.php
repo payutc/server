@@ -39,7 +39,7 @@ class PaylineRwdbTest extends DatabaseTest
     public function testNoCrash()
     {
         $t = Transaction::getById(12);
-        $u = User::getById(1);
+        $u = User::getById(9447);
         
         // do web payment
         $this->payline->doWebPayment($u, $t, 50, 'http://localhost/nowhere');
@@ -62,13 +62,69 @@ class PaylineRwdbTest extends DatabaseTest
     }
     
     /**
+     * Test the user is credited after the transaction
+     * @requires PHP 5.4
+     */
+    public function testReload()
+    {
+        $amount = 50;
+        $u = User::getById(1);
+        $credit = $u->getCredit();
+        
+        // do web payment
+        $this->payline->doWebPayment($u, null, $amount, 'http://localhost/nowhere');
+        $transaction = $this->fakeSdk->getLastTransaction();
+        $token = $transaction['token'];
+        
+        // validate payment on payline side
+        $this->fakeSdk->validate($token);
+        
+        // notification
+        $this->payline->notification($token);
+        
+        // test db record
+        $u = User::getById(1);
+        $this->assertEquals($credit + $amount, $u->getCredit());
+    }
+    
+    
+    /**
+     * Test a web transaction, the user should be credited and 
+     * then debited (his starting credit should be the same as the ending
+     * one).
+     * 
+     * @requires PHP 5.4
+     */
+    public function testTransaction()
+    {
+        $t = Transaction::getById(12);
+        $amount = $t->getMontantTotal();
+        $u = User::getById(9447);
+        $credit = $u->getCredit();
+        
+        // do web payment
+        $this->payline->doWebPayment($u, $t, $amount, 'http://localhost/nowhere');
+        $transaction = $this->fakeSdk->getLastTransaction();
+        $token = $transaction['token'];
+        
+        // validate payment on payline side
+        $this->fakeSdk->validate($token);
+        
+        // notification
+        $this->payline->notification($token);
+        
+        // test db record
+        $this->assertEquals($credit, User::getCreditById($u->getId()));
+    }
+    
+    /**
      * 
      * @requires PHP 5.4
      */
     public function testNotificationBeforeValidate()
     {
         $t = Transaction::getById(12);
-        $u = User::getById(1);
+        $u = User::getById(9447);
         $this->payline->doWebPayment($u, $t, 50, 'http://localhost/nowhere');
         $transaction = $this->fakeSdk->getLastTransaction();
         $token = $transaction['token'];
@@ -85,7 +141,7 @@ class PaylineRwdbTest extends DatabaseTest
     public function testDoWebPaymentFailure()
     {
         $t = Transaction::getById(12);
-        $u = User::getById(1);
+        $u = User::getById(9447);
         $this->fakeSdk->nextWillFail();
         $e = null;
         try {
@@ -114,7 +170,7 @@ class PaylineRwdbTest extends DatabaseTest
     public function testDoWebPaymentCriticalFailure()
     {
         $t = Transaction::getById(12);
-        $u = User::getById(1);
+        $u = User::getById(9447);
         $this->fakeSdk->nextWillHardFail();
         $e = null;
         try {
@@ -134,12 +190,42 @@ class PaylineRwdbTest extends DatabaseTest
     }
     
     /**
+     * Test the notification method abort the transaction if the return
+     * code of payline is bad
+     */
+    public function testNotificationFailsOnBadReturnCode()
+    {
+        
+        $t = Transaction::getById(12);
+        $u = User::getById(9447);
+        
+        // do web payment
+        $this->payline->doWebPayment($u, $t, 50, 'http://localhost/nowhere');
+        $transaction = $this->fakeSdk->getLastTransaction();
+        $token = $transaction['token'];
+        
+        // cancel the payment on payline side
+        $this->fakeSdk->cancel($token);
+        
+        // notification
+        $this->payline->notification($token);
+        
+        // test db record
+        $r = $this->getLastDbTransaction($u->getId(), $t->getId());
+        $this->assertEquals('A', $r['pay_step']);
+        
+        // test the log records
+        $s = 'PAYLINE : error';
+        $this->assertTrue($this->strIsInLogs($s));
+    }
+    
+    /**
      * @requires PHP 5.4
      */
     public function testDoubleLoading()
     {
         $t = Transaction::getById(12);
-        $u = User::getById(1);
+        $u = User::getById(9447);
         $this->payline->doWebPayment($u, $t, 50, 'http://localhost/nowhere');
         $transaction = $this->fakeSdk->getLastTransaction();
         $token = $transaction['token'];
@@ -156,7 +242,7 @@ class PaylineRwdbTest extends DatabaseTest
     public function testCheckUser()
     {
         $t = Transaction::getById(12);
-        $u = User::getById(1);
+        $u = User::getById(9447);
         
         // first clean all existing transactions
         $qb = Dbal::createQueryBuilder();

@@ -249,8 +249,7 @@ class FakePaylineSdk
     
     public function cancel($token)
     {
-        $transaction = $this->transactions[$token];
-        $transaction['code'] = '11111';
+        $this->transactions[$token]['code'] = '11111';
     }
     
     public function getLastTransaction()
