@@ -63,6 +63,10 @@ class PaylineRwdbTest extends DatabaseTest
     
     /**
      * Test the user is credited after the transaction
+     * 
+     * usr_id != null
+     * tra_id == null
+     * 
      * @requires PHP 5.4
      */
     public function testReload()
@@ -93,6 +97,9 @@ class PaylineRwdbTest extends DatabaseTest
      * then debited (his starting credit should be the same as the ending
      * one).
      * 
+     * usr_id != null
+     * tra_id != null
+     * 
      * @requires PHP 5.4
      */
     public function testTransaction()
@@ -115,6 +122,69 @@ class PaylineRwdbTest extends DatabaseTest
         
         // test db record
         $this->assertEquals($credit, User::getCreditById($u->getId()));
+    }
+    
+    /**
+     * Test the transaction if the amount payed on payline is different 
+     * than the total amount of the transaction.
+     * Everything should pass.
+     * 
+     * usr_id != null
+     * tra_id != null
+     * 
+     * @requires PHP 5.4
+     */
+    public function testTransactionWithUserOnUnMatchAmounts()
+    {
+        $diff = 3;
+        $t = Transaction::getById(12);
+        $amount = $t->getMontantTotal() + $diff;
+        $u = User::getById(9447);
+        $credit = $u->getCredit();
+        
+        // do web payment
+        $this->payline->doWebPayment($u, $t, $amount, 'http://localhost/nowhere');
+        $transaction = $this->fakeSdk->getLastTransaction();
+        $token = $transaction['token'];
+        
+        // validate payment on payline side
+        $this->fakeSdk->validate($token);
+        
+        // notification
+        $this->payline->notification($token);
+        
+        // test db record
+        $this->assertEquals($credit + $diff, User::getCreditById($u->getId()));
+    }
+    
+    /**
+     * Test the transaction fails if the amount payed on payline is different 
+     * than the total amount of the transaction.
+     * 
+     * usr_id == null
+     * tra_id != null
+     * 
+     * @requires PHP 5.4
+     */
+    public function testTransactionWithNoUserFailsOnUnMatchAmounts()
+    {
+        $t = Transaction::getById(12);
+        $amount = $t->getMontantTotal() + 2;
+        
+        // do web payment
+        $this->payline->doWebPayment(null, $t, $amount, 'http://localhost/nowhere');
+        $transaction = $this->fakeSdk->getLastTransaction();
+        $token = $transaction['token'];
+        
+        // validate payment on payline side
+        $this->fakeSdk->validate($token);
+        
+        // notification
+        $this->payline->notification($token);
+        
+        // test the log records
+        $s = 'PAYLINE : Validation of transaction';
+        $this->assertTrue($this->strIsInLogs($s));
     }
     
     /**
@@ -192,6 +262,8 @@ class PaylineRwdbTest extends DatabaseTest
     /**
      * Test the notification method abort the transaction if the return
      * code of payline is bad
+     * 
+     * @requires PHP 5.4
      */
     public function testNotificationFailsOnBadReturnCode()
     {
