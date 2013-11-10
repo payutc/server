@@ -40,11 +40,25 @@ class PaylineRwdbTest extends DatabaseTest
     {
         $t = Transaction::getById(12);
         $u = User::getById(1);
+        
+        // do web payment
         $this->payline->doWebPayment($u, $t, 50, 'http://localhost/nowhere');
         $transaction = $this->fakeSdk->getLastTransaction();
         $token = $transaction['token'];
+        
+        // test db record
+        $r = $this->getLastDbTransaction($u->getId(), $t->getId());
+        $this->assertEquals($token, $r['pay_token']);
+        
+        // validate payment on payline side
         $this->fakeSdk->validate($token);
+        
+        // notification
         $this->payline->notification($token);
+        
+        // test db record
+        $r = $this->getLastDbTransaction($u->getId(), $t->getId());
+        $this->assertEquals('V', $r['pay_step']);
     }
     
     /**
@@ -66,7 +80,6 @@ class PaylineRwdbTest extends DatabaseTest
     /**
      * Test payline failure of a web payment
      * 
-     * @expectedException         \Payutc\Exception\PaylineException
      * @requires PHP 5.4
      */
     public function testDoWebPaymentFailure()
@@ -74,7 +87,50 @@ class PaylineRwdbTest extends DatabaseTest
         $t = Transaction::getById(12);
         $u = User::getById(1);
         $this->fakeSdk->nextWillFail();
-        $this->payline->doWebPayment($u, $t, 50, 'http://localhost/nowhere');
+        $e = null;
+        try {
+            $this->payline->doWebPayment($u, $t, 50, 'http://localhost/nowhere');
+        }
+        catch (Exception $a) {
+            $e = $a;
+        }
+        // test the throwed exception
+        $this->assertNotNull($e);
+        $this->assertTrue($e instanceof \Payutc\Exception\PaylineException);
+        $s = 'PAYLINE : Erreur au moment de créer le rechargement';
+        $this->assertTrue($this->strIsInLogs($s));
+        
+        // test the database record
+        $r = $this->getLastDbTransaction($u->getId(), $t->getId());
+        $this->assertEquals('A', $r['pay_step']);
+        $this->assertNotNull($r['pay_error']);
+    }
+    
+    /**
+     * Test payline critical failure of a web payment
+     * 
+     * @requires PHP 5.4
+     */
+    public function testDoWebPaymentCriticalFailure()
+    {
+        $t = Transaction::getById(12);
+        $u = User::getById(1);
+        $this->fakeSdk->nextWillHardFail();
+        $e = null;
+        try {
+            $this->payline->doWebPayment($u, $t, 50, 'http://localhost/nowhere');
+        }
+        catch (Exception $a) {
+            $e = $a;
+        }
+        // test the throwed exception
+        $this->assertNotNull($e);
+        $this->assertTrue($e instanceof \Payutc\Exception\PaylineException);
+        $this->assertContains("Payline erreur critique", $e->getMessage());
+        
+        // test the database record
+        $r = $this->getLastDbTransaction($u->getId(), $t->getId());
+        $this->assertEquals('A', $r['pay_step']);
     }
     
     /**
@@ -146,7 +202,18 @@ class PaylineRwdbTest extends DatabaseTest
         $c = $r['count'];
         $this->assertEquals(0, $c);
     }
-        
+    
+    /**
+     * @expectedException           \Payutc\Exception\PaylineException
+     * @expectedExceptionMessage    Le paiement sert a rien
+     * @requires PHP 5.4
+     */
+    public function testUselessTransaction()
+    {
+        $this->payline->doWebPayment(null, null, 50, 'http://localhost/nowhere');
+        $transaction = $this->fakeSdk->getLastTransaction();
+    }
+    
     protected function strIsInLogs($s, $lvl=null)
     {
         $records = Log::getStreamHandler()->getRecords();
@@ -161,6 +228,25 @@ class PaylineRwdbTest extends DatabaseTest
         return false;
     }
     
+    protected function getLastDbTransaction($usr_id = null, $tra_id = null)
+    {
+        $qb = Dbal::createQueryBuilder();
+        $qb->select('*')
+           ->from('t_paybox_pay', 'pay')
+           ->orderBy('pay_id', 'DESC')
+           ->setMaxResults(1);
+        
+        if ($usr_id !== null) {
+            $qb->where('usr_id = :usr_id')
+               ->setParameter('usr_id', $usr_id);
+        }
+        if ($tra_id !== null) {
+            $qb->where('tra_id = :tra_id')
+               ->setParameter('tra_id', $tra_id);
+        }
+        $r = $qb->execute()->fetch();
+        return $r;
+    }
 
 }
 

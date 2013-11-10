@@ -173,11 +173,26 @@ class FakePaylineSdk
     public $notificationURL = '';
     public $transactions = array();
     
-    protected $next_will_fail = false;
+    const NO_FAILURE = 0;
+    const FAILURE_CODE = 1;
+    const FAILURE_HARD = 2;
     
+    protected $next_will_fail = self::NO_FAILURE;
+    
+    /*
+     * next doWebPayment return will have a failure code
+     */
     public function nextWillFail()
     {
-        $this->next_will_fail = true;
+        $this->next_will_fail = self::FAILURE_CODE;
+    }
+    
+    /*
+     * next doWebPayment return will be invalid (not even an array)
+     */
+    public function nextWillHardFail()
+    {
+        $this->next_will_fail = self::FAILURE_HARD;
     }
     
     public function doWebPayment($arr)
@@ -192,10 +207,14 @@ class FakePaylineSdk
             'redirectURL' => 'http://localhost/fakePayline'
         );
         
-        if ($this->next_will_fail) {
-            $this->next_will_fail = false;
+        if ($this->next_will_fail == self::FAILURE_CODE) {
+            $this->next_will_fail = self::NO_FAILURE;
             $r['result']['code'] = '1111';
             $r['result']['longMessage'] = 'Failure !!';
+        }
+        else if ($this->next_will_fail == self::FAILURE_HARD) {
+            $this->next_will_fail = self::NO_FAILURE;
+            $r = "failure";
         }
         return $r;
     }
