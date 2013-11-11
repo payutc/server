@@ -66,18 +66,22 @@ class Payline {
      * $app_id => Permet de loguer l'id de l'application qui a effectué la requete
      * $service => Permet de loguer le service utilisé pour effectuer la requete (MADMIN / VENTEWEB ?)
     */
-    public function __construct($app_id, $service) {
-        // Appel du constructeur de paylineSDK
-        $this->payline = new PaylineSdkWrapper(
-                            Config::get('payline_merchant_id'),
-                            Config::get('payline_access_key'),
-                            Config::get('proxy_host'),
-                            Config::get('proxy_port'),
-                            Config::get('proxy_login'),
-                            Config::get('proxy_password'),
-                            Config::get('payline_production')
-                            );
-
+    public function __construct($app_id, $service, $paylineSdk = null) {
+        if ($paylineSdk === null) {
+            // Appel du constructeur de paylineSDK
+            $this->payline = new PaylineSdkWrapper(
+                                Config::get('payline_merchant_id'),
+                                Config::get('payline_access_key'),
+                                Config::get('proxy_host'),
+                                Config::get('proxy_port'),
+                                Config::get('proxy_login'),
+                                Config::get('proxy_password'),
+                                Config::get('payline_production')
+                                );
+        }
+        else {
+            $this->payline = $paylineSdk;
+        }
         // Sauvegarde des parametres
         $this->$app_id = $app_id;
         $this->$service = $service; 

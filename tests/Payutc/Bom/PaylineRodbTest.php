@@ -2,9 +2,8 @@
 
 require_once 'utils.php';
 
-use \Payutc\Config;
 
-class paylineRodbTest extends ReadOnlyDatabaseTest
+class PaylineRodbTest extends ReadOnlyDatabaseTest
 {
 	
     /**
