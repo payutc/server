@@ -13,7 +13,7 @@ class WebApp {
         
         $app = new \Slim\Slim(\Payutc\Config::get('slim_config'));
         // JSON route
-        $app->map('/:service/:method', function($service, $method) use ($app) {
+        $app->post('/:service/:method', function($service, $method) use ($app) {
             $dispatcher = new \Payutc\Dispatcher\Json();
 
             // JSON Error handler
