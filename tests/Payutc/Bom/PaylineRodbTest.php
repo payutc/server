@@ -11,7 +11,7 @@ class PaylineRodbTest extends ReadOnlyDatabaseTest
      */
     public function getDataSet() {
         return $this->computeDataset(array(
-            'users.yml'
+            'users'
         ));
     }
 	

@@ -17,11 +17,11 @@ abstract class ServiceBaseRodbTest extends ReadOnlyDatabaseTest
     public function getFixtures()
     {
         return array(
-            'users.yml',
-            'fundations.yml',
-            'applications.yml',
-            'applicationright.yml',
-            'fundationrights.yml',
+            'users',
+            'fundations',
+            'applications',
+            'applicationright',
+            'fundationrights',
         );
     }
     

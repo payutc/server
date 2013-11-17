@@ -11,8 +11,8 @@ class ApplicationRightRodbTest extends ReadOnlyDatabaseTest
     public function getDataSet()
     {
         return $this->computeDataSet(array(
-            'applications.yml',
-            'applicationright.yml'
+            'applications',
+            'applicationright'
         ));
     }
     

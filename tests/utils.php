@@ -1,6 +1,5 @@
 <?php
 
-
 require_once '../vendor/autoload.php';
 
 require_once __DIR__ . '/config-test.inc.php';
@@ -8,6 +7,7 @@ require_once __DIR__ . '/config-test.inc.php';
 use \Payutc\Config;
 use \Httpful\Request;
 use \Payutc\Log;
+use \Test\Dataset\DatasetFactory;
 
 $SEED_DIR = __DIR__ . "/seed/";
 function filepathSeed($fixture)
@@ -62,9 +62,15 @@ class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
 class InsertOperation extends \PHPUnit_Extensions_Database_Operation_Insert
 {
 	public function execute(\PHPUnit_Extensions_Database_DB_IDatabaseConnection $connection, \PHPUnit_Extensions_Database_DataSet_IDataSet $dataSet) {
+		// add a transaction to speed up the insert
+		$conn = $connection->getConnection();
+		$conn->beginTransaction();
+		// disable foreignkeys
 		$connection->getConnection()->query("SET foreign_key_checks = 0");
 		parent::execute($connection, $dataSet);
+		// enable foreignkeys
 		$connection->getConnection()->query("SET foreign_key_checks = 1");
+		$conn->commit();
 	}
 }
 
@@ -117,21 +123,13 @@ abstract class DatabaseTest extends \PHPUnit_Extensions_Database_TestCase
         return new TruncateOperation($cascadeTruncates);
     }
     
-	function computeDataset($fixture)
+	function computeDataset($fixtures)
 	{
-		if (!is_array($fixture)) {
-			$fixture = array($fixture);
+		if (!is_array($fixtures)) {
+			$fixture = array($fixtures);
 		}
-		$ds = null;
-		for ($i=0; $i<count($fixture); $i++) {
-			$filepath = filepathSeed($fixture[$i]);
-			if ($i == 0) {
-				$ds = new PHPUnit_Extensions_Database_DataSet_YamlDataSet($filepath);
-			}
-			else {
-				$ds->addYamlFile($filepath);
-			}
-		}
+		$a = $fixtures;
+		$ds = DatasetFactory::computeDataset($fixtures);
 		return $ds;
 	}
 }

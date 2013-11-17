@@ -9,7 +9,7 @@ class StatsRodbTest extends ServiceBaseRodbTest
     public function getFixtures()
     {
         return array_merge(parent::getFixtures(), array(
-            'products.yml', 'purchase.yml'
+            'products', 'purchase'
         ));
     }
 
