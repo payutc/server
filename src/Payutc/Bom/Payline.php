@@ -218,7 +218,7 @@ class Payline {
         if($result['pay_step'] != "W") {
             // ERROR ! Ce rechargement n'est pas en attente.
             // Tentative de double rechargement ?
-            Log::warn("PAYLINE : Notification sur une transaction qui n'est pas en attente.", array('token' => $token));
+            Log::warn("PAYLINE : Notification sur une transaction qui n'est pas en attente", array('token' => $token));
             return $return_url;
         }
         
