@@ -12,9 +12,9 @@ class BlockedRodbTest extends ReadOnlyDatabaseTest
     public function getDataSet()
     {
         return $this->computeDataSet(array(
-            'users.yml',
-            'blocked.yml',
-            'fundations.yml',
+            'users',
+            'blocked',
+            'fundations',
         ));
     }
     

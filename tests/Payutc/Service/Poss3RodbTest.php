@@ -9,7 +9,7 @@ class Poss3RodbTest extends ServiceBaseRodbTest
     public function getFixtures()
     {
         return array_merge(parent::getFixtures(), array(
-            'products.yml',
+            'products',
         ));
     }
 

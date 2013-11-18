@@ -12,8 +12,8 @@ class CategoryRodbTest extends ReadOnlyDatabaseTest
 	public function getDataSet()
 	{
         return $this->computeDataset(array(
-            'categories.yml',
-            'fundations.yml'
+            'categories',
+            'fundations'
         ));
 	}
     

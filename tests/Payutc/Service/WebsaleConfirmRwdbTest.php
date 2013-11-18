@@ -13,13 +13,13 @@ class WebsaleConfirmRwdbTest extends DatabaseTest
     public function getDataSet()
     {
         return $this->computeDataset(array(
-            'users.yml',
-            'fundations.yml',
-            'applications.yml',
-            'products.yml',
-            'applicationright.yml',
-            'fundationrights.yml',
-            'purchase.yml'
+            'users',
+            'fundations',
+            'applications',
+            'products',
+            'applicationright',
+            'fundationrights',
+            'purchase'
         ));
     }
 
@@ -38,7 +38,7 @@ class WebsaleConfirmRwdbTest extends DatabaseTest
             'tra_id' => 12,
             'token' => "token_12"
         ));
-
+        
         $this->assertEquals(200, $r->code);
         $o = array(
             "id" => "12",

@@ -16,10 +16,10 @@ class PaylineRwdbTest extends DatabaseTest
     public function getDataSet()
     {
         return $this->computeDataset(array(
-            'products.yml',
-            'users.yml',
-            'fundations.yml',
-            'purchase.yml'
+            'products',
+            'users',
+            'fundations',
+            'purchase'
         ));
     }
     

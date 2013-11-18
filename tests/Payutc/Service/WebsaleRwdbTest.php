@@ -13,13 +13,13 @@ class WebsaleRwdbTest extends DatabaseTest
     public function getDataSet()
     {
         return $this->computeDataset(array(
-            'users.yml',
-            'fundations.yml',
-            'applications.yml',
-            'products.yml',
-            'applicationright.yml',
-            'fundationrights.yml',
-            'purchase.yml'
+            'users',
+            'fundations',
+            'applications',
+            'products',
+            'applicationright',
+            'fundationrights',
+            'purchase'
         ));
     }
 

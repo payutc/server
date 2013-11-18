@@ -19,7 +19,8 @@
     "autoload": {
         "classmap": ["class/", "vendor/payline/"],
         "psr-0": {
-            "Payutc": "src/"
+            "Payutc": "src/",
+            "Test": "tests/src/"
         }
     }
 }
