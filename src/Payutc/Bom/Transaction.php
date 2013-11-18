@@ -248,7 +248,6 @@ class Transaction {
     
     static public function getById($idTrans){
         Log::debug("Transaction: getById($idTrans)");
-
         $qb = self::getQbBase()
             ->where('tra.tra_id = :tra_id')
             ->setParameter('tra_id', $idTrans);
