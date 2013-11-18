@@ -215,18 +215,18 @@ class Payline {
             $return_url = "";
         }
         
+        if($result['pay_step'] != "W") {
+            // ERROR ! Ce rechargement n'est pas en attente.
+            // Tentative de double rechargement ?
+            Log::warn("PAYLINE : Notification sur une transaction qui n'est pas en attente.", array('token' => $token));
+            return $return_url;
+        }
+        
         $response = $this->payline->getWebPaymentDetails($array);
         if(isset($response)){
             // Paiement valide
             if($response["result"]["code"] == "00000") {
                 $conn = Dbal::conn();
-
-                if($result['pay_step'] != "W") {
-                    // ERROR ! Ce rechargement n'est pas en attente.
-                    // Tentative de double rechargement ?
-                    Log::warn("PAYLINE : Tentative de double rechargement !", array('token' => $token, 'response'=>$response));
-                    return $return_url;
-                }
                 
                 $conn->beginTransaction();
                 try {
