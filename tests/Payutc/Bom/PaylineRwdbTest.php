@@ -304,7 +304,7 @@ class PaylineRwdbTest extends DatabaseTest
         $this->fakeSdk->validate($token);
         $this->payline->notification($token);
         $this->payline->notification($token);
-        $s = 'PAYLINE : Tentative de double rechargement !';
+        $s = "PAYLINE : Notification sur une transaction qui n'est pas en attente";
         $this->assertTrue($this->strIsInLogs($s));
     }
     
