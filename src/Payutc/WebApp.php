@@ -7,10 +7,6 @@ use \Payutc\Log;
 
 class WebApp {
     
-    public static $allowed_get_methods = array(
-        'WEBSALECONFIRM::notificationPayline',
-    ); 
-    
     public static function createApplication($config)
     {
         Config::initFromArray($config);
@@ -19,7 +15,7 @@ class WebApp {
         $app = new \Slim\Slim(\Payutc\Config::get('slim_config'));
         // JSON route
         $app->map('/:service/:method', function($service, $method) use ($app) {
-            $dispatcher = new \Payutc\Dispatcher\Json(static::$allowed_get_methods);
+            $dispatcher = new \Payutc\Dispatcher\Json();
 
             // JSON Error handler
             $app->error(function (\Exception $e) use ($dispatcher) {

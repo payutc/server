@@ -34,26 +34,14 @@ use \Payutc\Log;
 
 class Json
 {
-    protected $allowed_get_methods;
-    
-    public function __construct($allowed_get_methods = array())
-    {
-        $this->allowed_get_methods = $allowed_get_methods;
-    }
-    
     public function checkMethodAllowed($service, $method)
     {
         $app = \Slim\Slim::getInstance();
         if ($app->request->isPost()) {
             return;
         }
-        else if ($app->request->isGet() 
-                and in_array($service."::".$method, $this->allowed_get_methods)) {
-            return;
-        }
-        else {
-            $s = "Impossible d'accéder à cette méthode depuis un {$app->request->getMethod()}";
-            throw new \Payutc\Exception\ServiceMethodForbidden($s);
+        else if ($app->request->isGet()) {
+            \Payutc\Mapping\Services::checkGetAuthorized($service, $method);
         }
     }
     
