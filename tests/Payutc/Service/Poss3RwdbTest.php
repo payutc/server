@@ -95,7 +95,7 @@ class Poss3RwdbTest extends DatabaseTest
         $r = httpSend('POSS3', 'transaction', $cookie, array(
             'fun_id' => 1,
             'badge_id' => 'ABCDABCD',
-            'obj_ids' => json_encode($object)
+            'obj_ids' => json_encode($objects)
             ));
         $o = array(
                    'firstname' => 'Thomas',
