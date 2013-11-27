@@ -104,8 +104,8 @@ class TransactionRwdbTest extends DatabaseTest
      * @requires PHP 5.4
      * @expectedException         \Payutc\Exception\InvalidReduction
 	 */
-    public function testIllegalReduction(){
-        $items = array(array(5, 1, 0));
+    public function testIllegalReductionSup(){
+        $items = array(array(5, 1, 1.01));
 
         $matthieu = new User("mguffroy");
         $transaction = Transaction::createAndValidate($matthieu, $matthieu, 51, 1, $items, null, null);
@@ -115,8 +115,8 @@ class TransactionRwdbTest extends DatabaseTest
      * @requires PHP 5.4
      * @expectedException         \Payutc\Exception\InvalidReduction
 	 */
-    public function testIllegalReduction2(){
-        $items = array(array(5, 1, 1));
+    public function testIllegalReductionInf(){
+        $items = array(array(5, 1, -0.2));
 
         $matthieu = new User("mguffroy");
         $transaction = Transaction::createAndValidate($matthieu, $matthieu, 51, 1, $items, null, null);
