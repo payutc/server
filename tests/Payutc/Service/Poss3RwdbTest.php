@@ -94,7 +94,9 @@ class Poss3RwdbTest extends DatabaseTest
                          );
         /* soit un prix de 1€ + 1,6€ + 2€ * (1-0,1) + 1,6€ * (1-0,03) *
          * 1,7€ * (1-0,03) = 7,601€
-         * Mais le système doit arrondir à 7,60€ parcequ'on ne peut pas enlever de montant inférieur au centime
+         * Chaque ligne est arrondie à l'entier le plus proche puisqu'on ne
+         *  peut pas débiter de montant inférieur au centime
+         * Dans le cas de ce test ça fait 7,60€
          */
 
         $r = httpSend('POSS3', 'transaction', $cookie, array(
