@@ -366,13 +366,23 @@ class Transaction {
                     throw new PossException("La quantité pour l'article est $object[0] nulle.");
                 }
             
+                $price = $product['price'] * $object[1];
+                // Apply the reduction
+                if(isset($object[2]) && !is_null($object[2]) && $object[2] > 0) {
+                    $reduction = $object[2];
+                    $price = $price * (1 - $reduction);
+                } else {
+                    $reduction = null;
+                }
+
                 // Add the product to the transaction
                 $conn->insert('t_purchase_pur', array(
                     'tra_id' => $transactionId,
                     'obj_id' => $product['id'],
                     'pur_qte' => $object[1],
-                    'pur_price' => $product['price'] * $object[1],
+                    'pur_price' => $price,
                     'pur_unit_price' => $product['price'],
+                    'pur_reduction' => $reduction,
                 ), array("integer", "integer", "integer", "integer", "integer"));
             }
 
