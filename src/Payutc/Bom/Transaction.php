@@ -370,12 +370,14 @@ class Transaction {
                 $price = $product['price'] * $object[1];
                 // Apply the reduction
                 if(isset($object[2]) && !is_null($object[2])) {
-                    if ($object[2] <= 0 || $object[2] >= 1) {
-                        Log::warn("transaction($funId, $transactionId) : Invalid reduction $object[2] for article $object[0]");
-                        throw new InvalidReduction("La réduction pour l'article $object[0] est invalide.");
+                    if ($object[2] < 0 || $object[2] > 1) {
+                        Log::warn("transaction() : Invalid reduction for article $object[0]", compact('funId', 'appId',
+                                                                                                    'buyer', 'seller',
+                                                                                                      'object'));
+                        throw new PossException("La réduction pour l'article $object[0] est invalide.");
                     } else {
                         $reduction = $object[2];
-                        $price = $price * (1 - $reduction);
+                        $price = round($price * (1 - $reduction));
                     }
                 } else {
                     $reduction = null;
