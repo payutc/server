@@ -5,7 +5,7 @@ namespace Payutc\Migrations;
 use Doctrine\DBAL\Migrations\AbstractMigration,
     Doctrine\DBAL\Schema\Schema;
 
-class Version20131126235732 extends AbstractMigration
+class Version20131126235734 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
