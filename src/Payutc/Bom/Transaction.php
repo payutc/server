@@ -357,14 +357,18 @@ class Transaction {
             
                 // If alcohol and our buyer is <18, then fail
                 if ($product['alcool'] > 0 && $buyer->isAdult() == 0) {
-                    Log::warn("transaction($funId, $transactionId) : Under-18 users can't buy alcohol");
+                    Log::warn("transaction() : Under-18 users can't buy alcohol", compact('funId', 'appId',
+                                                                                          'buyer', 'seller',
+                                                                                          'object'));
                     throw new PossException($buyer->getNickname()." est mineur il ne peut pas acheter d'alcool !");
                 }
                 
                 // If there is no quantity for this product, fail
                 if(count($object) != 2 || empty($object[1])){
-                    Log::warn("transaction($funId, $transactionId) : Null quantity for article $object[0]");
-                    throw new InvalidQuantity("La quantité pour l'article est $object[0] nulle.");
+                    Log::warn("transaction() : Null quantity for article $object[0]", compact('funId', 'appId',
+                                                                                              'buyer', 'seller',
+                                                                                              'object'));
+                    throw new InvalidQuantity("La quantité pour l'article $object[0] est nulle.");
                 }
             
                 // Add the product to the transaction
