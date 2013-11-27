@@ -374,7 +374,7 @@ class Transaction {
                         Log::warn("transaction() : Invalid reduction for article $object[0]", compact('funId', 'appId',
                                                                                                     'buyer', 'seller',
                                                                                                       'object'));
-                        throw new PossException("La réduction pour l'article $object[0] est invalide.");
+                        throw new InvalidReduction("La réduction pour l'article $object[0] est invalide.");
                     } else {
                         $reduction = $object[2];
                         $price = round($price * (1 - $reduction));
