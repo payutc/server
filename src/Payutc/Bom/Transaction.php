@@ -31,6 +31,7 @@ use \Payutc\Exception\NotEnoughMoney;
 use \Payutc\Exception\TransactionAborted;
 use \Payutc\Exception\TransactionNotFound;
 use \Payutc\Exception\TransactionAlreadyValidated;
+use \Payutc\Exception\InvalidReduction;
 use \Payutc\Exception\InvalidQuantity;
 
 class Transaction {
@@ -364,20 +365,37 @@ class Transaction {
                 }
                 
                 // If there is no quantity for this product, fail
-                if(count($object) != 2 || empty($object[1])){
+                if(count($object) < 2 || empty($object[1])){
                     Log::warn("transaction() : Null quantity for article $object[0]", compact('funId', 'appId',
                                                                                               'buyer', 'seller',
                                                                                               'object'));
                     throw new InvalidQuantity("La quantité pour l'article $object[0] est nulle.");
                 }
             
+                $price = $product['price'] * $object[1];
+                // Apply the reduction
+                if(isset($object[2]) && !is_null($object[2])) {
+                    if ($object[2] < 0 || $object[2] > 1) {
+                        Log::warn("transaction() : Invalid reduction for article $object[0]", compact('funId', 'appId',
+                                                                                                    'buyer', 'seller',
+                                                                                                      'object'));
+                        throw new InvalidReduction("La réduction pour l'article $object[0] est invalide.");
+                    } else {
+                        $reduction = $object[2];
+                        $price = round($price * (1 - $reduction));
+                    }
+                } else {
+                    $reduction = null;
+                }
+
                 // Add the product to the transaction
                 $conn->insert('t_purchase_pur', array(
                     'tra_id' => $transactionId,
                     'obj_id' => $product['id'],
                     'pur_qte' => $object[1],
-                    'pur_price' => $product['price'] * $object[1],
+                    'pur_price' => $price,
                     'pur_unit_price' => $product['price'],
+                    'pur_reduction' => $reduction,
                 ), array("integer", "integer", "integer", "integer", "integer"));
             }
 

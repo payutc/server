@@ -123,8 +123,8 @@ class POSS3 extends \ServiceBase {
         }
 
         // tranformer la chaine passee en un array exploitable
-        // il y a deux formats : ids séparés par des espaces (pas de quantités) ou json
-        // $objects est un array de array($idProduct, $qte)
+        // il y a deux formats : ids séparés par des espaces (pas de quantités) ou json array d'arrays (id_product, qte, %reduction)
+        // $objects est un array de array($idProduct, $qte, $reduc)
         $objects = json_decode($obj_ids);
         Log::debug('decoded objects', array('objects' => $objects));
         
@@ -132,7 +132,7 @@ class POSS3 extends \ServiceBase {
             $objects_ids = explode(" ", trim($obj_ids));
             $objects = array();
             foreach ($objects_ids as $id) {
-                $objects[] = array($id, 1);
+                $objects[] = array($id, 1, null);
             }
         }
 

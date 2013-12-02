@@ -81,8 +81,8 @@ class TransactionRwdbTest extends DatabaseTest
 	 */
     public function testCreateAndValidate(){
         $items = array(
-            array(5, 1),
-            array(5, 1)
+            array(5, 1, null),
+            array(5, 1, 0.1)
         );
 
         $matthieu = new User("mguffroy");
@@ -91,13 +91,35 @@ class TransactionRwdbTest extends DatabaseTest
         $this->assertEquals('V', $transaction->getStatus());
 
         $u = new User("mguffroy");
-        $this->assertEquals(4660, $u->getCredit());
+        $this->assertEquals(4677, $u->getCredit());
 
         $p = Product::getOne(5,1);
         $this->assertEquals(40, $p['stock']);
 
         $r = Purchase::getNbSell(5, 1);
         $this->assertEquals(4, $r);
+    }
+
+	/**
+     * @requires PHP 5.4
+     * @expectedException         \Payutc\Exception\InvalidReduction
+	 */
+    public function testIllegalReductionSup(){
+        $items = array(array(5, 1, 1.01));
+
+        $matthieu = new User("mguffroy");
+        $transaction = Transaction::createAndValidate($matthieu, $matthieu, 51, 1, $items, null, null);
+    }
+
+	/**
+     * @requires PHP 5.4
+     * @expectedException         \Payutc\Exception\InvalidReduction
+	 */
+    public function testIllegalReductionInf(){
+        $items = array(array(5, 1, -0.2));
+
+        $matthieu = new User("mguffroy");
+        $transaction = Transaction::createAndValidate($matthieu, $matthieu, 51, 1, $items, null, null);
     }
     
 	/**
