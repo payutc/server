@@ -137,7 +137,9 @@ class POSS3 extends \ServiceBase {
         }
 
         // Création de la transaction, validée immédiatement
-        Transaction::createAndValidate($buyer, $this->user(), $this->application()->getId(), $fun_id, $objects);
+        $tr = Transaction::createAndValidate($buyer, $this->user(),
+                                             $this->application()->getId(),
+                                             $fun_id, $objects);
         
         // Retourner les infos sur l'utilisateur
         $msg = $buyer->getMsgPerso($fun_id);
@@ -145,7 +147,8 @@ class POSS3 extends \ServiceBase {
         return array("firstname"=>$buyer->getFirstname(), 
                      "lastname"=>$buyer->getLastname(), 
                      "solde"=>$buyer->getCredit(),
-                     "msg_perso"=>$msg);
+                     "msg_perso"=>$msg,
+                     "transaction_id"=>$tr->getId());
     }
 
     public function getImage64($img_id, $outw = 0, $outh = 0)

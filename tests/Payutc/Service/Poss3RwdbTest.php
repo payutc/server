@@ -49,7 +49,8 @@ class Poss3RwdbTest extends DatabaseTest
             'firstname' => 'Thomas',
             'lastname' => 'Recouvreux',
             'solde' => $solde-280,
-            'msg_perso' => 'http://payutc.github.io'
+            'msg_perso' => 'http://payutc.github.io',
+            'transaction_id' => 14
         );
         $this->assertEquals($o, $r->body);
         $this->assertEquals(200, $r->code);
@@ -108,7 +109,8 @@ class Poss3RwdbTest extends DatabaseTest
                    'firstname' => 'Thomas',
                    'lastname' => 'Recouvreux',
                    'solde' => $solde-760,
-                   'msg_perso' => 'http://payutc.github.io'
+                   'msg_perso' => 'http://payutc.github.io',
+                   'transaction_id' => 14
                    );
         $this->assertEquals($o, $r->body);
         $this->assertEquals(200, $r->code);
