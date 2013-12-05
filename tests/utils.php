@@ -18,13 +18,15 @@ function filepathSeed($fixture)
 
 function httpSend($service, $meth, &$cookies='', $params=array())
 {
-	$url = "http://localhost:" . PAYUTC_TEST_SERVER_PORT . "/$service/$meth?";
+	$url = "http://localhost:" . PAYUTC_TEST_SERVER_PORT . "/$service/$meth";
+    $payload = "";
     foreach ($params as $k=>$v) {
-        $url .= $k."=".urlencode($v)."&";
+        $payload .= $k."=".urlencode($v)."&";
     }
-    $r = Request::get($url)
+    $payload = rtrim($payload, "&");
+    $r = Request::post($url)
       ->addHeader('Cookie', $cookies)
-      ->sendsJson()
+      ->body($payload)
       ->parseWith(function($body) { return json_decode($body, true); })
       ->send();
 
