@@ -4,24 +4,24 @@ namespace Payutc\Mapping;
 
 class Services {
     protected static $services = array(
-        'POSS3' => array(),
-        'STATS' => array(),
-        'KEY' => array(),
-        'ADMINRIGHT' => array(),
-        'BLOCKED' => array(),
-        'GESARTICLE' => array(),
-        'PAYLINE' => array(),
-        'RELOAD' => array(),
-        'MYACCOUNT' => array(),
-        'TRANSFER' => array(),
-        'WEBSALE' => array(),
-        'WEBSALECONFIRM' => array(
-            'access' => array(
-                'notificationPayline' => array(
-                    'get' => 'allow'
-                )
-            )
-        )
+        'POSS3',
+        'STATS',
+        'KEY',
+        'ADMINRIGHT',
+        'BLOCKED',
+        'GESARTICLE',
+        'PAYLINE',
+        'RELOAD',
+        'MYACCOUNT',
+        'TRANSFER',
+        'WEBSALE',
+        'WEBSALECONFIRM',
+    );
+    
+    protected static $servicesGET = array(
+        'PAYLINE' => array(
+            'notification',
+        ),
     );
     
     public static function get($name) {
@@ -31,19 +31,16 @@ class Services {
     }
     
     public static function checkExist($name) {
-        if (!array_key_exists($name, static::$services)) {
+        if (!in_array($name, static::$services)) {
             throw new \Payutc\Exception\ServiceNotFound("Service $name does not exist");
         }
     }
     
-    public static function checkGetAuthorized($name, $meth)
+    public static function checkGetAuthorized($service, $method)
     {
-        static::checkExist($name);
-        $a = isset(static::$services[$name]['access'][$meth]['get']) ?
-                static::$services[$name]['access'][$meth]['get']
-                : 'deny';
-        if ($a != 'allow') {
-            throw new \Payutc\Exception\ServiceMethodForbidden("Can't access $name::$meth with GET");
+        static::checkExist($service);
+        if (!isset(static::$servicesGET[$service]) || !in_array($method, static::$servicesGET[$service])) {
+            throw new \Payutc\Exception\ServiceMethodForbidden("Can't access $service::$method with GET");
         }
     }
     
