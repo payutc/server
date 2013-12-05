@@ -97,6 +97,12 @@ use \Application;
                         "desc"    => "Permet de virer de l'argent vers un autre utilisateur",
                         "user"    => false,
                         "app"     => false
+                    ), array(
+                        "service" => "CATALOG",
+                        "name"    => "Consluter le catalogue",
+                        "desc"    => "Permet de consluter le catalogue des produits (bières, softs, snacks",
+                        "user"    => false,
+                        "app"     => false
                     )
                     
                 );
