@@ -215,7 +215,7 @@ class Transaction {
                 $buyer = User::getById($this->buyerId);
                 
                 if($total > User::getCreditById($this->buyerId)){
-                    throw new NotEnoughMoney();
+                    throw new NotEnoughMoney("L'utilisateur n'a pas assez d'argent sur son compte.");
                 }
 
                 User::decCreditById($this->buyerId, $this->getMontantTotal());
