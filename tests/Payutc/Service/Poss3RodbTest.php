@@ -103,7 +103,7 @@ class Poss3RodbTest extends ServiceBaseRodbTest
             'error' => array (
                 'type' => 'Payutc\\Exception\\NotEnoughMoney',
                 'code' => 0,
-                'message' => '',
+                'message' => "L'utilisateur n'a pas assez d'argent sur son compte.",
             ));
         $this->assertEquals($a, $r->body);
     }
