@@ -46,8 +46,14 @@ class Purchase
         }
 
         if($tick != null) {
-            $qb->groupBy('UNIX_TIMESTAMP( tra.tra_date ) DIV :tick')
-               ->setParameter('tick', $tick);
+            $tick = strtoupper($tick);
+            if ($tick === 'DAY' or $tick === 'MONTH' or $tick === 'YEAR') {
+                $qb->groupBy("$tick( tra.tra_date )");
+            }
+            else {
+                $qb->groupBy('UNIX_TIMESTAMP( tra.tra_date ) DIV :tick')
+                   ->setParameter('tick', $tick);
+            }
             $result = array();
             $a = $qb->execute();
             while($r = $a->fetch(3)) { $result[] = $r; }
@@ -92,8 +98,14 @@ class Purchase
         }
 
         if($tick != null) {
-            $qb->groupBy('UNIX_TIMESTAMP( tra.tra_date ) DIV :tick')
-                ->setParameter('tick', $tick);
+            $tick = strtoupper($tick);
+            if ($tick === 'DAY' or $tick === 'MONTH' or $tick === 'YEAR') {
+                $qb->groupBy("$tick( tra.tra_date )");
+            }
+            else {
+                $qb->groupBy('UNIX_TIMESTAMP( tra.tra_date ) DIV :tick')
+                   ->setParameter('tick', $tick);
+            }
             $result = array();
             $a = $qb->execute();
             while($r = $a->fetch(3)) { $result[] = $r; }
