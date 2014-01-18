@@ -524,12 +524,10 @@ class User {
 
     public function incCredit($val) {
         $this::incCreditById($this->getId(), $val);
-        $this->credit += $val;
     }
 
     public function decCredit($val) {
         $this::decCreditById($this->getId(), $val);
-        $this->credit -= $val;
     }
 
     public static function getUserFromCas($ticket, $service) {
