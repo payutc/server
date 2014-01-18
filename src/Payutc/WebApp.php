@@ -22,6 +22,10 @@ class WebApp {
                 $dispatcher->handleError($e);
             });
             
+            if (Config::get('maintenance')) {
+                throw new \Payutc\Exception\MaintenanceException("Payutc est en cours de maintenance.");
+            }
+    
             $dispatcher->handleService($service, $method);
         })->via('GET', 'POST');
 

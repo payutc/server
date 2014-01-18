@@ -73,3 +73,5 @@ $_CONFIG['slim_config'] = array(
 $_CONFIG['log_mode'] = 'TST';
 $_CONFIG['log_filename'] = __DIR__.'/logs/logs.log';
 
+// Mode maintenance
+$_CONFIG['maintenance'] = false;

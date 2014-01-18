@@ -69,6 +69,8 @@ $_CONFIG['slim_config'] = array(
     'debug' => true,
 );
 
+// Mode maintenance
+$_CONFIG['maintenance'] = false;
 
 // Configuration des logs
 $_CONFIG['log_mode'] = 'DEV';
