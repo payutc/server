@@ -27,6 +27,7 @@ use \Payutc\Exception\UserError;
 use \Payutc\Bom\User;
 use \Payutc\Log;
 use \Payutc\Config;
+use \Payutc\Utils;
 
 /**
 * ServiceBase.class
@@ -413,10 +414,14 @@ class ServiceBase {
         else {
             return $session[$key];
         }
-    } 
+    }
+
+    /**
+     * Renvoie la liste des méthodes utilisables sur ce service
+     */
+    public function getMethods() {
+        return Utils::introspectMethods($this, array('__construct', '__wakeup'));
+    }
 }
-
-
-
 
 
