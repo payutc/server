@@ -30,7 +30,12 @@ class IntrospectableBase {
                 for ($i = 1; $i < $nb_lines -1; $i++) {
                     // on ignore la première ligne ( /** )
                     // et la dernière ( */ )
-                    $clean_doc .= preg_replace('/^[\s\t]*\*[ ]?(.*)/i', '$1', $lines[$i])."\n";
+                    $line = preg_replace('/^[\s\t]*\*[ ]?(.*)/i', '$1', $lines[$i]);
+                    if ($line === false) {
+                        $clean_doc .= $lines[$i] . "\n";
+                    } else {
+                        $clean_doc .= $line . "\n";
+                    }
                 }
 
                 $doc = substr($clean_doc, 0, -1);

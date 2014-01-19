@@ -17,6 +17,7 @@ class IntrospectionTestClass extends \IntrospectableBase {
     /**
      * Some documentation :
      *  Very Indentation
+ Bad Formating
      */
     public function coucou($a, $b=3) {
 
@@ -34,7 +35,7 @@ class IntrospectableTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetmethods() {
         $expected = array(array('name' => 'coucou',
-                                'comment' => "Some documentation :\n Very Indentation",
+                                'comment' => "Some documentation :\n Very Indentation\n Bad Formating",
                                 'parameters' => array(array('name' => 'a'),
                                                       array('name' => 'b',
                                                             'default' => 3))),
