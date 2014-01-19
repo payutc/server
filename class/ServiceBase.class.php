@@ -27,7 +27,7 @@ use \Payutc\Exception\UserError;
 use \Payutc\Bom\User;
 use \Payutc\Log;
 use \Payutc\Config;
-use \IntrospectableBase;
+use \Payutc\Utils;
 
 /**
 * ServiceBase.class
@@ -40,7 +40,7 @@ use \IntrospectableBase;
 
 use \Payutc\Db\DbBuckutt;
 
-class ServiceBase extends \IntrospectableBase {
+class ServiceBase {
     protected $db;
     protected $service_name;  // Nom du service
 	
@@ -414,6 +414,13 @@ class ServiceBase extends \IntrospectableBase {
         else {
             return $session[$key];
         }
+    }
+
+    /**
+     * Renvoie la liste des méthodes utilisables sur ce service
+     */
+    public function getMethods() {
+        return Utils::introspectMethods($this, array('__construct', '__wakeup'));
     }
 }
 

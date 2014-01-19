@@ -2,15 +2,10 @@
 
 require_once 'utils.php';
 
-use \Payutc\Config;
-use \IntrospectableBase;
+use \Payutc\Utils;
 
-class IntrospectionTestClass extends \IntrospectableBase {
+class IntrospectionTestClass {
     public function __construct() {
-
-    }
-
-    public function __wakeup() {
 
     }
 
@@ -20,6 +15,10 @@ class IntrospectionTestClass extends \IntrospectableBase {
  Bad Formating
      */
     public function coucou($a, $b=3) {
+
+    }
+
+    public function noDoc() {
 
     }
 
@@ -33,16 +32,17 @@ class IntrospectableTest extends \PHPUnit_Framework_TestCase
     /**
      * @requires PHP 5.4
      */
-    public function testGetmethods() {
+    public function testIntrospectMethods() {
         $expected = array(array('name' => 'coucou',
                                 'comment' => "Some documentation :\n Very Indentation\n Bad Formating",
                                 'parameters' => array(array('name' => 'a'),
                                                       array('name' => 'b',
                                                             'default' => 3))),
-                          array('name' => 'getMethods',
-                                'comment' => 'Renvoie la liste des méthodes utilisables sur ce service',
+                          array('name' => 'noDoc',
+                                'comment' => '',
                                 'parameters' => array()));
         $c = new IntrospectionTestClass();
-        $this->assertEquals($expected, $c->getMethods());
+        $this->assertEquals($expected,
+                            Utils::introspectMethods($c, array('__construct')));
     }
 }
