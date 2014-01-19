@@ -436,15 +436,18 @@ class ServiceBase {
                 // si il n'y a pas de doc on renvoie juste une chaine vide
                 $doc = "";
             } else {
-                // on enlève le /** du début et le */ de la fin et les * au milieu (un peu violent peut être)
-                $doc = str_replace(array("/**", "*/", "*"), array('', '', ""), $doc);
-                $a = explode("\n", $doc);
-                // on enlève les espaces de début et fin
-                $a = array_map('trim', $a);
-                // comme ça on peut enlever les lignes vides
-                $a = array_filter($a, function($s) { return $s !== ""; });
-                // et on recombine le tout
-                $doc = implode("\n", $a);
+                $doc = str_replace( "\r", "\n", $doc);
+                $lines = explode("\n", $doc);
+                $clean_doc = "";
+
+                $nb_lines = count($lines);
+                for ($i = 1; $i < $nb_lines -1; $i++) {
+                    // on ignore la première ligne ( /** )
+                    // et la dernière ( */ )
+                    $clean_doc .= preg_replace('/^[\s\t]*\*[ ]?(.*)/i', '$1', $lines[$i])."\n";
+                }
+
+                $doc = substr($clean_doc, 0, -1);
             }
 
             // on récupère le nom de la fonction et les paramètres
