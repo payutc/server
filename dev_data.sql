@@ -36,8 +36,8 @@ INSERT INTO `t_fundation_fun` (`fun_id`, `fun_name`, `fun_removed`) VALUES
 -- Contenu de la table `t_message_msg`
 --
 
-INSERT INTO `t_message_msg` (`msg_id`, `usr_id`, `fun_id`, `msg_perso`) VALUES
-(1, NULL, NULL, 'Il y a une vie après les cours');
+INSERT INTO `t_message_msg` (`usr_id`, `fun_id`, `msg_perso`) VALUES
+(NULL, NULL, 'Il y a une vie après les cours');
 
 --
 -- Contenu de la table `t_object_obj`
