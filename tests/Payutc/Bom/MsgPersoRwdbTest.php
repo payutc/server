@@ -22,13 +22,10 @@ class MsgPersoRwdbTest extends DatabaseTest
      */
     public function testSetMsgPersoUsrFunInsert()
     {
-        try {
-            MsgPerso::setMsgPerso('Message de user 2 au pic', 2, 1);
-            $res = MsgPerso::getMsgPerso(2, 1);
-            $this->assertEquals($res, 'Message de user 2 au pic');
-        } catch (MessageUpdateFailedException $e) {
-            $this->fail("Unexpected exception :".$e->getMessage());
-        }
+        MsgPerso::setMsgPerso('Message de user 2 au pic', 2, 1);
+        $res = MsgPerso::getMsgPerso(2, 1);
+        $this->assertEquals($res, 'Message de user 2 au pic');
+
     }
 
     /**
@@ -38,13 +35,9 @@ class MsgPersoRwdbTest extends DatabaseTest
      */
     public function testSetMsgPersoUsrFunUpdate()
     {
-        try {
-            MsgPerso::setMsgPerso('Message de user 2 au pic 2', 2, 1);
-            $res = MsgPerso::getMsgPerso(2, 1);
-            $this->assertEquals($res, 'Message de user 2 au pic 2');
-        } catch (MessageUpdateFailedException $e) {
-            $this->fail("Unexpected exception :".$e->getMessage());
-        }
+        MsgPerso::setMsgPerso('Message de user 2 au pic 2', 2, 1);
+        $res = MsgPerso::getMsgPerso(2, 1);
+        $this->assertEquals($res, 'Message de user 2 au pic 2');
     }
 
     /**
@@ -54,13 +47,9 @@ class MsgPersoRwdbTest extends DatabaseTest
      */
     public function testSetMsgPersoUsrInsert()
     {
-        try {
-            MsgPerso::setMsgPerso('Message de user 3', 3, 1);
-            $res = MsgPerso::getMsgPerso(3, 1);
-            $this->assertEquals($res, 'Message de user 3');
-        } catch (MessageUpdateFailedException $e) {
-            $this->fail("Unexpected exception :".$e->getMessage());
-        }
+        MsgPerso::setMsgPerso('Message de user 3', 3, 1);
+        $res = MsgPerso::getMsgPerso(3, 1);
+        $this->assertEquals($res, 'Message de user 3');
     }
 
     /**
@@ -70,14 +59,10 @@ class MsgPersoRwdbTest extends DatabaseTest
      */
     public function testSetMsgPersoUsrUpdate()
     {
+        MsgPerso::setMsgPerso('Message de user 1 (2)', 1, NULL);
+        $res = MsgPerso::getMsgPerso(1, NULL);
+        $this->assertEquals($res, 'Message de user 1 (2)');
 
-        try {
-            MsgPerso::setMsgPerso('Message de user 1 (2)', 1, NULL);
-            $res = MsgPerso::getMsgPerso(1, NULL);
-            $this->assertEquals($res, 'Message de user 1 (2)');
-        } catch (MessageUpdateFailedException $e) {
-            $this->fail("Unexpected exception :".$e->getMessage());
-        }
 	}
 
     /**
@@ -87,14 +72,9 @@ class MsgPersoRwdbTest extends DatabaseTest
      */
     public function testSetMsgPersoFunInsert()
     {
-
-        try {
-            MsgPerso::setMsgPerso('pic', NULL, 1);
-            $res = MsgPerso::getMsgPerso(NULL, 1);
-            $this->assertEquals($res, 'pic');
-        } catch (MessageUpdateFailedException $e) {
-            $this->fail("Unexpected exception :".$e->getMessage());
-        }
+        MsgPerso::setMsgPerso('pic', NULL, 1);
+        $res = MsgPerso::getMsgPerso(NULL, 1);
+        $this->assertEquals($res, 'pic');
 	}
 
     /**
@@ -104,14 +84,9 @@ class MsgPersoRwdbTest extends DatabaseTest
      */
     public function testSetMsgPersoFunUpdate()
     {
-
-        try {
-            MsgPerso::setMsgPerso('pic2', NULL, 1);
-            $res = MsgPerso::getMsgPerso(NULL, 1);
-            $this->assertEquals($res, 'pic2');
-        } catch (MessageUpdateFailedException $e) {
-            $this->fail("Unexpected exception :".$e->getMessage());
-        }
+        MsgPerso::setMsgPerso('pic2', NULL, 1);
+        $res = MsgPerso::getMsgPerso(NULL, 1);
+        $this->assertEquals($res, 'pic2');
 	}
 
     /**
