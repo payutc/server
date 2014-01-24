@@ -29,7 +29,6 @@ class MsgPersoRodbTest extends ReadOnlyDatabaseTest
      * Tests whether an user without a message in a fundation gets the correct
      * message returned
      * 
-     * @depends testGetMsgPersoUserFun
      */
     public function testGetMsgPersoUserFun2()
     {
@@ -40,7 +39,6 @@ class MsgPersoRodbTest extends ReadOnlyDatabaseTest
     /**
      * Tests whether an user gets his general message
      * 
-     * @depends testGetMsgPersoUserFun2
      */
     public function testGetMsgPersoUser()
     {

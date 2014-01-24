@@ -31,31 +31,28 @@ class MsgPersoRwdbTest extends DatabaseTest
     /**
      * Tests whether an user can modify his message in a fundation
      * 
-     * @depends testSetMsgPersoUsrFunInsert
      */
     public function testSetMsgPersoUsrFunUpdate()
     {
-        MsgPerso::setMsgPerso('Message de user 2 au pic 2', 2, 1);
-        $res = MsgPerso::getMsgPerso(2, 1);
-        $this->assertEquals($res, 'Message de user 2 au pic 2');
+        MsgPerso::setMsgPerso('Message de user 3 au pic 2', 3, 1);
+        $res = MsgPerso::getMsgPerso(3, 1);
+        $this->assertEquals($res, 'Message de user 3 au pic 2');
     }
 
     /**
      * Tests whether an user can create his general message
      * 
-     * @depends testSetMsgPersoUsrFunUpdate
      */
     public function testSetMsgPersoUsrInsert()
     {
-        MsgPerso::setMsgPerso('Message de user 3', 3, 1);
-        $res = MsgPerso::getMsgPerso(3, 1);
+        MsgPerso::setMsgPerso('Message de user 3', 3, NULL);
+        $res = MsgPerso::getMsgPerso(3, NULL);
         $this->assertEquals($res, 'Message de user 3');
     }
 
     /**
      * Tests whether an user can update his general message
      * 
-     * @depends testSetMsgPersoUsrInsert
      */
     public function testSetMsgPersoUsrUpdate()
     {
@@ -68,7 +65,6 @@ class MsgPersoRwdbTest extends DatabaseTest
     /**
      * Tests whether an user can set a message for a fundation
      * 
-     * @depends testSetMsgPersoUsrUpdate
      */
     public function testSetMsgPersoFunInsert()
     {
@@ -80,7 +76,6 @@ class MsgPersoRwdbTest extends DatabaseTest
     /**
      * Tests whether an user can modify a message for a fundation
      * 
-     * @depends testSetMsgPersoFunInsert
      */
     public function testSetMsgPersoFunUpdate()
     {
@@ -92,7 +87,6 @@ class MsgPersoRwdbTest extends DatabaseTest
     /**
      * Tests whether it’s impossible to set a message for an inexisting fundation
      * 
-     * @depends testSetMsgPersoFunUpdate
      *
      * @expectedException         \Payutc\Exception\MessageUpdateFailedException
      * @expectedExceptionMessage Fundation non existante
