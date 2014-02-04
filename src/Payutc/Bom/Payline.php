@@ -52,6 +52,8 @@ if (!defined('__PAYUTC_PAYLINE_OPTIONS')) {
     define('INI_FILE' , __DIR__ . '/../../../vendor/payline/HighDefinition.ini'); // Chemin du fichier ini
     define('PAYLINE_ERR_TOKEN', '02317,02318'); // Préfixe du token sur le site primaire
     define('__PAYUTC_PAYLINE_OPTIONS', '__PAYUTC_PAYLINE_OPTIONS');
+    
+    define('PRODUCTION', Config::get('payline_production'));
 }
 
 
