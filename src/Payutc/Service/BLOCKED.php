@@ -32,14 +32,14 @@ class BLOCKED extends \ServiceBase {
 
         if ($date_fin != NULL) {
             $date_fin = \DateTime::createFromFormat("Y-m-d H:i:s", $date_fin);
-            if ($date_fin == False) {
+            if ($date_fin == false) {
                 throw new InvalidData("Format de date de début incorrect");
             }
         }
 
         if ($date_debut != NULL) {
             $date_debut = \DateTime::createFromFormat("Y-m-d H:i:s", $date_debut);
-            if ($date_debut == False) {
+            if ($date_debut == false) {
                 throw new InvalidData("Format de date de fin incorrect");
             }
         }
@@ -55,7 +55,7 @@ class BLOCKED extends \ServiceBase {
 
         if ($date_fin != NULL) {
             $date_fin = \DateTime::createFromFormat("Y-m-d H:i:s", $date_fin);
-            if ($date_fin == False) {
+            if ($date_fin == false) {
                 throw new InvalidData("Format de date de fin incorrect");
             }
         }
