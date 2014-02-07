@@ -166,7 +166,7 @@ WHERE blo.usr_id = usr.usr_id ";
         //return $req." ".print_r($param, true);
         $db->query($req, $param);
         if ($db->affectedRows() != 1) {
-			throw new Exception("Une erreur s'est produite lors de l'edition du blocage utilisateur.");
+			throw new \Exception("Une erreur s'est produite lors de l'edition du blocage utilisateur.");
 		}
         return true;
     }
