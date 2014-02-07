@@ -90,7 +90,7 @@ class Blocked {
         $req   .= ")";
         $db->query($req, $insert_data);
         if ($db->affectedRows() != 1) {
-			throw new Exception("Une erreur s'est produite lors du blocage de l'utilisateur.");
+			throw new \Exception("Une erreur s'est produite lors du blocage de l'utilisateur.");
 		}
         return $db->insertId();
     }
@@ -157,14 +157,15 @@ WHERE blo.usr_id = usr.usr_id ";
             $req .= "blo_removed = '%s' ";
             $param[] = $fin->format("Y-m-d H:i:s");
         }
-        $req .= " WHERE blo_id = '%u' AND (blo_removed < NOW() OR blo_removed IS NULL) ";
+        $req .= " WHERE blo_id = '%u' AND (blo_removed > NOW() OR blo_removed IS NULL) ";
         $param[] = $blo_id;
         if($fun_id != NULL) {
             $req .= " AND fun_id = '%u' ";
             $param[] = $fun_id;
         }
-        //return $req." ".print_r($param, true);
+
         $db->query($req, $param);
+
         if ($db->affectedRows() != 1) {
 			throw new \Exception("Une erreur s'est produite lors de l'edition du blocage utilisateur.");
 		}
