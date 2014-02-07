@@ -47,7 +47,7 @@ class Purchase
 
         if($tick != null) {
             $tick = strtoupper($tick);
-            if ($tick === 'DAY' or $tick === 'MONTH' or $tick === 'YEAR') {
+            if ($tick === 'DAY') {
                 $qb->groupBy("YEAR(tra.tra_date), MONTH(tra.tra_date), DAY(tra.tra_date)");
             }
             else if ($tick === 'MONTH') {
@@ -105,7 +105,7 @@ class Purchase
 
         if($tick != null) {
             $tick = strtoupper($tick);
-            if ($tick === 'DAY' or $tick === 'MONTH' or $tick === 'YEAR') {
+            if ($tick === 'DAY') {
                 $qb->groupBy("YEAR(tra.tra_date), MONTH(tra.tra_date), DAY(tra.tra_date)");
             }
             else if ($tick === 'MONTH') {
