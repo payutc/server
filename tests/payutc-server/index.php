@@ -4,9 +4,9 @@
 // Include all dependencies
 require_once '../../vendor/autoload.php';
 
-require_once __DIR__ . '/../config-test.inc.php';
 
-$app = \Payutc\WebApp::createApplication($_CONFIG);
+$config = \Payutc\Config::jsonFileToArray(__DIR__ . '/../config-test.json');
+$app = \Payutc\WebApp::createApplication($config);
 
 // run app
 $app->run();

@@ -1,0 +1,39 @@
+{
+    "sql_host": "localhost",
+    "sql_db": "payutc_test",
+    "sql_user": "root",
+    "sql_pass": "root",
+
+    "cas_url": "http://localhost:33434/",
+
+    "server_url": "http://localhost:33435/",
+
+    "wsdl_cache": "WSDL_CACHE_NONE",
+
+    "credit_max": 10000,
+
+    "rechargement_min": 1000,
+
+    "proxy_host": null,
+    "proxy_port": null,
+    "proxy_login": "",
+    "proxy_password": "",
+
+    "payline_contract_number": "1234567",
+    "payline_merchant_id": "70038023549152",
+    "payline_access_key": "fAPFZ5vkg0K734953kKG",
+    "payline_production": false,
+
+    "ginger_key": "fauxginger",
+    "ginger_url": "http://localhost:33436/v1/",
+
+    "slim_config": {
+        "mode": "production",
+        "debug": false
+    },
+
+    "maintenance": false,
+
+    "log_mode": "TST",
+    "log_filename": "./logs/logs.log"
+}
