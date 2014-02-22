@@ -12,7 +12,8 @@ class UserRodbTest extends ReadOnlyDatabaseTest
 	public function getDataSet()
 	{
         return $this->computeDataset(array(
-            'users'
+            'users',
+            'blocked',
         ));
 	}
 	
