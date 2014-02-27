@@ -16,8 +16,8 @@ class Services {
         'PAYLINE',
         'RELOAD',
         'MYACCOUNT',
-        'TRANSFER',
-        'CATALOG'
+        'CATALOG',
+        'TRANSFER'
     );
     
     public static function get($name) {
