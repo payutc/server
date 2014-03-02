@@ -102,7 +102,7 @@ use \Application;
                         "name"    => "Consluter le catalogue",
                         "desc"    => "Permet de consluter le catalogue des produits (bières, softs, snacks",
                         "user"    => false,
-                        "app"     => false
+                        "app"     => true
                     )
                     
                 );
