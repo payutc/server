@@ -77,23 +77,25 @@ class CATALOG extends \ServiceBase {
 
     /**
     * Retourne les articles classés par catégories
-    * @param $fun_ids = array de fun_id (a passer sous forme de json), ou null
-    * Si $fun_ids == NULL renvoit tous les articles (ou l'on a les droits)
-    * Sinon renvoit les catégories des fundations demandés.
-    * @return array $products
+    * @param $fun_ids = array de fun_id (a passer sous forme de json)
+    * @return array $productsByCategories
     */
     public function getProductsByCategories($fun_ids = null) {
         $categories = $this->getCategories($fun_ids);
         $products = $this->getProducts($fun_ids);
+        $productsByCategories = array();
 
         foreach ($categories as $c_num => $cat) {
+
+            $productsByCategories[$c_num] = $cat;
+
             foreach ($products as $p_num => $prod) {
-                if($cat->id == $prod->categorie_id)
-                    $categories[$c_num]['products'][] = $prod;
+                if($cat['id'] == $prod['categorie_id'])
+                    $productsByCategories[$c_num]['products'][$p_num] = $prod;
             }
         }
 
-        return $categories;
+        return $productsByCategories;
     }
 
     /**
