@@ -1,9 +1,8 @@
 <?php
 
-require_once "bootstrap.php";
+require_once 'utils.php';
 
 use \Payutc\Config;
-
 
 abstract class ServiceBaseRodbTest extends ReadOnlyDatabaseTest
 {
@@ -18,11 +17,11 @@ abstract class ServiceBaseRodbTest extends ReadOnlyDatabaseTest
     public function getFixtures()
     {
         return array(
-            'users.yml',
-            'fundations.yml',
-            'applications.yml',
-            'applicationright.yml',
-            'fundationrights.yml',
+            'users',
+            'fundations',
+            'applications',
+            'applicationright',
+            'fundationrights',
         );
     }
     

@@ -11,6 +11,7 @@ class ContextProcessor
         
         $record['extra']['user'] = $user;
         $record['extra']['application'] = $application;
+        $record['extra']['session_id'] = session_id();
         
         return $record;
     }

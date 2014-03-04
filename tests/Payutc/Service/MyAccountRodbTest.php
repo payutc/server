@@ -6,7 +6,7 @@ class MyAccountRodbTest extends ServiceBaseRodbTest
 {
     public function getFixtures()
     {
-        return array_merge(parent::getFixtures(), array('products.yml', 'purchase.yml'));
+        return array_merge(parent::getFixtures(), array('products', 'purchase'));
     }
 
 

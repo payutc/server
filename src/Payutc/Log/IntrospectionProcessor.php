@@ -61,6 +61,7 @@ class IntrospectionProcessor
                 'line'      => isset($trace[$i-1]['line']) ? $trace[$i-1]['line'] : null,
                 'class'     => isset($trace[$i]['class']) ? $trace[$i]['class'] : null,
                 'function'  => isset($trace[$i]['function']) ? $trace[$i]['function'] : null,
+                'args'      => isset($trace[$i]['args']) ? $trace[$i]['args'] : null,
             )
         );
 

@@ -1,7 +1,7 @@
 <?php
 
 
-require_once "bootstrap.php";
+require_once 'utils.php';
           
 use \Payutc\Bom\User;
 
@@ -13,8 +13,8 @@ class TransferRwdbTest extends DatabaseTest
     public function getDataSet()
     {
         return $this->computeDataset(array(
-            'users.yml',
-            'applications.yml'
+            'users',
+            'applications'
         ));
     }
 

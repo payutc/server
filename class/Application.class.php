@@ -8,6 +8,7 @@
 
 use \Payutc\Db\Dbal;
 use \Payutc\Db\DbBuckutt;
+use \Payutc\Exception\ApplicationException;
 
 class Application {
     protected $db;
@@ -33,6 +34,17 @@ class Application {
     }
 
     /**
+     * Get URL
+     */
+    public function getUrl() {
+        if(!$this->app_url) {
+            throw new ApplicationException("Cette application n'a pas d'url");
+        }
+        return $this->app_url;
+    }
+
+
+    /**
      * Init the application from DB for a given key
      */
 	public function fromKey($key) {
@@ -42,7 +54,7 @@ class Application {
                                 Array($this->app_key));		
         $row = $this->db->fetchArray($query);
         if ($this->db->affectedRows() != 1) {
-            throw new Exception("La clef d'application n'a pas été reconnu !");
+            throw new ApplicationException("La clef d'application n'a pas été reconnu !");
         }
         $this->fromArray($row);
     }
@@ -57,10 +69,56 @@ class Application {
                                 Array($this->app_id));		
         $row = $this->db->fetchArray($query);
         if ($this->db->affectedRows() != 1) {
-            throw new Exception("Il n'existe pas d'application correspondant à cet ID !");
+            throw new ApplicationException("Il n'existe pas d'application correspondant à cet ID !");
         }
         $this->fromArray($row);
     }
+    
+    /*
+     * fromRight()
+     *
+     * Retourne une application ayant certains droits
+     */
+    public function fromRight($service, $fun_id=null)
+    {
+        $qb = Dbal::createQueryBuilder();
+        
+        $qb->select('app.app_id', 'app.app_url', 'app.app_key', 'app.app_name', 'app.app_desc',
+                    'app.app_creator', 'app.app_lastuse', 'app.app_created')
+            ->from('t_application_app', 'app')
+            ->innerJoin('app', 'tj_app_fun_afu', 'afu', 'afu.app_id = app.app_id')
+            ->where('app.app_removed is NULL')
+            ->andWhere('afu.afu_removed is NULL');
+            
+        if($service) {
+            $qb->andWhere($qb->expr()->orX(
+                $qb->expr()->isNull('afu.afu_service'),
+                $qb->expr()
+                    ->eq('afu.afu_service', ':service')
+            ));
+            $qb->setParameter('service', $service);
+        } else {
+            $qb->andWhere('afu.afu_service is NULL');
+        }
+        
+        if($fun_id) {
+            $qb->andWhere($qb->expr()->orX(
+                $qb->expr()->isNull('afu.fun_id'),
+                $qb->expr()
+                    ->eq('afu.fun_id', ':fun_id')
+            ));
+            $qb->setParameter('fun_id', $fun_id);
+        } else {
+            $qb->andWhere('afu.fun_id is NULL');
+        }
+        
+        $result = $qb->execute()->fetch();
+        if(!$result) {
+            throw new ApplicationException("Il n'y a pas d'application ayant le droit $service pour la fundation $fun_id");
+        }
+        $this->fromArray($result);
+    }
+    
     
     /*
      * For a given row, instantiate the Application attributes
@@ -162,7 +220,5 @@ class Application {
         }
         return $result;
     }
-
-	
 }
 

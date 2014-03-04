@@ -4,10 +4,7 @@ namespace Payutc\Mapping;
 
 class Services {
     protected static $services = array(
-        'POSS2',
-        'POSS2WithExceptions',
         'POSS3',
-        'AADMIN',
         'STATS',
         'KEY',
         'ADMINRIGHT',
@@ -18,6 +15,15 @@ class Services {
         'MYACCOUNT',
         'CATALOG',
         'TRANSFER'
+        'WEBSALE',
+        'WEBSALECONFIRM',
+        'MESSAGES',
+    );
+    
+    protected static $servicesGET = array(
+        'PAYLINE' => array(
+            'notification',
+        ),
     );
     
     public static function get($name) {
@@ -29,6 +35,14 @@ class Services {
     public static function checkExist($name) {
         if (!in_array($name, static::$services)) {
             throw new \Payutc\Exception\ServiceNotFound("Service $name does not exist");
+        }
+    }
+    
+    public static function checkGetAuthorized($service, $method)
+    {
+        static::checkExist($service);
+        if (!isset(static::$servicesGET[$service]) || !in_array($method, static::$servicesGET[$service])) {
+            throw new \Payutc\Exception\ServiceMethodForbidden("Can't access $service::$method with GET");
         }
     }
     

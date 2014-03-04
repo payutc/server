@@ -4,6 +4,7 @@ namespace Payutc\Service;
 
 use \Application;
 use \ApplicationList;
+use \Payutc\Log;
 
 /**
  * KEY.services.php
@@ -26,6 +27,7 @@ use \ApplicationList;
 	public function registerApplication($app_url, $app_name, $app_desc=null) {
         // Pour déclarer une nouvelle application on a besoin d'un user, mais pas d'être une application.
         if(!$this->user()) {
+            Log::info("registerApplication($app_url, $app_name, $app_desc) : User not connected");
             throw new \Payutc\Exception\CheckRightException("Vous devez connecter un utilisateur ! (method loginCas)");
         }
 
@@ -40,9 +42,11 @@ use \ApplicationList;
             "app_lastuse" => null,
             "app_created" => null
         ));
-        $application->insert();
-		return $application->toArray(1);
-	}
+            $application->insert();
+            Log::info("registerApplication($app_url, $app_name, $app_desc) : OK");
+            return $application->toArray(1);
+	
+        }
 	
 	/**
 	 * Obtenir la liste des applications pour l'user current
@@ -57,7 +61,8 @@ use \ApplicationList;
         $application_list = new ApplicationList();
         $application_list->fromLogin($this->user()->getNickname());
         // On retourne la liste d'applications (mais sans la clef, car on ne ne veut pas qu'un service "malintentioné" puisse récupérer les clefs d'un user).
-		return $application_list->toArray(0);
-	 }
+                Log::info("getCurrentApplication() : OK");
+                return $application_list->toArray(0);
+	}
 	
  }

@@ -56,7 +56,7 @@ class User {
     * @param string $username Login of the User object to init
     */
     public function __construct($username, $gingerUser = null) {
-        Log::debug("User: __construct($username, ".print_r($gingerUser, true).")");
+        Log::debug("User: __construct($username, [gingerUser])", array('ginger_user' => $gingerUser));
         
         $query = Dbal::createQueryBuilder()
             ->select('usr_id', 'usr_blocked')
@@ -86,7 +86,7 @@ class User {
                 throw new GingerFailure($ex);
             }    
         }
-        Log::debug("User: data from Ginger: ".print_r($this->gingerUser, true));
+        Log::debug("User: data from Ginger: ", array('data' => $this->gingerUser));
         if($this->gingerUser == null){
             Log::error("Empty gingerUser");
             throw new GingerFailure("Ginger user is empty");
@@ -94,7 +94,7 @@ class User {
                 
         // Get remaining data from the database
         $don = $query->fetch();
-        Log::debug("User: data from database: ".print_r($don, true));
+        Log::debug("User: data from database: ", array('data' => $don));
         
         $this->idUser = $don['usr_id'];
         $this->selfBlocked = $don['usr_blocked'];
@@ -201,7 +201,7 @@ class User {
         $conn = Dbal::conn();
         $query = $conn->executeQuery(
             'SELECT 
-                pur.pur_date AS date, 
+                IFNULL(tra.tra_validated, tra.tra_date) AS date, 
                 pur.pur_price AS amount, 
                 "PURCHASE" AS type,
                 obj.obj_name AS name,
@@ -210,10 +210,11 @@ class User {
                 NULL AS lastname
             FROM
                 t_purchase_pur pur
+            INNER JOIN t_transaction_tra tra ON pur.tra_id = tra.tra_id
             INNER JOIN t_object_obj obj ON pur.obj_id = obj.obj_id
-            INNER JOIN t_fundation_fun fun ON pur.fun_id = fun.fun_id
+            INNER JOIN t_fundation_fun fun ON tra.fun_id = fun.fun_id
             WHERE 
-                pur.usr_id_buyer = ?
+                tra.usr_id_buyer = ? AND tra.tra_status = "V" AND pur.pur_removed = 0
             UNION ALL
             SELECT 
                 rec.rec_date AS date,
@@ -226,7 +227,7 @@ class User {
             FROM 
                 t_recharge_rec rec
             WHERE 
-                rec.usr_id_buyer = ?
+                rec.usr_id_buyer = ? AND rec.rec_removed = 0
             UNION ALL
             SELECT
                 virin.vir_date AS date,
@@ -273,9 +274,10 @@ class User {
         
         $qb = Dbal::createQueryBuilder();
         $qb->update('ts_user_usr', 'usr')
-            ->set('usr_blocked', $qb->expr()->literal($blocage))
+            ->set('usr_blocked', ':usr_blocked')
             ->where('usr_id = :usr_id')
-            ->setParameter('usr_id', $this->idUser);
+            ->setParameter('usr_id', $this->idUser, "integer")
+            ->setParameter('usr_blocked', $blocage, "integer");
         
         $affectedRows = $qb->execute();
         if ($affectedRows != 1){
@@ -389,7 +391,7 @@ class User {
     *
     * @throws CannotReload
     */
-    public function checkReload($amount = null) {
+    public function checkReload($amount = null, $credit_max = null) {
         if($amount === null){
             $amount = Config::get('rechargement_min', 1000);
         }
@@ -398,7 +400,10 @@ class User {
             throw new CannotReload("Le montant du rechargement est inférieur au minimum autorisé");
         }
         
-        if(($this->getCredit() + $amount) > Config::get('credit_max')){
+        if($credit_max === null) {
+            $credit_max = Config::get('credit_max');
+        }
+        if(($this->getCredit() + $amount) > $credit_max){
             throw new CannotReload("Le rechargement ferait dépasser le plafond maximum");
         }
         
@@ -519,12 +524,10 @@ class User {
 
     public function incCredit($val) {
         $this::incCreditById($this->getId(), $val);
-        $this->credit += $val;
     }
 
     public function decCredit($val) {
         $this::decCreditById($this->getId(), $val);
-        $this->credit -= $val;
     }
 
     public static function getUserFromCas($ticket, $service) {
@@ -606,5 +609,36 @@ class User {
                 ->setParameter('id', $id);
         $res = $q->execute()->fetch();
         return 0 != $res['count'];
+    }
+    
+    public static function getById($id) {
+        $qb = Dbal::createQueryBuilder();
+        $q = $qb->select('usr_nickname')
+                ->from('ts_user_usr', 'usr')
+                ->where('usr_id = :id')
+                ->setParameter('id', $id);
+        $res = $q->execute()->fetch();
+        return new User($res['usr_nickname']);
+    }
+    
+    public static function getCreditById($id){
+        Log::debug("User::getCreditById($id)");
+        
+        $query = Dbal::createQueryBuilder()
+            ->select('usr_credit')
+            ->from('ts_user_usr', 'usr')
+            ->where('usr.usr_id = :usr_id')
+            ->setParameter('usr_id', $id)
+            ->execute();
+
+        // Check that the user exists
+        if ($query->rowCount() != 1) {
+            Log::debug("User: User not found for id $id");
+            throw new UserNotFound();
+        }
+
+        // Get data from the database
+        $don = $query->fetch();
+        return $don['usr_credit'];
     }
 }

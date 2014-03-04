@@ -3,9 +3,8 @@
 /composer.lock
 /composer.phar
 /logs
-/tests/config.inc.php
+/tests/config-test.inc.php
 /tests/faux-cas
 /tests/faux-ginger
-/log*.txt
-/tests/log*.txt
-
+/tests/logs/*.log
+/tests/payutc-server/*.pid

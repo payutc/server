@@ -34,6 +34,17 @@ use \Payutc\Log;
 
 class Json
 {
+    public function checkMethodAllowed($service, $method)
+    {
+        $app = \Slim\Slim::getInstance();
+        if ($app->request->isPost()) {
+            return;
+        }
+        else if ($app->request->isGet()) {
+            \Payutc\Mapping\Services::checkGetAuthorized($service, $method);
+        }
+    }
+    
     public function handleService($service, $method) {
         $app = \Slim\Slim::getInstance();
         
@@ -44,7 +55,8 @@ class Json
         if (!array_key_exists($service, $_SESSION['services']))
                 $_SESSION['services'][$service] = \Payutc\Mapping\Services::get($service);
         $obj = $_SESSION['services'][$service];
-        $a = \Payutc\Utils::call_user_func_named(array($obj, $method), $_REQUEST);
+        $this->checkMethodAllowed($service, $method);
+        $a = \Payutc\Utils::call_user_func_named(array($obj, $method), $app->request->params());
         echo json_encode($a);
     }
     

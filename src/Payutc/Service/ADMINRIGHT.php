@@ -103,6 +103,24 @@ use \Application;
                         "desc"    => "Permet de consluter le catalogue des produits (bières, softs, snacks) avec une connexion d'application",
                         "user"    => false,
                         "app"     => true
+                    ),array(
+                        "service" => "WEBSALE",
+                        "name"    => "Encaisser par internet",
+                        "desc"    => "Permet à une application d'encaisser de l'argent par internet",
+                        "user"    => false,
+                        "app"     => true
+                    ), array(
+                        "service" => "WEBSALECONFIRM",
+                        "name"    => "Valider des paiements par internet",
+                        "desc"    => "Permet de valider les paiements en ligne",
+                        "user"    => false,
+                        "app"     => false
+                    ), array(
+                        "service" => "MESSAGES",
+                        "name"    => "Récupèrer et changer des messages persos",
+                        "desc"    => "Permet de changer les messages persos d’une fundation ou d’un utilisateur",
+                        "user"    => true,
+                        "app"     => true
                     )
                     
                 );

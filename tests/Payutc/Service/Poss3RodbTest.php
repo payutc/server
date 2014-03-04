@@ -9,7 +9,7 @@ class Poss3RodbTest extends ServiceBaseRodbTest
     public function getFixtures()
     {
         return array_merge(parent::getFixtures(), array(
-            'products.yml',
+            'products',
         ));
     }
 
@@ -101,9 +101,9 @@ class Poss3RodbTest extends ServiceBaseRodbTest
         ));
         $a = array (
             'error' => array (
-                'type' => 'Payutc\\Exception\\PossException',
+                'type' => 'Payutc\\Exception\\NotEnoughMoney',
                 'code' => 0,
-                'message' => 'puyouart n\'a pas assez d\'argent pour effectuer la transaction.',
+                'message' => "L'utilisateur n'a pas assez d'argent sur son compte.",
             ));
         $this->assertEquals($a, $r->body);
     }

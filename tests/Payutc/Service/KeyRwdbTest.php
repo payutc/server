@@ -1,7 +1,7 @@
 <?php
 
 
-require_once "bootstrap.php";
+require_once 'utils.php';
 
 
 class KeyRwdbTest extends DatabaseTest
@@ -12,8 +12,8 @@ class KeyRwdbTest extends DatabaseTest
     public function getDataSet()
     {
         return $this->computeDataset(array(
-            'users.yml',
-            'applications.yml'
+            'users',
+            'applications'
         ));
     }
 
