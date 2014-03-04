@@ -18,7 +18,6 @@ class CATALOG extends \ServiceBase {
     * @return array $categories
     */
     public function getCategories($fun_ids = null) {
-        //Desormais la logique se fait dans ServiceBase puisque cette logique était écrite dans 2 fois dans 2 services différents
         //On passe en paramètres $user, $app, $fun_ids
         //Les deux premiers sont pour le checkRight qui sera appelé par getFundations lui même appelé par checkFundationIds si fun_ids est NULL
         $fun_ids = $this->checkFundationIds(false,true,$fun_ids);
@@ -43,7 +42,6 @@ class CATALOG extends \ServiceBase {
     * @return array $products
     */
     public function getProducts($fun_ids = null) {
-        //Desormais la logique se fait dans ServiceBase puisque cette logique était écrite dans 2 fois dans 2 services différents
         //On passe en paramètres $user, $app, $fun_ids
         //Les deux premiers sont pour le checkRight qui sera appelé par getFundations lui même appelé par checkFundationIds si fun_ids est NULL
         $fun_ids = $this->checkFundationIds(false,true,$fun_ids);

@@ -278,8 +278,6 @@ class ServiceBase {
             }
         } else {
             // Verifie qu'on a des droits sur le service
-            // Devient inutile de faire appel à checkRight car on passe les parmètres pour l'appel depuis getFundations
-            // $this->checkRight($user, $app, false, null); 
             $fundations = $this->getFundations($user,$app,false,null);
             $fun_ids = array();
             foreach($fundations as $fun) {
