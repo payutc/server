@@ -100,7 +100,7 @@ use \Application;
                     ), array(
                         "service" => "CATALOG",
                         "name"    => "Consluter le catalogue",
-                        "desc"    => "Permet de consluter le catalogue des produits (bières, softs, snacks",
+                        "desc"    => "Permet de consluter le catalogue des produits (bières, softs, snacks) avec une connexion d'application",
                         "user"    => false,
                         "app"     => true
                     )

@@ -18,22 +18,10 @@ class CATALOG extends \ServiceBase {
     * @return array $categories
     */
     public function getCategories($fun_ids = null) {
-        $fun_ids = json_decode($fun_ids);
-        if(is_array($fun_ids)) {
-            // Checker les droits sur chaque fundation donné.
-            foreach($fun_ids as $fun_id) {
-                $this->checkRight(false, true, true, $fun_id);
-            }
-        } else {
-            // Verifie qu'on a des droits sur le service (sans checker de fundation)
-            $this->checkRight(false, true, false, null); 
-            $fundations = $this->getFundations();
-            $fun_ids = array();
-            foreach($fundations as $fun) {
-                if($fun['fun_id'])
-                    $fun_ids[] = $fun['fun_id'];
-            }
-        }
+        //Desormais la logique se fait dans ServiceBase puisque cette logique était écrite dans 2 fois dans 2 services différents
+        //On passe en paramètres $user, $app, $fun_ids
+        //Les deux premiers sont pour le checkRight qui sera appelé par getFundations lui même appelé par checkFundationIds si fun_ids est NULL
+        $fun_ids = $this->checkFundationIds(false,true,$fun_ids);
         return \Payutc\Bom\Category::getAll($fun_ids);
     }
 
@@ -55,23 +43,10 @@ class CATALOG extends \ServiceBase {
     * @return array $products
     */
     public function getProducts($fun_ids = null) {
-        $fun_ids = json_decode($fun_ids);
-        if(is_array($fun_ids)) {
-            // Checker les droits sur chaque fundation donné.
-            foreach($fun_ids as $fun_id) {
-                $this->checkRight(false, true, true, $fun_id);
-            }
-        } else {
-            // Verifie qu'on a des droits sur le service (sans checker de fundation)
-            $this->checkRight(false, true, false, null); 
-            // Et selectione toute les fundations ou on a les droits
-            $fundations = $this->getFundations();
-            $fun_ids = array();
-            foreach($fundations as $fun) {
-                if($fun['fun_id'])
-                    $fun_ids[] = $fun['fun_id'];
-            }
-        }
+        //Desormais la logique se fait dans ServiceBase puisque cette logique était écrite dans 2 fois dans 2 services différents
+        //On passe en paramètres $user, $app, $fun_ids
+        //Les deux premiers sont pour le checkRight qui sera appelé par getFundations lui même appelé par checkFundationIds si fun_ids est NULL
+        $fun_ids = $this->checkFundationIds(false,true,$fun_ids);
         return \Payutc\Bom\Product::getAll($fun_ids);
     }
 

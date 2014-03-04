@@ -213,14 +213,15 @@ class ServiceBase {
      * Selon tout les droit en vigueur
      * @return array()
      */
-    public function getFundations() {
+    public function getFundations($user=true,$app=true,$fun_check=false,$fun_id=NULL) {
         // Verification sur le droits avant toute choses
-        $this->checkRight();
+        $this->checkRight($user,$app,$fun_check,$fun_id);
         // On recupere les fundations pour l'user et l'application
-        $fundations_for_user = UserRight::getFundations($this->user()->getId(), 
-                                                        $this->service_name);
-        $fundations_for_app = ApplicationRight::getFundations($this->application()->getId(),
-                                                              $this->service_name);
+        if($user)
+            $fundations_for_user = UserRight::getFundations($this->user()->getId(), $this->service_name);
+
+        if($app)
+            $fundations_for_app = ApplicationRight::getFundations($this->application()->getId(), $this->service_name);
 
         // Si on est admin, le premier item permet d'indiquer une fundation "fantome" qui representent toutes les autres.
         if($this->isAdmin()) {
@@ -229,9 +230,19 @@ class ServiceBase {
             $fundations = array();
         }
 
-        // On fait un ET logique entre les deux arrays
-        foreach($fundations_for_user as $fun_id => $fundation) {
-            if(array_key_exists($fun_id, $fundations_for_app)) {
+        if($user && $app){
+            // On fait un ET logique entre les deux arrays
+            foreach($fundations_for_user as $fun_id => $fundation) {
+                if(array_key_exists($fun_id, $fundations_for_app)) {
+                    $fundations[] = array("fun_id" => $fun_id, "name" => $fundation);
+                }
+            }
+        }elseif($user && !$app){
+            foreach($fundations_for_user as $fun_id => $fundation) {
+                $fundations[] = array("fun_id" => $fun_id, "name" => $fundation);
+            }
+        }elseif(!$user && $app){
+            foreach($fundations_for_app as $fun_id => $fundation) {
                 $fundations[] = array("fun_id" => $fun_id, "name" => $fundation);
             }
         }
@@ -251,6 +262,32 @@ class ServiceBase {
         $application->registerUse(); // Update the app_lastuse field to now
         $_SESSION['ServiceBase']['application'] = $application;
         return true;
+    }
+
+    protected function checkFundationIds($user=true,$app=true,$fun_ids=null){
+        $fun_ids = json_decode($fun_ids);
+        if(is_array($fun_ids)) {
+            // Checker les droits sur chaque fundation donnée.
+            // On ne check que les droits de l'application et pas de user
+            foreach($fun_ids as $fun_id) {
+                if($app)
+                    $this->checkRight($user, $app, true, $fun_id);
+                else
+                    $this->checkRight($user, $app, false, null);
+
+            }
+        } else {
+            // Verifie qu'on a des droits sur le service
+            // Devient inutile de faire appel à checkRight car on passe les parmètres pour l'appel depuis getFundations
+            // $this->checkRight($user, $app, false, null); 
+            $fundations = $this->getFundations($user,$app,false,null);
+            $fun_ids = array();
+            foreach($fundations as $fun) {
+                if($fun['fun_id'])
+                    $fun_ids[] = $fun['fun_id'];
+            }
+        }
+        return $fun_ids;
     }
 
     /**
