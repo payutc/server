@@ -4,13 +4,13 @@
 require_once '../vendor/autoload.php';
 
 
-include 'config-test.inc.php';
 
 use \Payutc\Config;
 
 $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
 
-Config::initFromArray($_CONFIG);
+Config::initFromJsonFile(__DIR__ . '/config-test.json');
+Config::set('log_filename', __DIR__ . '/' . Config::get('log_filename'));
 
 define('PAYUTC_TEST_SERVER_PORT', parse_url(Config::get('server_url'), PHP_URL_PORT));
 define('PAYUTC_TEST_CAS_PORT', parse_url(Config::get('cas_url'), PHP_URL_PORT));

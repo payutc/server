@@ -1,10 +1,11 @@
-/config.inc.php
+/config.json
 /vendor
 /composer.lock
 /composer.phar
 /logs
-/tests/config-test.inc.php
+/tests/config-test.json
 /tests/faux-cas
 /tests/faux-ginger
 /tests/logs/*.log
 /tests/payutc-server/*.pid
+/tests/payutc-server/logs

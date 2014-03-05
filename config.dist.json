@@ -1,0 +1,39 @@
+{
+    'sql_host': 'localhost',
+    'sql_db': 'payutc',
+    'sql_user': 'root',
+    'sql_pass': '',
+
+    'cas_url': '',
+
+    'server_url': 'http://localhost/buckutt/',
+
+    'wsdl_cache': 'WSDL_CACHE_NONE',
+
+    'credit_max': 10000,
+
+    'rechargement_min': 1000,
+
+    'proxy_host': null,
+    'proxy_port': null,
+    'proxy_login': '',
+    'proxy_password': '',
+
+    'payline_contract_number': '1234567',
+    'payline_merchant_id': '70038023549152',
+    'payline_access_key': 'fAPFZ5vkg0K734953kKG',
+    'payline_production': false,
+
+    'ginger_key': '',
+    'ginger_url': '',
+
+    'slim_config': {
+        'mode': 'developement',
+        'debug': true
+    },
+
+    'maintenance': false,
+
+    'log_mode': 'DEV',
+    'log_filename': '../logs/logs.log'
+}

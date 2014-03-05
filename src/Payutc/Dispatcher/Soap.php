@@ -39,13 +39,25 @@ class Soap {
         
         \Payutc\Mapping\Services::checkExist($name_class);
         
+        switch (Config::get('wsdl_cache')) {
+            case 'WSDL_CACHE_NONE':
+                $wsdl_cache = WSDL_CACHE_NONE;
+                break;
+            case 'WSDL_CACHE_BOTH':
+                $wsdl_cache = WSDL_CACHE_BOTH;
+                break;
+            default:
+                throw new \Exception("Unkown wsdl_cache: " . Config::get('wsdl_cache'));
+        }
+        
         if (isset($_GET['wsdl'])) {
             $server = new \Zend\Soap\AutoDiscover();
             $server->setUri(Config::get('server_url').$name_class.'.class.php');
             $server->setClass("Payutc\\Service\\$name_class");
             echo $server->toXml();
         } else {
-            $server = new \Zend\Soap\Server(Config::get('server_url').$name_class.'.class.php?wsdl', array('cache_wsdl' => Config::get('wsdl_cache')));
+            $server = new \Zend\Soap\Server(Config::get('server_url').$name_class.'.class.php?wsdl', 
+                array('cache_wsdl' =>  $wsdl_cache));
             $server->setClass("Payutc\\Service\\$name_class");
             $server->setPersistence(SOAP_PERSISTENCE_SESSION);
             $server->handle();

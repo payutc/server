@@ -4,8 +4,7 @@
 require_once '../vendor/autoload.php';
 
 // Load config
-require_once 'config-test.inc.php';
-\Payutc\Config::initFromArray($_CONFIG);
+\Payutc\Config::initFromJsonFile(__DIR__ . '/config-test.json');
 
 // Get db link
 $db = \Payutc\Db\Dbal::conn();

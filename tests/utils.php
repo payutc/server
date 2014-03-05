@@ -2,7 +2,6 @@
 
 require_once '../vendor/autoload.php';
 
-require_once __DIR__ . '/config-test.inc.php';
 
 use \Payutc\Config;
 use \Httpful\Request;
@@ -45,11 +44,11 @@ function sort_by_key(&$arr, $key)
 
 function setupConfig()
 {
-    global $_CONFIG;
     global $_SERVER;
     $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
     
-    Config::initFromArray($_CONFIG);
+    Config::initFromJsonFile(__DIR__ . '/config-test.json');
+    Config::set('log_filename', __DIR__ . '/' . Config::get('log_filename'));
 }
 
 class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
