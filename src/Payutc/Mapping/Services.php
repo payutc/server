@@ -14,7 +14,7 @@ class Services {
         'RELOAD',
         'MYACCOUNT',
         'CATALOG',
-        'TRANSFER'
+        'TRANSFER',
         'WEBSALE',
         'WEBSALECONFIRM',
         'MESSAGES',
