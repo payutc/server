@@ -47,8 +47,14 @@ class Purchase
 
         if($tick != null) {
             $tick = strtoupper($tick);
-            if ($tick === 'DAY' or $tick === 'MONTH' or $tick === 'YEAR') {
-                $qb->groupBy("$tick( tra.tra_date )");
+            if ($tick === 'DAY') {
+                $qb->groupBy("YEAR(tra.tra_date), MONTH(tra.tra_date), DAY(tra.tra_date)");
+            }
+            else if ($tick === 'MONTH') {
+                $qb->groupBy("YEAR(tra.tra_date), MONTH(tra.tra_date)");
+            }
+            else if ($tick === 'YEAR') {
+                $qb->groupBy("YEAR(tra.tra_date)");
             }
             else {
                 $qb->groupBy('UNIX_TIMESTAMP( tra.tra_date ) DIV :tick')
@@ -99,8 +105,14 @@ class Purchase
 
         if($tick != null) {
             $tick = strtoupper($tick);
-            if ($tick === 'DAY' or $tick === 'MONTH' or $tick === 'YEAR') {
-                $qb->groupBy("$tick( tra.tra_date )");
+            if ($tick === 'DAY') {
+                $qb->groupBy("YEAR(tra.tra_date), MONTH(tra.tra_date), DAY(tra.tra_date)");
+            }
+            else if ($tick === 'MONTH') {
+                $qb->groupBy("YEAR(tra.tra_date), MONTH(tra.tra_date)");
+            }
+            else if ($tick === 'YEAR') {
+                $qb->groupBy("YEAR(tra.tra_date)");
             }
             else {
                 $qb->groupBy('UNIX_TIMESTAMP( tra.tra_date ) DIV :tick')
