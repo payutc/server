@@ -10,11 +10,11 @@ use Monolog\Handler\ChromePHPHandler;
 use Monolog\Handler\TestHandler;
 use Monolog\Processor\UidProcessor;
 use Monolog\Processor\WebProcessor;
-use Monolog\Formatter\LineFormatter;
 
 use Payutc\Config;
 use Payutc\Log\ContextProcessor;
 use Payutc\Log\IntrospectionProcessor;
+use Payutc\Log\JsonFormatter;
 
 class Log
 { 
@@ -70,6 +70,7 @@ class Log
             case self::PRD:
                 $introspectionProcessorLevel = Logger::INFO;
                 self::$streamHandler = new StreamHandler($filename, Logger::INFO);
+                self::$streamHandler->setFormatter(new JsonFormatter());
             break;
             case self::TEST:
                 $introspectionProcessorLevel = Logger::DEBUG;
@@ -81,15 +82,9 @@ class Log
                 
                 self::$chromePhpHandler = new ChromePHPHandler($filename, Logger::DEBUG);
                 self::$streamHandler = new RotatingFileHandler($filename, Logger::DEBUG);
+                self::$streamHandler->setFormatter(new JsonFormatter(true));
             break;
         }
-        
-        // the default output format is "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n"
-        $output = "[%datetime%] %level_name%: %message% %context% %extra%\n";
-        // finally, create a formatter
-        $formatter = new LineFormatter($output);
-        // set the formatter
-        self::$streamHandler->setFormatter($formatter);
         
         // get informations about the file, the function, etc...
         self::$streamHandler->pushProcessor(new WebProcessor());
