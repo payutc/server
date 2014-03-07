@@ -99,7 +99,7 @@ use \Application;
                         "app"     => false
                     ), array(
                         "service" => "CATALOG",
-                        "name"    => "Consluter le catalogue",
+                        "name"    => "Consulter le catalogue d'une fondation depuis son application",
                         "desc"    => "Permet de consluter le catalogue des produits (bières, softs, snacks) avec une connexion d'application",
                         "user"    => false,
                         "app"     => true

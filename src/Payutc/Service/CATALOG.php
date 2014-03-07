@@ -2,11 +2,14 @@
 
 namespace Payutc\Service;
 
+use \Payutc\Bom\Category;
+use \Payutc\Bom\Product;
+use \Payutc\Exception\ProductNotFoundException;
+use \Payutc\Exception\CategoryNotFoundException;
+
 /**
  * CATALOG.php
- * 
  * Ce service permet de récupérer le catalogue des produits (bieres, snacks, softs) sans connexion user juste avec une connexion app
- *
  */
 class CATALOG extends \ServiceBase {
     
@@ -21,7 +24,7 @@ class CATALOG extends \ServiceBase {
         //On passe en paramètres $user, $app, $fun_ids
         //Les deux premiers sont pour le checkRight qui sera appelé par getFundations lui même appelé par checkFundationIds si fun_ids est NULL
         $fun_ids = $this->checkFundationIds(false,true,$fun_ids);
-        return \Payutc\Bom\Category::getAll($fun_ids);
+        return Category::getAll($fun_ids);
     }
 
     /**
@@ -31,7 +34,12 @@ class CATALOG extends \ServiceBase {
     */
     public function getCategory($obj_id, $fun_id = null) {
         $this->checkRight(false, true, true, $fun_id);
-        return \Payutc\Bom\Category::getOne($obj_id, $fun_id);
+        $c = Category::getOne($obj_id, $fun_id);
+        if ($c === null) {
+            throw new CategoryNotFoundException("Cette categorie ($obj_id, $fun_id) n'existe pas, ou vous n'avez pas les droits dessus.");
+        }else {
+            return array("success" => $c);
+        }
     }
 
     /**
@@ -45,7 +53,7 @@ class CATALOG extends \ServiceBase {
         //On passe en paramètres $user, $app, $fun_ids
         //Les deux premiers sont pour le checkRight qui sera appelé par getFundations lui même appelé par checkFundationIds si fun_ids est NULL
         $fun_ids = $this->checkFundationIds(false,true,$fun_ids);
-        return \Payutc\Bom\Product::getAll($fun_ids);
+        return Product::getAll($fun_ids);
     }
 
     /**
@@ -63,8 +71,9 @@ class CATALOG extends \ServiceBase {
             $productsByCategories[$c_num] = $cat;
 
             foreach ($products as $p_num => $prod) {
-                if($cat['id'] == $prod['categorie_id'])
+                if($cat['id'] == $prod['categorie_id']){
                     $productsByCategories[$c_num]['products'][$p_num] = $prod;
+                }
             }
         }
 
@@ -78,11 +87,10 @@ class CATALOG extends \ServiceBase {
     */
     public function getProduct($obj_id, $fun_id = null) {
         $this->checkRight(false, true, true, $fun_id);
-        $p = \Payutc\Bom\Product::getOne($obj_id, $fun_id);
+        $p = Product::getOne($obj_id, $fun_id);
         if ($p === null) {
-            return array("error"=>400, "error_msg"=>"Cet article ($obj_id, $fun_id) n'existe pas, ou vous n'avez pas les droits dessus.");
-        }
-        else {
+            throw new ProductNotFoundException("Cet article ($obj_id, $fun_id) n'existe pas, ou vous n'avez pas les droits dessus.");
+        }else {
             return array("success" => $p);
         }
     }

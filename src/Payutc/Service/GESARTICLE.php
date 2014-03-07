@@ -9,6 +9,11 @@
 
 namespace Payutc\Service;
 
+use \Payutc\Bom\Category;
+use \Payutc\Bom\Product;
+use \Payutc\Exception\ProductNotFoundException;
+use \Payutc\Exception\CategoryNotFoundException;
+
 class GESARTICLE extends \ServiceBase {
 
 	/**
@@ -22,7 +27,7 @@ class GESARTICLE extends \ServiceBase {
         //On passe en paramètres $user, $app, $fun_ids
         //Les deux premiers sont pour le checkRight qui sera appelé par getFundations lui même appelé par checkFundationIds si fun_ids est NULL
         $fun_ids = $this->checkFundationIds(true,true,$fun_ids);
-		return \Payutc\Bom\Category::getAll($fun_ids);
+		return Category::getAll($fun_ids);
 	}
 
     /**
@@ -32,7 +37,12 @@ class GESARTICLE extends \ServiceBase {
     */
     public function getCategory($obj_id, $fun_id = null) {
         $this->checkRight(true, true, true, $fun_id);
-        return \Payutc\Bom\Category::getOne($obj_id, $fun_id);
+        $c = Category::getOne($obj_id, $fun_id);
+        if ($c === null) {
+            throw new CategoryNotFoundException("Cette categorie ($obj_id, $fun_id) n'existe pas, ou vous n'avez pas les droits dessus.");
+        }else {
+            return array("success" => $c);
+        }
     }
 
     /**
@@ -41,9 +51,9 @@ class GESARTICLE extends \ServiceBase {
     public function setCategory($obj_id = null, $name, $parent_id, $fun_id) {
         $this->checkRight(true, true, true, $fun_id);
         if($obj_id) {
-            return \Payutc\Bom\Category::edit($obj_id, $name, $parent_id, $fun_id);
+            return Category::edit($obj_id, $name, $parent_id, $fun_id);
         } else {
-            return \Payutc\Bom\Category::add($name, $parent_id, $fun_id);
+            return Category::add($name, $parent_id, $fun_id);
         }
     }
 
@@ -52,7 +62,7 @@ class GESARTICLE extends \ServiceBase {
     */
     public function deleteCategory($obj_id, $fun_id) {
         $this->checkRight(true, true, true, $fun_id);
-        return \Payutc\Bom\Category::delete($obj_id, $fun_id);
+        return Category::delete($obj_id, $fun_id);
     }
 
 	/**
@@ -66,7 +76,7 @@ class GESARTICLE extends \ServiceBase {
         //On passe en paramètres $user, $app, $fun_ids
         //Les deux premiers sont pour le checkRight qui sera appelé par getFundations lui même appelé par checkFundationIds si fun_ids est NULL
         $fun_ids = $this->checkFundationIds(true,true,$fun_ids);
-		return \Payutc\Bom\Product::getAll($fun_ids);
+		return Product::getAll($fun_ids);
 	}
 
     /**
@@ -76,11 +86,10 @@ class GESARTICLE extends \ServiceBase {
     */
     public function getProduct($obj_id, $fun_id = null) {
         $this->checkRight(true, true, true, $fun_id);
-        $p = \Payutc\Bom\Product::getOne($obj_id, $fun_id);
+        $p = Product::getOne($obj_id, $fun_id);
         if ($p === null) {
-            return array("error"=>400, "error_msg"=>"Cet article ($obj_id, $fun_id) n'existe pas, ou vous n'avez pas les droits dessus.");
-        }
-        else {
+            throw new ProductNotFoundException("Cet article ($obj_id, $fun_id) n'existe pas, ou vous n'avez pas les droits dessus.");
+        }else {
             return array("success" => $p);
         }
     }
@@ -91,9 +100,9 @@ class GESARTICLE extends \ServiceBase {
     public function setProduct($obj_id = null, $name, $parent, $prix, $stock, $alcool, $image, $fun_id) {
         $this->checkRight(true, true, true, $fun_id);
         if($obj_id) {
-            return \Payutc\Bom\Product::edit($obj_id, $name, $parent, $prix, $stock, $alcool, $image, $fun_id);
+            return Product::edit($obj_id, $name, $parent, $prix, $stock, $alcool, $image, $fun_id);
         } else {
-            return \Payutc\Bom\Product::add($name, $parent, $prix, $stock, $alcool, $image, $fun_id);
+            return Product::add($name, $parent, $prix, $stock, $alcool, $image, $fun_id);
         }
     }
 
@@ -102,7 +111,7 @@ class GESARTICLE extends \ServiceBase {
     */
     public function deleteProduct($obj_id, $fun_id) {
         $this->checkRight(true, true, true, $fun_id);
-        return \Payutc\Bom\Product::delete($obj_id, $fun_id);
+        return Product::delete($obj_id, $fun_id);
     }
 
 	/**

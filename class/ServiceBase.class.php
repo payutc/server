@@ -135,10 +135,12 @@ class ServiceBase {
     * @return array $status
     */
     public function getStatus() {
-        if($this->application())
+        if($this->application()){
             $app = $this->application()->toArray(0);
-        else
+        }else{
             $app = null;
+        }
+
         if($this->user()) {
             $user = $this->user()->getNickname();
             $firstname = $this->user()->getFirstname();
@@ -148,6 +150,7 @@ class ServiceBase {
             $firstname = null;
             $lastname = null;
         }
+
         return array(
             "application" => $app, 
             "user" => $user, 
@@ -173,8 +176,7 @@ class ServiceBase {
      * et bien sur fun_id == NULL ne sera authorisé que si l'utilisateur est "super admin" sur le droit en question.
      */
     public function checkRight($user=true, $app=true, $fun_check=false, $fun_id=NULL) {
-        if($user)
-        {
+        if($user){
             if(!$this->user()) {
                 throw new \Payutc\Exception\CheckRightException("Vous devez connecter un utilisateur ! (method loginCas)");
             }
@@ -184,8 +186,8 @@ class ServiceBase {
                              $fun_check,
                              $fun_id);
         }
-        if($app)
-        {
+
+        if($app){
             if(!$this->application()) {
                 throw new \Payutc\Exception\CheckRightException("Vous devez connecter une application ! (method loginApp)");
             }
@@ -218,11 +220,13 @@ class ServiceBase {
         // Verification sur le droits avant toute choses
         $this->checkRight($user,$app,$fun_check,$fun_id);
         // On recupere les fundations pour l'user et l'application
-        if($user)
+        if($user){
             $fundations_for_user = UserRight::getFundations($this->user()->getId(), $this->service_name);
+        }
 
-        if($app)
+        if($app){
             $fundations_for_app = ApplicationRight::getFundations($this->application()->getId(), $this->service_name);
+        }
 
         // Si on est admin, le premier item permet d'indiquer une fundation "fantome" qui representent toutes les autres.
         if($this->isAdmin()) {
@@ -271,19 +275,20 @@ class ServiceBase {
             // Checker les droits sur chaque fundation donnée.
             // On ne check que les droits de l'application et pas de user
             foreach($fun_ids as $fun_id) {
-                if($app)
+                if($app){
                     $this->checkRight($user, $app, true, $fun_id);
-                else
+                }else{
                     $this->checkRight($user, $app, false, null);
-
+                }
             }
         } else {
             // Verifie qu'on a des droits sur le service
             $fundations = $this->getFundations($user,$app,false,null);
             $fun_ids = array();
             foreach($fundations as $fun) {
-                if($fun['fun_id'])
+                if($fun['fun_id']){
                     $fun_ids[] = $fun['fun_id'];
+                }
             }
         }
         return $fun_ids;
@@ -382,10 +387,13 @@ class ServiceBase {
         $height_orig = imagesy($oldgd);
 
 		// Handle no resize
-		if($outw == 0)
+		if($outw == 0){
 			$outw = $width_orig;
-		if($outh == 0)
+        }
+
+		if($outh == 0){
 			$outh = $height_orig;
+        }
 
         $ratio_orig = $width_orig/$height_orig;
 
@@ -408,9 +416,9 @@ class ServiceBase {
 		ob_end_clean();
 		
 		// Retour s'il y a une image correcte
-		if($output != false)
+		if($output != false){
 			return array("success"=> $output);
-		else {
+		}else {
 			Log::warn("getImage64($img_id, $outw, $outh) : No image found");
 			return array("error"=>400, "error_msg"=>"Image non trouvée.");
 		}
