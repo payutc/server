@@ -89,7 +89,8 @@ class WEBSALE extends \ServiceBase {
             "id" => $tra_id,
             "status" => $transaction->getStatus(),
             "purchases" => $transaction->getPurchases(),
-            "created" => $transaction->getDate()
+            "created" => $transaction->getDate(),
+            "email" => $transaction->getEmail()
         );
     }
  }
