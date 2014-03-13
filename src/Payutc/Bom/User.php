@@ -56,6 +56,7 @@ class User {
     * @param string $username Login of the User object to init
     */
     public function __construct($username, $gingerUser = null) {
+        $this->gingerUser = $gingerUser;
         Log::debug("User: __construct($username, [gingerUser])", array('ginger_user' => $gingerUser));
         
         $query = Dbal::createQueryBuilder()
