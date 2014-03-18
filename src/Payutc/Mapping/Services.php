@@ -13,6 +13,7 @@ class Services {
         'PAYLINE',
         'RELOAD',
         'MYACCOUNT',
+        'CATALOG',
         'TRANSFER',
         'WEBSALE',
         'WEBSALECONFIRM',

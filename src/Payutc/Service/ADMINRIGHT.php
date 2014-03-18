@@ -98,6 +98,12 @@ use \Application;
                         "user"    => false,
                         "app"     => false
                     ), array(
+                        "service" => "CATALOG",
+                        "name"    => "Consulter le catalogue d'une fondation depuis son application",
+                        "desc"    => "Permet de consluter le catalogue des produits (bières, softs, snacks) avec une connexion d'application",
+                        "user"    => false,
+                        "app"     => true
+                    ),array(
                         "service" => "WEBSALE",
                         "name"    => "Encaisser par internet",
                         "desc"    => "Permet à une application d'encaisser de l'argent par internet",
