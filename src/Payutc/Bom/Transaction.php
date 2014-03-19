@@ -33,6 +33,7 @@ use \Payutc\Exception\TransactionNotFound;
 use \Payutc\Exception\TransactionAlreadyValidated;
 use \Payutc\Exception\InvalidReduction;
 use \Payutc\Exception\InvalidQuantity;
+use \Httpful\Request;
 
 class Transaction {
     protected $id;
@@ -173,7 +174,7 @@ class Transaction {
             array("string", "integer")
         );
         
-        // TODO Callback if any
+        $this->doCallback();
     }
 
     public function validate(){
@@ -232,7 +233,23 @@ class Transaction {
         $this->validatedDate = $now;
         $this->status = 'V';
         
-        // TODO Callback if any
+        $this->doCallback();
+    }
+    
+    protected function doCallback() {
+        if($this->callbackUrl) {
+            $url = $this->callbackUrl;
+            $query = parse_url($url, PHP_URL_QUERY);
+
+            // Returns a string if the URL has parameters or NULL if not
+            if( $query ) {
+                $url .= '&tra_id='.$this->id;
+            }
+            else {
+                $url .= '?tra_id='.$this->id;
+            }
+            Request::get($url)->send();
+        }
     }
     
     // --- Generators
