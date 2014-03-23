@@ -50,12 +50,6 @@ use \Application;
                         "user"    => true,
                         "app"     => true
                     ), array(
-                        "service" => "VENTEWEB", 
-                        "name"    => "Vente en ligne",
-                        "desc"    => "Permet la vente depuis une application",
-                        "user"    => false,
-                        "app"     => true
-                    ), array(
                         "service" => null,
                         "name"    => "Tout les droits",
                         "desc"    => "Donne les droits à l'utilisateur ou à l'application sur tous les services",
