@@ -74,6 +74,12 @@ use \Application;
                         "user"    => true,
                         "app"     => true
                     ), array(
+                        "service" => "TRESO",
+                        "name"    => "Trésorerie",
+                        "desc"    => "Permet le suivi par le trésorier.",
+                        "user"    => true,
+                        "app"     => true
+                    ), array(
                         "service" => "STATS",
                         "name"    => "Statistiques",
                         "desc"    => "Permet de récupérer différentes informations statistiques sur la fundation.",
