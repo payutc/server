@@ -642,4 +642,14 @@ class User {
         $don = $query->fetch();
         return $don['usr_credit'];
     }
+
+    public static function getSumCredit() {
+        $qb = Dbal::createQueryBuilder()
+            ->select('sum(usr_credit) as sum')
+            ->from('ts_user_usr', 'usr');
+
+        // Get data from the database
+        $don = $qb->execute()->fetch();
+        return $don['sum'];
+    }
 }

@@ -79,15 +79,18 @@ class Purchase
      * $tick permet de découper le resultat par tranche (pour afficher une courbe d'évolution)
      * il faut indiquer un nombre de secondes à $tick
      */
-    public static function getRevenue($fun_id, $app_id=null, $start=null, $end=null, $tick=null)
+    public static function getRevenue($fun_id=null, $app_id=null, $start=null, $end=null, $tick=null)
     {
         $qb = Dbal::createQueryBuilder();
         $qb->select('sum(pur_price) as total', 'tra.tra_date')
             ->from('t_purchase_pur', 'pur')
             ->innerJoin('pur', 't_transaction_tra', 'tra', 'pur.tra_id = tra.tra_id')
-            ->andWhere('tra.fun_id = :fun_id')->setParameter('fun_id', $fun_id)
             ->andWhere("tra.tra_status = 'V'")
             ->andWhere('pur.pur_removed = 0');
+
+        if($fun_id != null) {
+            $qb->andWhere('tra.fun_id = :fun_id')->setParameter('fun_id', $fun_id);
+        }
 
         if($app_id != null) {
             $qb->andWhere('tra.app_id = :app_id')->setParameter('app_id', $app_id);
