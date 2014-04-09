@@ -142,7 +142,7 @@ class Product {
 
             // 4. AJOUT DU PRIX
             $db->query(
-                  "INSERT INTO t_price_pri (`pri_id`, `obj_id`, `grp_id`, `per_id`, `pri_credit`, `pri_removed`) VALUES ( NULL ,  '%u', NULL , NULL ,  '%u',  '0');",
+                  "INSERT INTO t_price_pri (`pri_id`, `obj_id`, `pri_credit`, `pri_removed`) VALUES ( NULL ,  '%u', '%u',  '0');",
                   array($article_id, $prix));
 
             // ON RETOURNE L'ID D'ARTICLE
