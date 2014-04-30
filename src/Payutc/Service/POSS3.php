@@ -157,9 +157,9 @@ class POSS3 extends \ServiceBase {
                      "transaction_id"=>$tr->getId());
     }
 
-    public function getImage64($img_id, $outw = 0, $outh = 0)
+    public function getImage64($img_id, $outw = 0, $outh = 0, $encode=true)
     {
-        $r = parent::getImage64($img_id, $outw, $outh);
+        $r = parent::getImage64($img_id, $outw, $outh, $encode);
         if (array_key_exists('error_msg', $r)) {
             throw new Exception($r['error_msg']);
         }

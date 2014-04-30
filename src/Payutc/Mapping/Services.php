@@ -24,6 +24,9 @@ class Services {
         'PAYLINE' => array(
             'notification',
         ),
+        'POSS3' => array(
+            'getImage64',
+        ),
     );
     
     public static function get($name) {
