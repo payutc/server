@@ -402,17 +402,17 @@ class ServiceBase {
         } else {
            $outh = $outw/$ratio_orig;
         }
-		
-		// Création de l'image GD à sortir
-		$newgd = imagecreatetruecolor($outw, $outh);
-		
-		// Redimensionnement
-		imagecopyresampled($newgd, $oldgd, 0, 0, 0, 0, $outw, $outh, $width_orig, $height_orig);
-		
-		// Récupération et encodage en base64
+
+        // Création de l'image GD à sortir
+        $newgd = imagecreatetruecolor($outw, $outh);
+
+        // Redimensionnement
+        imagecopyresampled($newgd, $oldgd, 0, 0, 0, 0, $outw, $outh, $width_orig, $height_orig);
+
+        // Récupération et encodage en base64
         if($encode) {
-    		ob_start();
-    		imagepng($newgd);
+            ob_start();
+            imagepng($newgd);
             $output = base64_encode(ob_get_contents());
             ob_end_clean();
         } else {
@@ -425,15 +425,15 @@ class ServiceBase {
             imagepng($newgd);
             exit();
         }
-		
-		// Retour s'il y a une image correcte
-		if($output != false){
-			return array("success"=> $output);
-		}else {
-			Log::warn("getImage64($img_id, $outw, $outh) : No image found");
-			return array("error"=>400, "error_msg"=>"Image non trouvée.");
-		}
-	}
+
+        // Retour s'il y a une image correcte
+        if($output != false){
+            return array("success"=> $output);
+        }else {
+            Log::warn("getImage64($img_id, $outw, $outh) : No image found");
+            return array("error"=>400, "error_msg"=>"Image non trouvée.");
+        }
+    }
     
     /**
      * Renvoie l'id d'un utilisateur à partir de son login UTC
