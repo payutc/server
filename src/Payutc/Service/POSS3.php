@@ -59,9 +59,8 @@ class POSS3 extends \ServiceBase {
     public function getCategories($fun_id)
     {
         $this->checkRight(true, true, true, $fun_id);
-        return Category::getAll(array('fun_ids'=>array($fun_id,)));
+        return Category::getAll(array($fun_id,));
     }
-
 
     /** Annulation d'un achat
      * 1. Récupére l'achat
