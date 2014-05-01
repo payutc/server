@@ -42,7 +42,6 @@ class MESSAGES extends \ServiceBase {
         if ($usr_id == NULL && $fun_id != NULL) {
             $this->checkRight(true, true, true, $fun_id);
         } else {
-            $this->checkRight(true, true);
             if ($this->user()->getId() != $usr_id) {
                 throw new MessageUpdateFailedException("On ne peut changer que son message perso, pas celui des autres ...");
             }
