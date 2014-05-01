@@ -260,7 +260,7 @@ class Transaction {
                 'tra.tra_email', 'tra.app_id',
                 'tra.tra_status', 'tra.tra_callback_url', 'tra.tra_return_url', 'tra.tra_token',
                 'tra.fun_id', 'pur.pur_id', 'pur.obj_id', 'pur.pur_qte', 'pur.pur_unit_price',
-                'pur.pur_price', 'pur.pur_removed')
+                'pur.pur_price', 'pur.pur_tva', 'pur.pur_amount_tva', 'pur.pur_removed')
             ->from('t_transaction_tra', 'tra')
             ->innerJoin('tra', 't_purchase_pur', 'pur', 'pur.tra_id = tra.tra_id');
     }
@@ -317,6 +317,8 @@ class Transaction {
                 'pur_qte' => $don['pur_qte'],
                 'pur_unit_price' => $don['pur_unit_price'],
                 'pur_price' => $don['pur_price'],
+                'pur_tva' => $don['pur_tva'],
+                'pur_amount_tva' => $don['pur_amount_tva'],
                 'pur_removed' => $don['pur_removed']
             );            
         } while($don = $query->fetch());
@@ -405,6 +407,9 @@ class Transaction {
                     $reduction = null;
                 }
 
+                $tva = $product['tva'];
+                $amount_tva = $price * $tva / ($tva + 100);
+
                 // Add the product to the transaction
                 $conn->insert('t_purchase_pur', array(
                     'tra_id' => $transactionId,
@@ -412,6 +417,8 @@ class Transaction {
                     'pur_qte' => $object[1],
                     'pur_price' => $price,
                     'pur_unit_price' => $product['price'],
+                    'pur_tva' => $tva,
+                    'pur_amount_tva' => $amount_tva,
                     'pur_reduction' => $reduction,
                 ), array("integer", "integer", "integer", "integer", "integer"));
             }
