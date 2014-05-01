@@ -120,6 +120,7 @@ class Product {
     * @return array $categorie
     */
     public static function add($nom, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva) {
+        $conn = Dbal::conn();
         $db = DbBuckutt::getInstance();
         // 1. Verification que le parent existe (et qu'il est bien dans la fundation indiqué (vu qu'on a vérifié les droits grâce à ça)
         $res = $db->query("SELECT fun_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u' AND fun_id = '%u' LIMIT 0,1;", array($parent, $fun_id));
@@ -144,9 +145,12 @@ class Product {
                   array($parent, $article_id));
 
             // 4. AJOUT DU PRIX
-            $db->query(
-                  "INSERT INTO t_price_pri (`pri_id`, `obj_id`, `grp_id`, `per_id`, `pri_credit`, `pri_tva`, `pri_removed`) VALUES ( NULL ,  '%u', NULL , NULL ,  '%u',  '%d', 0');",
-                  array($article_id, $prix, $tva));
+            $conn->insert('t_price_pri', array(
+                'obj_id' => $article_id,
+                'pri_credit' => $prix,
+                'pri_tva' => $tva,
+                'pri_removed' => 0,
+            ));
 
             // ON RETOURNE L'ID D'ARTICLE
             return array("success"=>$article_id);
