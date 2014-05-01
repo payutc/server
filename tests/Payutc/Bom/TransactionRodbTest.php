@@ -34,7 +34,9 @@ class TransactionRodbTest extends ReadOnlyDatabaseTest
                 'pur_qte' => 1,
                 'pur_unit_price' => 170,
                 'pur_price' => 170,
-                'pur_removed' => 0
+                'pur_removed' => 0,
+                'pur_tva' => 0.00,
+                'pur_amount_tva' => 0,
             ),
             array(
                 'pur_id' => 12,
@@ -42,7 +44,9 @@ class TransactionRodbTest extends ReadOnlyDatabaseTest
                 'pur_qte' => 1,
                 'pur_unit_price' => 170,
                 'pur_price' => 170,
-                'pur_removed' => 0
+                'pur_removed' => 0,
+                'pur_tva' => 0.00,
+                'pur_amount_tva' => 0
             )
         );
         $this->assertEquals($purchases, $transaction->getPurchases());
