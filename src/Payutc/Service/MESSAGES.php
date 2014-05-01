@@ -38,7 +38,7 @@ class MESSAGES extends \ServiceBase {
     /**
     * Change le message d’un utilisateur ou d’une fundation
     */
-    public function changeMsg($usr_id, $fun_id, $message) {
+    public function changeMsg($usr_id=NULL, $fun_id, $message) {
         if ($usr_id == NULL && $fun_id != NULL) {
             $this->checkRight(true, true, true, $fun_id);
         } else {
