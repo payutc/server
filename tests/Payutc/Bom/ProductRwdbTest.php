@@ -34,29 +34,31 @@ class ProductRwdbTest extends DatabaseTest
     }
 
     public function testAdd() {
-        $a = Product::add("Chouffe", 1000, 180, 10, 1, null, 1);
+        $a = Product::add("Chouffe", 1000, 180, 10, 1, null, 1, 19.6);
         $r = Product::getOne($a["success"], 1);
 
         $this->assertEquals("Chouffe", $r['name']);
         $this->assertEquals(10, $r['stock']);
         $this->assertEquals(180, $r['price']);
+        $this->assertEquals(19.6, $r['tva']);
         $this->assertEquals(1, $r['alcool']);
         $this->assertEquals(null, $r['image']);
         $this->assertEquals(1000, $r['categorie_id']);
         $this->assertEquals(1, $r['fundation_id']);
         
-        $a = Product::edit($r["id"], "MC Chouffe", 1001, 170, 10, 1, null, 1);
+        $a = Product::edit($r["id"], "MC Chouffe", 1001, 170, 10, 1, null, 1, 20);
         $r = Product::getOne($a["success"]);
 
         $this->assertEquals("MC Chouffe", $r['name']);
         $this->assertEquals(10, $r['stock']);
         $this->assertEquals(170, $r['price']);
+        $this->assertEquals(20, $r['tva']);
         $this->assertEquals(1, $r['alcool']);
         $this->assertEquals(null, $r['image']);
         $this->assertEquals(1001, $r['categorie_id']);
         $this->assertEquals(1, $r['fundation_id']);
 
-        $a = Product::edit($r["id"], "MC Chouffe", 1001, 170, 10, 0, null, 1);
+        $a = Product::edit($r["id"], "MC Chouffe", 1001, 170, 10, 0, null, 1, 20);
         $r = Product::getOne($a["success"]);
         $this->assertEquals(0, $r['alcool']);
 
@@ -68,6 +70,7 @@ class ProductRwdbTest extends DatabaseTest
         $this->assertEquals("MC Chouffe", $r['name']);
         $this->assertEquals(10, $r['stock']);
         $this->assertEquals(170, $r['price']);
+        $this->assertEquals(20, $r['tva']);
         $this->assertEquals(0, $r['alcool']);
         $this->assertEquals(null, $r['image']);
         $this->assertEquals(1001, $r['categorie_id']);
@@ -86,7 +89,7 @@ class ProductRwdbTest extends DatabaseTest
                 'img_length' => 0,
                 'img_content' => ''));
         // create object
-        $a = Product::add("Chouffe", 1000, 180, 10, 1, $img_id, 1);
+        $a = Product::add("Chouffe", 1000, 180, 10, 1, $img_id, 1, 19.6);
         $id = $a["success"];
         // delete object
         Product::delete($id, 1);

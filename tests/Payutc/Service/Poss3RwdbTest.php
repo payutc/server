@@ -50,7 +50,39 @@ class Poss3RwdbTest extends DatabaseTest
             'lastname' => 'Recouvreux',
             'solde' => $solde-280,
             'msg_perso' => 'http://payutc.github.io',
-            'transaction_id' => 14
+            'transaction_id' => 14,
+            'purchases' => array(
+              array(
+                'pur_id' => 16,
+                'obj_id' => 1,
+                'pur_qte' => 1,
+                'pur_unit_price' => 100,
+                'pur_price' => 100,
+                'pur_tva' => 7.0,
+                'pur_amount_tva' => 7,
+                'pur_removed' => 0
+              ),
+              array(
+                'pur_id' => 17,
+                'obj_id' => 1,
+                'pur_qte' => 1,
+                'pur_unit_price' => 100,
+                'pur_price' => 100,
+                'pur_tva' => 7.0,
+                'pur_amount_tva' => 7,
+                'pur_removed' => 0
+              ),
+              array(
+                'pur_id' => 18,
+                'obj_id' => 2,
+                'pur_qte' => 1,
+                'pur_unit_price' => 80,
+                'pur_price' => 80,
+                'pur_tva' => 7.0,
+                'pur_amount_tva' => 5,
+                'pur_removed' => 0
+              )              
+            )
         );
         $this->assertEquals($o, $r->body);
         $this->assertEquals(200, $r->code);
@@ -110,8 +142,61 @@ class Poss3RwdbTest extends DatabaseTest
                    'lastname' => 'Recouvreux',
                    'solde' => $solde-760,
                    'msg_perso' => 'http://payutc.github.io',
-                   'transaction_id' => 14
-                   );
+                   'transaction_id' => 14,
+                   'purchases' => array(
+                     array(
+                       'pur_id' => 16,
+                       'obj_id' => 1,
+                       'pur_qte' => 1,
+                       'pur_unit_price' => 100,
+                       'pur_price' => 100,
+                       'pur_tva' => 7.0,
+                       'pur_amount_tva' => 7,
+                       'pur_removed' => 0
+                     ),
+                     array(
+                       'pur_id' => 17,
+                       'obj_id' => 2,
+                       'pur_qte' => 2,
+                       'pur_unit_price' => 80,
+                       'pur_price' => 160,
+                       'pur_tva' => 7.0,
+                       'pur_amount_tva' => 10,
+                       'pur_removed' => 0
+                     ),
+                     array(
+                       'pur_id' => 18,
+                       'obj_id' => 1,
+                       'pur_qte' => 2,
+                       'pur_unit_price' => 100,
+                       'pur_price' => 180,
+                       'pur_tva' => 7.0,
+                       'pur_amount_tva' => 12,
+                       'pur_removed' => 0
+                     ),
+                     array(
+                       'pur_id' => 19,
+                       'obj_id' => 2,
+                       'pur_qte' => 2,
+                       'pur_unit_price' => 80,
+                       'pur_price' => 155,
+                       'pur_tva' => 7.0,
+                       'pur_amount_tva' => 10,
+                       'pur_removed' => 0
+                     ),
+                     array(
+                       'pur_id' => 20,
+                       'obj_id' => 3,
+                       'pur_qte' => 1,
+                       'pur_unit_price' => 170,
+                       'pur_price' => 165,
+                       'pur_tva' => 19.6,
+                       'pur_amount_tva' => 27,
+                       'pur_removed' => 0
+                     )
+                   )
+                );
+        
         $this->assertEquals($o, $r->body);
         $this->assertEquals(200, $r->code);
         $u = new User("trecouvr");

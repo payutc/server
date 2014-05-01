@@ -154,7 +154,8 @@ class POSS3 extends \ServiceBase {
                      "lastname"=>$buyer->getLastname(), 
                      "solde"=>$buyer->getCredit(),
                      "msg_perso"=>$msg,
-                     "transaction_id"=>$tr->getId());
+                     "transaction_id"=>$tr->getId(),
+                     "purchases"=>$tr->getPurchases());
     }
 
     public function getImage64($img_id, $outw = 0, $outh = 0, $encode=true)

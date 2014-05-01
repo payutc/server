@@ -50,7 +50,9 @@ class WebsaleConfirmRwdbTest extends DatabaseTest
                             "pur_qte" => 1,
                             "pur_unit_price" => 170,
                             "pur_price" => 170,
-                            "pur_removed" => 0
+                            "pur_removed" => 0,
+                            "pur_tva" => 0.00,
+                            "pur_amount_tva" => 0
                         ),
                     array(
                             "pur_id" => 14,
@@ -58,7 +60,9 @@ class WebsaleConfirmRwdbTest extends DatabaseTest
                             "pur_qte" => 1,
                             "pur_unit_price" => 170,
                             "pur_price" => 170,
-                            "pur_removed" => 0
+                            "pur_removed" => 0,
+                            "pur_tva" => 0.00,
+                            "pur_amount_tva" => 0
                         )
 
                 ),
@@ -71,7 +75,8 @@ class WebsaleConfirmRwdbTest extends DatabaseTest
                             "stock" => 42,
                             "price" => 170,
                             "alcool" => 0,
-                            "image" => "",
+                            "image" => "",                            
+                            "tva" => 19.60
                         )
 
                 ),
