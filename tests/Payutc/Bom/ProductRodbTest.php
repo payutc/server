@@ -28,7 +28,7 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
                  "fundation_id" => "1",
                  "stock" => "10",
                  "price" => "100",
-                 "price" => "7",
+                 "tva" => "7",
                  "alcool" => "0",
                  "image" => null
             ),
