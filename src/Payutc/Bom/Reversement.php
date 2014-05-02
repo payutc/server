@@ -152,6 +152,19 @@ class Reversement
         return self::getByQb($qb);
 	}
 
+    public static function getAll($funId=null, $step='V') {
+        $qb = self::getQbBase()
+            ->where("rev.rev_step = :step")
+            ->setParameter('step', $step)
+            ->orderBy('rev.rev_date_updated', 'DESC');
+
+        if($funId) {
+            $qb->andWhere('rev.fun_id = :fun_id')
+                ->setParameter('fun_id', $funId);
+        }
+        return self::getByQb($qb);
+    }
+
 	protected static function getQbBase(){
         return Dbal::createQueryBuilder()
             ->select('*')
@@ -161,14 +174,24 @@ class Reversement
 	protected static function getByQb($qb){
         $query = $qb->execute();
 
+        $count = $query->rowCount();
         // Check that the transaction exists
-        if ($query->rowCount() == 0) {
+        if ($count == 0) {
             throw new ReversementNotFound("Le reversement n'existe pas");
+        } else if($count == 1) {
+            // Get remaining data from the database
+            $don = $query->fetch();
+            return self::fromArray($don);
+        } else {
+            $ret = array();
+            while($don = $query->fetch()) {
+                $ret[] = self::fromArray($don);
+            }
+            return $ret;
         }
-                        
-        // Get remaining data from the database
-        $don = $query->fetch();
-        
+    }
+
+    protected static function fromArray($don){
         $reversement = new Reversement();
         $reversement->id = $don['rev_id'];
         $reversement->funId = $don['fun_id'];
