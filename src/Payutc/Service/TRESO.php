@@ -65,6 +65,11 @@ class TRESO extends \ServiceBase {
      	}
      }
 
+     public function getExport($fun_id, $start=null, $end=null){
+          $this->checkRight(true, true, true, $fun_id);
+          return Purchase::getDetails($fun_id, $start, $end);
+     }
+
      public function askReversement($fun_id) {
      	$this->checkRight(true, true, true, $fun_id);
      	$rev = new Reversement($fun_id, $this->user()->getId());
