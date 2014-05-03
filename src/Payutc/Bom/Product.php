@@ -175,6 +175,7 @@ class Product {
     * @return array $categorie
     */
     public static function edit($id, $nom, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva) {
+        $qb = Dbal::createQueryBuilder();
         $db = DbBuckutt::getInstance();
         // 1. GET THE ARTICLE
         $res = $db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit, p.pri_tva, o.img_id, oli_id
@@ -231,9 +232,19 @@ class Product {
         // 5. EDIT THE PRICE IF NECESSARY
         if($old_price != $prix || $old_tva != $tva)
         {
-            $db->query(
-                  "UPDATE t_price_pri SET `pri_credit` = '%u', `pri_tva` = '%d' WHERE `obj_id` = '%u' and `pri_removed` = '0';",
-                  array($prix, $tva, $id));
+            $qb->update('t_price_pri', 'pri')
+                ->set('pri.pri_credit', ':pri_credit')
+                ->set('pri.pri_tva', ':pri_tva')
+                ->where('pri.obj_id = :obj_id')
+                ->andWhere('pri.pri_removed = :pri_removed');
+
+            $qb->setParameters(array(
+                "pri_credit" => $prix,
+                "pri_tva" => $tva,
+                "obj_id" => $id,
+                "pri_removed" => 0));
+            
+            $qb->execute();
         }
 
         // 6. EDIT THE ARTICLE NAME AND STOCK
