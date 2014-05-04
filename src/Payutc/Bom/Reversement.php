@@ -27,45 +27,45 @@ class Reversement
     public $frais = null;
 
     public function __construct($funId=null, $usrId=null) {
-    	$this->funId = $funId;
-    	$this->usrAsk = $usrId;
-    	$this->step = 'W';
-    	if($funId) {
-    		$this->amount = self::getNotReversed($funId);
-    	}
-    	$this->created = new \DateTime();
+        $this->funId = $funId;
+        $this->usrAsk = $usrId;
+        $this->step = 'W';
+        if($funId) {
+            $this->amount = self::getNotReversed($funId);
+        }
+        $this->created = new \DateTime();
     }
 
     public function insert() {
-	    $conn = Dbal::conn();
-	    $conn->insert('t_reversement_rev', array(
-	            'fun_id' => $this->funId,
-	            'rev_step' => $this->step,
-	            'rev_date_created' => $this->created,
-	            'rev_date_updated' => $this->updated,
-	            'usr_id_ask' => $this->usrAsk,
-	            'usr_id_done' => $this->usrDone,
-	            'rev_amount' => $this->amount,
-	            'rev_taux' => $this->taux,
-	            'rev_frais' => $this->frais
-	            ),
-	     		array(
-	     			"integer", 
-	     			"string",
-	     			"datetime", 
-	     			"datetime",
-	     			"integer",
-	     			"integer",
-	     			"integer",
-	     			"integer",
-	     			"integer")
-	        );
-	    return $conn->lastInsertId();
-	}
+        $conn = Dbal::conn();
+        $conn->insert('t_reversement_rev', array(
+                'fun_id' => $this->funId,
+                'rev_step' => $this->step,
+                'rev_date_created' => $this->created,
+                'rev_date_updated' => $this->updated,
+                'usr_id_ask' => $this->usrAsk,
+                'usr_id_done' => $this->usrDone,
+                'rev_amount' => $this->amount,
+                'rev_taux' => $this->taux,
+                'rev_frais' => $this->frais
+                ),
+                array(
+                    "integer", 
+                    "string",
+                    "datetime", 
+                    "datetime",
+                    "integer",
+                    "integer",
+                    "integer",
+                    "integer",
+                    "integer")
+            );
+        return $conn->lastInsertId();
+    }
 
 
     public function update($usrId) {
-		$qb = Dbal::createQueryBuilder();
+        $qb = Dbal::createQueryBuilder();
         $qb->update('t_reversement_rev', 'rev')
             ->set('rev_date_updated', ':rev_date_updated')
             ->set('usr_id_done', ':usr_id_done')
@@ -86,11 +86,11 @@ class Reversement
             Log::debug("Reversement($this->id): no lines updated");
             throw new UpdateFailed("Impossible de changer l'état du reversement");
         }
-	}
+    }
 
-	// Obtenir le montant total reversé
-	public static function getTotal($funId = null) {
-		$qb = Dbal::createQueryBuilder();
+    // Obtenir le montant total reversé
+    public static function getTotal($funId = null) {
+        $qb = Dbal::createQueryBuilder();
         $qb->select('sum(rev_amount) as total')
             ->from('t_reversement_rev', 'rev')
             ->where("rev.rev_step = 'V'");
@@ -98,19 +98,19 @@ class Reversement
         if($funId != null) {
             $qb->andWhere('rev.fun_id = :fun_id')->setParameter('fun_id', $funId);
         }
-		
-		$result = $qb->execute()->fetch();
+        
+        $result = $qb->execute()->fetch();
         return $result['total'];
-	}
-	
-	// Obtenir le montant total non reversé.
-	public static function getNotReversed($funId = null) {
-		return Purchase::getRevenue($funId) - self::getTotal($funId);
-	}
+    }
+    
+    // Obtenir le montant total non reversé.
+    public static function getNotReversed($funId = null) {
+        return Purchase::getRevenue($funId) - self::getTotal($funId);
+    }
 
-	// Obtenir le montant total en attente de reversement.
-	public static function getWait($funId = null) {
-		$qb = Dbal::createQueryBuilder();
+    // Obtenir le montant total en attente de reversement.
+    public static function getWait($funId = null) {
+        $qb = Dbal::createQueryBuilder();
         $qb->select('sum(rev_amount) as total')
             ->from('t_reversement_rev', 'rev')
             ->where("rev.rev_step = 'W'");
@@ -118,40 +118,44 @@ class Reversement
         if($funId != null) {
             $qb->andWhere('rev.fun_id = :fun_id')->setParameter('fun_id', $funId);
         }
-		
-		$result = $qb->execute()->fetch();
+        
+        $result = $qb->execute()->fetch();
         return $result['total'];
-	}
+    }
 
-	// Retourne le dernier reversement effectué pour une fundation donné.
-	public static function getLast($funId, $step='V') {
-		$qb = self::getQbBase()
+    // Retourne le dernier reversement effectué pour une fundation donné.
+    public static function getLast($funId, $step='V') {
+        $qb = self::getQbBase()
             ->where('rev.fun_id = :fun_id')
             ->andWhere("rev.rev_step = :step")
             ->setParameter('fun_id', $funId)
             ->setParameter('step', $step)
             ->orderBy('rev.rev_date_updated', 'DESC')
             ->setMaxResults(1);
-        try {
-        	$rev = self::getByQb($qb);
-        	return $rev[0];
-       	} catch (ReversementNotFound $e) {
-       		return null;
-       	}
-	}
 
-	public static function getById($revId, $funId=null) {
-		$qb = self::getQbBase()
+        $rev = self::getByQb($qb);
+        if (count($rev) == 0) {
+            return null;
+        } else {
+            return $rev[0];
+        }
+    }
+
+    public static function getById($revId, $funId=null) {
+        $qb = self::getQbBase()
             ->where('rev.rev_id = :rev_id')
             ->setParameter('rev_id', $revId);
 
-		if($funId != null) {
+        if($funId != null) {
             $qb->andWhere('rev.fun_id = :fun_id')->setParameter('fun_id', $funId);
         }
 
         $ret = self::getByQb($qb);
+        if (count($ret) != 1) {
+            throw new ReversementNotFound("Le reversement n'existe pas");
+        }
         return $ret[0];
-	}
+    }
 
     public static function getAll($funId=null, $step='V') {
         $qb = self::getQbBase()
@@ -166,26 +170,22 @@ class Reversement
         return self::getByQb($qb);
     }
 
-	protected static function getQbBase(){
+    protected static function getQbBase(){
         return Dbal::createQueryBuilder()
             ->select('*')
             ->from('t_reversement_rev', 'rev');
     }
 
-	protected static function getByQb($qb){
+    protected static function getByQb($qb){
         $query = $qb->execute();
 
         $count = $query->rowCount();
-        // Check that the transaction exists
-        if ($count == 0) {
-            throw new ReversementNotFound("Le reversement n'existe pas");
-        } else {
-            $ret = array();
-            while($don = $query->fetch()) {
-                $ret[] = self::fromArray($don);
-            }
-            return $ret;
+
+        $ret = array();
+        while($don = $query->fetch()) {
+            $ret[] = self::fromArray($don);
         }
+        return $ret;
     }
 
     protected static function fromArray($don){
