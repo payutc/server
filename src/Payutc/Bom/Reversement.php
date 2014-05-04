@@ -134,7 +134,7 @@ class Reversement
             ->setMaxResults(1);
         try {
         	$rev = self::getByQb($qb);
-        	return $rev;
+        	return $rev[0];
        	} catch (ReversementNotFound $e) {
        		return null;
        	}
@@ -149,7 +149,8 @@ class Reversement
             $qb->andWhere('rev.fun_id = :fun_id')->setParameter('fun_id', $funId);
         }
 
-        return self::getByQb($qb);
+        $ret = self::getByQb($qb);
+        return $ret[0];
 	}
 
     public static function getAll($funId=null, $step='V') {
@@ -178,10 +179,6 @@ class Reversement
         // Check that the transaction exists
         if ($count == 0) {
             throw new ReversementNotFound("Le reversement n'existe pas");
-        } else if($count == 1) {
-            // Get remaining data from the database
-            $don = $query->fetch();
-            return self::fromArray($don);
         } else {
             $ret = array();
             while($don = $query->fetch()) {
