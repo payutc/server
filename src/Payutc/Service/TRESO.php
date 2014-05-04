@@ -51,7 +51,7 @@ class TRESO extends \ServiceBase {
                 "account_total" => User::getSumCredit(),  // Montant total présent sur les comptes
                 "reversement_total" => Reversement::getTotal(), // Montant total reversé
                 "reversement_wait" => Reversement::getWait(), // Montant total en attente
-                    "reversements" => Reversement::getAll(), // Tout les reversements
+                "reversements" => Reversement::getAll(), // Tout les reversements
                 "fundations" => $fundations
                 );
         } else {
@@ -60,7 +60,7 @@ class TRESO extends \ServiceBase {
                 "reversement_total" => Reversement::getTotal($fun_id),  // Montant total déjà reversé
                 "reversement_wait" => Reversement::getLast($fun_id, 'W'),           // Montant total en attente
                 "reversement_last" => Reversement::getLast($fun_id),    // Date et montant du dernier reversement
-                    "reversements" => Reversement::getAll($fun_id)
+                "reversements" => Reversement::getAll($fun_id)
                 );
         }
      }

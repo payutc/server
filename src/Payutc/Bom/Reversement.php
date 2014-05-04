@@ -132,12 +132,13 @@ class Reversement
             ->setParameter('step', $step)
             ->orderBy('rev.rev_date_updated', 'DESC')
             ->setMaxResults(1);
-        try {
-        	$rev = self::getByQb($qb);
-        	return $rev[0];
-       	} catch (ReversementNotFound $e) {
-       		return null;
-       	}
+
+        $rev = self::getByQb($qb);
+        if (count($rev) == 0) {
+            return null;
+        } else {
+            return $rev[0];
+        }
 	}
 
 	public static function getById($revId, $funId=null) {
@@ -150,6 +151,9 @@ class Reversement
         }
 
         $ret = self::getByQb($qb);
+        if (count($ret) != 1) {
+            throw new ReversementNotFound("Le reversement n'existe pas");
+        }
         return $ret[0];
 	}
 
@@ -176,16 +180,12 @@ class Reversement
         $query = $qb->execute();
 
         $count = $query->rowCount();
-        // Check that the transaction exists
-        if ($count == 0) {
-            throw new ReversementNotFound("Le reversement n'existe pas");
-        } else {
-            $ret = array();
-            while($don = $query->fetch()) {
-                $ret[] = self::fromArray($don);
-            }
-            return $ret;
+
+        $ret = array();
+        while($don = $query->fetch()) {
+            $ret[] = self::fromArray($don);
         }
+        return $ret;
     }
 
     protected static function fromArray($don){
