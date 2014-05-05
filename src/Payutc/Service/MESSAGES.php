@@ -41,6 +41,11 @@ class MESSAGES extends \ServiceBase {
 
     public function changeMyMsg($message, $fun_id=NULL) {
         $this->checkRight(false, false);
+
+        if(!$this->user()) {
+            throw new MessageUpdateFailedException("Vous devez connecter un utilisateur ! (method loginCas)");
+        }
+        
         return \Payutc\Bom\MsgPerso::setMsgPerso($message, $this->user()->getId(), $fun_id);
     }
 
