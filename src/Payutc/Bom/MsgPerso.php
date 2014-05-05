@@ -140,6 +140,9 @@ class MsgPerso
             } else if ($usr_id && $fun_id) {
                 $qb->where('m.usr_id = :usr_id');
                 $qb->andWhere('m.fun_id = :fun_id');
+            } else if (!$usr_id && !$fun_id) {
+                $qb->where('m.usr_id IS NULL');
+                $qb->andWhere('m.fun_id IS NULL');
             }
             $qb->setParameters($args);
             $nb = $qb->execute();
