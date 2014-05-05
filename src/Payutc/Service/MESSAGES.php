@@ -31,17 +31,31 @@ class MESSAGES extends \ServiceBase {
     * Retourne le message perso actuel d’un utilisateur ou d’une fundation
     */
     public function getMsg($usr_id=NULL, $fun_id=NULL) {
-        $this->checkRight(false);
+        $this->checkRight(false, false);
         return \Payutc\Bom\MsgPerso::getMsgPerso($usr_id, $fun_id);
+    }
+
+    /**
+     * Change le message perso de l'utilisateur connecté
+     */
+
+    public function changeMyMsg($message, $fun_id=NULL) {
+        $this->checkRight(false, false);
+        return \Payutc\Bom\MsgPerso::setMsgPerso($message, $this->user()->getId(), $fun_id);
     }
 
     /**
     * Change le message d’un utilisateur ou d’une fundation
     */
     public function changeMsg($usr_id=NULL, $fun_id, $message) {
+        if ($usr_id == NULL && $fun_id == NULL) {
+            throw new MessageUpdateFailedException("Impossible de changer le message par défaut global à travers l’API");
+        }
+
         if ($usr_id == NULL && $fun_id != NULL) {
             $this->checkRight(true, true, true, $fun_id);
         } else {
+            $this->checkRight(false, false);
             if ($this->user()->getId() != $usr_id) {
                 throw new MessageUpdateFailedException("On ne peut changer que son message perso, pas celui des autres ...");
             }
