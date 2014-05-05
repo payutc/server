@@ -69,10 +69,6 @@ class MsgPerso
             throw new MessageUpdateFailedException("Message trop long (255 caractères max)");
         }
 
-        if ($usr_id == NULL && $fun_id == NULL) {
-            throw new MessageUpdateFailedException("Impossible de changer le message par défaut global à travers l’API");
-        }
-
         $qb = Dbal::createQueryBuilder();
 
         //We check if the fundation exists
