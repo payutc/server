@@ -31,7 +31,6 @@ class MESSAGES extends \ServiceBase {
     * Retourne le message perso actuel d’un utilisateur ou d’une fundation
     */
     public function getMsg($usr_id=NULL, $fun_id=NULL) {
-        $this->checkRight(false, false);
         return \Payutc\Bom\MsgPerso::getMsgPerso($usr_id, $fun_id);
     }
 
@@ -40,7 +39,6 @@ class MESSAGES extends \ServiceBase {
      */
 
     public function changeMyMsg($message, $fun_id=NULL) {
-        $this->checkRight(false, false);
 
         if(!$this->user()) {
             throw new MessageUpdateFailedException("Vous devez connecter un utilisateur ! (method loginCas)");
