@@ -50,15 +50,16 @@ class MESSAGES extends \ServiceBase {
     /**
     * Change le message d’un utilisateur ou d’une fundation
     */
-    public function changeMsg($usr_id=NULL, $fun_id, $message) {
-        if ($usr_id == NULL && $fun_id == NULL) {
-            throw new MessageUpdateFailedException("Impossible de changer le message par défaut global à travers l’API");
-        }
+    public function changeMsg($usr_id, $fun_id, $message) {
 
-        if ($usr_id == NULL && $fun_id != NULL) {
+        //If usr_id is null, we check if the user has the rights to change a fundation or global message
+        if ($usr_id == NULL) {
             $this->checkRight(true, true, true, $fun_id);
         } else {
-            $this->checkRight(false, false);
+            if(!$this->user()) {
+                throw new MessageUpdateFailedException("Vous devez connecter un utilisateur ! (method loginCas)");
+            }
+        
             if ($this->user()->getId() != $usr_id) {
                 throw new MessageUpdateFailedException("On ne peut changer que son message perso, pas celui des autres ...");
             }
