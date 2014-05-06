@@ -72,10 +72,12 @@ class MsgPerso
             throw new MessageUpdateFailedException("Message trop long (255 caractères max)");
         }
 
-        try {
-            Fundation::getById($fun_id);
-        } catch(FundationNotFound $ex) {
-            throw new MessageUpdateFailedException("La fundation n'existe pas");
+        if ($fun_id){
+            try {
+                Fundation::getById($fun_id);
+            } catch(FundationNotFound $ex) {
+                throw new MessageUpdateFailedException("Fundation non existante");
+            }
         }
 
         $qb = Dbal::createQueryBuilder();
