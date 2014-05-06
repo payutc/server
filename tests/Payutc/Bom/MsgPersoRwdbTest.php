@@ -89,7 +89,7 @@ class MsgPersoRwdbTest extends DatabaseTest
      * 
      *
      * @expectedException         \Payutc\Exception\MessageUpdateFailedException
-     * @expectedExceptionMessage La fundation n'existe pas
+     * @expectedExceptionMessage Fundation non existante
      */
     public function testSetMsgPersoInexistingFun()
     {
