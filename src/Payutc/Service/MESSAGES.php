@@ -48,24 +48,11 @@ class MESSAGES extends \ServiceBase {
     }
 
     /**
-    * Change le message d’un utilisateur ou d’une fundation
+    * Change le message d’une fundation
     */
-    public function changeMsg($usr_id, $fun_id, $message) {
-
-        //If usr_id is null, we check if the user has the rights to change a fundation or global message
-        if ($usr_id == NULL) {
-            $this->checkRight(true, true, true, $fun_id);
-        } else {
-            if(!$this->user()) {
-                throw new MessageUpdateFailedException("Vous devez connecter un utilisateur ! (method loginCas)");
-            }
-        
-            if ($this->user()->getId() != $usr_id) {
-                throw new MessageUpdateFailedException("On ne peut changer que son message perso, pas celui des autres ...");
-            }
-        }
-        
-        return \Payutc\Bom\MsgPerso::setMsgPerso($message, $usr_id, $fun_id);
+    public function changeMsg($fun_id, $message) {
+        $this->checkRight(true, true, true, $fun_id);
+        return \Payutc\Bom\MsgPerso::setMsgPerso($message, NULL, $fun_id);
     }
 
 }
