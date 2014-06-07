@@ -18,20 +18,35 @@ class Notification {
             throw new NotificationInvalidDeviceType("Choose between 'iOS' or 'Android'.");
         }
         
-        try {
-            Dbal::conn()->insert('t_notification_not',
-                array('not_user' => 1,
+        $conn = Dbal::conn();
+        $conn->beginTransaction();
+        $qb = $conn->createQueryBuilder()
+            ->select('not_id', 'not_user')
+            ->from('t_notification_not', 'n')
+            ->where('not_type LIKE :type AND not_token LIKE :token')
+            ->setParameter('type', $type)
+            ->setParameter('token', $token);
+        $query = $qb->execute();
+        
+        if ($query->rowCount() == 0) {
+            $conn->insert('t_notification_not',
+                array('not_user' => $user->getId(),
                       'not_type' => $type,
                       'not_token' => $token
                      ),
                 array('integer', 'string', 'string'));
-            return Dbal::conn()->lastInsertId();
-        } catch (\Doctrine\DBAL\DBALException $e) {
-            if (strpos($e->getPrevious()->getMessage(), "Integrity constraint violation: 1062")) {
-                return false;
-            } else {
-                throw $e;
+            $id = $conn->lastInsertId();
+        } else {
+            $data = $query->fetch();
+            if ($data['not_user'] != $user->getId()) {
+                $conn->update('t_notification_not',
+                    array('not_user' => $user->getId()),
+                    array('not_id' => $data['not_id']),
+                    array('integer', 'integer'));
             }
+            $id = $data['not_id'];
         }
+        $conn->commit();
+        return $id;
     }
 }

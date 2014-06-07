@@ -15,7 +15,8 @@ class NOTIFICATIONS extends \ServiceBase {
      */
     public function addDevice($type, $token) {
         $this->checkRight(false, false, false);
-        Notification::addDevice($type, $token, $this->user());
+        $id = Notification::addDevice($type, $token, $this->user());
+        return true;
     }
 }
 
