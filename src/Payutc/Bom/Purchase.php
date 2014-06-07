@@ -47,8 +47,14 @@ class Purchase
 
         if($tick != null) {
             $tick = strtoupper($tick);
-            if ($tick === 'DAY' or $tick === 'MONTH' or $tick === 'YEAR') {
-                $qb->groupBy("$tick( tra.tra_date )");
+            if ($tick === 'DAY') {
+                $qb->groupBy("YEAR(tra.tra_date), MONTH(tra.tra_date), DAY(tra.tra_date)");
+            }
+            else if ($tick === 'MONTH') {
+                $qb->groupBy("YEAR(tra.tra_date), MONTH(tra.tra_date)");
+            }
+            else if ($tick === 'YEAR') {
+                $qb->groupBy("YEAR(tra.tra_date)");
             }
             else {
                 $qb->groupBy('UNIX_TIMESTAMP( tra.tra_date ) DIV :tick')
@@ -73,15 +79,18 @@ class Purchase
      * $tick permet de découper le resultat par tranche (pour afficher une courbe d'évolution)
      * il faut indiquer un nombre de secondes à $tick
      */
-    public static function getRevenue($fun_id, $app_id=null, $start=null, $end=null, $tick=null)
+    public static function getRevenue($fun_id=null, $app_id=null, $start=null, $end=null, $tick=null)
     {
         $qb = Dbal::createQueryBuilder();
         $qb->select('sum(pur_price) as total', 'tra.tra_date')
             ->from('t_purchase_pur', 'pur')
             ->innerJoin('pur', 't_transaction_tra', 'tra', 'pur.tra_id = tra.tra_id')
-            ->andWhere('tra.fun_id = :fun_id')->setParameter('fun_id', $fun_id)
             ->andWhere("tra.tra_status = 'V'")
             ->andWhere('pur.pur_removed = 0');
+
+        if($fun_id != null) {
+            $qb->andWhere('tra.fun_id = :fun_id')->setParameter('fun_id', $fun_id);
+        }
 
         if($app_id != null) {
             $qb->andWhere('tra.app_id = :app_id')->setParameter('app_id', $app_id);
@@ -99,8 +108,14 @@ class Purchase
 
         if($tick != null) {
             $tick = strtoupper($tick);
-            if ($tick === 'DAY' or $tick === 'MONTH' or $tick === 'YEAR') {
-                $qb->groupBy("$tick( tra.tra_date )");
+            if ($tick === 'DAY') {
+                $qb->groupBy("YEAR(tra.tra_date), MONTH(tra.tra_date), DAY(tra.tra_date)");
+            }
+            else if ($tick === 'MONTH') {
+                $qb->groupBy("YEAR(tra.tra_date), MONTH(tra.tra_date)");
+            }
+            else if ($tick === 'YEAR') {
+                $qb->groupBy("YEAR(tra.tra_date)");
             }
             else {
                 $qb->groupBy('UNIX_TIMESTAMP( tra.tra_date ) DIV :tick')
@@ -114,6 +129,38 @@ class Purchase
             $result = $qb->execute()->fetch();
             return $result['total'];
         }
+    }
+
+    /**
+     * getDetails() retourne les détails des ventes d'un fundation pour éditer un journal des ventes
+     */
+    public static function getDetails($fun_id, $start=null, $end=null)
+    {
+        $qb = Dbal::createQueryBuilder();
+        $qb->select('sum(pur.pur_price) as total', 'sum(pur.pur_qte) as qte', 'pur.pur_unit_price', 'pur.pur_tva', 'obj.obj_name')
+            ->from('t_purchase_pur', 'pur')
+            ->innerJoin('pur', 't_transaction_tra', 'tra', 'pur.tra_id = tra.tra_id')
+            ->innerJoin('pur', 't_object_obj', 'obj', 'pur.obj_id = obj.obj_id')
+            ->andWhere("tra.tra_status = 'V'")
+            ->andWhere('pur.pur_removed = 0')
+            ->andWhere('tra.fun_id = :fun_id')
+            ->setParameter('fun_id', $fun_id)
+            ->groupBy("pur.obj_id", "pur.pur_unit_price", "pur.pur_tva");
+
+        if($start != null) {
+            $qb->andWhere('tra.tra_date >= :start')
+                ->setParameter('start', $start);
+        }
+
+        if($end != null) {
+            $qb->andWhere('tra.tra_date <= :end')
+                ->setParameter('end', $end);
+        }
+
+        $result = array();
+        $a = $qb->execute();
+        while($r = $a->fetch()) { $result[] = $r; }
+        return $result;
     }
     
     public static function getPurchaseById($pur_id)

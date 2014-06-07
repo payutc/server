@@ -13,15 +13,21 @@ class Services {
         'PAYLINE',
         'RELOAD',
         'MYACCOUNT',
+        'CATALOG',
         'TRANSFER',
         'WEBSALE',
         'WEBSALECONFIRM',
+        'MESSAGES',
+        'TRESO',
         'NOTIFICATIONS'
     );
     
     protected static $servicesGET = array(
         'PAYLINE' => array(
             'notification',
+        ),
+        'POSS3' => array(
+            'getImage64',
         ),
     );
     

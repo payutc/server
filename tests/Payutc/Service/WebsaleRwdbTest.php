@@ -71,14 +71,18 @@ class WebsaleRwdbTest extends DatabaseTest
                     'pur_qte' => '1',
                     'pur_unit_price' => '150',
                     'pur_price' => '150',
-                    'pur_removed' => '0'),
+                    'pur_removed' => '0',
+                    'pur_tva' => '19.60',
+                    'pur_amount_tva' => '25'),
                 array(
                     'pur_id' => '17',
                     'obj_id' => '4',
                     'pur_qte' => '3',
                     'pur_unit_price' => '150',
                     'pur_price' => '450',
-                    'pur_removed' => '0')
+                    'pur_removed' => '0',
+                    'pur_tva' => '19.60',
+                    'pur_amount_tva' => '74')
         ));
         
         $this->assertEquals($o['id'], $r->body['id']);

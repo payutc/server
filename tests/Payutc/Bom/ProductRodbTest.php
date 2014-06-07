@@ -28,6 +28,7 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
                  "fundation_id" => "1",
                  "stock" => "10",
                  "price" => "100",
+                 "tva" => "7",
                  "alcool" => "0",
                  "image" => null
             ),
@@ -38,6 +39,7 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
                  "fundation_id" => "1",
                  "stock" => "6",
                  "price" => "80",
+                 "tva" => "7",
                  "alcool" => "0",
                  "image" => null
             ),
@@ -48,6 +50,7 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
                  "fundation_id" => "1",
                  "stock" => "0",
                  "price" => "170",
+                 "tva" => "19.6",
                  "alcool" => "0",
                  "image" => null
             ),
@@ -58,6 +61,7 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
                  "fundation_id" => "1",
                  "stock" => "23",
                  "price" => "150",
+                 "tva" => "19.6",
                  "alcool" => "0",
                  "image" => null
             ),
@@ -68,6 +72,7 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
                  "fundation_id" => "1",
                  "stock" => "42",
                  "price" => "170",
+                 "tva" => "19.6",
                  "alcool" => "0",
                  "image" => null
             ),
@@ -89,6 +94,7 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
              "fundation_id" => "1",
              "stock" => "10",
              "price" => "100",
+             "tva" => "7",
              "alcool" => "0",
              "image" => null
         );
@@ -101,6 +107,7 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
              "fundation_id" => "1",
              "stock" => "6",
              "price" => "80",
+             "tva" => "7",
              "alcool" => "0",
              "image" => null
         );

@@ -27,6 +27,7 @@ use \Payutc\Exception\UserError;
 use \Payutc\Bom\User;
 use \Payutc\Log;
 use \Payutc\Config;
+use \Payutc\Utils;
 
 /**
 * ServiceBase.class
@@ -134,10 +135,12 @@ class ServiceBase {
     * @return array $status
     */
     public function getStatus() {
-        if($this->application())
+        if($this->application()){
             $app = $this->application()->toArray(0);
-        else
+        }else{
             $app = null;
+        }
+
         if($this->user()) {
             $user = $this->user()->getNickname();
             $firstname = $this->user()->getFirstname();
@@ -147,6 +150,7 @@ class ServiceBase {
             $firstname = null;
             $lastname = null;
         }
+
         return array(
             "application" => $app, 
             "user" => $user, 
@@ -172,8 +176,7 @@ class ServiceBase {
      * et bien sur fun_id == NULL ne sera authorisé que si l'utilisateur est "super admin" sur le droit en question.
      */
     public function checkRight($user=true, $app=true, $fun_check=false, $fun_id=NULL) {
-        if($user)
-        {
+        if($user){
             if(!$this->user()) {
                 throw new \Payutc\Exception\CheckRightException("Vous devez connecter un utilisateur ! (method loginCas)");
             }
@@ -183,8 +186,8 @@ class ServiceBase {
                              $fun_check,
                              $fun_id);
         }
-        if($app)
-        {
+
+        if($app){
             if(!$this->application()) {
                 throw new \Payutc\Exception\CheckRightException("Vous devez connecter une application ! (method loginApp)");
             }
@@ -213,14 +216,17 @@ class ServiceBase {
      * Selon tout les droit en vigueur
      * @return array()
      */
-    public function getFundations() {
+    public function getFundations($user=true,$app=true,$fun_check=false,$fun_id=NULL) {
         // Verification sur le droits avant toute choses
-        $this->checkRight();
+        $this->checkRight($user,$app,$fun_check,$fun_id);
         // On recupere les fundations pour l'user et l'application
-        $fundations_for_user = UserRight::getFundations($this->user()->getId(), 
-                                                        $this->service_name);
-        $fundations_for_app = ApplicationRight::getFundations($this->application()->getId(),
-                                                              $this->service_name);
+        if($user){
+            $fundations_for_user = UserRight::getFundations($this->user()->getId(), $this->service_name);
+        }
+
+        if($app){
+            $fundations_for_app = ApplicationRight::getFundations($this->application()->getId(), $this->service_name);
+        }
 
         // Si on est admin, le premier item permet d'indiquer une fundation "fantome" qui representent toutes les autres.
         if($this->isAdmin()) {
@@ -229,9 +235,19 @@ class ServiceBase {
             $fundations = array();
         }
 
-        // On fait un ET logique entre les deux arrays
-        foreach($fundations_for_user as $fun_id => $fundation) {
-            if(array_key_exists($fun_id, $fundations_for_app)) {
+        if($user && $app){
+            // On fait un ET logique entre les deux arrays
+            foreach($fundations_for_user as $fun_id => $fundation) {
+                if(array_key_exists($fun_id, $fundations_for_app)) {
+                    $fundations[] = array("fun_id" => $fun_id, "name" => $fundation);
+                }
+            }
+        }elseif($user && !$app){
+            foreach($fundations_for_user as $fun_id => $fundation) {
+                $fundations[] = array("fun_id" => $fun_id, "name" => $fundation);
+            }
+        }elseif(!$user && $app){
+            foreach($fundations_for_app as $fun_id => $fundation) {
                 $fundations[] = array("fun_id" => $fun_id, "name" => $fundation);
             }
         }
@@ -251,6 +267,31 @@ class ServiceBase {
         $application->registerUse(); // Update the app_lastuse field to now
         $_SESSION['ServiceBase']['application'] = $application;
         return true;
+    }
+
+    protected function checkFundationIds($user=true,$app=true,$fun_ids=null){
+        $fun_ids = json_decode($fun_ids);
+        if(is_array($fun_ids)) {
+            // Checker les droits sur chaque fundation donnée.
+            // On ne check que les droits de l'application et pas de user
+            foreach($fun_ids as $fun_id) {
+                if($app){
+                    $this->checkRight($user, $app, true, $fun_id);
+                }else{
+                    $this->checkRight($user, $app, false, null);
+                }
+            }
+        } else {
+            // Verifie qu'on a des droits sur le service
+            $fundations = $this->getFundations($user,$app,false,null);
+            $fun_ids = array();
+            foreach($fundations as $fun) {
+                if($fun['fun_id']){
+                    $fun_ids[] = $fun['fun_id'];
+                }
+            }
+        }
+        return $fun_ids;
     }
 
     /**
@@ -326,7 +367,7 @@ class ServiceBase {
 	 * @param int $outh Hauteur de l'image
 	 * @return array $csv
 	 */
-	public function getImage64($img_id, $outw = 0, $outh = 0) {
+	public function getImage64($img_id, $outw = 0, $outh = 0, $encode=true) {
         // A partir du moment ou l'on a les droits sur le service courant on peut récupérer les images        
         $this->checkRight();
 
@@ -346,10 +387,13 @@ class ServiceBase {
         $height_orig = imagesy($oldgd);
 
 		// Handle no resize
-		if($outw == 0)
+		if($outw == 0){
 			$outw = $width_orig;
-		if($outh == 0)
+        }
+
+		if($outh == 0){
 			$outh = $height_orig;
+        }
 
         $ratio_orig = $width_orig/$height_orig;
 
@@ -358,27 +402,38 @@ class ServiceBase {
         } else {
            $outh = $outw/$ratio_orig;
         }
-		
-		// Création de l'image GD à sortir
-		$newgd = imagecreatetruecolor($outw, $outh);
-		
-		// Redimensionnement
-		imagecopyresampled($newgd, $oldgd, 0, 0, 0, 0, $outw, $outh, $width_orig, $height_orig);
-		
-		// Récupération et encodage en base64
-		ob_start();
-		imagepng($newgd);
-		$output = base64_encode(ob_get_contents());
-		ob_end_clean();
-		
-		// Retour s'il y a une image correcte
-		if($output != false)
-			return array("success"=> $output);
-		else {
-			Log::warn("getImage64($img_id, $outw, $outh) : No image found");
-			return array("error"=>400, "error_msg"=>"Image non trouvée.");
-		}
-	}
+
+        // Création de l'image GD à sortir
+        $newgd = imagecreatetruecolor($outw, $outh);
+
+        // Redimensionnement
+        imagecopyresampled($newgd, $oldgd, 0, 0, 0, 0, $outw, $outh, $width_orig, $height_orig);
+
+        // Récupération et encodage en base64
+        if($encode) {
+            ob_start();
+            imagepng($newgd);
+            $output = base64_encode(ob_get_contents());
+            ob_end_clean();
+        } else {
+            $seconds_to_cache = 36000000;
+            $ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
+            header("Expires: $ts");
+            header("Pragma: cache");
+            header("Cache-Control: max-age=$seconds_to_cache");
+            header('Content-Type: image/png');
+            imagepng($newgd);
+            exit();
+        }
+
+        // Retour s'il y a une image correcte
+        if($output != false){
+            return array("success"=> $output);
+        }else {
+            Log::warn("getImage64($img_id, $outw, $outh) : No image found");
+            return array("error"=>400, "error_msg"=>"Image non trouvée.");
+        }
+    }
     
     /**
      * Renvoie l'id d'un utilisateur à partir de son login UTC
@@ -413,10 +468,14 @@ class ServiceBase {
         else {
             return $session[$key];
         }
-    } 
+    }
+
+    /**
+     * Renvoie la liste des méthodes utilisables sur ce service
+     */
+    public function getMethods() {
+        return Utils::introspectMethods($this, array('__construct', '__wakeup'));
+    }
 }
-
-
-
 
 

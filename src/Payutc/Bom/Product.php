@@ -23,6 +23,7 @@ class Product {
             "fundation_id"=>$don['fun_id'],
             "stock"=>$don['obj_stock'],
             "price"=>$don['pri_credit'],
+            "tva"=>$don['pri_tva'],
             "alcool"=>$don['obj_alcool'],
             "image"=>$don['img_id']
         );
@@ -45,7 +46,7 @@ class Product {
         $qb = Dbal::createQueryBuilder();
         $qb->select('itm.obj_id', 'itm.obj_name', 'oli.obj_id_parent', 
                     'itm.fun_id', 'itm.obj_stock', 'itm.obj_alcool', 
-                    'pri.pri_credit', 'itm.img_id')
+                    'pri.pri_credit', 'pri.pri_tva', 'itm.img_id')
             ->from('t_object_obj', 'itm')
             ->leftjoin('itm', 't_price_pri', 'pri', 'pri.obj_id = itm.obj_id')
             ->leftjoin('itm', 'tj_object_link_oli', 'oli', 'oli.obj_id_child = itm.obj_id')
@@ -79,7 +80,7 @@ class Product {
     public static function getOne($obj_id, $fun_id=null, $removed=0) {
         $qb = Dbal::createQueryBuilder();
         $qb->select('obj.obj_id', 'obj.obj_name', 'oli.obj_id_parent', 'obj.fun_id', 
-                    'obj.obj_stock', 'obj.obj_alcool', 'pri.pri_credit', 'obj.img_id')
+                    'obj.obj_stock', 'obj.obj_alcool', 'pri.pri_credit', 'pri.pri_tva', 'obj.img_id')
            ->from('t_object_obj', 'obj')
            ->leftjoin('obj', 'tj_object_link_oli', 'oli', 'oli.obj_id_child = obj.obj_id')
            ->leftjoin('obj', 't_price_pri', 'pri', 'pri.obj_id = obj.obj_id')
@@ -114,9 +115,12 @@ class Product {
     * @param int $parent
     * @param int $prix
     * @param int $image
+    * @param int $fun_id
+    * @param $tva
     * @return array $categorie
     */
-    public static function add($nom, $parent, $prix, $stock, $alcool, $image, $fun_id) {
+    public static function add($nom, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva) {
+        $conn = Dbal::conn();
         $db = DbBuckutt::getInstance();
         // 1. Verification que le parent existe (et qu'il est bien dans la fundation indiqué (vu qu'on a vérifié les droits grâce à ça)
         $res = $db->query("SELECT fun_id FROM t_object_obj LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u' AND fun_id = '%u' LIMIT 0,1;", array($parent, $fun_id));
@@ -141,9 +145,12 @@ class Product {
                   array($parent, $article_id));
 
             // 4. AJOUT DU PRIX
-            $db->query(
-                  "INSERT INTO t_price_pri (`pri_id`, `obj_id`, `grp_id`, `per_id`, `pri_credit`, `pri_removed`) VALUES ( NULL ,  '%u', NULL , NULL ,  '%u',  '0');",
-                  array($article_id, $prix));
+            $conn->insert('t_price_pri', array(
+                'obj_id' => $article_id,
+                'pri_credit' => $prix,
+                'pri_tva' => $tva,
+                'pri_removed' => 0,
+            ));
 
             // ON RETOURNE L'ID D'ARTICLE
             return array("success"=>$article_id);
@@ -163,12 +170,15 @@ class Product {
     * @param int $prix
     * @param int $stock
     * @param int $image 0 pour conserver la valeur actuelle, -1 pour la supprimer, id dans la table image sinon
+    * @param int $fun_id
+    * @param int $tva
     * @return array $categorie
     */
-    public static function edit($id, $nom, $parent, $prix, $stock, $alcool, $image, $fun_id) {
+    public static function edit($id, $nom, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva) {
+        $qb = Dbal::createQueryBuilder();
         $db = DbBuckutt::getInstance();
         // 1. GET THE ARTICLE
-        $res = $db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit, o.img_id, oli_id
+        $res = $db->query("SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id, p.pri_credit, p.pri_tva, o.img_id, oli_id
         FROM t_object_obj o
         LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child
         LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  WHERE o.obj_removed = '0' AND o.obj_type = 'product' AND o.obj_id = '%u' AND o.fun_id = '%u';", array($id, $fun_id));
@@ -177,6 +187,7 @@ class Product {
             $fundation=$don['fun_id'];
             $old_parent=$don['obj_id_parent'];
             $old_price=$don['pri_credit'];
+            $old_tva=$don['pri_tva'];
             $old_img_id=$don['img_id'];
             $oli_id=$don['oli_id'];
         } else {
@@ -219,11 +230,21 @@ class Product {
         }
 
         // 5. EDIT THE PRICE IF NECESSARY
-        if($old_price != $prix)
+        if($old_price != $prix || $old_tva != $tva)
         {
-            $db->query(
-                  "UPDATE t_price_pri SET `pri_credit` = '%u' WHERE `obj_id` = '%u' and `pri_removed` = '0';",
-                  array($prix, $id));
+            $qb->update('t_price_pri', 'pri')
+                ->set('pri.pri_credit', ':pri_credit')
+                ->set('pri.pri_tva', ':pri_tva')
+                ->where('pri.obj_id = :obj_id')
+                ->andWhere('pri.pri_removed = :pri_removed');
+
+            $qb->setParameters(array(
+                "pri_credit" => $prix,
+                "pri_tva" => $tva,
+                "obj_id" => $id,
+                "pri_removed" => 0));
+            
+            $qb->execute();
         }
 
         // 6. EDIT THE ARTICLE NAME AND STOCK

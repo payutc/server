@@ -56,6 +56,7 @@ class User {
     * @param string $username Login of the User object to init
     */
     public function __construct($username, $gingerUser = null) {
+        $this->gingerUser = $gingerUser;
         Log::debug("User: __construct($username, [gingerUser])", array('ginger_user' => $gingerUser));
         
         $query = Dbal::createQueryBuilder()
@@ -640,5 +641,15 @@ class User {
         // Get data from the database
         $don = $query->fetch();
         return $don['usr_credit'];
+    }
+
+    public static function getSumCredit() {
+        $qb = Dbal::createQueryBuilder()
+            ->select('sum(usr_credit) as sum')
+            ->from('ts_user_usr', 'usr');
+
+        // Get data from the database
+        $don = $qb->execute()->fetch();
+        return $don['sum'];
     }
 }

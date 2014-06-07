@@ -29,12 +29,6 @@ class WebApp {
             $dispatcher->handleService($service, $method);
         })->via('GET', 'POST');
 
-        // SOAP route
-        $app->map('/:service.class.php', function($service) {
-            $dispatcher = new \Payutc\Dispatcher\Soap();
-            $dispatcher->handle($service);
-        })->via('GET', 'POST');
-
         return $app;
     }
 }

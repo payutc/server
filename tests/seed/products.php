@@ -97,26 +97,31 @@ $data = array (
     array (
       'obj_id' => 1,
       'pri_credit' => 100,
+      'pri_tva' => 7,
     ),
     1 => 
     array (
       'obj_id' => 2,
       'pri_credit' => 80,
+      'pri_tva' => 7,
     ),
     2 => 
     array (
       'obj_id' => 3,
       'pri_credit' => 170,
+      'pri_tva' => 19.6,
     ),
     3 => 
     array (
       'obj_id' => 4,
       'pri_credit' => 150,
+      'pri_tva' => 19.6,
     ),
     4 => 
     array (
       'obj_id' => 5,
       'pri_credit' => 170,
+      'pri_tva' => 19.6,
     ),
   ),
 );

@@ -44,6 +44,14 @@ $data = array (
     ),
     4 => 
     array (
+      'usr_id' => 5,
+      'usr_firstname' => 'Test',
+      'usr_lastname' => 'Bloqué',
+      'usr_nickname' => 'tbloque',
+      'usr_credit' => 7500,
+    ),
+    5 => 
+    array (
       'usr_id' => 9447,
       'usr_firstname' => 'Matthieu',
       'usr_lastname' => 'Guffroy',

@@ -50,12 +50,6 @@ use \Application;
                         "user"    => true,
                         "app"     => true
                     ), array(
-                        "service" => "VENTEWEB", 
-                        "name"    => "Vente en ligne",
-                        "desc"    => "Permet la vente depuis une application",
-                        "user"    => false,
-                        "app"     => true
-                    ), array(
                         "service" => null,
                         "name"    => "Tout les droits",
                         "desc"    => "Donne les droits à l'utilisateur ou à l'application sur tous les services",
@@ -71,6 +65,12 @@ use \Application;
                         "service" => "GESARTICLE",
                         "name"    => "Gestion des articles",
                         "desc"    => "Donne les droits de gérer les articles (stock, prix, images...)",
+                        "user"    => true,
+                        "app"     => true
+                    ), array(
+                        "service" => "TRESO",
+                        "name"    => "Trésorerie",
+                        "desc"    => "Permet le suivi par le trésorier.",
                         "user"    => true,
                         "app"     => true
                     ), array(
@@ -98,6 +98,12 @@ use \Application;
                         "user"    => false,
                         "app"     => false
                     ), array(
+                        "service" => "CATALOG",
+                        "name"    => "Consulter le catalogue d'une fondation depuis son application",
+                        "desc"    => "Permet de consluter le catalogue des produits (bières, softs, snacks) avec une connexion d'application",
+                        "user"    => false,
+                        "app"     => true
+                    ),array(
                         "service" => "WEBSALE",
                         "name"    => "Encaisser par internet",
                         "desc"    => "Permet à une application d'encaisser de l'argent par internet",
@@ -115,6 +121,12 @@ use \Application;
                         "desc"    => "Permet de notifier certains évènements à un utilisateur",
                         "user"    => false,
                         "app"     => false
+                    ), array(
+                        "service" => "MESSAGES",
+                        "name"    => "Récupèrer et changer des messages persos",
+                        "desc"    => "Permet de changer les messages persos d’une fundation ou d’un utilisateur",
+                        "user"    => true,
+                        "app"     => true
                     )
                     
                 );

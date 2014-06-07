@@ -22,7 +22,6 @@ class Version20140607212315 extends AbstractMigration
           PRIMARY KEY (`not_id`)
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Appareils à notifier';");
         $this->addSql("ALTER TABLE t_notification_not ADD CONSTRAINT `t_notification_not_ibfk_1` FOREIGN KEY (`not_user`) REFERENCES `ts_user_usr` (`usr_id`);");
-        $this->addSql("ALTER TABLE t_notification_not ADD UNIQUE `t_notification_not_ibfk_2` (`not_type`, `not_token`, `not_user`);");
     }
 
     public function down(Schema $schema)

@@ -84,4 +84,16 @@ class Fundation {
         return $fundation;
     }
     
+    public static function getAll() {
+        $qb = self::getQbBase();
+        $query = $qb->execute();
+        $result = array();
+        while($don = $query->fetch()) {
+            $fundation = new Fundation();
+            $fundation->id = $don['fun_id'];
+            $fundation->name = $don['fun_name'];
+            $result[] = $fundation;          
+        };
+        return $result;
+    }
 }

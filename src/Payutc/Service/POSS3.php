@@ -4,6 +4,7 @@ namespace Payutc\Service;
 
 use \Payutc\Bom\Purchase;
 use \Payutc\Bom\Product;
+use \Payutc\Bom\Category;
 use \Payutc\Bom\Transaction;
 use \Payutc\Exception\PossException;
 use \Payutc\Exception\UserNotFound;
@@ -55,7 +56,12 @@ class POSS3 extends \ServiceBase {
         return Product::getAll(array('fun_ids'=>array($fun_id,)));
     }
     
-    
+    public function getCategories($fun_id)
+    {
+        $this->checkRight(true, true, true, $fun_id);
+        return Category::getAll(array($fun_id,));
+    }
+
     /** Annulation d'un achat
      * 1. Récupére l'achat
      * 2. Vérifie que le vendeur est le bon, ainsi que la vente à été réalisé il y'a moins de X temps
@@ -148,12 +154,13 @@ class POSS3 extends \ServiceBase {
                      "lastname"=>$buyer->getLastname(), 
                      "solde"=>$buyer->getCredit(),
                      "msg_perso"=>$msg,
-                     "transaction_id"=>$tr->getId());
+                     "transaction_id"=>$tr->getId(),
+                     "purchases"=>$tr->getPurchases());
     }
 
-    public function getImage64($img_id, $outw = 0, $outh = 0)
+    public function getImage64($img_id, $outw = 0, $outh = 0, $encode=true)
     {
-        $r = parent::getImage64($img_id, $outw, $outh);
+        $r = parent::getImage64($img_id, $outw, $outh, $encode);
         if (array_key_exists('error_msg', $r)) {
             throw new Exception($r['error_msg']);
         }
