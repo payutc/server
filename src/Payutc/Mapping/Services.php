@@ -16,6 +16,7 @@ class Services {
         'TRANSFER',
         'WEBSALE',
         'WEBSALECONFIRM',
+        'NOTIFICATIONS'
     );
     
     protected static $servicesGET = array(

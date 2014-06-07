@@ -109,6 +109,12 @@ use \Application;
                         "desc"    => "Permet de valider les paiements en ligne",
                         "user"    => false,
                         "app"     => false
+                    ), array(
+                        "service" => "NOTIFICATIONS",
+                        "name"    => "Notifier les utilisateurs",
+                        "desc"    => "Permet de notifier certains évènements à un utilisateur",
+                        "user"    => false,
+                        "app"     => false
                     )
                     
                 );
