@@ -8,7 +8,8 @@
  */
 
 namespace Payutc\Bom;
-use \Payutc\Db\DbBuckutt;
+use \Payutc\Exception\NotImplemented;
+use \Payutc\Exception\MissingConfiguration;
 use \Payutc\Db\Dbal;
 use \Payutc\Exception\NotificationInvalidDeviceType;
 
@@ -48,5 +49,41 @@ class Notification {
         }
         $conn->commit();
         return $id;
+    }
+    
+    public static function send($user_id, $message) {
+        $qb = Dbal::conn()->createQueryBuilder()
+            ->select('not_token', 'not_type')
+            ->from('t_notification_not', 'n')
+            ->where('not_user = :user')
+            ->setParameter('user', $data['tas_user'])
+            ->execute();
+
+        while ($device = $qb->fetch()) {        
+            switch($device['not_type']) {
+            case 'Android':
+                Notification::sendToAndroid($device['not_token'], $message);
+                break;
+            default:
+                throw new NotImplement("DeviceType : " . $device['not_type']);
+            }
+        }
+    }
+    
+    protected static function sendToAndroid($token, $message) {
+        $key = Config::get('google_api_key');
+        if ($key === null) {
+            throw new MissingConfiguration('google_api_key');
+        }
+        
+        $res = Request::post('https://android.googleapis.com/gcm/send')
+            ->addHeader('Authorization', 'key=' . $key)
+            ->addHeader('Content-Type', 'application/json')
+            ->body(json_encode(array('data' => $message,
+                                     'registration_ids' => array($token))))
+            ->expectsJson()
+            ->send();
+
+        if ($res->
     }
 }
