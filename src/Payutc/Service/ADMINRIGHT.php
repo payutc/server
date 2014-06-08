@@ -116,6 +116,12 @@ use \Application;
                         "user"    => false,
                         "app"     => false
                     ), array(
+                        "service" => "NOTIFICATIONS",
+                        "name"    => "Notifier les utilisateurs",
+                        "desc"    => "Permet de notifier certains évènements à un utilisateur",
+                        "user"    => false,
+                        "app"     => false
+                    ), array(
                         "service" => "MESSAGES",
                         "name"    => "Récupèrer et changer des messages persos",
                         "desc"    => "Permet de changer les messages persos d’une fundation ou d’un utilisateur",
