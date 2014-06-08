@@ -58,6 +58,9 @@ $_CONFIG['payline_merchant_id'] = '70038023549152' ; // Merchant ID
 $_CONFIG['payline_access_key'] = 'fAPFZ5vkg0K734953kKG' ; // Certificate key
 $_CONFIG['payline_production'] = false ; // production mode
 
+// Clé d'API Google pour envoyer des notifications
+$_CONFIG['google_api_key'] = "";
+
 // Configuration de ginger (outil cotisant)
 // En environnement de dev, utiliser https://github.com/simde-utc/faux-ginger
 $_CONFIG['ginger_key'] = "";

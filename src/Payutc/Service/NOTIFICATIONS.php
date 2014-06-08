@@ -3,6 +3,7 @@
 namespace Payutc\Service;
 
 use \Payutc\Bom\Notification;
+use \Payutc\Bom\Task;
 use \Payutc\Exception\UserError;
 use \Payutc\Config;
 use \Payutc\Log;
@@ -22,6 +23,9 @@ class NOTIFICATIONS extends \ServiceBase {
         }
 
         $id = Notification::addDevice($type, $token, $this->user());
+        if ($id) {
+            Task::addNotification("Votre appareil recevra maintenant des notifications", $this->user());
+        }
         return true;
     }
 }
