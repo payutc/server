@@ -24,7 +24,7 @@ class NOTIFICATIONS extends \ServiceBase {
 
         $id = Notification::addDevice($type, $token, $this->user());
         if ($id) {
-            Task::addNotification("Votre appareil recevra maintenant des notifications", $this->user());
+            Task::addNotification("Votre appareil recevra maintenant des notifications.", $this->user());
         }
         return true;
     }
