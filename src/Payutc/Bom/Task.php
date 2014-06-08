@@ -10,15 +10,15 @@
 namespace Payutc\Bom;
 use \Payutc\Db\Dbal;
 use \Payutc\Exception\NotImplemented;
-use \Httpful\Request;
 
-class Blocked {
+class Task {
     public static function addNotification($message, $user) {
         Dbal::conn()->insert('t_task_tas',
             array('tas_message' => $message,
                   'tas_user' => $user->getId(),
-                  'tas_type' => 'notification'),
-            array('string', 'integer', 'string'));
+                  'tas_type' => 'notification',
+                  'tas_created_at' => new \DateTime('now')),
+            array('string', 'integer', 'string', 'datetime'));
     }
     
     /**
@@ -30,10 +30,13 @@ class Blocked {
      * false il n'y a plus de tâches à traiter
      */
     public static function doOne() {
-        $qb = Dbal::conn()->createQueryBuilder()
+        $conn = Dbal::conn();
+        $conn->beginTransaction();
+        
+        $qb = $conn->createQueryBuilder()
             ->select('tas_id', 'tas_message', 'tas_user', 'tas_type')
             ->from('t_task_tas', 't')
-            ->orderBy('tas_id', 'ACS')
+            ->orderBy('tas_id', 'ASC')
             ->setMaxResults(1);
         $query = $qb->execute();
         
@@ -41,13 +44,30 @@ class Blocked {
             return false;
         }
 
-        $data = $query->fetch();
-        if ($data['tas_type'] == 'notification') {
-            Notification::send($data['tas_user'], $data['tas_message']);
-            return true;
-        } else {
-            throw new NotImplement("Task type : " . $data['tas_type']);
+        try {
+            $data = $query->fetch();
+            if ($data['tas_type'] == 'notification') {
+                Notification::send($data['tas_user'], $data['tas_message']);
+            } else {
+                throw new NotImplement("Task type : " . $data['tas_type']);
+            }
+        } catch (\Exception $e) {
+            $qdelete = $conn->createQueryBuilder()
+                ->delete('t_task_tas')
+                 ->where('tas_id = :id')
+                 ->setParameter('id', $data['tas_id'])
+                 ->execute();
+            $conn->commit();
+            throw $e;
         }
+
+        $qdelete = $conn->createQueryBuilder()
+            ->delete('t_task_tas')
+             ->where('tas_id = :id')
+             ->setParameter('id', $data['tas_id'])
+             ->execute();
+        $conn->commit();
+        return true;
     }
 }
 

@@ -14,7 +14,7 @@ class Version20140608034837 extends AbstractMigration
     {
         $this->addSql("CREATE TABLE t_task_tas (
             `tas_id` INT(11) unsigned NOT NULL AUTO_INCREMENT,
-            `tas_created_at` DATETIME NOT NULL DEFAULT NOW(),
+            `tas_created_at` DATETIME NOT NULL,
             `tas_type` VARCHAR(15) NOT NULL COMMENT 'Type de la tâche',
             `tas_message` VARCHAR(255) COLLATE utf8_general_ci,
             `tas_user` INT(11) unsigned,
