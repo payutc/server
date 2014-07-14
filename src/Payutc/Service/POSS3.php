@@ -15,6 +15,10 @@ use \Payutc\Log;
 
 class POSS3 extends \ServiceBase {
     
+    protected function shouldICheckUser() {
+        return true;
+    }
+
     /**
      * Obtenir les infos d'un buyer 
      *
@@ -22,7 +26,7 @@ class POSS3 extends \ServiceBase {
      * @return array $state
      */
     public function getBuyerInfo($badge_id) {
-        $this->checkRight(true, true);
+        $this->checkRight($this->shouldICheckUser(), true);
 
         // Verifier que le buyer existe
         try {
@@ -52,13 +56,13 @@ class POSS3 extends \ServiceBase {
     
     public function getArticles($fun_id)
     {
-        $this->checkRight(true, true, true, $fun_id);
+        $this->checkRight($this->shouldICheckUser(), true, true, $fun_id);
         return Product::getAll(array('fun_ids'=>array($fun_id,)));
     }
     
     public function getCategories($fun_id)
     {
-        $this->checkRight(true, true, true, $fun_id);
+        $this->checkRight($this->shouldICheckUser(), true, true, $fun_id);
         return Category::getAll(array($fun_id,));
     }
 
@@ -71,7 +75,7 @@ class POSS3 extends \ServiceBase {
      */
     public function cancel($fun_id, $pur_id)
     {
-        $this->checkRight(true, true, true, $fun_id);
+        $this->checkRight($this->shouldICheckUser(), true, true, $fun_id);
         
         // ANNULATION
         $pur = Purchase::getPurchaseById($pur_id);
@@ -99,7 +103,7 @@ class POSS3 extends \ServiceBase {
      * @return array $state
      */
     public function transaction($fun_id, $badge_id, $obj_ids) {
-        $this->checkRight(true, true, true, $fun_id);
+        $this->checkRight($this->shouldICheckUser(), true, true, $fun_id);
 
         // Verifier que le buyer existe
         try {

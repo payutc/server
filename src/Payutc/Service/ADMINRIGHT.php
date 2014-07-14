@@ -50,6 +50,12 @@ use \Application;
                         "user"    => true,
                         "app"     => true
                     ), array(
+                        "service" => "POSS4",
+                        "name"    => "Vente physique (sans vendeur)",
+                        "desc"    => "Permet la vente par badge sans vendeur",
+                        "user"    => false,
+                        "app"     => true
+                    ), array(
                         "service" => null,
                         "name"    => "Tout les droits",
                         "desc"    => "Donne les droits à l'utilisateur ou à l'application sur tous les services",
