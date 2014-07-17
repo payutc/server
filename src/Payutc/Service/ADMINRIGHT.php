@@ -51,8 +51,8 @@ use \Application;
                         "app"     => true
                     ), array(
                         "service" => "SELFPOS",
-                        "name"    => "Vente physique (sans vendeur)",
-                        "desc"    => "Permet la vente par (badge ou login) sans vendeur",
+                        "name"    => "Vente physique sans vendeur par login",
+                        "desc"    => "Permet la vente par login sans vendeur",
                         "user"    => false,
                         "app"     => true
                     ), array(
