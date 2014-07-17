@@ -4,6 +4,7 @@ namespace Payutc\Mapping;
 
 class Services {
     protected static $services = array(
+        'SELFPOS',
         'POSS3',
         'STATS',
         'KEY',
@@ -29,6 +30,8 @@ class Services {
         'POSS3' => array(
             'getImage64',
         ),
+        'SELFPOS' => array(
+            'getStatus')
     );
     
     public static function get($name) {

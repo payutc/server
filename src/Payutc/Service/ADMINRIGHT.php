@@ -50,9 +50,9 @@ use \Application;
                         "user"    => true,
                         "app"     => true
                     ), array(
-                        "service" => "POSS4",
+                        "service" => "SELFPOS",
                         "name"    => "Vente physique (sans vendeur)",
-                        "desc"    => "Permet la vente par badge sans vendeur",
+                        "desc"    => "Permet la vente par (badge ou login) sans vendeur",
                         "user"    => false,
                         "app"     => true
                     ), array(
