@@ -1,35 +1,37 @@
 <?php
 
 namespace Payutc\Service;
-
 use \Payutc\Exception\PossException;
 use \Payutc\Exception\UserNotFound;
 use \Payutc\Bom\User;
+use \Payutc\Log;
 
-class POSS3 extends POSS {
-    
+class SELFPOS extends POSS {
+
     protected function shouldICheckUser() {
-        return true;
+        return false;
     }
 
-    /**
+     /**
      * Obtenir les infos d'un buyer 
      *
-     * @param String $badge_id
+     * @param String $login
      * @return array $state
      */
-    public function getBuyerInfo($badge_id) {
+    public function getBuyerInfo($login) {
+
         // Verifier que le buyer existe
         try {
-            $buyer = User::getUserFromBadge($badge_id);
+            $buyer = new User($login);
         }
         catch(UserNotFound $ex) {
-            Log::warn("getBuyerInfo($badge_id) : User not found");
-            throw new PossException("Ce badge n'a pas été reconnu");
+            Log::warn("getBuyerInfo($login) : User not found");
+            throw new PossException("Ce login n'a pas été reconnu");
         }
-        return parent::getBuyerInfo($buyer);
+
+    	return parent::getBuyerInfo($buyer);
     }
-    
+
     /**
      * Transaction complète,
      *         1. load le buyer
@@ -39,11 +41,10 @@ class POSS3 extends POSS {
      * @param String $obj_ids list of ids separated by a space or json : [[id1, qte1], [id2, qt2], ...]
      * @return array $state
      */
-    public function transaction($fun_id, $badge_id, $obj_ids) {
-
+    public function transaction($fun_id, $login, $obj_ids) {
         // Verifier que le buyer existe
         try {
-            $buyer = User::getUserFromBadge($badge_id);
+            $buyer = new User($login);
         }
         catch(UserNotFound $ex) {
             Log::warn("transaction($fun_id, $badge_id, $obj_ids) : User not found");
@@ -52,6 +53,5 @@ class POSS3 extends POSS {
 
         return parent::transaction($fun_id, $buyer, $obj_ids);
     }
+
 }
-
-
