@@ -407,10 +407,6 @@ class User {
         if(($this->getCredit() + $amount) > $credit_max){
             throw new CannotReload("Le rechargement ferait dépasser le plafond maximum");
         }
-        
-        if(!$this->isCotisant()){
-            throw new CannotReload("Il faut être cotisant pour pouvoir recharger");
-        }
     }
 
     /**
