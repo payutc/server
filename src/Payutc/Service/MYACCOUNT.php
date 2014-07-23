@@ -83,7 +83,18 @@ class MYACCOUNT extends \ServiceBase {
             "historique" => $this->user()->getHistorique(),
             "credit" => $this->user()->getCredit());
 	}
-	
+
+    /**
+    * Recupere le statut de la cotisation de l'utilisateur
+    * Utile pour ne pas afficher les modules qui lui sont "bloqués" comme le virement
+    * Et pour lui afficher un lien de rappel lui permettant d'aller cotiser directement en ligne.
+    * @return boolean 
+    */
+    public function isCotisant() {
+        return $this->user()->isCotisant();
+    }
+
+
 	/**
 	* Definit le blocage de la carte de l'utilisateur (par lui même, en cas de perte par exemple)
 	* @param int (0/1)
