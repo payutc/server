@@ -25,7 +25,8 @@ class Product {
             "price"=>$don['pri_credit'],
             "tva"=>$don['pri_tva'],
             "alcool"=>$don['obj_alcool'],
-            "image"=>$don['img_id']
+            "image"=>$don['img_id'],
+            "cotisant"=>$don['obj_cotisant']
         );
     } 
 
@@ -45,7 +46,7 @@ class Product {
         
         $qb = Dbal::createQueryBuilder();
         $qb->select('itm.obj_id', 'itm.obj_name', 'oli.obj_id_parent', 
-                    'itm.fun_id', 'itm.obj_stock', 'itm.obj_alcool', 
+                    'itm.fun_id', 'itm.obj_stock', 'itm.obj_alcool', 'itm.obj_cotisant', 
                     'pri.pri_credit', 'pri.pri_tva', 'itm.img_id')
             ->from('t_object_obj', 'itm')
             ->leftjoin('itm', 't_price_pri', 'pri', 'pri.obj_id = itm.obj_id')
@@ -80,7 +81,7 @@ class Product {
     public static function getOne($obj_id, $fun_id=null, $removed=0) {
         $qb = Dbal::createQueryBuilder();
         $qb->select('obj.obj_id', 'obj.obj_name', 'oli.obj_id_parent', 'obj.fun_id', 
-                    'obj.obj_stock', 'obj.obj_alcool', 'pri.pri_credit', 'pri.pri_tva', 'obj.img_id')
+                    'obj.obj_stock', 'obj.obj_alcool', 'obj.obj_cotisant', 'pri.pri_credit', 'pri.pri_tva', 'obj.img_id')
            ->from('t_object_obj', 'obj')
            ->leftjoin('obj', 'tj_object_link_oli', 'oli', 'oli.obj_id_child = obj.obj_id')
            ->leftjoin('obj', 't_price_pri', 'pri', 'pri.obj_id = obj.obj_id')
@@ -117,9 +118,10 @@ class Product {
     * @param int $image
     * @param int $fun_id
     * @param $tva
+    * @param $cotisant
     * @return array $categorie
     */
-    public static function add($nom, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva) {
+    public static function add($nom, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva, $cotisant) {
         $conn = Dbal::conn();
         $db = DbBuckutt::getInstance();
         // 1. Verification que le parent existe (et qu'il est bien dans la fundation indiqué (vu qu'on a vérifié les droits grâce à ça)
@@ -135,9 +137,9 @@ class Product {
 
             $article_id = $db->insertId(
               $db->query(
-                  "INSERT INTO t_object_obj (`obj_id`, `obj_name`, `obj_type`, `obj_stock`, `obj_single`, `img_id`, `fun_id`, `obj_removed`, `obj_alcool`)
-                  VALUES (NULL, '%s', 'product', '%d', '0',  %s, '%u', '0', '%u');",
-                  array($nom, $stock, $image, $fun_id, $alcool)));
+                  "INSERT INTO t_object_obj (`obj_id`, `obj_name`, `obj_type`, `obj_stock`, `obj_single`, `img_id`, `fun_id`, `obj_removed`, `obj_alcool`, `obj_cotisant`)
+                  VALUES (NULL, '%s', 'product', '%d', '0',  %s, '%u', '0', '%u', '%u');",
+                  array($nom, $stock, $image, $fun_id, $alcool, $cotisant)));
 
             // 3. CREATION DU LIEN SUR LE PARENT
             $db->query(
@@ -172,9 +174,10 @@ class Product {
     * @param int $image 0 pour conserver la valeur actuelle, -1 pour la supprimer, id dans la table image sinon
     * @param int $fun_id
     * @param int $tva
+    * @param int $cotisant
     * @return array $categorie
     */
-    public static function edit($id, $nom, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva) {
+    public static function edit($id, $nom, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva, $cotisant) {
         $qb = Dbal::createQueryBuilder();
         $db = DbBuckutt::getInstance();
         // 1. GET THE ARTICLE
@@ -247,13 +250,13 @@ class Product {
             $qb->execute();
         }
 
-        // 6. EDIT THE ARTICLE NAME AND STOCK
+        // 6. EDIT THE ARTICLE NAME AND STOCK AND cotisant
         if($image == 0) {
           $image = "`img_id`";
         } else if ($image == -1) {
           $image = "NULL";
         }
-        $db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_stock` = '%d', `obj_alcool` = '%u', `img_id` = %s WHERE `obj_id` = '%u';",array($nom, $stock, $alcool, $image, $id));
+        $db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_stock` = '%d', `obj_alcool` = '%u', `img_id` = %s, `obj_cotisant` = '%u' WHERE `obj_id` = '%u';",array($nom, $stock, $alcool, $image, $cotisant, $id));
 
         return array("success"=>$id);
     }
