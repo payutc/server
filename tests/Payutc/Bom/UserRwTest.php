@@ -52,5 +52,15 @@ class UserDatabaseTest extends DatabaseTest
         $u = new User("trecouvr");
         $this->assertEquals(8900, $u->getCredit());
     }
+
+
+    /**
+     * @requires PHP 5.4
+     */
+    public function testisCotisant()
+    {
+        $u = new User("trecouvr");
+        $this->assertEquals(true, $u->isCotisant());
+    }
 }
 

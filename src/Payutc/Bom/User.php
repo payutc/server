@@ -419,7 +419,7 @@ class User {
      */
     public function transfer($amount, $userID, $message="") {
         $message = htmlspecialchars($message);
-        if(!$this->user()->isCotisant()) {
+        if(!$this->isCotisant()) {
             throw new TransferException("Les non cotisants ne peuvent pas utiliser la fonction virement.");
         } else if($amount < 0) {
             Log::warn("TRANSFERT: Montant négatif par l'userID ".$this->getId()." vers l'user ".$userID);

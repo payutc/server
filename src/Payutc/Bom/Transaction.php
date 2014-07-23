@@ -346,7 +346,7 @@ class Transaction {
         $items = array();
         foreach($products as $item) {
             $items[$item['id']] = $item;
-            if($item->cotisant) {
+            if($item['cotisant']) {
                 $forceCotisant = true;
             }
         }

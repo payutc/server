@@ -34,7 +34,7 @@ class ProductRwdbTest extends DatabaseTest
     }
 
     public function testAdd() {
-        $a = Product::add("Chouffe", 1000, 180, 10, 1, null, 1, 19.6);
+        $a = Product::add("Chouffe", 1000, 180, 10, 1, null, 1, 19.6, 0);
         $r = Product::getOne($a["success"], 1);
 
         $this->assertEquals("Chouffe", $r['name']);
@@ -45,8 +45,9 @@ class ProductRwdbTest extends DatabaseTest
         $this->assertEquals(null, $r['image']);
         $this->assertEquals(1000, $r['categorie_id']);
         $this->assertEquals(1, $r['fundation_id']);
+        $this->assertEquals(0, $r['cotisant']);
         
-        $a = Product::edit($r["id"], "MC Chouffe", 1001, 170, 10, 1, null, 1, 20);
+        $a = Product::edit($r["id"], "MC Chouffe", 1001, 170, 10, 1, null, 1, 20, 1);
         $r = Product::getOne($a["success"]);
 
         $this->assertEquals("MC Chouffe", $r['name']);
@@ -57,8 +58,9 @@ class ProductRwdbTest extends DatabaseTest
         $this->assertEquals(null, $r['image']);
         $this->assertEquals(1001, $r['categorie_id']);
         $this->assertEquals(1, $r['fundation_id']);
+        $this->assertEquals(1, $r['cotisant']);
 
-        $a = Product::edit($r["id"], "MC Chouffe", 1001, 170, 10, 0, null, 1, 20);
+        $a = Product::edit($r["id"], "MC Chouffe", 1001, 170, 10, 0, null, 1, 20, 1);
         $r = Product::getOne($a["success"]);
         $this->assertEquals(0, $r['alcool']);
 
@@ -89,7 +91,7 @@ class ProductRwdbTest extends DatabaseTest
                 'img_length' => 0,
                 'img_content' => ''));
         // create object
-        $a = Product::add("Chouffe", 1000, 180, 10, 1, $img_id, 1, 19.6);
+        $a = Product::add("Chouffe", 1000, 180, 10, 1, $img_id, 1, 19.6, 1);
         $id = $a["success"];
         // delete object
         Product::delete($id, 1);
