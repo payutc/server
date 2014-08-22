@@ -339,11 +339,26 @@ class Transaction {
         $products = Product::getAll(array('itm_ids' => array_unique($objectsIds), 'fun_ids' => array($funId)));
         
         // Index the products by their ID
+
+        // check if there is a "forceCotisant" product
+        $forceCotisant = false;
+
         $items = array();
         foreach($products as $item) {
             $items[$item['id']] = $item;
+            if($item['cotisant']) {
+                $forceCotisant = true;
+            }
         }
         
+        // If there is a "forceCotisant" product, and a buyer (the check is not done for online payment)
+        // we check that buyer is really cotisant, if no we throw an exception the transaction is not possible
+        if($buyer && $forceCotisant) {
+            if(!$buyer->isCotisant()) {
+                throw new PossException($buyer->getNickname()." n'est pas cotisant, et au moins l'un des articles sélectionés n'est pas ouvert à la vente pour les non cotisants.");
+            }
+        }
+
         try {
             $conn->beginTransaction();
             

@@ -75,6 +75,7 @@ class WebsaleConfirmRwdbTest extends DatabaseTest
                             "stock" => 42,
                             "price" => 170,
                             "alcool" => 0,
+                            "cotisant" => 1,
                             "image" => "",                            
                             "tva" => 19.60
                         )

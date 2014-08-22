@@ -30,6 +30,7 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
                  "price" => "100",
                  "tva" => "7",
                  "alcool" => "0",
+                 "cotisant" => "1",
                  "image" => null
             ),
             array(
@@ -41,6 +42,7 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
                  "price" => "80",
                  "tva" => "7",
                  "alcool" => "0",
+                 "cotisant" => "1",
                  "image" => null
             ),
             array(
@@ -52,6 +54,7 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
                  "price" => "170",
                  "tva" => "19.6",
                  "alcool" => "0",
+                 "cotisant" => "1",
                  "image" => null
             ),
             array(
@@ -63,6 +66,7 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
                  "price" => "150",
                  "tva" => "19.6",
                  "alcool" => "0",
+                 "cotisant" => "1",
                  "image" => null
             ),
             array(
@@ -74,6 +78,7 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
                  "price" => "170",
                  "tva" => "19.6",
                  "alcool" => "0",
+                 "cotisant" => "1",
                  "image" => null
             ),
         );
@@ -96,6 +101,7 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
              "price" => "100",
              "tva" => "7",
              "alcool" => "0",
+             "cotisant" => "1",
              "image" => null
         );
         $r = Product::getOne(1,1);
@@ -109,6 +115,7 @@ class ProductRodbTest extends ReadOnlyDatabaseTest
              "price" => "80",
              "tva" => "7",
              "alcool" => "0",
+             "cotisant" => "1",
              "image" => null
         );
         $r = Product::getOne(2,1);

@@ -97,12 +97,12 @@ class GESARTICLE extends \ServiceBase {
     /**
     * Ajoute (ou edite) un article
     */
-    public function setProduct($obj_id = null, $name, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva=0.00) {
+    public function setProduct($obj_id = null, $name, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva=0.00, $cotisant=1) {
         $this->checkRight(true, true, true, $fun_id);
         if($obj_id) {
-            return Product::edit($obj_id, $name, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva);
+            return Product::edit($obj_id, $name, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva, $cotisant);
         } else {
-            return Product::add($name, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva);
+            return Product::add($name, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva, $cotisant);
         }
     }
 

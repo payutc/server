@@ -407,10 +407,6 @@ class User {
         if(($this->getCredit() + $amount) > $credit_max){
             throw new CannotReload("Le rechargement ferait dépasser le plafond maximum");
         }
-        
-        if(!$this->isCotisant()){
-            throw new CannotReload("Il faut être cotisant pour pouvoir recharger");
-        }
     }
 
     /**
@@ -423,7 +419,9 @@ class User {
      */
     public function transfer($amount, $userID, $message="") {
         $message = htmlspecialchars($message);
-        if($amount < 0) {
+        if(!$this->isCotisant()) {
+            throw new TransferException("Les non cotisants ne peuvent pas utiliser la fonction virement.");
+        } else if($amount < 0) {
             Log::warn("TRANSFERT: Montant négatif par l'userID ".$this->getId()." vers l'user ".$userID);
             throw new TransferException("Tu ne peux pas faire un virement négatif (bien essayé)");
         } else if($amount == 0) {
