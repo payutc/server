@@ -54,4 +54,18 @@ class SELFPOS extends POSS {
         return parent::transaction($fun_id, $buyer, $obj_ids);
     }
 
+    public function transactionByCardId($fun_id, $card_id, $obj_ids) {
+
+        // Verifier que le buyer existe
+        try {
+            $buyer = User::getUserFromBadge($card_id);
+        }
+        catch(UserNotFound $ex) {
+            Log::warn("transaction($fun_id, $card_id, $obj_ids) : User not found");
+            throw new PossException("Ce badge n'a pas été reconnu");
+        }
+
+        return parent::transaction($fun_id, $buyer, $obj_ids);
+    }
+
 }
