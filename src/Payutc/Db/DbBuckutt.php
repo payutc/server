@@ -59,18 +59,18 @@ class DbBuckutt {
     */
     public function connect($host, $base, $user, $pass)
     {
-        if (!$this->connexion = mysql_connect($host, $user, $pass))
+        if (!$this->connexion = mysqli_connect($host, $user, $pass))
         {
             $this->error();
             exit();
         }
-        if (!$result = mysql_select_db($base, $this->connexion))
+        if (!$result = mysqli_select_db($this->connexion, $base))
         {
             $this->error();
             exit();
         }
 		
-        mysql_set_charset("utf8", $this->connexion);
+        mysqli_set_charset($this->connexion, "utf8");
 		
         return $result;
     }
@@ -86,11 +86,11 @@ class DbBuckutt {
     public function query($query, $args = false) {
         if(!empty($args)){
             foreach($args as &$parametre){
-                $parametre = mysql_real_escape_string($parametre, $this->connexion);
+                $parametre = mysqli_real_escape_string($this->connexion, $parametre);
             }
         }
 
-        if(!$result = mysql_query(vsprintf($query, $args), $this->connexion)) {
+        if(!$result = mysqli_query($this->connexion, vsprintf($query, $args))) {
             $this->error();
         }
 
@@ -107,9 +107,9 @@ class DbBuckutt {
     */
     public function result($result, $column = 0)
     {
-        if ($result && mysql_num_rows($result) != 0)
+        if ($result && mysqli_num_rows($result) != 0)
         {
-            return mysql_result($result, $column);
+            return mysqli_result($result, $column);
         }
         
         return false;        
@@ -123,7 +123,7 @@ class DbBuckutt {
     */
     public function insertId()
     {
-        return mysql_insert_id();
+        return mysqli_insert_id();
     }
 
     /**
@@ -137,7 +137,7 @@ class DbBuckutt {
     {
         if($result)
         {
-            return mysql_num_rows($result);;
+            return mysqli_num_rows($result);;
         }
         
         return 0;
@@ -154,10 +154,10 @@ class DbBuckutt {
     {
         if ($type != '')
         {
-            return mysql_fetch_array($result, $type);
+            return mysqli_fetch_array($result, $type);
         }
         
-        return mysql_fetch_array($result);
+        return mysqli_fetch_array($result);
     }
 
     /**
@@ -168,7 +168,7 @@ class DbBuckutt {
     */
     public function affectedRows()
     {
-        return mysql_affected_rows($this->connexion);
+        return mysqli_affected_rows($this->connexion);
     }
 
     /**
@@ -179,7 +179,7 @@ class DbBuckutt {
     */
     public function close()
     {
-        return mysql_close($this->connexion);
+        return mysqli_close($this->connexion);
     }
     
     /**
@@ -189,7 +189,7 @@ class DbBuckutt {
     */
     function error()
     {
-        Log::error("Erreur SQL #".mysql_errno().": ". mysql_error());
+        Log::error("Erreur SQL #".mysqli_errno().": ". mysqli_error());
     }
     
 }

@@ -124,7 +124,7 @@ class MsgPerso
             $has_message = true;
         }
 
-        $args["msg_perso"] = mysql_real_escape_string(htmlspecialchars($msgPerso));
+        $args["msg_perso"] = mysqli_real_escape_string(htmlspecialchars($msgPerso));
 
         if ($has_message) {
 
