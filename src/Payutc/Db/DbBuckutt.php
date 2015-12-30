@@ -123,7 +123,7 @@ class DbBuckutt {
     */
     public function insertId()
     {
-        return mysqli_insert_id();
+        return mysqli_insert_id($this->connexion);
     }
 
     /**
