@@ -154,7 +154,45 @@ class Reversement
         if (count($ret) != 1) {
             throw new ReversementNotFound("Le reversement n'existe pas");
         }
-        return $ret[0];
+        $reversement = $ret[0];
+
+        // Récupérer la date de début des transactions prise en compte par ce reversement
+        $qb = self::getQbBase()
+            ->where('rev.fun_id = :fun_id')
+            ->andWhere("rev.rev_date_created < :rev_date_created")
+            ->setParameter('fun_id', $reversement->funId)
+            ->setParameter('rev_date_created', $reversement->created)
+            ->orderBy('rev.rev_date_created', 'DESC')
+            ->setMaxResults(1);
+
+        $ret = self::getByQb($qb);
+        if (count($ret) != 1){
+            $reversement->startDate = self::getFirstTransactionDate($reversement);
+        } else {
+            $reversement->startDate = $ret[0]->created;
+        }
+
+        return $reversement;
+    }
+
+    private static function getFirstTransactionDate($reversement) {
+        try {
+            // Récupérer la date de début des transactions prise en compte par ce reversement
+            $qb = Dbal::createQueryBuilder()
+                ->select('*')
+                ->from('t_transaction_tra', 'tra')
+                ->where('tra.fun_id = :fun_id')
+                ->setParameter('fun_id', $reversement->funId)
+                ->orderBy('tra.tra_date', 'ASC')
+                ->setMaxResults(1);
+            $query = $qb->execute();
+            $count = $query->rowCount();
+
+            $don = $query->fetch();
+            return $don['tra_date'];
+        } catch (Exception $e) {
+            return "1992";
+        }
     }
 
     public static function getAll($funId=null, $step='V') {
@@ -167,7 +205,21 @@ class Reversement
             $qb->andWhere('rev.fun_id = :fun_id')
                 ->setParameter('fun_id', $funId);
         }
-        return self::getByQb($qb);
+        $reversements = self::getByQb($qb);
+
+        // On veut ajouter à chaque reversement la date où il a commencé... id est celle du précédent
+        // ATTENTION: Je suppose que l'on a pas en une seconde à une même date une demande de reversement & une nouvelle transaction ...
+        $prevDate = [];
+        foreach (array_reverse($reversements) as $reversement) {
+            if (!isset($prevDate[$reversement->funId])) {
+                $reversement->startDate = self::getFirstTransactionDate($reversement);
+            } else {
+                $reversement->startDate = $prevDate[$reversement->funId];
+            }
+            $prevDate[$reversement->funId] = $reversement->created;
+        }
+
+        return $reversements;
     }
 
     protected static function getQbBase(){
