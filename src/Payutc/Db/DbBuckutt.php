@@ -150,14 +150,25 @@ class DbBuckutt {
     * @param $result résultat d'une requête SELECT
     * @return Array Tableau associatif comportant les valeurs de l'enregistrement courant. false si il n'y a plus d'enregistrement
     */
-    public function fetchArray($result, $type = '')
-    {
+    public function fetchArray($result, $type = '') {
         if ($type != '')
-        {
             return mysqli_fetch_array($result, $type);
-        }
-        
-        return mysqli_fetch_array($result);
+        else       
+            return mysqli_fetch_array($result);
+    }
+
+    /**
+    * Fonction fetchAssoc
+    * Repartit un enregistrement dans un tableau associatif et pass à l'enregistrement suivant
+    *
+    * @param $result résultat d'une requête SELECT
+    * @return Array Tableau associatif comportant les valeurs de l'enregistrement courant. false si il n'y a plus d'enregistrement
+    */
+    public function fetchAssoc($result, $type = '') {
+        if ($type != '')
+            return mysqli_fetch_assoc($result, $type);
+        else         
+            return mysqli_fetch_assoc($result);
     }
 
     /**
