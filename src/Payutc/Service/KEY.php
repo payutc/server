@@ -4,7 +4,6 @@ namespace Payutc\Service;
 
 use \Application;
 use \ApplicationList;
-use \UserRightsList;
 use \Payutc\Log;
 
 /**
@@ -54,7 +53,7 @@ use \Payutc\Log;
      * 
      * @return Array (liste d'applications)
      */
-     public function getCurrentUserApplications() {
+    public function getCurrentUserApplications() {
         // On a besoin d'avoir un user logged
         if(!$this->user()) {
             throw new \Payutc\Exception\CheckRightException("Vous devez connecter un utilisateur ! (method loginCas)");
@@ -65,27 +64,5 @@ use \Payutc\Log;
                 Log::info("getCurrentApplication() : OK");
                 return $application_list->toArray(0);
     }
-
-	/** l'utilisateur a-t-il des droits d'admin ? superadmin ? */
-	 public function hasUserAdminRights() {
-        // On a besoin d'avoir un user logged
-        if(!$this->user()) {
-            throw new \Payutc\Exception\CheckRightException("Vous devez connecter un utilisateur ! (method loginCas)");
-        }
-
-        $userRights = \UserRightsList::getUserAdminRights($this->user()->getId());
-        $userSuperAdmin = false;
-        $userAdmin = false;
-        $auMoinsIlAdesDroits = (count($userRights))?1:0;
-        foreach ($userRights as $right) {
-            if ($right['ufu_service'] == "ADMINRIGHT" || $right['ufu_service'] == null ) {
-                $userAdmin = true;
-            }
-            if ($right['fun_id'] == null && ($right['ufu_service'] == "ADMINRIGHT" || $right['ufu_service'] == null)) {
-                $userSuperAdmin = true;
-            }
-        }
-        return ($userSuperAdmin)?3: (($userAdmin)?2: (($auMoinsIlAdesDroits)?1:0) );
-	}
 	
- }
+}

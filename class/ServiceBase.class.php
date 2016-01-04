@@ -211,6 +211,38 @@ class ServiceBase {
         }
     }
 
+    /*
+     * Return true if current user is admin (=> Have right on this service with fun_id = NULL)
+     */
+    public function isSuperAdmin() {
+        try {
+            UserRight::check($this->user()->getId(), null, true, null);
+            return true;
+        } catch (\Payutc\Exception\CheckRightException $e) {
+            return false;
+        }
+    }
+
+    /** l'utilisateur a-t-il des droits d'admin ? superadmin ? */
+    public function getUserLevel() {
+        // On a besoin d'avoir un user logged
+        if(!$this->user()) {
+            throw new \Payutc\Exception\CheckRightException("Vous devez connecter un utilisateur ! (method loginCas)");
+        }
+
+        $userRights = \UserRightsList::getUserAdminRights($this->user()->getId());
+        $userSuperAdmin = false;
+        $userAdmin = false;
+        $auMoinsIlAdesDroits = (count($userRights))?1:0;
+        foreach ($userRights as $right) {
+            if ($right['ufu_service'] == "ADMINRIGHT" || $right['ufu_service'] == null )
+                $userAdmin = true;
+            if ($right['fun_id'] == null && ($right['ufu_service'] == "ADMINRIGHT" || $right['ufu_service'] == null))
+                $userSuperAdmin = true;
+        }
+        return ($userSuperAdmin)? 3 : (($userAdmin)? 2 : (($auMoinsIlAdesDroits)? 1 : 0 ) );
+    }
+
     /**
      * Retourne les fundations sur les quels on a les droits pour travailer
      * Selon tout les droit en vigueur
