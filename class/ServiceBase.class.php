@@ -216,6 +216,8 @@ class ServiceBase {
      */
     public function isSuperAdmin() {
         try {
+            if(!$this->user())
+                throw new \Payutc\Exception\CheckRightException("Vous devez connecter un utilisateur ! (method loginCas)");
             UserRight::check($this->user()->getId(), null, true, null);
             return true;
         } catch (\Payutc\Exception\CheckRightException $e) {
