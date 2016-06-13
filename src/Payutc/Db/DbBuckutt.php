@@ -23,8 +23,7 @@ class DbBuckutt {
     * Recupere une instance de DB
     * @return object $instance
     */
-    public static function getInstance()
-    {
+    public static function getInstance() {
         if (!isset(self::$instance))
         {
             self::$instance = new DbBuckutt();
@@ -42,8 +41,7 @@ class DbBuckutt {
     * @access public
     * @return void
     */
-    public final function __wakeup()
-    {
+    public final function __wakeup() {
         $this->connect(Config::get('sql_host'), Config::get('sql_db'), Config::get('sql_user'), Config::get('sql_pass'));
     }
 
@@ -57,8 +55,7 @@ class DbBuckutt {
     * @param $hostin mot de passe
     * @return boulean etat de la connection : true = connecté
     */
-    public function connect($host, $base, $user, $pass)
-    {
+    public function connect($host, $base, $user, $pass) {
         if (!$this->connexion = mysqli_connect($host, $user, $pass))
         {
             $this->error();
@@ -105,8 +102,7 @@ class DbBuckutt {
     * @param $column nom ou numero de la colonne souhaitée
     * @return valeur de la colonne
     */
-    public function result($result, $column = 0)
-    {
+    public function result($result, $column = 0) {
         if ($result && mysqli_num_rows($result) != 0)
         {
             return mysqli_result($result, $column);
@@ -121,8 +117,7 @@ class DbBuckutt {
     *
     * @return identifiant de l'enregistrement
     */
-    public function insertId()
-    {
+    public function insertId() {
         return mysqli_insert_id($this->connexion);
     }
 
@@ -133,8 +128,7 @@ class DbBuckutt {
     * @param $result Resultat d'une requete
     * @return nombre d'enregistrements
     */
-    public function numRows($result)
-    {
+    public function numRows($result) {
         if($result)
         {
             return mysqli_num_rows($result);;
@@ -177,8 +171,7 @@ class DbBuckutt {
     *
     * @return nombre de lignes
     */
-    public function affectedRows()
-    {
+    public function affectedRows() {
         return mysqli_affected_rows($this->connexion);
     }
 
@@ -188,8 +181,7 @@ class DbBuckutt {
     *
     * @return boulean indique si la deconnexion s'est bien effectuée
     */
-    public function close()
-    {
+    public function close() {
         return mysqli_close($this->connexion);
     }
     
@@ -198,9 +190,8 @@ class DbBuckutt {
     * Log une erreur SQL
     *
     */
-    function error()
-    {
-        Log::error("Erreur SQL #".mysqli_errno().": ". mysqli_error());
+    function error() {
+        Log::error("Erreur SQL #".mysqli_errno($this->connexion).": ". mysqli_error($this->connexion));
     }
     
 }
