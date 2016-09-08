@@ -456,7 +456,57 @@ class User {
                 }
             }
         }
-    }  
+    }
+
+    /**
+     * rechargement papercut
+     * 
+     * @param int $amount montant du virement en centimes
+     * @param int $userID Id de la personne a qui l'on vire de l'argent.
+     * @return int $error (1 c'est que tout va bien sinon faut aller voir le code d'erreur)
+     */
+    public function reloadPapercut($amount) {
+        $fun_id = 4;
+        $article_id = 218;
+
+        if(!$this->isCotisant()) {
+            throw new TransferException("Les non cotisants ne peuvent pas utiliser la fonction reloadPapercut.");
+        } else if($amount < 0) {
+            Log::warn("TRANSFERT: Montant négatif par l'userID ".$this->getId()." vers PaperCut ");
+            throw new TransferException("Tu ne peux pas faire un virement négatif (bien essayé)");
+        } else if($amount == 0) {
+            throw new TransferException("Pas de montant saisi");
+        } else if($this->getCredit() < $amount) {
+            throw new TransferException("Tu n'as pas assez d'argent pour réaliser ce virement");
+        } else {
+
+            $conn = Dbal::conn();
+            $conn->beginTransaction();
+            try {
+
+
+                $transaction = Transaction::createAndValidate(
+                    $this, // Buyer
+                    null, // Seller
+                    1, // appId
+                    $fun_id, // funId
+                    [[$article_id, $amount, null]] // objects
+                );
+
+                $c = $this->getCredit();
+                $tra_id = $transaction->getId();
+                $transaction->validate();
+
+                return serialize($transaction);
+                       
+            } catch (\Exception $e) {
+                return $amount;
+                // $conn->rollback();
+                Log::error("Error during transaction for transfer (from ".$this->getId()." to $userID amount: $amount): ".$e->getMessage());
+                throw new TransferException("Une erreur inconnue s'est produite pendant le virement");
+            }
+        }
+    }
 
     /**
     * Returns the last purchases from the user (to allow the seller to cancel them)

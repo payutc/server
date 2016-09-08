@@ -13,6 +13,7 @@ class Services {
         'GESARTICLE',
         'PAYLINE',
         'RELOAD',
+        'RELOADPAPERCUT',
         'MYACCOUNT',
         'CATALOG',
         'TRANSFER',

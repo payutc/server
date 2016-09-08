@@ -104,6 +104,12 @@ use \Application;
                         "user"    => false,
                         "app"     => false
                     ), array(
+                        "service" => "RELOADPAPERCUT",
+                        "name"    => "Recharger son compte PaperCut",
+                        "desc"    => "Permet de recharger son compte PaperCut avec des sous PayIcam",
+                        "user"    => false,
+                        "app"     => false
+                    ), array(
                         "service" => "CATALOG",
                         "name"    => "Consulter le catalogue d'une fondation depuis son application",
                         "desc"    => "Permet de consluter le catalogue des produits (bières, softs, snacks) avec une connexion d'application",
