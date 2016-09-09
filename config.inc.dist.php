@@ -1,11 +1,11 @@
-<?php 
+<?php
 /**
 *	payutc
 * Copyright (C) 2011 BuckUTT <buckutt@utt.fr>
 *	Copyright (C) 2013 payutc <payutc@assos.utc.fr>
 *
 *	This file is part of payutc
-*	
+*
 *	payutc is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
 *	the Free Software Foundation, either version 3 of the License, or
@@ -78,3 +78,16 @@ $_CONFIG['maintenance'] = false;
 // Configuration des logs
 $_CONFIG['log_mode'] = 'DEV';
 $_CONFIG['log_filename'] = __DIR__.'/logs/logs.log';
+
+// Papercut
+$_CONFIG["papercut"] = [
+	'fun_id' => 4, // id fondation papercut
+	'obj_id' => 278, // id objet transfert argent avec un prix de 0.1 cts
+];
+
+$_CONFIG["papercut_mysql"] = [
+	'sql_host' => "localhost",
+	'sql_db'   => "payicam_prod",
+	'sql_user' => "root",
+	'sql_pass' => "root"
+];
