@@ -12,15 +12,16 @@ use \Payutc\Exception\UserIsBlockedException;
 use \Payutc\Bom\User;
 use \Payutc\Config;
 use \Payutc\Log;
+use \Payutc\Db\Dbal;
 
 class POSS extends \ServiceBase {
-    
+
     protected function shouldICheckUser() {
         return true;
     }
 
     /**
-     * Obtenir les infos d'un buyer 
+     * Obtenir les infos d'un buyer
      *
      * @param String $badge_id
      * @return array $state
@@ -33,24 +34,25 @@ class POSS extends \ServiceBase {
             $buyer->checkNotBlockedMe();
         }
         catch(UserIsBlockedException $ex) {
-            Log::warn("getBuyerInfo($buyer) : Blocked card");
+            Log::warn("getBuyerInfo(".$buyer->getId().") : Blocked card");
             throw new PossException("Ce badge à été bloqué : son propriétaire doit le débloquer sur son interface de gestion");
         }
 
         return array(
-            "firstname"=>$buyer->getFirstname(), 
-            "lastname"=>$buyer->getLastname(), 
+            "firstname"=>$buyer->getFirstname(),
+            "lastname"=>$buyer->getLastname(),
             "solde"=>$buyer->getCredit(),
+            "credit_ecocup"=>$buyer->getCreditEcocup(),
             "last_purchases"=>$buyer->getLastPurchases()
         );
     }
-    
+
     public function getArticles($fun_id)
     {
         $this->checkRight($this->shouldICheckUser(), true, true, $fun_id);
         return Product::getAll(array('fun_ids'=>array($fun_id,)));
     }
-    
+
     public function getCategories($fun_id)
     {
         $this->checkRight($this->shouldICheckUser(), true, true, $fun_id);
@@ -67,7 +69,7 @@ class POSS extends \ServiceBase {
     public function cancel($fun_id, $pur_id)
     {
         $this->checkRight($this->shouldICheckUser(), true, true, $fun_id);
-        
+
         // ANNULATION
         $pur = Purchase::getPurchaseById($pur_id);
         $seller_id = $this->user()->getId();
@@ -80,10 +82,15 @@ class POSS extends \ServiceBase {
             throw new PossException("Cette vente à déjà été annulé...");
         }
         Purchase::cancelById($pur_id);
+
+        if ($pur['obj_id'] == $_CONFIG["ecocup"]['return']) {
+            # code...
+        }
+        var_dump($pur);
         return true;
     }
-    
-    
+
+
     /**
      * Transaction complète,
      *         1. load le buyer
@@ -104,7 +111,7 @@ class POSS extends \ServiceBase {
             Log::warn("transaction($fun_id, $buyer, $obj_ids) : Blocked card");
             throw new PossException("Ce badge à été bloqué : son propriétaire doit le débloquer sur son interface de gestion");
         }
-        
+
         // vérifier que l'utilisateur n'est pas bloqué sur cette fondation
         try {
             $buyer->checkNotBlockedFun($fun_id);
@@ -119,8 +126,8 @@ class POSS extends \ServiceBase {
         // $objects est un array de array($idProduct, $qte, $reduc)
         $objects = json_decode($obj_ids);
         Log::debug('decoded objects', array('objects' => $objects));
-        
-        if (!is_array($objects)) { 
+
+        if (!is_array($objects)) {
             $objects_ids = explode(" ", trim($obj_ids));
             $objects = array();
             foreach ($objects_ids as $id) {
@@ -128,16 +135,94 @@ class POSS extends \ServiceBase {
             }
         }
 
+        // Fonction Bar Icam - eco cups
+        global $_CONFIG;
+        // $_CONFIG["ecocup"] = [
+        //     'fun_id' => 4, // id fun bar icam
+        //     'buy' => 279,
+        //     'return' => 280,
+        // ];
+        $ecocup = [
+            'buy' => 0,
+            'return' => 0
+        ];
+
+        foreach ($objects as $obj) {
+            if ($fun_id == $_CONFIG["ecocup"]['fun_id']) {
+                if ($obj[0] == $_CONFIG["ecocup"]['buy'])
+                    $ecocup['buy'] += $obj[1];
+                else if ($obj[0] == $_CONFIG["ecocup"]['return'])
+                    $ecocup['return'] += $obj[1];
+            }
+        }
+        function removeFromArray($objects, $objIDs) {
+            $temp = [];
+            foreach ($objects as $obj) {
+                if (!in_array($obj[0], $objIDs))
+                    $temp[] = $obj;
+            }
+            return $temp;
+        }
+
+        if (!empty($ecocup['buy']) || !empty($ecocup['return'])) {
+            $cur_ecocup = $buyer->getCreditEcocup();
+            if ($ecocup['return'] + $cur_ecocup > 4)
+                throw new PossException("Inutile, tu ne peux pas retourner plus de 4 écocup");
+            if ($ecocup['buy'] > 0) {
+                if ($ecocup['return'] > 0) { // faire la différence dans les écocup achetées & rendues !
+                    $ecocup['return'] -= $ecocup['buy'];
+                    if ($ecocup['return'] == 0) { // On achete pas d'écocup rien !
+                        $objects = removeFromArray($objects, [$_CONFIG["ecocup"]['buy'], $_CONFIG["ecocup"]['return']]);
+                        throw new PossException("Inutile, tu achètes autant d'écocup que tu en retournes");
+                    } else if ($ecocup['return'] < 0) {
+                        $ecocup['buy'] = abs($ecocup['return']);
+                        $objects = removeFromArray($objects, [$_CONFIG["ecocup"]['return']]);
+                    } else { // pas d'achat d'écocup !
+                        $ecocup['buy'] = 0;
+                        $objects = removeFromArray($objects, [$_CONFIG["ecocup"]['buy']]);
+                    }
+                }
+                if ($ecocup['buy'] > 0) { // return est vide !
+                    if ($cur_ecocup > 0) {
+                        $new_count_ecocup = $cur_ecocup - $ecocup['buy'];
+                        if ($new_count_ecocup == 0) { // On achete pas d'écocup rien !
+                            $objects = removeFromArray($objects, [$_CONFIG["ecocup"]['buy']]);
+                            // On retire l'achat d'ecocup plein prix & on achette des ecocup à 100% de réduction
+                            $objects[] = array($_CONFIG["ecocup"]['buy'], $ecocup['buy'], 1);
+                            $buyer->updateCreditEcocup(0);
+                        } else if ($new_count_ecocup < 0) {
+                            $ecocup['buy'] = abs($new_count_ecocup);
+                            // On a vidé notre réserve écocup, et en plus on a racheté des écocup plein tarif
+                            $objects = removeFromArray($objects, [$_CONFIG["ecocup"]['buy']]);
+                            $objects[] = array($_CONFIG["ecocup"]['buy'], abs($new_count_ecocup), null);
+                            $buyer->updateCreditEcocup(0);
+                        } else { // On avait suffisament d'écocup en stock
+                            $objects = removeFromArray($objects, [$_CONFIG["ecocup"]['buy']]);
+                            $objects[] = array($_CONFIG["ecocup"]['buy'], $ecocup['buy'], 1);
+                            $buyer->updateCreditEcocup($new_count_ecocup);
+                            $ecocup['buy'] = 0;
+                        }
+                    }
+                }
+            }
+            if ($ecocup['return'] > 0) {
+                // On en retourne !
+                $objects = removeFromArray($objects, [$_CONFIG["ecocup"]['return']]);
+                $objects[] = array($_CONFIG["ecocup"]['return'], $ecocup['return'], null);
+                $buyer->updateCreditEcocup($ecocup['return'] + $cur_ecocup);
+            }
+        }
+
         // Création de la transaction, validée immédiatement
         $tr = Transaction::createAndValidate($buyer, $this->user(),
                                              $this->application()->getId(),
                                              $fun_id, $objects);
-        
+
         // Retourner les infos sur l'utilisateur
         $msg = $buyer->getMsgPerso($fun_id);
 
-        return array("firstname"=>$buyer->getFirstname(), 
-                     "lastname"=>$buyer->getLastname(), 
+        return array("firstname"=>$buyer->getFirstname(),
+                     "lastname"=>$buyer->getLastname(),
                      "solde"=>$buyer->getCredit(),
                      "msg_perso"=>$msg,
                      "transaction_id"=>$tr->getId(),

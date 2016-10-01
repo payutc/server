@@ -173,6 +173,33 @@ class User {
     }
 
     /**
+    * Retourne $credit.
+    * On fait une requête dans la BDD à chaque accès au crédit par sécurité.
+    *
+    * @return int $credit
+    */
+    public function getCreditEcocup() {
+        Log::debug("User($this->idUser): getCreditEcocup()");
+
+        $query = Dbal::createQueryBuilder()
+            ->select('usr_credit_ecocup')
+            ->from('ts_user_usr', 'usr')
+            ->where('usr.usr_id = :usr_id')
+            ->setParameter('usr_id', $this->getId())
+            ->execute();
+
+        // Check that the user exists
+        if ($query->rowCount() != 1) {
+            Log::debug("User: User not found for id $this->idUser");
+            throw new UserNotFound();
+        }
+
+        // Get data from the database
+        $don = $query->fetch();
+        return $don['usr_credit_ecocup'];
+    }
+
+    /**
     * Retourne $msgPerso
     *
     * @param  int $usrId
@@ -363,7 +390,8 @@ class User {
             "firstname" => $this->getFirstname(),
             "lastname" => $this->getLastname(),
             "nickname" => $this->getNickname(),
-            "credit" => $this->getCredit()
+            "credit" => $this->getCredit(),
+            "credit_ecocup" => $this->getCreditEcocup()
         );
     }
 
@@ -517,6 +545,18 @@ class User {
     public static function decCreditById($usr_id, $val) {
         $qb = static::_baseUpdateQueryById($usr_id);
         $qb->set('usr_credit', 'usr_credit - :val')
+            ->setParameter('val', $val);
+        $qb->execute();
+    }
+    public function updateCreditEcocup($val) {
+        static::updateCreditEcocupById($val, $this->getId());
+    }
+    public static function updateCreditEcocupById($val, $usrId) {
+        $qb = Dbal::createQueryBuilder();
+        $qb->update('ts_user_usr', 'usr')
+            ->where('usr_id = :usr_id')
+            ->setParameter('usr_id', $usrId)
+            ->set('usr_credit_ecocup', ':val')
             ->setParameter('val', $val);
         $qb->execute();
     }
