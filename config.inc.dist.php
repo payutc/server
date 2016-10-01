@@ -79,10 +79,26 @@ $_CONFIG['maintenance'] = false;
 $_CONFIG['log_mode'] = 'DEV';
 $_CONFIG['log_filename'] = __DIR__.'/logs/logs.log';
 
-// Papercut
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Papercut                                                                                                              //
+// Ne pas oublier d'avoir les droits RELOADPAPERCUT sur l'application casper pour la fondation papercut !                //
+// Ne pas oublier de créer l'objet "Transfert argent vers compte papercut" à 0.01 centimes dans la fondation papercut !! //
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 $_CONFIG["papercut"] = [
-	'fun_id' => 4, // id fondation papercut
-	'obj_id' => 278, // id objet transfert argent avec un prix de 0.1 cts
+	'fun_id' => xx, // id fondation papercut
+	'obj_id' => xx, // id objet transfert argent avec un prix de 0.1 cts
+];
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Ecocup                                                                                        //
+// Ne pas oublier de créer les objets:                                                           //
+//   * éco cup à 1€                                                                              //
+//   * retour éco cup à 0€                                                                       //
+// & d'ajouter le champ usr_credit_ecocup à la table usr: utiliser php db.php migrations:migrate //
+///////////////////////////////////////////////////////////////////////////////////////////////////
+$_CONFIG["ecocup"] = [
+	'fun_id' => 2, // id fun bar icam
+	'buy' => 279,
+	'return' => 280,
 ];
 
 $_CONFIG["papercut_mysql"] = [
