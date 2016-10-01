@@ -560,6 +560,24 @@ class User {
             ->setParameter('val', $val);
         $qb->execute();
     }
+    public static function addCreditEcocupById($val, $usrId) {
+        $qb = Dbal::createQueryBuilder();
+        $qb->update('ts_user_usr', 'usr')
+            ->where('usr_id = :usr_id')
+            ->setParameter('usr_id', $usrId)
+            ->set('usr_credit_ecocup', 'usr_credit_ecocup + :val')
+            ->setParameter('val', $val);
+        $qb->execute();
+    }
+    public static function getCreditEcocupById($usrId) {
+        $qb = Dbal::createQueryBuilder();
+        $q = $qb->select('usr_credit_ecocup')
+                ->from('ts_user_usr', 'usr')
+                ->where('usr_id = :id')
+                ->setParameter('id', $usrId);
+        $res = $q->execute()->fetch();
+        return $res['usr_credit_ecocup']*1;
+    }
 
     public function incCredit($val) {
         $this::incCreditById($this->getId(), $val);
