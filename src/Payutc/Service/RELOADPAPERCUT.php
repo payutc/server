@@ -7,6 +7,7 @@ use \Payutc\Db\Dbal;
 use \Payutc\Config;
 use \Payutc\Log;
 use \Payutc\Bom\Transaction;
+use \Payutc\Exception\TransferException;
 
 /**
  * RELOAD.php
@@ -54,21 +55,21 @@ class RELOADPAPERCUT extends \ServiceBase {
 
         // Verification de la possiblité de recharger
         if (!is_numeric($amount))
-            throw new \Payutc\Exception\TransferException("Mauvais montant entré");
+            throw new TransferException("Mauvais montant entré");
         else
             $amount *= 1;
 
         $user = $this->user();
 
         if (!$user->isCotisant()) {
-            throw new \Payutc\Exception\TransferException("Les non cotisants ne peuvent pas utiliser la fonction reloadPapercut.");
+            throw new TransferException("Les non cotisants ne peuvent pas utiliser la fonction reloadPapercut.");
         } else if ($amount < 0) {
             Log::warn("TRANSFERT: Montant négatif par l'userID ".$user->getId()." vers PaperCut ");
-            throw new \Payutc\Exception\TransferException("Tu ne peux pas faire un virement négatif (bien essayé)");
+            throw new TransferException("Tu ne peux pas faire un virement négatif (bien essayé)");
         } else if ($amount == 0) {
-            throw new \Payutc\Exception\TransferException("Pas de montant saisi");
+            throw new TransferException("Pas de montant saisi");
         } else if ($user->getCredit() < $amount) {
-            throw new \Payutc\Exception\TransferException("Tu n'as pas assez d'argent pour réaliser ce virement");
+            throw new TransferException("Tu n'as pas assez d'argent pour réaliser ce virement");
         } else {
             $conn = Dbal::conn();
             $conn->beginTransaction();
@@ -85,13 +86,25 @@ class RELOADPAPERCUT extends \ServiceBase {
 
                 $c = $user->getCredit();
                 $tra_id = $transaction->getId();
+                $tra_date = $transaction->getDate();
 
+
+                $confSQLReload = Config::get('papercut_mysql');
+                $DB = new \Payutc\DB($confSQLReload['sql_host'], $confSQLReload['sql_user'], $confSQLReload['sql_pass'], $confSQLReload['sql_db']);
+                $id = $DB->query("INSERT INTO reloads (tra_id, user_mail, amount, tra_date) VALUES (:tra_id, :user_mail, :amount, :tra_date)", [
+                        'tra_id' => $tra_id,
+                        'user_mail' => 'antoine.giraud@2015.icam.fr',
+                        'amount' => $amount,
+                        'tra_date' => $tra_date
+                    ]);
+                // $id
                 $conn->commit();
+
                 return $amount;
             } catch (\Exception $e) {
                 $conn->rollback();
-                Log::error("Error during transaction for transfer (from ".$this->getId()." to $userID amount: $amount): ".$e->getMessage());
-                throw new TransferException("Une erreur inconnue s'est produite pendant le virement");
+                Log::error("Error during transaction for papercut transfer (".$user->getId()." amount: $amount): ".$e->getMessage());
+                throw new TransferException("Une erreur inconnue s'est produite pendant le virement".$e->getMessage());
                 return $e.getMessage();
             }
 

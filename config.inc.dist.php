@@ -103,7 +103,7 @@ $_CONFIG["ecocup"] = [
 
 $_CONFIG["papercut_mysql"] = [
 	'sql_host' => "localhost",
-	'sql_db'   => "payicam_prod",
+	'sql_db'   => "papercut_reloads",
 	'sql_user' => "root",
 	'sql_pass' => "root"
 ];
