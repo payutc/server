@@ -51,7 +51,7 @@ class RELOADPAPERCUT extends \ServiceBase {
         $article_id = $confPaperCut['obj_id']; // article
 
         try {
-            $this->checkRight(true, true, true, $fun_id);
+            $this->checkRight(false, true, true, $fun_id);
         } catch (\Exception $e) {
             return $e->getMessage();
         }
