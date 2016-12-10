@@ -19,7 +19,7 @@ class RELOADPAPERCUT extends \ServiceBase {
 
     public function getSoldePaperCut() {
         try {
-            $this->checkRight(true, false, false, null);
+            $this->checkRight(false, true, true, null);
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -30,7 +30,7 @@ class RELOADPAPERCUT extends \ServiceBase {
                                 SUM(amount) amount,
                                 SUM(CASE WHEN fetched_by_papercut = 0 THEN amount ELSE NULL  END) waiting
                             FROM reloads
-                            WHERE user_mail = :user_mail", ['user_mail' => $this->user()->getNickname()]);
+                            WHERE user_mail = :user_mail", ['user_mail' => $this->user()->getMail()]);
         $amounts['amount'] = $amounts['amount']/100;
         $amounts['waiting'] = $amounts['waiting']/100;
         return json_encode($amounts);
@@ -99,7 +99,7 @@ class RELOADPAPERCUT extends \ServiceBase {
                 $DB = new \Payutc\DB($confSQLReload['sql_host'], $confSQLReload['sql_user'], $confSQLReload['sql_pass'], $confSQLReload['sql_db']);
                 $id = $DB->query("INSERT INTO reloads (tra_id, user_mail, amount, tra_date) VALUES (:tra_id, :user_mail, :amount, :tra_date)", [
                         'tra_id' => $tra_id,
-                        'user_mail' => $user->getNickname(),
+                        'user_mail' => $user->getMail(),
                         'amount' => $amount,
                         'tra_date' => $tra_date
                     ]);
