@@ -18,8 +18,11 @@ use \Payutc\Exception\TransferException;
 class RELOADPAPERCUT extends \ServiceBase {
 
     public function getSoldePaperCut() {
+
+        $confPaperCut = Config::get('papercut');
+        $fun_id = $confPaperCut['fun_id']; // PaperCut
         try {
-            $this->checkRight(false, true, true, null);
+            $this->checkRight(false, false, false, $fun_id);
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -46,7 +49,6 @@ class RELOADPAPERCUT extends \ServiceBase {
         // On a une appli qui a les droits ?
 
         $confPaperCut = Config::get('papercut');
-
         $fun_id = $confPaperCut['fun_id']; // PaperCut
         $article_id = $confPaperCut['obj_id']; // article
 
