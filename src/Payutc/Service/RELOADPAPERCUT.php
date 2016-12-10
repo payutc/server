@@ -19,12 +19,21 @@ class RELOADPAPERCUT extends \ServiceBase {
 
     public function getSoldePaperCut() {
         try {
-            $this->checkRight(true, true, true, $fun_id);
+            $this->checkRight(true, false, false, null);
         } catch (\Exception $e) {
             return $e->getMessage();
         }
 
-        return 20;
+        $confSQLReload = Config::get('papercut_mysql');
+        $DB = new \Payutc\DB($confSQLReload['sql_host'], $confSQLReload['sql_user'], $confSQLReload['sql_pass'], $confSQLReload['sql_db']);
+        $amounts = $DB->queryFirst("SELECT
+                                SUM(amount) amount,
+                                SUM(CASE WHEN fetched_by_papercut = 0 THEN amount ELSE NULL  END) waiting
+                            FROM reloads
+                            WHERE user_mail = :user_mail", ['user_mail' => $this->user()->getNickname()]);
+        $amounts['amount'] = $amounts['amount']/100;
+        $amounts['waiting'] = $amounts['waiting']/100;
+        return json_encode($amounts);
     }
 
     /**
@@ -74,7 +83,6 @@ class RELOADPAPERCUT extends \ServiceBase {
             $conn = Dbal::conn();
             $conn->beginTransaction();
             try {
-
                 $transaction = Transaction::createAndValidate(
                     $user, // Buyer
                     $user, // Seller
@@ -83,17 +91,15 @@ class RELOADPAPERCUT extends \ServiceBase {
                     [[$article_id, $amount, null]] // objects
                 );
 
-
                 $c = $user->getCredit();
                 $tra_id = $transaction->getId();
                 $tra_date = $transaction->getDate();
-
 
                 $confSQLReload = Config::get('papercut_mysql');
                 $DB = new \Payutc\DB($confSQLReload['sql_host'], $confSQLReload['sql_user'], $confSQLReload['sql_pass'], $confSQLReload['sql_db']);
                 $id = $DB->query("INSERT INTO reloads (tra_id, user_mail, amount, tra_date) VALUES (:tra_id, :user_mail, :amount, :tra_date)", [
                         'tra_id' => $tra_id,
-                        'user_mail' => 'antoine.giraud@2015.icam.fr',
+                        'user_mail' => $user->getNickname(),
                         'amount' => $amount,
                         'tra_date' => $tra_date
                     ]);
