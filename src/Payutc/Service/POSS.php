@@ -144,9 +144,9 @@ class POSS extends \ServiceBase {
                      "purchases"=>$tr->getPurchases());
     }
 
-    public function getImage64($img_id, $outw = 0, $outh = 0, $encode=true)
+    public function getImage64($img_id, $outw = 0, $outh = 0)
     {
-        $r = parent::getImage64($img_id, $outw, $outh, $encode);
+        $r = parent::getImage64($img_id, $outw, $outh);
         if (array_key_exists('error_msg', $r)) {
             throw new Exception($r['error_msg']);
         }
