@@ -10,9 +10,11 @@
 namespace Payutc\Bom;
 
 use \Payutc\Exception\MessageUpdateFailedException;
+use \Payutc\Exception\FundationNotFound;
 use \Payutc\Db\DbBuckutt;
 use \Payutc\Log;
 use \Payutc\Db\Dbal;
+use \Payutc\Bom\Fundation;
 
 class MsgPerso
 {
@@ -28,8 +30,9 @@ class MsgPerso
 
         $qb->select('m.msg_perso')
            ->from('t_message_msg', 'm');
-            $qb->where('m.usr_id = :usr_id OR m.usr_id IS NULL');
-            $qb->andWhere('m.fun_id = :fun_id OR m.fun_id IS NULL');
+           
+        $qb->where('m.usr_id = :usr_id OR m.usr_id IS NULL');
+        $qb->andWhere('m.fun_id = :fun_id OR m.fun_id IS NULL');
         
         $qb->addOrderBy('m.usr_id', 'DESC')
            ->addOrderBy('m.fun_id', 'DESC')
@@ -48,7 +51,7 @@ class MsgPerso
             return "http://payutc.github.io";            
         }
     }
-    
+
     /**
      * Sets user's personnal message
      * There's three different behaviours : 
@@ -69,30 +72,19 @@ class MsgPerso
             throw new MessageUpdateFailedException("Message trop long (255 caractères max)");
         }
 
-        if ($usr_id == NULL && $fun_id == NULL) {
-            throw new MessageUpdateFailedException("Impossible de changer le message par défaut global à travers l’API");
+        if ($fun_id){
+            try {
+                Fundation::getById($fun_id);
+            } catch(FundationNotFound $ex) {
+                throw new MessageUpdateFailedException("Fundation non existante");
+            }
         }
 
         $qb = Dbal::createQueryBuilder();
 
-        //We check if the fundation exists
-        if ($fun_id) {
-            $qb->select('f.fun_id')
-               ->from('t_fundation_fun', 'f')
-               ->where('f.fun_id = :id')
-               ->getFirstResult();
-               
-            $qb->setParameters(array("id" => $fun_id));
-
-            $res = $qb->execute();
-
-            if ($res->rowCount() == 0) {
-                throw new MessageUpdateFailedException("Fundation non existante");
-            }
-        }
-        
         $args = array();
-
+        $args["msg_perso"] = mysql_real_escape_string(htmlspecialchars($msgPerso));
+        
         if ($fun_id) {
             $args["fun_id"] = $fun_id;
         }
@@ -101,50 +93,30 @@ class MsgPerso
             $args["usr_id"] = $usr_id;
         }
 
-        //We check if a message is already set for the tuple ($usr_id, $fun_id)
-        $qb->select('m.msg_perso')
-           ->from('t_message_msg', 'm');
-        if ($usr_id && !$fun_id) {
-            $qb->where('m.usr_id = :usr_id');
-            $qb->andWhere('m.fun_id IS NULL');
-        } else if (!$usr_id && $fun_id) {
-            $qb->where('m.fun_id = :fun_id');
-            $qb->andWhere('m.usr_id IS NULL');
-        } else if ($usr_id && $fun_id) {
-            $qb->where('m.usr_id = :usr_id');
-            $qb->andWhere('m.fun_id = :fun_id');
-        }
-        
-        $qb->setParameters($args);
+        $message = static::messageExists($usr_id, $fun_id);
 
-        $res = $qb->execute()->fetch();
-
-        $has_message = false;
-        if($res != false) { 
-            $has_message = true;
-        }
-
-        $args["msg_perso"] = mysql_real_escape_string(htmlspecialchars($msgPerso));
-
-        if ($has_message) {
+        if ($message) {
 
             //If the message is the same than the old one, there’s no need to update
-            if ($msgPerso == $res["msg_perso"]) {
+            if ($msgPerso == $message) {
                 return;
             }
             
             $qb->update('t_message_msg', 'm')
             ->set('m.msg_perso', ':msg_perso');
-            if ($usr_id && !$fun_id) {
-                $qb->where('m.usr_id = :usr_id');
-                $qb->andWhere('m.fun_id IS NULL');
-            } else if (!$usr_id && $fun_id) {
+            
+            if ($fun_id) {
                 $qb->where('m.fun_id = :fun_id');
-                $qb->andWhere('m.usr_id IS NULL');
-            } else if ($usr_id && $fun_id) {
-                $qb->where('m.usr_id = :usr_id');
-                $qb->andWhere('m.fun_id = :fun_id');
+            } else {
+                $qb->andWhere('m.fun_id IS NULL');
             }
+
+            if ($usr_id) {
+                $qb->andWhere('m.usr_id = :usr_id');
+            } else {
+                $qb->andWhere('m.usr_id IS NULL');
+            }
+            
             $qb->setParameters($args);
             $nb = $qb->execute();
 
@@ -157,6 +129,44 @@ class MsgPerso
             if ($nb != 1) {
                 throw new MessageUpdateFailedException("Erreur dans la requête SQL d’insertion du message");
             }
+        }
+    }
+
+    private static function messageExists($usr_id, $fun_id) {
+        $args = array();
+
+        if ($fun_id) {
+            $args["fun_id"] = $fun_id;
+        }
+
+        if ($usr_id) {
+            $args["usr_id"] = $usr_id;
+        }
+
+        $qb = Dbal::createQueryBuilder();
+        $qb->select('m.msg_perso')
+           ->from('t_message_msg', 'm');
+           
+        if ($fun_id) {
+            $qb->where('m.fun_id = :fun_id');
+        } else {
+            $qb->where('m.fun_id IS NULL');
+        }
+
+        if ($usr_id) {
+            $qb->andWhere('m.usr_id = :usr_id');
+        } else {
+            $qb->andWhere('m.usr_id IS NULL');
+        }
+        
+        $qb->setParameters($args);
+
+        $res = $qb->execute()->fetch();
+
+        if($res != false) { 
+            return $res["msg_perso"];
+        } else {
+            return false;
         }
     }
 }

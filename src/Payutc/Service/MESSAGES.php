@@ -31,24 +31,28 @@ class MESSAGES extends \ServiceBase {
     * Retourne le message perso actuel d’un utilisateur ou d’une fundation
     */
     public function getMsg($usr_id=NULL, $fun_id=NULL) {
-        $this->checkRight(false);
         return \Payutc\Bom\MsgPerso::getMsgPerso($usr_id, $fun_id);
     }
 
     /**
-    * Change le message d’un utilisateur ou d’une fundation
-    */
-    public function changeMsg($usr_id=NULL, $fun_id, $message) {
-        if ($usr_id == NULL && $fun_id != NULL) {
-            $this->checkRight(true, true, true, $fun_id);
-        } else {
-            $this->checkRight(true, true);
-            if ($this->user()->getId() != $usr_id) {
-                throw new MessageUpdateFailedException("On ne peut changer que son message perso, pas celui des autres ...");
-            }
+     * Change le message perso de l'utilisateur connecté
+     */
+
+    public function changeMyMsg($message, $fun_id=NULL) {
+
+        if(!$this->user()) {
+            throw new MessageUpdateFailedException("Vous devez connecter un utilisateur ! (method loginCas)");
         }
         
-        return \Payutc\Bom\MsgPerso::setMsgPerso($message, $usr_id, $fun_id);
+        return \Payutc\Bom\MsgPerso::setMsgPerso($message, $this->user()->getId(), $fun_id);
+    }
+
+    /**
+    * Change le message d’une fundation
+    */
+    public function changeMsg($fun_id, $message) {
+        $this->checkRight(true, true, true, $fun_id);
+        return \Payutc\Bom\MsgPerso::setMsgPerso($message, NULL, $fun_id);
     }
 
 }
