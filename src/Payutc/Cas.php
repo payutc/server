@@ -24,11 +24,11 @@ class Cas
           ->sendsXml()
           ->timeoutIn($this->timeout)
           ->send();
-        $r->body = str_replace("\n", "", $r->body);
+        $user = trim(str_replace("\n", "", $r->raw_body));
+        /*
         try {
             $xml = new SimpleXMLElement($r->body);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw new \UnexpectedValueException("Return cannot be parsed : '{$r->body}'");
         }
         
@@ -36,21 +36,20 @@ class Cas
         
         $serviceResponse = $xml->children($namespaces['cas']);
         $user = $serviceResponse->authenticationSuccess->user;
-        
+        //*/ 
         if ($user) {
             return (string)$user; // cast simplexmlelement to string
-        }
-        else {
+        } else { /*
             $authFailed = $serviceResponse->authenticationFailure;
             if ($authFailed) {
                 $attributes = $authFailed->attributes();
                 Log::warning("AuthenticationFailure : ".$attributes['code']." ($ticket, $service)");
                 throw new AuthenticationFailure((string)$attributes['code']);
             }
-            else {
-                Log::error("Cas return is weird : '{$r->body}'");
-                throw new \UnexpectedValueException($r->body);
-            }
+            else { //*/
+                Log::error("Cas return is weird : '{$user}'");
+                throw new \UnexpectedValueException($user);
+            // }
         }
         // never reach there
     }
