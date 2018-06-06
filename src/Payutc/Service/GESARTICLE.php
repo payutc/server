@@ -23,7 +23,7 @@ class GESARTICLE extends \ServiceBase {
     * Sinon renvoit les catégories des fundations demandés.
 	* @return array $categories
 	*/
-    public function getCategories($params = null) {
+    public function getCategories($params = array()) {
         //On passe en paramètres $user, $app, $fun_ids
         //Les deux premiers sont pour le checkRight qui sera appelé par getFundations lui même appelé par checkFundationIds si fun_ids est NULL
         $fun_ids = $this->checkFundationIds(true,true,$params['fun_ids']??null);

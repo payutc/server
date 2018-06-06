@@ -25,7 +25,7 @@ class Category {
     /*
      * Retourne toutes les categories
      */
-    public static function getAll($params=null) {
+    public static function getAll($params=array()) {
         $default = array(
             'fun_ids' => null,
             'services' => ['Mozart']
