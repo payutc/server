@@ -39,7 +39,7 @@ class Product {
         $default = array(
             'fun_ids' => null,
             'itm_ids' => null,
-            'services' => ['Mozart']
+            'services' => null
         );
         $params = array_merge($default, $params);
         $fun_ids = $params['fun_ids'];

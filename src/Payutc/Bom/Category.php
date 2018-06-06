@@ -28,7 +28,7 @@ class Category {
     public static function getAll($params=array()) {
         $default = array(
             'fun_ids' => null,
-            'services' => ['Mozart']
+            'services' => null
         );
         $params = array_merge($default, $params);
         $services = $params['services'];
