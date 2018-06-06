@@ -10,7 +10,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration,
  */
 class Version20180606180000 extends AbstractMigration {
     public function up(Schema $schema) {
-        $this->addSql("ALTER TABLE `t_object_obj` ADD `obj_service` VARCHAR(20) '0' AFTER `obj_type` ");
+        $this->addSql("ALTER TABLE `t_object_obj` ADD `obj_service` VARCHAR(20) AFTER `obj_type` ");
 
     }
 
