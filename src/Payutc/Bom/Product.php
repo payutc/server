@@ -44,7 +44,7 @@ class Product {
         $params = array_merge($default, $params);
         $fun_ids = $params['fun_ids'];
         $itm_ids = $params['itm_ids'];
-        $services = $params['services'];
+        $services = !empty($params['services']) && !is_array($params['services']) ? [$params['services']] : $params['services'];
 
         $qb = Dbal::createQueryBuilder();
         $qb->select('itm.obj_id', 'itm.obj_name', 'oli.obj_id_parent', 'itm.obj_service',

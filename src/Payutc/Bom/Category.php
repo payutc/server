@@ -31,7 +31,7 @@ class Category {
             'services' => null
         );
         $params = array_merge($default, $params);
-        $services = $params['services'];
+        $services = !empty($params['services']) && !is_array($params['services']) ? [$params['services']] : $params['services'];
 
         $fun_req = "";
         if (is_array($params['fun_ids']) && !empty($params['fun_ids']))
