@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * Gestion des articles
  * Table: t_object_obj | obj_type = 'product'
  */
@@ -28,7 +28,7 @@ class Product {
             "image"=>$don['img_id'],
             "cotisant"=>$don['obj_cotisant']
         );
-    } 
+    }
 
     /*
      * Retourne tous les produits
@@ -39,14 +39,16 @@ class Product {
         $default = array(
             'fun_ids' => null,
             'itm_ids' => null,
+            'services' => ['Mozart']
         );
         $params = array_merge($default, $params);
         $fun_ids = $params['fun_ids'];
         $itm_ids = $params['itm_ids'];
-        
+        $services = $params['services'];
+
         $qb = Dbal::createQueryBuilder();
-        $qb->select('itm.obj_id', 'itm.obj_name', 'oli.obj_id_parent', 
-                    'itm.fun_id', 'itm.obj_stock', 'itm.obj_alcool', 'itm.obj_cotisant', 
+        $qb->select('itm.obj_id', 'itm.obj_name', 'oli.obj_id_parent', 'itm.obj_service',
+                    'itm.fun_id', 'itm.obj_stock', 'itm.obj_alcool', 'itm.obj_cotisant',
                     'pri.pri_credit', 'pri.pri_tva', 'itm.img_id')
             ->from('t_object_obj', 'itm')
             ->leftjoin('itm', 't_price_pri', 'pri', 'pri.obj_id = itm.obj_id')
@@ -57,7 +59,7 @@ class Product {
                 'removed' => 0,
                 'obj_type' => 'product'
             ));
-        
+
         if ($fun_ids !== null) {
            $qb->andWhere('itm.fun_id IN (:fun_ids)')
                 ->setParameter('fun_ids', $fun_ids, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY);
@@ -66,21 +68,26 @@ class Product {
            $qb->andWhere('itm.obj_id IN (:ids)')
                 ->setParameter('ids', $itm_ids, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY);
         }
-        
+        if ($services !== null) {
+           $qb->andWhere('itm.obj_service IN (:service)')
+                ->setParameter('service', $services, \Doctrine\DBAL\Connection::PARAM_STR_ARRAY);
+        }
+
+
         $res = $qb->execute();
-        
+
         $products = array();
         while ($don = $res->fetch()) {
             $products[] = static::fromDbArray($don);
         }
-        
+
         return $products;
     }
 
 
     public static function getOne($obj_id, $fun_id=null, $removed=0) {
         $qb = Dbal::createQueryBuilder();
-        $qb->select('obj.obj_id', 'obj.obj_name', 'oli.obj_id_parent', 'obj.fun_id', 
+        $qb->select('obj.obj_id', 'obj.obj_name', 'oli.obj_id_parent', 'obj.fun_id',
                     'obj.obj_stock', 'obj.obj_alcool', 'obj.obj_cotisant', 'pri.pri_credit', 'pri.pri_tva', 'obj.img_id')
            ->from('t_object_obj', 'obj')
            ->leftjoin('obj', 'tj_object_link_oli', 'oli', 'oli.obj_id_child = obj.obj_id')
@@ -99,12 +106,12 @@ class Product {
         }
 
         $res = $qb->execute();
-        
+
         $don = $res->fetch();
-        if($don != false) {        
+        if($don != false) {
             return static::fromDbArray($don);
         } else {
-            return null;            
+            return null;
         }
     }
 
@@ -121,7 +128,7 @@ class Product {
     * @param $cotisant
     * @return array $categorie
     */
-    public static function add($nom, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva, $cotisant) {
+    public static function add($nom, $parent, $service, $prix, $stock, $alcool, $image, $fun_id, $tva, $cotisant) {
         $conn = Dbal::conn();
         $db = DbBuckutt::getInstance();
         // 1. Verification que le parent existe (et qu'il est bien dans la fundation indiqué (vu qu'on a vérifié les droits grâce à ça)
@@ -137,9 +144,9 @@ class Product {
 
             $article_id = $db->insertId(
               $db->query(
-                  "INSERT INTO t_object_obj (`obj_id`, `obj_name`, `obj_type`, `obj_stock`, `obj_single`, `img_id`, `fun_id`, `obj_removed`, `obj_alcool`, `obj_cotisant`)
-                  VALUES (NULL, '%s', 'product', '%d', '0',  %s, '%u', '0', '%u', '%u');",
-                  array($nom, $stock, $image, $fun_id, $alcool, $cotisant)));
+                  "INSERT INTO t_object_obj (`obj_id`, `obj_name`, `obj_type`, `obj_service`, `obj_stock`, `obj_single`, `img_id`, `fun_id`, `obj_removed`, `obj_alcool`, `obj_cotisant`)
+                  VALUES (NULL, '%s', 'product', '%s', '%d', '0',  %s, '%u', '0', '%u', '%u');",
+                  array($nom, $service, $stock, $image, $fun_id, $alcool, $cotisant)));
 
             // 3. CREATION DU LIEN SUR LE PARENT
             $db->query(
@@ -177,7 +184,7 @@ class Product {
     * @param int $cotisant
     * @return array $categorie
     */
-    public static function edit($id, $nom, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva, $cotisant) {
+    public static function edit($id, $nom, $service, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva, $cotisant) {
         $qb = Dbal::createQueryBuilder();
         $db = DbBuckutt::getInstance();
         // 1. GET THE ARTICLE
@@ -246,7 +253,7 @@ class Product {
                 "pri_tva" => $tva,
                 "obj_id" => $id,
                 "pri_removed" => 0));
-            
+
             $qb->execute();
         }
 
@@ -256,7 +263,7 @@ class Product {
         } else if ($image == -1) {
           $image = "NULL";
         }
-        $db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_stock` = '%d', `obj_alcool` = '%u', `img_id` = %s, `obj_cotisant` = '%u' WHERE `obj_id` = '%u';",array($nom, $stock, $alcool, $image, $cotisant, $id));
+        $db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_service` = '%s', `obj_stock` = '%d', `obj_alcool` = '%u', `img_id` = %s, `obj_cotisant` = '%u' WHERE `obj_id` = '%u';",array($nom, $stock, $service, $alcool, $image, $cotisant, $id));
 
         return array("success"=>$id);
     }
@@ -271,15 +278,15 @@ class Product {
         $db = DbBuckutt::getInstance();
         // 1. GET THE ARTICLE
         $res = $db->query("
-        SELECT 
+        SELECT
             o.obj_id, o.obj_name, obj_id_parent, o.fun_id, o.img_id,
             p.pri_credit
         FROM t_object_obj o
             LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child
-            LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id  
-        WHERE 
-            o.obj_removed = '0' AND 
-            o.obj_type = 'product' AND 
+            LEFT JOIN t_price_pri p ON p.obj_id = o.obj_id
+        WHERE
+            o.obj_removed = '0' AND
+            o.obj_type = 'product' AND
             o.obj_id = '%u' AND
             o.fun_id = '%u';", array($id, $fun_id));
         if ($db->affectedRows() >= 1) {
@@ -287,11 +294,11 @@ class Product {
         } else {
             return array("error"=>400, "error_msg"=>"L'article à supprimer n'existe pas ! (Ou vous n' avez pas les droits pour le supprimer).");
         }
-        
+
         // start transaction
         $conn = Dbal::conn();
         $conn->beginTransaction();
-        
+
         try {
             // 2. remove article
             $db->query("UPDATE t_object_obj SET  `obj_removed` = '1' WHERE  `obj_id` = '%u';",array($id));
@@ -303,10 +310,10 @@ class Product {
                 ->set('pri_removed', 1)
                 ->setParameter('id', $id);
             $qb->execute();
-            
+
             // 4. delete image
             $conn->delete('ts_image_img', array('img_id' => $don['img_id']));
-            
+
             // commit
             $conn->commit();
         }
@@ -314,7 +321,7 @@ class Product {
             $conn->rollback();
             return array("error"=>400, "error_msg"=>"Erreur lors de la suppression de l'objet $id.");
         }
-        
+
 
         return array("success"=>"ok");
     }
@@ -328,7 +335,7 @@ class Product {
             ->setParameter('itm_id', $itm_id);
         return $qb;
     }
-    
+
     public static function incStockById($itm_id, $val)
     {
         $qb = static::_baseUpdateQueryById($itm_id);
@@ -336,7 +343,7 @@ class Product {
             ->setParameter('val', $val);
         $qb->execute();
     }
-    
+
     public static function decStockById($itm_id, $val)
     {
         $qb = static::_baseUpdateQueryById($itm_id);

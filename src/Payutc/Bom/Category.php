@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * Gestion des categories
  * Table: t_object_obj | obj_type = 'category'
  */
@@ -25,17 +25,34 @@ class Category {
     /*
      * Retourne toutes les categories
      */
-    public static function getAll($fun_ids=null) {
+    public static function getAll($params=null) {
+        $default = array(
+            'fun_ids' => null,
+            'services' => ['Mozart']
+        );
+        $params = array_merge($default, $params);
+        $fun_ids = $params['fun_ids'];
+        $services = $params['services'];
+
         if(is_array($fun_ids)) {
             $fun_req = "AND o.fun_id IN (";
             foreach($fun_ids as $fun_id) {
                 $fun_req .= "'%u', ";
             }
             $fun_req = substr($fun_req, 0, -2) . ")";
-            $param = $fun_ids;
         } else {
             $fun_req = "";
-            $param = array();
+            $fun_ids = array();
+        }
+        if(is_array($services)) {
+            $service_req = "AND o.obj_service IN (";
+            foreach($services as $service) {
+                $service_req .= "'%s', ";
+            }
+            $service_req = substr($service_req, 0, -2) . ")";
+        } else {
+            $service_req = "";
+            $services = array();
         }
 
         $query = "SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id
@@ -44,10 +61,10 @@ LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child AND oli_removed = 0
 WHERE
 obj_removed = '0'
 AND obj_type = 'category'
-$fun_req
+$fun_req $service_req
 ORDER BY obj_name;";
 
-        $res = DbBuckutt::getInstance()->query($query, $param);
+        $res = DbBuckutt::getInstance()->query($query, $fun_ids, $services);
 
         // Construction du resultat.
         $categories = array();
@@ -81,11 +98,11 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
     * Ajoute une categorie
     *
     */
-    public static function add($nom, $parent, $fundation) {
+    public static function add($nom, $service, $parent, $fundation) {
         $db = DbBuckutt::getInstance();
         // 1. CHECK THE PARENT (AND IF TRUE SELECT THE TRUTH FUNDATION)
         if($parent != null) {
-            $res = $db->query("SELECT fun_id FROM t_object_obj 
+            $res = $db->query("SELECT fun_id FROM t_object_obj
                 WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u' AND fun_id = '%u';", array($parent, $fundation));
             if ($db->affectedRows() >= 1) {
                 $don = $db->fetchArray($res);
@@ -98,9 +115,9 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
         // 3. INSERTION DE LA CATEGORIE
         $categorie_id = $db->insertId(
               $db->query(
-                  "INSERT INTO t_object_obj (`obj_id`, `obj_name`, `obj_type`, `obj_stock`, `obj_single`, `img_id`, `fun_id`, `obj_removed`)
-                  VALUES (NULL, '%s', 'category', NULL, '0', NULL, '%u', '0');",
-                  array($nom, $fundation)));
+                  "INSERT INTO t_object_obj (`obj_id`, `obj_name`, `obj_service`, `obj_type`, `obj_stock`, `obj_single`, `img_id`, `fun_id`, `obj_removed`)
+                  VALUES (NULL, '%s', '%s', 'category', NULL, '0', NULL, '%u', '0');",
+                  array($nom, $service, $fundation)));
         if($parent != NULL) {
             $db->query(
                   "INSERT INTO tj_object_link_oli (`oli_id`, `obj_id_parent`, `obj_id_child`, `oli_step`, `oli_removed`) VALUES (NULL, '%u', '%u', '0', '0');",
@@ -115,12 +132,12 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
     * Edite une categorie
     *
     */
-    public static function edit($id, $nom, $parent, $fun_id) {
+    public static function edit($id, $nom, $service, $parent, $fun_id) {
         $db = DbBuckutt::getInstance();
         // 1. GET THE CATEGORIE
-        $res = $db->query("SELECT obj_id_parent, fun_id, oli_id 
-            FROM t_object_obj 
-            LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child AND oli_removed = 0 
+        $res = $db->query("SELECT obj_id_parent, fun_id, oli_id
+            FROM t_object_obj
+            LEFT JOIN tj_object_link_oli ON obj_id = obj_id_child AND oli_removed = 0
             WHERE obj_removed = '0' AND obj_type = 'category' AND obj_id = '%u' AND fun_id = '%u';", array($id, $fun_id));
             if ($db->affectedRows() >= 1) {
                 $don = $db->fetchArray($res);
@@ -164,7 +181,7 @@ ORDER BY obj_name;", array($obj_id, $fun_id));
         }
 
         // 5. EDIT THE CATEGORY
-        $db->query("UPDATE t_object_obj SET  `obj_name` =  '%s' WHERE  `obj_id` = '%u';",array($nom, $id));
+        $db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_service` =  '%s' WHERE  `obj_id` = '%u';",array($nom, $service, $id));
 
         return array("success"=>$id);
     }

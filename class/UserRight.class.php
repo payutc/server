@@ -2,7 +2,7 @@
 
 /**
  * UserRight.class
- * 
+ *
  * Gestion des droits User <=> Service (<=> Fundation)
  * Table: tj_usr_fun_ufu
  */
@@ -15,30 +15,30 @@ class UserRight {
     protected $db;
 
     public function __construct() {
-        $this->db = DbBuckutt::getInstance();        
+        $this->db = DbBuckutt::getInstance();
     }
-    
+
     /**
      * Verifie un tuple de droits.
      * Lorsque les droits n'existe pas throw an exception
      */
 	public static function check($user_id, $service_name = false, $check_fundation = false, $fundation_id = NULL) {
         $db = DbBuckutt::getInstance();
-        $req = "SELECT ufu.ufu_id FROM tj_usr_fun_ufu ufu 
-                                WHERE ufu.usr_id = '%u' 
-                                AND (ufu.ufu_service = '%s' OR ufu.ufu_service IS NULL) 
+        $req = "SELECT ufu.ufu_id FROM tj_usr_fun_ufu ufu
+                                WHERE ufu.usr_id = '%u'
+                                AND (ufu.ufu_service = '%s' OR ufu.ufu_service IS NULL)
                                 AND ufu.ufu_removed IS NULL ";
 
         if($check_fundation) {
             if($fundation_id) {
                 $res = $db->query($req." AND (ufu.fun_id = '%u' OR ufu.fun_id IS NULL)", array($user_id, $service_name, $fundation_id));
             } else {
-                $res = $db->query($req." AND ufu.fun_id IS NULL", array($user_id, $service_name)); 
+                $res = $db->query($req." AND ufu.fun_id IS NULL", array($user_id, $service_name));
             }
         } else {
             $res = $db->query($req, array($user_id, $service_name));
         }
-        
+
 		if ($db->affectedRows() == 0) {
             if($fundation_id)
 	            throw new \Payutc\Exception\CheckRightException("Le user_id $user_id n'a pas les droits $service_name sur la fundation n°$fundation_id");
@@ -47,7 +47,7 @@ class UserRight {
 	    }
         return true;
     }
-    
+
     /**
      * Retourne les fundations ou l'user "user_id" à des droits sur "service_name"
      */
@@ -62,7 +62,7 @@ class UserRight {
         $fundations = array();
         if ($db->affectedRows() >= 1) {
 			while ($don = $db->fetchArray($res)) {
-                $fundations[$don["fun_id"]] = $don["fun_name"]; 
+                $fundations[$don["fun_id"]] = $don["fun_name"];
 			}
         }
         return $fundations;
@@ -78,7 +78,7 @@ class UserRight {
 					    FROM tj_usr_fun_ufu ufu, ts_user_usr usr
 					    WHERE usr.usr_id = ufu.usr_id
                             AND ufu.fun_id = '%u'
-                            AND ufu.ufu_removed IS NULL;", array($fun_id));       
+                            AND ufu.ufu_removed IS NULL;", array($fun_id));
         } else {
             $res = $db->query("SELECT ufu.ufu_id, ufu.usr_id, ufu.fun_id, ufu.ufu_service, usr.usr_lastname, usr.usr_firstname, usr.usr_nickname
 					    FROM tj_usr_fun_ufu ufu, ts_user_usr usr
@@ -98,7 +98,7 @@ class UserRight {
                     $rights[$don["usr_id"]]["usr_lastname"]  = $don["usr_lastname"];
                     $rights[$don["usr_id"]]["fun_id"]  = $don["fun_id"];
                     $rights[$don["usr_id"]]["service"] = array();
-                } 
+                }
                 $rights[$don["usr_id"]]["service"][] = array("service" => $don["ufu_service"], "id" => $don["ufu_id"]);
 			}
         }
@@ -132,7 +132,7 @@ class UserRight {
             "ufu_inserted" => new \DateTime()
         );
         $type = array("integer", "datetime");
-        
+
         // Si fun_id = 0 ou false ou NULL alors c'est un passe partout
         if($fun_id) {
             $insert['fun_id'] = $fun_id;
@@ -161,7 +161,7 @@ class UserRight {
 
 	/**
 	* Supprimer le droit
-	* 
+	*
 	*/
 	public static function removeRight($usr_id, $service, $fun_id) {
         $db = DbBuckutt::getInstance();
@@ -173,20 +173,18 @@ class UserRight {
             $var[] = $fun_id;
         } else {
             $query .= "AND fun_id IS NULL ";
-        }            
+        }
 
         if($service) {
             $query .= "AND ufu_service='%s' ";
             $var[] = $service;
         } else {
             $query .= "AND ufu_service IS NULL ";
-        }  
+        }
 
         $db->query($query, $var);
 		if ($db->affectedRows() == 0) {
 			throw new \Payutc\Exception\SetRightException("Une erreur s'est produite lors de la supression du droit.");
-		}	
+		}
 	}
-
 }
-
