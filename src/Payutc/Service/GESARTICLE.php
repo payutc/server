@@ -26,7 +26,7 @@ class GESARTICLE extends \ServiceBase {
     public function getCategories($params = null) {
         //On passe en paramètres $user, $app, $fun_ids
         //Les deux premiers sont pour le checkRight qui sera appelé par getFundations lui même appelé par checkFundationIds si fun_ids est NULL
-        $fun_ids = $this->checkFundationIds(true,true,$params['fun_ids']??[]);
+        $fun_ids = $this->checkFundationIds(true,true,$params['fun_ids']??null);
 		return Category::getAll($params);
 	}
 
@@ -75,7 +75,7 @@ class GESARTICLE extends \ServiceBase {
     public function getProducts($params=null) {
         //On passe en paramètres $user, $app, $fun_ids
         //Les deux premiers sont pour le checkRight qui sera appelé par getFundations lui même appelé par checkFundationIds si fun_ids est NULL
-        $fun_ids = $this->checkFundationIds(true,true,$params['fun_ids']??[]);
+        $fun_ids = $this->checkFundationIds(true,true,$params['fun_ids']??null);
 		return Product::getAll($params);
 	}
 
