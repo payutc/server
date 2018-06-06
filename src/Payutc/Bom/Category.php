@@ -28,23 +28,19 @@ class Category {
     public static function getAll($params=array()) {
         $default = array(
             'fun_ids' => null,
-            'services' => null
+            'service' => null
         );
         $params = array_merge($default, $params);
-        $services = !empty($params['services']) && !is_array($params['services']) ? [$params['services']] : $params['services'];
 
         $fun_req = "";
         if (is_array($params['fun_ids']) && !empty($params['fun_ids']))
             $fun_req = "AND o.fun_id IN (".implode(', ', array_map(function($d){return (int)$d;}, $params['fun_ids'])).")";
 
-        if (is_array($services)) {
-            $service_req = "AND o.obj_service IN (";
-            foreach($services as $service)
-                $service_req .= "'%s', ";
-            $service_req = substr($service_req, 0, -2) . ")";
+        if (!empty($params['service'])) {
+            $service_req = 'AND o.obj_service = "'.str_replace(['"','\\'], ['',''], $params['service']).'"';
         } else {
             $service_req = "";
-            $services = array();
+            $service = array();
         }
 
         $query = "SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id
@@ -56,7 +52,7 @@ WHERE obj_removed = '0'
     $service_req
 ORDER BY obj_name;";
 
-        $res = DbBuckutt::getInstance()->query($query, $services);
+        $res = DbBuckutt::getInstance()->query($query);
 
         // Construction du resultat.
         $categories = array();

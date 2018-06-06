@@ -39,12 +39,11 @@ class Product {
         $default = array(
             'fun_ids' => null,
             'itm_ids' => null,
-            'services' => null
+            'service' => null
         );
         $params = array_merge($default, $params);
         $fun_ids = $params['fun_ids'];
         $itm_ids = $params['itm_ids'];
-        $services = !empty($params['services']) && !is_array($params['services']) ? [$params['services']] : $params['services'];
 
         $qb = Dbal::createQueryBuilder();
         $qb->select('itm.obj_id', 'itm.obj_name', 'oli.obj_id_parent', 'itm.obj_service',
@@ -58,7 +57,14 @@ class Product {
             ->setParameters(array(
                 'removed' => 0,
                 'obj_type' => 'product'
+                'service' => $params['services']
             ));
+
+        if($params['service'] !== null)
+        {
+            $qb->andWhere('itm.obj_service = :service')
+                ->setParameter('service' => $params['service']);
+        }
 
         if ($fun_ids !== null) {
            $qb->andWhere('itm.fun_id IN (:fun_ids)')
@@ -68,11 +74,6 @@ class Product {
            $qb->andWhere('itm.obj_id IN (:ids)')
                 ->setParameter('ids', $itm_ids, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY);
         }
-        if ($services !== null) {
-           $qb->andWhere('itm.obj_service IN (:service)')
-                ->setParameter('service', $services, \Doctrine\DBAL\Connection::PARAM_STR_ARRAY);
-        }
-
 
         $res = $qb->execute();
 
