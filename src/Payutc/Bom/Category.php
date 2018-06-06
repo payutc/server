@@ -31,24 +31,16 @@ class Category {
             'services' => ['Mozart']
         );
         $params = array_merge($default, $params);
-        $fun_ids = $params['fun_ids'];
         $services = $params['services'];
 
-        if(is_array($fun_ids)) {
-            $fun_req = "AND o.fun_id IN (";
-            foreach($fun_ids as $fun_id) {
-                $fun_req .= "'%u', ";
-            }
-            $fun_req = substr($fun_req, 0, -2) . ")";
-        } else {
-            $fun_req = "";
-            $fun_ids = array();
-        }
-        if(is_array($services)) {
+        $fun_req = "";
+        if (is_array($params['fun_ids']) && !empty($params['fun_ids']))
+            $fun_req = "AND o.fun_id IN (".implode(', ', array_map(function($d){return (int)$d;}, $params['fun_ids'])).")";
+
+        if (is_array($services)) {
             $service_req = "AND o.obj_service IN (";
-            foreach($services as $service) {
+            foreach($services as $service)
                 $service_req .= "'%s', ";
-            }
             $service_req = substr($service_req, 0, -2) . ")";
         } else {
             $service_req = "";
@@ -58,13 +50,13 @@ class Category {
         $query = "SELECT o.obj_id, o.obj_name, obj_id_parent, o.fun_id
 FROM t_object_obj o
 LEFT JOIN tj_object_link_oli ON o.obj_id = obj_id_child AND oli_removed = 0
-WHERE
-obj_removed = '0'
-AND obj_type = 'category'
-$fun_req $service_req
+WHERE obj_removed = '0'
+    AND obj_type = 'category'
+    $fun_req
+    $service_req
 ORDER BY obj_name;";
 
-        $res = DbBuckutt::getInstance()->query($query, $fun_ids, $services);
+        $res = DbBuckutt::getInstance()->query($query, $services);
 
         // Construction du resultat.
         $categories = array();

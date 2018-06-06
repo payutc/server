@@ -72,7 +72,7 @@ class GESARTICLE extends \ServiceBase {
     * Sinon renvoit les catégories des fundations demandés.
 	* @return array $products
 	*/
-    public function getProducts($params=null) {
+    public function getProducts($params=array()) {
         //On passe en paramètres $user, $app, $fun_ids
         //Les deux premiers sont pour le checkRight qui sera appelé par getFundations lui même appelé par checkFundationIds si fun_ids est NULL
         $fun_ids = $this->checkFundationIds(true,true,$params['fun_ids']??null);
