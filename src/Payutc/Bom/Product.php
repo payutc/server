@@ -59,10 +59,9 @@ class Product {
                 'obj_type' => 'product'
             ));
 
-        if($params['service'] !== null)
-        {
+        if (!empty($params['service'])) {
             $qb->andWhere('itm.obj_service = :service')
-                ->setParameter('service' => $params['service']);
+                ->setParameter('service', $params['service']);
         }
 
         if ($fun_ids !== null) {
