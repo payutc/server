@@ -57,7 +57,6 @@ class Product {
             ->setParameters(array(
                 'removed' => 0,
                 'obj_type' => 'product'
-                'service' => $params['services']
             ));
 
         if($params['service'] !== null)
