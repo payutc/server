@@ -49,12 +49,12 @@ class POSS extends \ServiceBase {
 
     public function getArticles($fun_id) {
         $this->checkRight($this->shouldICheckUser(), true, true, $fun_id);
-        return Product::getAll(array('fun_ids'=>array($fun_id,)));
+        return Product::getAll(array('fun_ids'=>array($fun_id), 'service' => 'Mozart'));
     }
 
     public function getCategories($fun_id) {
         $this->checkRight($this->shouldICheckUser(), true, true, $fun_id);
-        return Category::getAll(array($fun_id,));
+        return Category::getAll(array('fun_ids'=>array($fun_id), 'service' => 'Mozart'));
     }
 
     /** Annulation d'un achat
