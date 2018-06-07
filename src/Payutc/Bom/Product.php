@@ -127,7 +127,7 @@ class Product {
     * @param $cotisant
     * @return array $categorie
     */
-    public static function add($nom, $parent, $service, $prix, $stock, $alcool, $image, $fun_id, $tva, $cotisant) {
+    public static function add($nom, $service, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva, $cotisant) {
         $conn = Dbal::conn();
         $db = DbBuckutt::getInstance();
         // 1. Verification que le parent existe (et qu'il est bien dans la fundation indiqué (vu qu'on a vérifié les droits grâce à ça)
@@ -262,7 +262,7 @@ class Product {
         } else if ($image == -1) {
           $image = "NULL";
         }
-        $db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_service` = '%s', `obj_stock` = '%d', `obj_alcool` = '%u', `img_id` = %s, `obj_cotisant` = '%u' WHERE `obj_id` = '%u';",array($nom, $stock, $service, $alcool, $image, $cotisant, $id));
+        $db->query("UPDATE t_object_obj SET  `obj_name` =  '%s', `obj_service` = '%s', `obj_stock` = '%d', `obj_alcool` = '%u', `img_id` = %s, `obj_cotisant` = '%u' WHERE `obj_id` = '%u';",array($nom, $service, $stock, $alcool, $image, $cotisant, $id));
 
         return array("success"=>$id);
     }

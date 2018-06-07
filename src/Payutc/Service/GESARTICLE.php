@@ -102,7 +102,7 @@ class GESARTICLE extends \ServiceBase {
         if($obj_id) {
             return Product::edit($obj_id, $name, $service, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva, $cotisant);
         } else {
-            return Product::add($name, $parent, $service, $prix, $stock, $alcool, $image, $fun_id, $tva, $cotisant);
+            return Product::add($name, $service, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva, $cotisant);
         }
     }
 
