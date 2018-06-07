@@ -97,7 +97,7 @@ class GESARTICLE extends \ServiceBase {
     /**
     * Ajoute (ou edite) un article
     */
-    public function setProduct($obj_id = null, $name, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva=0.00, $cotisant=1, $service=null) {
+    public function setProduct($obj_id = null, $name, $service, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva=0.00, $cotisant=1) {
         $this->checkRight(true, true, true, $fun_id);
         if($obj_id) {
             return Product::edit($obj_id, $name, $service, $parent, $prix, $stock, $alcool, $image, $fun_id, $tva, $cotisant);
