@@ -1,10 +1,10 @@
-<?php 
+<?php
 /**
 *	payutc
 *	Copyright (C) 2013 payutc <payutc@assos.utc.fr>
 *
 *	This file is part of payutc
-*	
+*
 *	payutc is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
 *	the Free Software Foundation, either version 3 of the License, or
@@ -31,7 +31,7 @@ use \Payutc\Utils;
 
 /**
 * ServiceBase.class
-* 
+*
 * Classe comprenant des méthodes utiles à l'ensemble des services.
 * @author payutc <payutc@assos.utc.fr>
 * @version 1.0
@@ -43,10 +43,10 @@ use \Payutc\Db\DbBuckutt;
 class ServiceBase {
     protected $db;
     protected $service_name;  // Nom du service
-	
+
     /**
     * Constructeur
-    */   
+    */
     public function __construct() {
         // DEPRECATED
         // Comme on vise à virer les requetes SQL dans les services le $this->db
@@ -55,11 +55,11 @@ class ServiceBase {
 
         $classdesc = explode("\\", get_class($this));
         $this->service_name = end($classdesc);
-        
+
         if(!array_key_exists('ServiceBase', $_SESSION)) {
             $_SESSION['ServiceBase'] = array(
                 "user" => null,
-                "application" => null            
+                "application" => null
             );
         }
     }
@@ -89,7 +89,7 @@ class ServiceBase {
 
     /**
 	 * Connecter le user avec un ticket CAS.
-	 * 
+	 *
 	 * @param String $ticket
 	 * @param String $service
 	 * @return bool $success
@@ -100,12 +100,12 @@ class ServiceBase {
         $_SESSION['ServiceBase']['user'] = NULL;
 
         $user = User::getUserFromCas($ticket, $service);
-        
+
         $this->setUser($user);
-        
+
         return $user->getNickname();
     }
-    
+
     protected function setUser($user) {
         // Save user in session for all service
         $_SESSION['ServiceBase']['user'] = $user;
@@ -152,10 +152,10 @@ class ServiceBase {
         }
 
         return array(
-            "application" => $app, 
-            "user" => $user, 
+            "application" => $app,
+            "user" => $user,
             "user_data" => array(
-                "firstname" => $firstname, 
+                "firstname" => $firstname,
                 "lastname" => $lastname));
     }
 
@@ -171,7 +171,7 @@ class ServiceBase {
      * Si l'on ne veut pas checker le user (cas d'un service ne dépendant pas d'un user, comme un service permettant de lister les articles sur un site web par exemple)
      * $this->checkRight(true, false);
      * Si votre fonction est ouverte à tout le monde, ne rien mette ou mettre: $this->checkRight(false, false) sera équivalent.
-     * 
+     *
      * Lorsque votre fonction travaille sur une fundation, vous devez passer $fun_check à true pour indiquer que vous tenez à la verification des droits sur le fun_id
      * et bien sur fun_id == NULL ne sera authorisé que si l'utilisateur est "super admin" sur le droit en question.
      */
@@ -198,7 +198,7 @@ class ServiceBase {
                                     $fun_id);
         }
     }
-    
+
     /*
      * Return true if current user is admin (=> Have right on this service with fun_id = NULL)
      */
@@ -246,7 +246,7 @@ class ServiceBase {
     }
 
     /**
-     * Retourne les fundations sur les quels on a les droits pour travailer
+     * Retourne les fundations sur lesquelles on a les droits pour travailer
      * Selon tout les droit en vigueur
      * @return array()
      */
@@ -342,16 +342,16 @@ class ServiceBase {
         }
         elseif(isset($_SERVER['REMOTE_ADDR'])) {
             return $_SERVER['REMOTE_ADDR'];
-        }   
+        }
         else {
             return "";
         }
     }
-    
+
     /**
     * Renvoie une liste d'utilisateurs correspondant à la recherche
     * Un utilisateur et une application doivent être authentifié et autorisé sur le service
-    * 
+    *
     * @return Array $userList
     */
     public function userAutocomplete($queryString) {
@@ -371,7 +371,7 @@ class ServiceBase {
         }
         return $return;
     }
-    
+
     /**
     * Renvoie la liste des services pour lesquels l'utilisateur et l'application courante
     * ont des droits pour y accéder
@@ -383,8 +383,8 @@ class ServiceBase {
             $this->service_name = $service;
             try {
                 $this->checkRight();
-                $result[] = $service;            
-            } 
+                $result[] = $service;
+            }
             catch(\Payutc\Exception\CheckRightException $e) { /* no right for this service */ }
         }
         // put back the correct $this->service_name
@@ -393,16 +393,29 @@ class ServiceBase {
         return $result;
     }
 
+    public function getImagePath($img_id, $useless) {
+        $this->checkRight();
+
+        $image = new \Image("", $img_id);
+
+        if($image->getState() != 1) {
+            Log::warn("getImagePath : No image found");
+            return array("error"=>400, "error_msg"=>"Image non trouvée.");
+        }
+
+        return $image->getPath();
+    }
+
 	/**
 	 * Récupérer les infos sur une image.
-	 * 
+	 *
 	 * @param int $img_id
 	 * @param int $outw Largeur de l'image
 	 * @param int $outh Hauteur de l'image
 	 * @return array $csv
 	 */
 	public function getImage64($img_id, $outw = 0, $outh = 0, $encode=true) {
-        // A partir du moment ou l'on a les droits sur le service courant on peut récupérer les images        
+        // A partir du moment ou l'on a les droits sur le service courant on peut récupérer les images
         $this->checkRight();
 
 		// Récupération de l'objet image
@@ -413,10 +426,10 @@ class ServiceBase {
 			Log::warn("getImage64($img_id, $outw, $outh) : No image found");
             return array("error"=>400, "error_msg"=>"Image non trouvée.");
         }
-		
+
 		// Création de l'image GD originale
 		$oldgd = imagecreatefromstring($image->getContent());
-		
+
         $width_orig = imagesx($oldgd);
         $height_orig = imagesy($oldgd);
 
@@ -468,7 +481,7 @@ class ServiceBase {
             return array("error"=>400, "error_msg"=>"Image non trouvée.");
         }
     }
-    
+
     /**
      * Renvoie l'id d'un utilisateur à partir de son login UTC
      */
@@ -484,16 +497,16 @@ class ServiceBase {
         }
         return $_SESSION[get_class($this)];
     }
-    
+
     protected function destroySession() {
         unset($_SESSION[get_class($this)]);
     }
-    
+
     protected function sessionSet($key, $val) {
         $session =& $this->getSession();
         $session[$key] = $val;
     }
-    
+
     protected function sessionGet($key, $default = null) {
         $session =& $this->getSession();
         if (!isset($session[$key])) {

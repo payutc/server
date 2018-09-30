@@ -26,6 +26,7 @@ class Product {
             "tva"=>$don['pri_tva'],
             "alcool"=>$don['obj_alcool'],
             "image"=>$don['img_id'],
+            "image_path" => $don['img_path'],
             "cotisant"=>$don['obj_cotisant']
         );
     }
@@ -48,10 +49,11 @@ class Product {
         $qb = Dbal::createQueryBuilder();
         $qb->select('itm.obj_id', 'itm.obj_name', 'oli.obj_id_parent', 'itm.obj_service',
                     'itm.fun_id', 'itm.obj_stock', 'itm.obj_alcool', 'itm.obj_cotisant',
-                    'pri.pri_credit', 'pri.pri_tva', 'itm.img_id')
+                    'pri.pri_credit', 'pri.pri_tva', 'itm.img_id', 'img.img_path')
             ->from('t_object_obj', 'itm')
             ->leftjoin('itm', 't_price_pri', 'pri', 'pri.obj_id = itm.obj_id')
             ->leftjoin('itm', 'tj_object_link_oli', 'oli', 'oli.obj_id_child = itm.obj_id')
+            ->leftjoin('itm', 'ts_image_img', 'img', 'img.img_id = itm.img_id')
             ->where('itm.obj_type = :obj_type')
             ->andWhere('itm.obj_removed = :removed')
             ->setParameters(array(
@@ -87,14 +89,15 @@ class Product {
     public static function getOne($obj_id, $fun_id=null, $removed=0) {
         $qb = Dbal::createQueryBuilder();
         $qb->select('obj.obj_id', 'obj.obj_name', 'oli.obj_id_parent', 'obj.fun_id',
-                    'obj.obj_stock', 'obj.obj_alcool', 'obj.obj_cotisant', 'pri.pri_credit', 'pri.pri_tva', 'obj.img_id')
-           ->from('t_object_obj', 'obj')
-           ->leftjoin('obj', 'tj_object_link_oli', 'oli', 'oli.obj_id_child = obj.obj_id')
-           ->leftjoin('obj', 't_price_pri', 'pri', 'pri.obj_id = obj.obj_id')
-           ->where('obj.obj_removed = :removed')
-           ->andWhere('obj.obj_type = :obj_type')
-           ->andWhere('obj.obj_id = :obj_id')
-           ->setParameters(array(
+                    'obj.obj_stock', 'obj.obj_alcool', 'obj.obj_cotisant', 'pri.pri_credit', 'pri.pri_tva', 'obj.img_id', 'img.img_path')
+                ->from('t_object_obj', 'obj')
+                ->leftjoin('obj', 'tj_object_link_oli', 'oli', 'oli.obj_id_child = obj.obj_id')
+                ->leftjoin('obj', 't_price_pri', 'pri', 'pri.obj_id = obj.obj_id')
+                ->leftjoin('obj', 'ts_image_img', 'img', 'img.img_id = obj.img_id')
+                ->where('obj.obj_removed = :removed')
+                ->andWhere('obj.obj_type = :obj_type')
+                ->andWhere('obj.obj_id = :obj_id')
+                ->setParameters(array(
                 'removed' => $removed,
                 'obj_type' => "product",
                 'obj_id' => $obj_id,

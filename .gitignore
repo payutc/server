@@ -8,3 +8,4 @@
 /tests/faux-ginger
 /tests/logs/*.log
 /tests/payutc-server/*.pid
+img/articles/

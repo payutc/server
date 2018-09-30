@@ -1,10 +1,10 @@
-<?php 
+<?php
 /**
     BuckUTT - Buckutt est un système de paiement avec porte-monnaie électronique.
     Copyright (C) 2011 BuckUTT <buckutt@utt.fr>
 
 	This file is part of BuckUTT
-	
+
     BuckUTT is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -23,7 +23,7 @@ use \Payutc\Db\DbBuckutt;
 
 /**
  * Image.class
- * 
+ *
  * Classe gérant les images.
  * @author BuckUTT <buckutt@utt.fr>
  * @version 2.0
@@ -34,47 +34,34 @@ use \Payutc\Db\DbBuckutt;
 class Image
 {
 	private $id;
-	private $mime;
-	private $width;
-	private $length;
-	private $content;
+    private $path;
 	private $state;
 	protected $db;
-	
+
 	/**
 	* Constructeur
-	* 
-	* @param int $img_id[optional]
-	* @param string $mime[optional]
-	* @param int $width[optional]
-	* @param int $length[optional]
-	* @param string $content[optional]
+	*
+	* @param string img_path
 	* @return boolean $state
 	*/
-	public function __construct($img_id = 0, $mime = 0, $width = 0, $length = 0, $content = 0)
+	public function __construct($path='', $img_id=0)
 	{
 		$this->db = DbBuckutt::getInstance();
-		
+
 		if ($img_id == 0) {
-			$this->db->query("INSERT INTO ts_image_img (img_mime, img_width, img_length, img_content) VALUES('%s','%u','%u','%s')", Array($mime, $width, $length, $content));
+			$this->db->query("INSERT INTO ts_image_img (img_path) VALUES('%s')", array($path));
 			if ($this->db->affectedRows() == 1) {
 				$this->id = $this->db->insertId();
-				$this->mime = $mime;
-				$this->width = $width;
-				$this->length = $length;
-				$this->content = $content;
+				$this->path = $path;
 				$this->state = 1;
 			} else {
 				$this->state = 400;
-			}		
+			}
 		} else {
 			$this->id = $img_id;
-			$don = $this->db->fetchArray($this->db->query("SELECT img_mime, img_width, img_length, img_content FROM ts_image_img WHERE img_id = '%u';", Array($this->id)));
+			$don = $this->db->fetchArray($this->db->query("SELECT img_path FROM ts_image_img WHERE img_id = '%u';", Array($this->id)));
 			if ($this->db->affectedRows() == 1) {
-				$this->mime = $don['img_mime'];
-				$this->width = $don['img_width'];
-				$this->length = $don['img_length'];
-				$this->content = $don['img_content'];
+                $this->path = $don['img_path'];
 				$this->state = 1;
 			}
 			else {
@@ -84,18 +71,8 @@ class Image
 	}
 
 	/**
-	* Retourne $content.
-	* 
-	* @return string $content
-	*/
-	public function getContent()
-	{
-		return $this->content;
-	}
-  
-	/**
 	* Retourne $state
-	* 
+	*
 	* @return string $state
 	*/
 	public function getState()
@@ -105,52 +82,22 @@ class Image
 
 	/**
 	* Retourne $id.
-	* 
+	*
 	* @return int $id
 	*/
 	public function getId()
 	{
 		return $this->id;
 	}
-	
-	/**
-	* Retourne $mime.
-	* 
-	* @return string $mime
-	*/
-	public function getMime()
-	{
-		return $this->mime;
-	}
 
 	/**
-	* Retourne $length.
-	* 
-	* @return int $length
+	* Retourne $path.
+	*
+	* @return int $path
 	*/
-	public function getLength()
+	public function getPath()
 	{
-		return $this->length;
-	}
-
-	/**
-	* Retourne $width.
-	* 
-	* @return int $width
-	*/
-	public function getWidth()
-	{
-		return $this->width;
-	}
-
-	/**
-	* Renvoie un tableau contenant l'image, le mime et les dimensions.
-	* 
-	* @return object $array_img
-	*/
-	public function getDetailsImage()
-	{
-		return array($this->id, $this->mime, $this->width, $this->length, base64_encode($this->content));
+		return $this->path;
 	}
 
     /**

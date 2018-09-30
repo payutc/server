@@ -13,13 +13,13 @@ use \Payutc\Exception\TransactionNotFound;
 
 /**
  * TRESO.php
- * 
+ *
  * Ce service permet la gestion par les tresoriers
  *
  */
- 
+
 class TRESO extends \ServiceBase {
-     
+
      /*
         Retourne une série de montant important.
         Si fun_id == null (=> Administrateur)

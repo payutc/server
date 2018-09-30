@@ -117,24 +117,13 @@ class GESARTICLE extends \ServiceBase {
 	/**
 	* Ajouter l'image d'un article
 	*
-	* @param string $image
+	* @param string $image_path
 	* @return int $result
 	*/
-    public function uploadImage($image) {
+    public function uploadImage($image_path) {
         $this->checkRight(true, true, false, null);
 
-        $oldgd = imagecreatefromstring(base64_decode($image));
-
-        ob_start();
-        imagepng($oldgd);
-        $imagedata = ob_get_contents();
-        ob_end_clean();
-
-        $img = new \Image(0, "image/png", imagesx($oldgd), imagesy($oldgd), $imagedata);
-
-        if($img->getState() != 1){
-          return $img->getState();
-        }
+        $img = new \Image($image_path);
 
         return $img->getId();
     }
